@@ -1,0 +1,16 @@
+.DS_Store
+/vendor
+/node_modules
+/public/storage
+Homestead.yaml
+Homestead.json
+.env
+*.sqlite
+/bower_components
+public/uploads
+/scripts
+*.save
+*.log
+*backup-*
+storage/stack
+*.html
