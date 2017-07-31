@@ -1,0 +1,6 @@
+Flask==0.12.2
+
+# Flask extensions
+Flask-Script==2.0.5
+Flask-SQLAlchemy==2.2
+alembic==0.9.3
