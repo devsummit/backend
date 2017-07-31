@@ -26,6 +26,11 @@ class User(db.Model, BaseModel):
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
+	def __init__(self):
+		self.created_at = datetime.datetime.now()
+		self.updated_at = datetime.datetime.now()
+		
+
 	def hash_password(self, password):
 		self.password = generate_password_hash(password)
 
