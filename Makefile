@@ -7,7 +7,8 @@ help:
 env:
 	# sudo pacman -S python-pip
 	# sudo pacman -S python-virtualenv 
-	pyvenv env && \
+	sudo apt-get install -y python3 python-virtualenv
+	virtualenv env && \
 	. env/bin/activate && \
 	make deps
 
