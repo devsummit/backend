@@ -6,6 +6,7 @@ DEBUG = True
 
 # constants
 API_BASE_URL = '/api/v1'
+SECRET_KEY = 'supersecret'
 
 # sqlite database file path
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, '../../app.db')
