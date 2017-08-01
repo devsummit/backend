@@ -15,7 +15,7 @@ class UserAuthorizationController(BaseController):
 			if user is not None:
 				if user.verify_password(password):
 					token = userservice.save_token()
-					return BaseController.send_response({'access_token': token.data['access_token'].decode(), 'refresh_token': token.data['refresh_token']}, 'User logged in successfully')
+					return BaseController.send_response({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
 				else:
 					return BaseController.send_response(None, 'wrong credentials')
 			else:
