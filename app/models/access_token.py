@@ -32,3 +32,4 @@ class AccessToken(db.Model, BaseModel):
 		self.access_token = access_token
 		self.refresh_token = refresh_token
 		self.user_id = user_id
+		return self
