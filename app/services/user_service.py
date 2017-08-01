@@ -1,6 +1,7 @@
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 
+
 class UserService:
     def __init__(self, model):
         self.model = model
@@ -24,4 +25,3 @@ class UserService:
                 'error': True,
                 'data': e.orig.args
             }
-    

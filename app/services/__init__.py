@@ -3,5 +3,3 @@ from app.models.user import User
 
 user = User()
 userservice = UserService(user)
-
-

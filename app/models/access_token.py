@@ -1,8 +1,8 @@
 import datetime
 
-from flask import current_app, jsonify
 from app.models import db
 from app.models.base_model import BaseModel
+
 
 class AccessToken(db.Model, BaseModel):
 	# table name
@@ -14,9 +14,10 @@ class AccessToken(db.Model, BaseModel):
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(
-		db.String(40), db.ForeignKey('users.id'),
-        nullable=False
-        )
+		db.String(40),
+		db.ForeignKey('users.id'),
+		nullable=False
+	)
 	user = db.relationship('User')
 	access_token = db.Column(db.String)
 	refresh_token = db.Column(db.String)
