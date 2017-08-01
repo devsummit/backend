@@ -18,15 +18,15 @@ depends_on = None
 
 def upgrade():
     op.create_table(
-    	'access_tokens',
-    	sa.Column('id', sa.Integer, primary_key=True),
-    	sa.Column('user_id', sa.Integer,
-    		sa.ForeignKey('users.id', ondelete='CASCADE')),
-    	sa.Column('access_token', sa.String),
-    	sa.Column('refresh_token', sa.String),
-    	sa.Column('created_at', sa.DateTime),
-    	sa.Column('updated_at', sa.DateTime)
-    	)
+        'access_tokens',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('user_id', sa.Integer,
+            sa.ForeignKey('users.id', ondelete='CASCADE')),
+        sa.Column('access_token', sa.String),
+        sa.Column('refresh_token', sa.String),
+        sa.Column('created_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime)
+        )
 
 
 def downgrade():

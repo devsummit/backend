@@ -3,6 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.access_token import AccessToken
 from app.models.user import User
 
+
 class UserService:
     def __init__(self, model_user, model_access_token):
         self.model_user = model_user
@@ -27,19 +28,25 @@ class UserService:
                 'error': True,
                 'data': e.orig.args
             }
-    
+
     def get_user(self, username):
-        self.model_user = db.session.query(User).filter_by(username = username).first()
+        self.model_user = db.session.query(User).filter_by(username=username).first()
         return self.model_user
 
     def save_token(self):
         token_exist = db.session.query(AccessToken).filter_by(user_id=self.model_user.id).first()
         if not token_exist:
-            payload  = self.model_access_token.init_token(self.model_user.generate_auth_token(), self.model_user.generate_refresh_token(), self.model.id)            
+            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(), self.model_user.generate_refresh_token(), self.model.id)            
             db.session.add(payload)
             db.session.commit()
-            return
+            return {
+                'error': False,
+                'data': payload
+            }
         token_exist.access_token = self.model_user.generate_auth_token()
         token_exist.refresh_token = self.model_user.generate_refresh_token()
         db.session.commit()
-        return
+        return{
+            'error': False,
+            'data': token_exist
+        }

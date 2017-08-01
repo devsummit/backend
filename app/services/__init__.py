@@ -7,5 +7,3 @@ user = User()
 access_token = AccessToken()
 
 userservice = UserService(user, access_token)
-
-
