@@ -1,7 +1,7 @@
 """create access_token table
 
 Revision ID: 79d78e481ff5
-Revises: 62832c972212
+Revises: 1314685ec5c0
 Create Date: 2017-07-31 20:54:35.517706
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '79d78e481ff5'
-down_revision = '62832c972212'
+down_revision = '1314685ec5c0'
 branch_labels = None
 depends_on = None
 
