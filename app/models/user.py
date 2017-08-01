@@ -1,4 +1,5 @@
-from flask import current_app, jsonify
+from flask import current_app
+
 
 import datetime
 import secrets
@@ -9,6 +10,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 # import classes
 from app.models.base_model import BaseModel
 from app.models import db
+
 
 class User(db.Model, BaseModel):
 	# table name
@@ -30,7 +32,6 @@ class User(db.Model, BaseModel):
 	def __init__(self):
 		self.created_at = datetime.datetime.now()
 		self.updated_at = datetime.datetime.now()
-		
 
 	def hash_password(self, password):
 		self.password = generate_password_hash(password)
@@ -38,8 +39,8 @@ class User(db.Model, BaseModel):
 	def verify_password(self, password):
 		return check_password_hash(self.password, password)
 
-	def generate_auth_token(self, expiration = 6000):
-		s = Serializer(current_app.config['SECRET_KEY'], expires_in = expiration)
+	def generate_auth_token(self, expiration=6000):
+		s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
 		return s.dumps({'id': self.id})
 
 	@staticmethod
@@ -51,7 +52,7 @@ class User(db.Model, BaseModel):
 			return None
 		except BadSignature:
 			return None
-		user = db.session.query(User).filter_by(id = data['id']).first()
+		user = db.session.query(User).filter_by(id=data['id']).first()
 		return user
 
 	def generate_refresh_token(self):
