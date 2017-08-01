@@ -13,9 +13,8 @@ from app.models import db
 
 
 class User(db.Model, BaseModel):
-	# table name
-	__tablename__ = 'users'
 
+	__tablename__ = 'users'
 	# displayed fields
 	visible = ['id', 'first_name', 'last_name', 'username', 'email', 'created_at', 'updated_at']
 
