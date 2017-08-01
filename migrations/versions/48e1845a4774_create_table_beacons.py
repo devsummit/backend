@@ -18,10 +18,10 @@ depends_on = None
 
 def upgrade():
     op.create_table('beacons',
-		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('code', sa.String),
-		sa.Column('timestamps', sa.DateTime),
-	)
+                    sa.Column('id', sa.Integer, primary_key=True),
+                    sa.Column('code', sa.String),
+                    sa.Column('timestamps', sa.DateTime)
+                    )
 
 
 def downgrade():

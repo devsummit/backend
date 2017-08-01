@@ -18,11 +18,13 @@ depends_on = None
 
 def upgrade():
     op.create_table('stage_photos',
-		sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('stage_id', sa.Integer, sa.ForeignKey('stages.id', ondelete='CASCADE')),
-		sa.Column('url', sa.String),
-		sa.Column('timestamps', sa.DateTime)
-    )
+                    sa.Column('id', sa.Integer, primary_key=True),
+                    sa.Column('stage_id', sa.Integer, sa.ForeignKey(
+                        'stages.id', ondelete='CASCADE')),
+                    sa.Column('url', sa.String),
+                    sa.Column('timestamps', sa.DateTime)
+                    )
+
 
 def downgrade():
     op.drop_table('stage_photos')
