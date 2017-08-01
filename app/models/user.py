@@ -1,6 +1,7 @@
 from flask import current_app, jsonify
 
 import datetime
+import secrets
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
@@ -35,7 +36,7 @@ class User(db.Model, BaseModel):
 		self.password = generate_password_hash(password)
 
 	def verify_password(self, password):
-		return self.password == password
+		return check_password_hash(self.password, password)
 
 	def generate_auth_token(self, expiration = 6000):
 		s = Serializer(current_app.config['SECRET_KEY'], expires_in = expiration)
@@ -44,7 +45,6 @@ class User(db.Model, BaseModel):
 	@staticmethod
 	def verify_auth_token(token):
 		s = Serializer(current_app.config['SECRET_KEY'])
-		print(s.loads(token))
 		try:
 			data = s.loads(token)
 		except SignatureExpired:
@@ -53,3 +53,6 @@ class User(db.Model, BaseModel):
 			return None
 		user = db.session.query(User).filter_by(id = data['id']).first()
 		return user
+
+	def generate_refresh_token(self):
+		return secrets.token_hex(8)
