@@ -5,9 +5,10 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 
 from app.models.user import User
 
+
 def token_required(f):
 	def decorated(*args, **kwargs):
-		if 'Authorization' not in request.headers :
+		if 'Authorization' not in request.headers:
 			return jsonify({'message': 'token is missing'})
 		else:
 			token = request.headers['Authorization']

@@ -18,14 +18,14 @@ depends_on = None
 
 
 def upgrade():
-    op.create_table(
-    	'roles',
-    	sa.Column('id', sa.Integer, primary_key=True),
-    	sa.Column('name', sa.String),
-    	sa.Column('created_at', sa.DateTime),
-    	sa.Column('updated_at', sa.DateTime)
-    	)
+	op.create_table(
+		'roles',
+		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('name', sa.String),
+		sa.Column('created_at', sa.DateTime),
+		sa.Column('updated_at', sa.DateTime)
+		)
 
 
 def downgrade():
-    op.drop_table('roles')
+	op.drop_table('roles')

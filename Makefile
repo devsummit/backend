@@ -12,5 +12,11 @@ env:
 	. env/bin/activate && \
 	make deps
 
+
+lint:
+	flake8 --config=flake8.ini .
+
+		   
+
 deps:
 	sudo pip install -r requirements.txt

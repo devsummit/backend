@@ -18,14 +18,14 @@ depends_on = None
 
 def upgrade():
     op.create_table(
-    	'user_role',
-    	sa.Column('user_id', sa.Integer, 
+        'user_role',
+        sa.Column('user_id', sa.Integer, 
             sa.ForeignKey('users.id', ondelete='CASCADE')),
-    	sa.Column('role_id', sa.Integer,
-    		sa.ForeignKey('roles.id')),
-    	sa.Column('created_at', sa.DateTime),
-    	sa.Column('updated_at', sa.DateTime)
-    	)
+        sa.Column('role_id', sa.Integer,
+            sa.ForeignKey('roles.id')),
+        sa.Column('created_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime)
+        )
 
 
 def downgrade():

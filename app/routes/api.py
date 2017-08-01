@@ -8,6 +8,7 @@ from app.middlewares.authentication import token_required
 
 api = Blueprint('api', __name__)
 
+
 @api.route('/', methods=['GET'])
 @token_required
 def index(*args, **kwargs):

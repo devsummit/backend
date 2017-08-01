@@ -8,6 +8,7 @@ from app.routes.auth import auth
 # db instance
 from app.models import db
 
+
 def create_app(configuration):
 	app = Flask(__name__)
 
