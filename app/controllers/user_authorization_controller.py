@@ -1,9 +1,6 @@
 # parent class imports
 from app.controllers.base_controller import BaseController
-from app.models import db
-from app.models.user import User
 from app.services import userservice
-from app.models.access_token import AccessToken
 
 
 class UserAuthorizationController(BaseController):
@@ -14,21 +11,16 @@ class UserAuthorizationController(BaseController):
 		password = request.form['password'] if 'password' in request.form else None
 		if username and password:
 			# check if user exist
-			user = db.session.query(User).filter_by(username=username).first()
+			user = userservice.get_user(username)
 			if user is not None:
 				if user.verify_password(password):
-					refresh_token = user.generate_refresh_token()
-					access_token = user.generate_auth_token()
-					UserAuthorizationController.save_token(access_token,
-						refresh_token,
-						user.id)
-					return BaseController.send_response({'access_token': access_token.decode(), 
-						'refresh_token': refresh_token}, 'User logged in successfully')
+					token = userservice.save_token()
+					return BaseController.send_response({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
 				else:
 					return BaseController.send_response(None, 'wrong credentials')
 			else:
 				return BaseController.send_response(None, 'username not found')
-		return BaseController.send_response({}, 'username and password required')
+		return BaseController.send_response(None, 'username and password required')
 
 	@staticmethod
 	def register(request):
@@ -40,12 +32,12 @@ class UserAuthorizationController(BaseController):
 		password = request.json['password'] if 'password' in request.json else None
 		if firstname and email and username and role and password:
 			payloads = {
-				"first_name": firstname,
-				"last_name": lastname,
-				"email": email,
-				"username": username,
-				"role": role,
-				"password": password
+				'first_name': firstname,
+				'last_name': lastname,
+				'email': email,
+				'username': username,
+				'role': role,
+				'password': password
 			}
 		else:
 			return BaseController.send_response(None, 'payloads not valid')
@@ -54,15 +46,3 @@ class UserAuthorizationController(BaseController):
 			return BaseController.send_response(result['data'].as_dict(), 'user succesfully registered')
 		else:
 			return BaseController.send_response(None, result['data'].decode('utf-8'))
-
-	def save_token(access_token, refresh_token, user_id):
-		token_exist = db.session.query(AccessToken).filter_by(user_id=user_id).first()
-		if not token_exist:
-			payload = AccessToken(access_token, refresh_token, user_id)
-			db.session.add(payload)
-			db.session.commit()
-			return
-		token_exist.access_token = access_token
-		token_exist.refresh_token = refresh_token
-		db.session.commit()
-		return

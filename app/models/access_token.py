@@ -24,9 +24,11 @@ class AccessToken(db.Model, BaseModel):
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
-	def __init__(self, access_token, refresh_token, user_id):
+	def __init__(self):
+		self.created_at = datetime.datetime.now()
+		self.updated_at = datetime.datetime.now()
+
+	def init_token(self, access_token, refresh_token, user_id):
 		self.access_token = access_token
 		self.refresh_token = refresh_token
 		self.user_id = user_id
-		self.created_at = datetime.datetime.now()
-		self.updated_at = datetime.datetime.now()
