@@ -30,6 +30,7 @@ class UserAuthorizationController(BaseController):
 		username = request.json['username'] if 'username' in request.json else None
 		role = request.json['role'] if 'role' in request.json else None
 		password = request.json['password'] if 'password' in request.json else None
+
 		if firstname and email and username and role and password:
 			payloads = {
 				'first_name': firstname,
@@ -41,7 +42,9 @@ class UserAuthorizationController(BaseController):
 			}
 		else:
 			return BaseController.send_response(None, 'payloads not valid')
+		print('fooo')
 		result = userservice.register(payloads)
+		print(result)
 		if not result['error']:
 			return BaseController.send_response(result['data'].as_dict(), 'user succesfully registered')
 		else:

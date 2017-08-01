@@ -15,13 +15,13 @@ class UserService:
         self.model_user.email = payloads['email']
         self.model_user.username = payloads['username']
         self.model_user.role = payloads['role']
-        self.model_user.password = payloads['password']
-        db.session_user.add(self.model)
+        self.model_user.hash_password(payloads['password'])
+        db.session.add(self.model_user)
         try:
             db.session.commit()
             return {
                 'error': False,
-                'data': self.model
+                'data': self.model_user
             }
         except SQLAlchemyError as e:
             return {
