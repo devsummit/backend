@@ -17,16 +17,17 @@ depends_on = None
 
 
 def upgrade():
-		op.create_table(
+	op.create_table(
 		'order_details',
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('ticket_id', sa.Integer,
-			sa.ForeignKey('tickets.id')),
+		sa.ForeignKey('tickets.id')),
 		sa.Column('order_id', sa.Integer,
 			sa.ForeignKey('orders.id')),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime)
 		)
+
 
 def downgrade():
 	op.drop_table('order_details')
