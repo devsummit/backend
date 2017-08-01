@@ -7,10 +7,10 @@ help:
 env:
 	# sudo pacman -S python-pip
 	# sudo pacman -S python-virtualenv 
-	sudo apt-get install -y python3 python-virtualenv
-	virtualenv env && \
+	sudo apt-get install -y python3.6 python-virtualenv
+	virtualenv -p python3.6 env && \
 	. env/bin/activate && \
 	make deps
 
 deps:
-	sudo pip3 install -r requirements.txt
+	sudo pip install -r requirements.txt
