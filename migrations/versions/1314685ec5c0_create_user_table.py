@@ -15,9 +15,9 @@ down_revision = None
 branch_labels = None
 depends_on = None
 
+
 def upgrade():
-    op.create_table(
-		'users',
+	op.create_table('users',
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('first_name', sa.String),
 		sa.Column('last_name', sa.String),
@@ -31,4 +31,4 @@ def upgrade():
 
 
 def downgrade():
-    op.drop_table('users')
+	op.drop_table('users')
