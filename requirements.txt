@@ -1,6 +1,9 @@
 Flask==0.12.2
-setuptools==36.2.5
+
 # Flask extensions
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.2
 alembic==0.9.3
+
+# Linter
+flake8==2.4.0
