@@ -5,9 +5,9 @@ HOST: https://private-909ac-devsummit.apiary-mock.com
 
 description
 
-## Register user [/auth/register]
+## User [/auth]
 
-### Register a user [POST]
+### Register a user [POST /auth/register]
 
 + Request (application/json)
 
@@ -36,9 +36,7 @@ description
             "success": true
         }
 
-## Login User [/auth/login]
-
-### Login a User [POST]
+### Login a User [POST /auth/login]
 
 + Request (application/json)
 
@@ -47,7 +45,7 @@ description
             "password": "andy123"
         }
 
-+ Response 201 (application/json)
++ Response 200 (application/json)
 
     + Body
 
@@ -59,3 +57,99 @@ description
                 },
                 "success": true
             }
+
+
+
+## Tickets [/api/v1/tickets]
+
+### Get list of tickets [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/tickets?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/tickets?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/tickets?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[TicketResponse])
+
+### Get ticket filter by id [GET /api/v1/tickets/{id}]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - id: `1` (number, required) - valid ticket id
+
++ Response 200 (application/json)
+    + Attributes
+        + data (TicketResponse)
+
+### Edit ticket filter by id [PATCH /api/v1/tickets/{id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (object)
+           + attributes (Ticket)
++ Parameters
+    
+    - id: `1` (number, required) - valid ticket id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Ticket successfully updated`
+            - success: true
+        + data (TicketResponse)
+
+### Delete ticket [DELETE /api/v1/tickets/{id}]
+
++ Request (application/json)
+
+    + Headers
+
+        Accept: application/json
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - id: `1` (number, required) - valid ticket id
+
++ Response 204
+
+
+### Data Structures
+
+### Ticket
+- ticket_type: `gold` (string)
+- price: `10000` (number)
+- information: `ticket description` (string)
+
+### TicketResponse
+- type: `tickets` (string)
+- id: `1` (number)
+- attributes (Ticket)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
