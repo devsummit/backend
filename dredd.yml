@@ -1,6 +1,6 @@
 reporter: apiary
 custom:
-  apiaryApiKey: 58c7e37c4119d849def6a6aeccf327a3
+  apiaryApiKey: c46b0bb0d3b7f93f043ec504728bd50f
   apiaryApiName: devsummit
 dry-run: null
 sandbox: false
