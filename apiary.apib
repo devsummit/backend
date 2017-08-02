@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: http://localhost:5000
+HOST: https://private-909ac-devsummit.apiary-mock.com
 
 # devsummit
 
@@ -14,10 +14,10 @@ description
         {
             "first_name": "andy",
             "last_name": "herman",
-            "role": "attendee"
+            "role": "attendee",
             "username": "andy",
             "email": "shi88.andy@gmail.com",
-            "password": "andy123",
+            "password": "andy123"
         }
 
 + Response 200 (application/json)
@@ -28,15 +28,15 @@ description
                "id": 1,
                "first_name": "andy",
                "last_name": "herman",
-               "username": "andy"
+               "username": "andy",
                "email": "shi88.andy@gmail.com",
                "created_at": "Wed, 02 Aug 2017 15:18:31 GMT",
-               "updated_at": "Wed, 02 Aug 2017 15:18:31 GMT",
+               "updated_at": "Wed, 02 Aug 2017 15:18:31 GMT"
             },
             "success": true
         }
 
-## Login User
+## Login User [/auth/login]
 
 ### Login a User [POST]
 
@@ -44,18 +44,18 @@ description
 
         {
             "username": "andy",
-            "password": "andy123",
+            "password": "andy123"
         }
 
 + Response 201 (application/json)
 
     + Body
 
-        {
-            "message": "user logged in succesfully",
-            "result": {
-                "access_token": "eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8",
-                "refresh_token": "126991391b52558b"
-            },
-            "success": true
-        }
+            {
+                "message": "user logged in succesfully",
+                "result": {
+                    "access_token": "eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8",
+                    "refresh_token": "126991391b52558b"
+                },
+                "success": true
+            }
