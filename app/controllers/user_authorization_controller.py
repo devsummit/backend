@@ -46,6 +46,6 @@ class UserAuthorizationController(BaseController):
 		result = userservice.register(payloads)
 		print(result)
 		if not result['error']:
-			return BaseController.send_response(result['data'].as_dict(), 'user succesfully registered')
+			return BaseController.send_response(result['data'], 'user succesfully registered')
 		else:
-			return BaseController.send_response(None, result['data'].decode('utf-8'))
+			return BaseController.send_error(None, result['data'])
