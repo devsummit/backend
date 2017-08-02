@@ -1,0 +1,2614 @@
+FORMAT: 1A
+HOST: https://localhost:8001/api/v1
+
+## Contact
+
+All routes support query parameters to refine responses
+
+- **[include](http://jsonapi.org/format/#fetching-relationships)**,
+  e.g. `GET /session?include=account.profile` to include properties of the
+  profile relationship
+- **[fields](http://jsonapi.org/format/#fetching-sparse-fieldsets)**,
+  e.g. `GET /session?fields[account]=username` to only return the username
+  of the account relationship
+- **[sort](http://jsonapi.org/format/#fetching-sorting)**,
+  e.g. `GET /accounts?sort=username` to sort all accounts ascending by name
+- **[page](http://jsonapi.org/format/#fetching-pagination)**,
+  e.g. `GET /accounts?page[number]=1&page[size]=10` to return only the first
+  10 accounts
+- **[filter](http://jsonapi.org/format/#fetching-filtering)**,
+  The `filter` is not defined by JSON API. Implementations must specify if how
+  the `filter` query parameter is supported.
+
+## Contact [/contacts]
+
+Available include: `company`, `emails`, `social-accounts`, `addresses`, `phones`, `tags`, `object-custom-fields`, `family`
+
+### Create Contact [POST]
+
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
+
+    + Attributes (object)
+        + data (object)
+            - attributes (Contact)
+            - relationships (object)
+                - company (CompanyRelationshipRequest)
+                - emails (EmailsRelationshipRequest)
+                - family (FamilyRelationshipRequest)
+                - `social-accounts` (SocialAccountRelationshipRequest)
+                - addresses (AddressesRelationshipRequest)
+                - phones (PhonesRelationshipRequest)
+                - tags (TagsRelationshipRequest)
+                - `object-custom-fields` (ContactObjectCustomFieldsRelationshipRequest)
+                - sources (SourcesRelationshipRequest)
+
++ Request With Formatted Phone Number (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
+    + Attributes (object)
+      + data (object)
+          - attributes (Contact)
+          - relationships (object)
+                - company (CompanyRelationshipRequest)
+                - emails (EmailsRelationshipRequest)
+                - family (FamilyRelationshipRequest)
+                - `social-accounts` (SocialAccountRelationshipRequest)
+                - addresses (AddressesRelationshipRequest)
+                - phones (FormattedPhoneRelationshipRequest)
+                - tags (TagsRelationshipRequest)
+                - `object-custom-fields` (ContactObjectCustomFieldsRelationshipRequest)
+                - sources (SourcesRelationshipRequest)
+
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (ContactResponse)
+          - relationships (object)
+              - company (CompanyRelationship)
+              - emails (EmailRelationship)
+              - `social-accounts` (SocialAccountRelationship)
+              - addresses (AddressRelationship)
+              - phones (PhonesRelationship)
+              - tags (TagsRelationship)
+              - `object-custom-fields` (ContactObjectCustomFieldsRelationship)
+              - sources (SourceRelationship)
+        + included (array)
+          - (CompanyResponse)
+          - (EmailResponse)
+          - (SocialAccountResponse)
+          - (AddressResponse)
+          - (PhoneResponse)
+          - (TagResponse)
+          - (ContactObjectCustomFieldResponse)
+          - (CustomFieldResponse)
+          - (SourceResponse)
+
+### List Contacts [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:8001/api/v1/contacts?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:8001/api/v1/contacts?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:8001/api/v1/contacts?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[ContactResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Contact [GET /contacts/{contact_id}]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Parameters
+
+    - contact_id: `1` (string,required) - Valid contact ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (ContactResponse)
+
+### Update Contact [PATCH /contacts/{contact_id}]
+
++ Parameters
+
+    - contact_id: `1` (string,required) - Valid contact ID
+
++ Attributes (object)
+    + data (object)
+        - attributes (Contact)
+        - relationships (object)
+          - company (CompanyRelationshipRequest)
+          - emails (EmailsRelationshipUpdateRequest)
+          - `social-accounts` (SocialAccountRelationshipRequest)
+          - addresses (AddressesRelationshipRequest)
+          - phones (PhonesRelationshipRequest)
+          - tags (TagsRelationshipRequest)
+          - `object-custom-fields` (ContactObjectCustomFieldsRelationshipRequest)
+          - sources (SourcesRelationshipRequest)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (ContactResponse)
+          - relationships (object)
+              - company (CompanyRelationship)
+              - emails (EmailRelationship)
+              - `social-accounts` (SocialAccountRelationship)
+              - addresses (AddressRelationship)
+              - phones (PhonesRelationship)
+              - tags (TagsRelationship)
+              - `object-custom-fields` (ContactObjectCustomFieldsRelationship)
+              - sources (SourceRelationship)
+        + included (array)
+          - (CompanyResponse)
+          - (EmailResponse)
+          - (SocialAccountResponse)
+          - (AddressResponse)
+          - (PhoneResponse)
+          - (TagResponse)
+          - (ContactObjectCustomFieldResponse)
+          - (CustomFieldResponse)
+          - (SourceResponse)
+
+### Delete Contact [DELETE /contacts/{contact_id}]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
+
++ Parameters
+
+    - contact_id: `2` (string,required) - Valid contact ID
+
++ Response 204
+
+### Delete Multiple Contact [DELETE]
+
++ Attributes (object)
+    + data (array, required)
+        + (object)
+          - id: 67 (number)
+          - type: `contacts` (string)
+        + (object)
+          - id: 68 (number)
+          - type: `contacts` (string)
+        + (object)
+          - id: 69 (number)
+          - type: `contacts` (string)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes (MultipleDeleteResponse)
+
+### Set Profile Photo [POST /contact/{contact_id}/profile-photo]
+
++ Parameters
+
+    - contact_id: `1` (string,required) - Valid contact ID
+
++ Attributes (object)
+  + data (object)
+        - attributes (object)
+            - url: `http://example.com/image.jpg` (string, required) - Path to image
+            - mime: `image/jpeg` (string) - Image mime type
+
++ Request With URL (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
+
++ Attributes
+
+    - photo (required) - image with max size 2048kb
+
++ Request With File (multipart/form-data; boundary=MultipartBoundry)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
+    + Body
+
+            --MultipartBoundry
+            Content-Disposition: form-data; name="photo"; filename="john-big-smile.jpg"
+            Content-Type: image/jpeg
+
+            RAW_FILE_DATA
+            --MultipartBoundry
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (ContactResponse)
+            - attributes (Contact)
+                - profile_photo: `http://example.com/image.jpg`
+
+
+### Show Activity Log (Interactions) of Contact [GET /contacts/{contact_id}/timeline]
+
+Contact Timeline (a.k.a. Activity Log) shows list of all contact's timelineable objects.
+
+Possible Timeline Objects:
+    `Interaction`
+    `Mails`
+    `Note`
+    `PrimaryReferral`
+    `Referral`
+    `Source`
+    `Stage`
+    `Task`
+
+Contact Timeline can't be added directly. Contact Timeline records appear when timelineable object creates.
+For example, when add interaction for this contact, system will write interaction to contact timeline.
+
++ Parameters
+
+    - contact_id: `66` (string,required) - Valid contact ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (array)
+          - (TimelineResponse)
+
+
+
+### Export Contacts [GET /export]
+
+Export contacts based on export template. Filter and paginator can be used
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta: (string)
+
+
+### Import Contacts [POST /import]
+
+Import contacts from CSV
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta: (object)
+            + errors (array)
+            + imported (number)
+
+# Template [/templates]
+
+### Create Template [POST]
+
++ Attributes (object)
+  + data (object)
+      - type: import
+      + attributes
+          - name: `Template`
+          - template (array[TemplateFields])
+
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (TemplateResponse)
+
+### List Templates [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:8001/api/v1/emails?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:8001/api/v1/emails?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:8001/api/v1/emails?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[TemplateResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Template [GET /templates/{template_id}]
+
++ Parameters
+
+    - template_id: `1` (string, required) - Valid template ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (TemplateResponse)
+
+### Update Template [PATCH /templates/{template_id}]
+
++ Parameters
+
+    - template_id: `1` (string,required) - Valid template ID
+
++ Attributes (object)
+  + data (object)
+      - type: import
+      + attributes
+          - name: `Template` (string)
+          - template (array[TemplateFields])
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (TemplateResponse)
+
+### Delete Template [DELETE /templates/{template_id}]
+
++ Parameters
+
+    - template_id: `1` (string,required) - Valid template ID
+
++ Response 204
+
+
+
+
+## Family [/family]
+
+Available include: `contact`, `related-to`
+
+### Create Family [POST]
+
++ Attributes (FamilyRequest)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes (FamilyListResponse)
+
+### List Family [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:8001/api/v1/family?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:8001/api/v1/family?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:8001/api/v1/family?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[FamilyDataResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Family [GET /family/{family_id}]
+
++ Parameters
+
+    - family_id: `1` (string,required) - Valid family ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (FamilyDataResponse)
+        + included (array)
+          - (ContactResponse)
+
+### Update Family [PATCH /family/{family_id}]
+
++ Parameters
+
+    - family_id: `1` (string,required) - Valid family ID
+
++ Attributes (FamilyRequest)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (FamilyDataResponse)
+        + included (array)
+          - (ContactResponse)
+
+### Delete Family [DELETE /family/{family_id}]
+
++ Parameters
+
+    - family_id: `1` (string,required) - Valid family ID
+
++ Response 204
+
+## Email [/emails]
+
+Available include: `contact`
+
+### Create Email [POST]
+
++ Attributes (object)
+  + data (object)
+      - type: emails
+      - attributes (Email)
+          - email: `mgufyefendi@gmail.com` (string)
+      - relationships (object)
+          - contact (object)
+              - data (object)
+                  - id: `1` (string, required) - Valid contact id
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (EmailResponse)
+          - relationships (object)
+              - contact (EmailContactRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### List Emails [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:8001/api/v1/emails?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:8001/api/v1/emails?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:8001/api/v1/emails?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[EmailResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Email [GET /emails/{email_id}]
+
++ Parameters
+
+    - email_id: `25` (string,required) - Valid email ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (EmailResponse)
+          - relationships (object)
+              - contact (EmailContactRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### Update Email [PATCH /emails/{email_id}]
+
++ Parameters
+
+    - email_id: `25` (string,required) - Valid email ID
+
++ Attributes (object)
+  + data (object)
+      - type: emails (string)
+      - attributes (object)
+        - label: `work` (string)
+        - email: `faz@booz.com` (string)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (EmailResponse)
+          - relationships (object)
+              - contact (EmailContactRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### Delete Email [DELETE /emails/{email_id}]
+
++ Parameters
+
+    - email_id: `31` (string,required) - Valid email ID
+
++ Response 204
+
+### Delete Multiple Email [DELETE]
+
++ Attributes (object)
+    + data (array, required)
+        + (object)
+          - id: 1 (number)
+          - type: `emails` (string)
+        + (object)
+          - id: 2 (number)
+          - type: `emails` (string)
+        + (object)
+          - id: 3 (number)
+          - type: `emails` (string)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes (MultipleDeleteResponse)
+
+
+## Social Account [/social-accounts]
+
+Available include: `contact`
+
+### Create Social Account [POST]
+
++ Attributes (object)
+  + data (object)
+      - type: `social-accounts`
+      - attributes (SocialAccount)
+      - relationships (object)
+          - contact (object)
+              - data (object)
+                  - type: `contacts`
+                  - id: `66` (string, required) - Valid contact id
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (SocialAccountResponse)
+          - relationships (object)
+              - contact (SocialAccountContactRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### List Social Accounts [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:8001/api/v1/social-accounts?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:8001/api/v1/social-accounts?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:8001/api/v1/social-accounts?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null`  (string, nullable)
+        + data (array[SocialAccountResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Social Account [GET /social-accounts/{social_account_id}]
+
++ Parameters
+
+    - social_account_id: `25` (string,required) - Valid social account ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (SocialAccountResponse)
+          - relationships (object)
+              - contact (SocialAccountContactRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### Update Social Account [PATCH /social-accounts/{social_account_id}]
+
++ Parameters
+
+    - social_account_id: `25` (string, required) - Valid social account ID
+
++ Attributes (object)
+  + data (object)
+      - type: `social-accounts` (string)
+      - attributes (SocialAccount)
+      - relationships (object)
+          - contact (object)
+              - data (object)
+                  - type: `contacts`
+                  - id: `66` (string, required) - Valid contact id
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (SocialAccountResponse)
+          - relationships (object)
+              - contact (SocialAccountContactRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### Delete Social Account [DELETE /social-accounts/{social_account_id}]
+
++ Parameters
+    - social_account_id: `3` (string, required) - Valid social account ID
+
++ Response 204
+
+
+## Phone [/phones]
+
+Available include : `contact`
+
+### Create Phone [POST]
+
++ Attributes (object)
+    + data (object)
+        - type: phones
+        - attributes (Phone)
+        - relationships (object)
+            - contact (object)
+                - data (object)
+                    - type: `contacts`
+                    - id: `66` (string, required) - Valid contact id
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (PhoneResponse)
+          - relationships (object)
+              - contact (PhoneContactRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### List Phones [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:8001/api/v1/phones?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:8001/api/v1/phones?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:8001/api/v1/phones?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev (string, nullable)
+        + data (array[PhoneResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Phone [GET /phones/{phone_id}]
+
++ Parameters
+
+    - phone_id: `14` (string, required) - Valid phone ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (PhoneResponse)
+          - relationships (object)
+              - contact (PhoneContactRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### Update Phone [PATCH /phones/{phone_id}]
+
++ Parameters
+    - phone_id: `14` (string, required) - Valid Phone ID
+
++ Attributes (object)
+    + data (object)
+        - type: phones
+        - attributes (Phone)
+        - relationships (object)
+            - contact (object)
+                - data (object)
+                    - type: `contacts`
+                    - id: `66` (string, required) - Valid contact id
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (PhoneResponse)
+          - relationships (object)
+              - contact (PhoneContactRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### Delete Phone [DELETE /phones/{phone_id}]
+
++ Parameters
+    - phone_id: `90` (string, required) - Valid Phone ID
+
++ Response 204
+
+### Delete Multiple Phone [DELETE]
+
++ Attributes (object)
+    + data (array, required)
+        + (object)
+          - id: 1 (number)
+          - type: `phones` (string)
+        + (object)
+          - id: 2 (number)
+          - type: `phones` (string)
+        + (object)
+          - id: 3 (number)
+          - type: `phones` (string)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes (MultipleDeleteResponse)
+
+## Address [/addresses]
+
+Available include: `contacts`
+
+### Create Address [POST]
+
++ Attributes (object)
+    + data (object)
+        - type: addresses
+        - attributes (Address)
+        - relationships (object)
+            - contacts (ContactsRelationshipRequest)
+
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (AddressResponse)
+          - relationships (object)
+              - contacts (AddressContactsRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### List Addresses [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:8001/api/v1/addresses?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:8001/api/v1/addresses?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:8001/api/v1/addresses?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev (string, nullable))
+        + data (array[AddressResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Update Address [PATCH /addresses/{address_id}]
+
++ Parameters
+    - address_id: 5 (string, required) - Valid Address ID
+
++ Attributes (object)
+    + data (object)
+        - type: addresses
+        - attributes (Address)
+        - relationships (object)
+            - contacts (ContactsRelationshipRequest) - If  attached in request, it will sync related contact. To remove all contact from address, set `data.relationships.contacts.data` to `[]`.
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (AddressResponse)
+          - relationships (object)
+              - contacts (AddressContactsRelationship)
+        + included (array)
+          - (ContactResponse)
+
+### Show Address [GET /addresses/{address_id}]
+
++ Parameters
+
+    - address_id: 5 (string,required) - Valid address ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (AddressResponse)
+
+### Delete Address [DELETE /addresses/{address_id}]
+
++ Parameters
+    - address_id: 5 (string, required) - Valid Address ID
+
++ Response 204
+
+### Delete Multiple Address [DELETE]
+
++ Attributes (object)
+    + data (array, required)
+        + (object)
+          - id: 1 (number)
+          - type: `addresses` (string)
+        + (object)
+          - id: 2 (number)
+          - type: `addresses` (string)
+        + (object)
+          - id: 3 (number)
+          - type: `addresses` (string)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes (MultipleDeleteResponse)
+
+## Company [/companies]
+
+Available include: `contacts`
+
+### Create Company [POST]
+
++ Attributes (object)
+  + data (object)
+      - type: companies
+      - attributes (Company)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (CompanyResponse)
+
+### List Companies [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `http://localhost:8001/api/v1/companies?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `http://localhost:8001/api/v1/companies?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `http://localhost:8001/api/v1/companies?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[CompanyResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Company [GET /companies/{company_id}]
+
++ Parameters
+
+    - company_id: `3` (string, required) - Valid company ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (CompanyResponse)
+
+### Update Company [PATCH /companies/{company_id}]
+
++ Parameters
+    - company_id: `3` (string, required) - Valid company ID
+
++ Attributes (object)
+    + data (object)
+        - type: companies
+        - attributes (Company)
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (CompanyResponse)
+
+### Delete Company [DELETE /companies/{company_id}]
+
++ Parameters
+    - company_id: `3` (string, required) - Valid company ID
+
++ Response 204
+
+
+## Interaction [/interactions]
+
+Available include: `user`, `contact`, `notes`, `tags`, `timelines`, `attendees`
+
+### Create Interaction [POST]
+
++ Attributes (object)
+  + data (object)
+      - type: interactions
+      - attributes (Interaction)
+      - relationships (ContactRelation)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (InteractionResponse)
+
+### List Interactions [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `http://localhost:8001/api/v1/interactions?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `http://localhost:8001/api/v1/interactions?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `http://localhost:8001/api/v1/interactions?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[InteractionResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Interaction [GET /interactions/{interaction_id}]
+
++ Parameters
+
+    - interaction_id: `7` (string, required) - Valid interaction ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (InteractionResponse)
+
+### Update Interaction [PATCH /interactions/{interaction_id}]
+
++ Parameters
+    - interaction_id: `7` (string, required) - Valid interaction ID
+
++ Attributes (object)
+    + data (object)
+        - type: interactions
+        - attributes (Interaction)
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (InteractionResponse)
+
+### Delete Interaction [DELETE /interactions/{interaction_id}]
+
++ Parameters
+    - interaction_id: `7` (string, required) - Valid interaction ID
+
++ Response 204
+
+
+## Note [/notes]
+
+Available include: `interaction`, `listing`, `contact`, `task`, `user`, `opportunity`, `noteable`
+
+### Create Note [POST]
+
++ Attributes (object)
+  + data (object)
+      - type: notes
+      - attributes (Note)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (NoteResponse)
+
+### List Notes [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `http://localhost:8001/api/v1/notes?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `http://localhost:8001/api/v1/notes?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `http://localhost:8001/api/v1/notes?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[NoteResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Note [GET /notes/{note_id}]
+
++ Parameters
+
+    - note_id: `12` (string, required) - Valid note ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (NoteResponse)
+
+### Update Note [PATCH /notes/{note_id}]
+
++ Parameters
+    - note_id: `12` (string, required) - Valid note ID
+
++ Attributes (object)
+    + data (object)
+        - type: notes
+        - attributes (Note)
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (NoteResponse)
+
+### Delete Note [DELETE /notes/{note_id}]
+
++ Parameters
+    - note_id: `12` (string, required) - Valid note ID
+
++ Response 204
+
+
+## Tag [/tags]
+
+### List Tags [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `http://localhost:8001/api/v1/tags?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `http://localhost:8001/api/v1/tags?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `http://localhost:8001/api/v1/tags?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[TagResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+
+### Set Tags [POST /tags/set]
+
++ Attributes (object)
+  + data (object)
+      - type: `contacts`
+      - id: `1`
+      - relationships (object)
+          - `tags` (object)
+              - data (array[TagRelationshipRequest])
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data
+             - type: `contacts`
+             - id: `1`
+        + included (array[TagRelationshipResponse])
+
+
+
+### Attach Tags [POST /tags/attach]
+
++ Attributes (object)
+  + data (object)
+      - type: `contacts`
+      - id: `1`
+      - relationships (object)
+          - `tags` (object)
+              - data (array[TagRelationshipRequest])
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data
+             - type: `contacts`
+             - id: `1`
+        + included (array[TagRelationshipResponse])
+
+
+### Detach Tags [POST /tags/detach]
+
++ Attributes (object)
+  + data (object)
+      - type: `contacts`
+      - id: `1`
+      - relationships (object)
+          - `tags` (object)
+              - data (array[TagRelationshipRequest])
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data
+             - type: `contacts`
+             - id: `1`
+
+
+## Custom Field [/custom-fields]
+
+Available include: `object-custom-fields`
+
+### Create Custom Field [POST]
+
++ Attributes (object)
+  + data (object)
+      - attributes (CustomField)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (CustomFieldResponse)
+
+### List Custom Fields [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:8001/api/v1/custom-fields?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:8001/api/v1/custom-fields?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:8001/api/v1/custom-fields?page[limit]=10&page[offset]=10` (string, nullable))
+          - prev: `null` (string, nullable)
+        + data (array[CustomFieldResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Custom Field [GET /custom-fields/{custom_field_id}]
+
++ Parameters
+
+    - custom_field_id: `1` (string, required) - Valid custom field ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (CustomFieldResponse)
+
+### Update Custom Field [PATCH /custom-fields/{custom_field_id}]
+
++ Parameters
+    - custom_field_id: `1` (string, required) - Valid custom field ID
+
++ Attributes (object)
+    + data (object)
+        - type: `custom-fields`
+        - attributes (CustomField)
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (CustomFieldResponse)
+
+### Delete Custom Field [DELETE /custom-fields/{custom_field_id}]
+
++ Parameters
+    - custom_field_id: `2` (string, required) - Valid custom field ID
+
++ Response 204
+
+## Custom Field Value [/custom-field-values]
+
+Used to setup choices for custom field with `custom_field_type` set to `3` (DROPDOWN) or `5` (CHECKBOX).
+
+Available include: `custom-field`
+
+### Create Custom Field Value [POST]
+
+To store multiple custom field value in one request, see details on `data` attributes.
+
++ Attributes (object)
+  + data (object) - To store multiple custom field values using single request, set `data` as array of object below.
+      - type: `custom-field-values`
+      - attributes (CustomFieldValue)
+      - relationships (object)
+          - `custom-field` (object)
+              - data (object)
+                  - type: `custom-fields`
+                  - id: `3` (string, required) - Valid custom field id with `custom_field_type` set to `3` (DROPDOWN) or `5` (CHECKBOX).
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (CustomFieldValueResponse)
+          - relationships (object)
+              - `custom-field` (CustomFieldCheckboxRelationship)
+        + included (array)
+          - (CustomFieldCheckboxResponse)
+
+### List Custom Field Values [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:8001/api/v1/custom-field-values?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:8001/api/v1/custom-field-values?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:8001/api/v1/custom-field-values?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[CustomFieldValueResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Custom Field Value [GET /custom-field-values/{custom_field_value_id}]
+
++ Parameters
+
+    - custom_field_value_id: `1` (string, required) - Valid custom field value ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (CustomFieldValueResponse)
+
+### Update Custom Field Value [PATCH /custom-field-values/{custom_field_value_id}]
+
++ Parameters
+    - custom_field_value_id: `3` (string, required) - Valid custom field value ID
+
++ Attributes (object)
+    + data (object)
+        - type: `custom-field-values`
+        - attributes (CustomFieldValue)
+      - relationships (object)
+          - `custom-field` (object)
+              - data (object)
+                  - type: `custom-fields`
+                  - id: `3` (string, required) - Valid custom field id with `custom_field_type` set to `3` (DROPDOWN) or `5` (CHECKBOX).
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (CustomFieldValueResponse)
+          - relationships (object)
+              - `custom-field` (CustomFieldCheckboxRelationship)
+        + included (array)
+          - (CustomFieldCheckboxResponse)
+
+### Delete Custom Field Value [DELETE /custom-field-values/{custom_field_value_id}]
+
++ Parameters
+    - custom_field_value_id: `2` (string, required) - Valid custom field value ID
+
++ Response 204
+
+
+## Object Custom Field [/object-custom-fields]
+
+Fill custom field value for target object.
+
+Available include: `custom-field`
+
+### Create Object Custom Field [POST]
+
++ Attributes (object)
+  + data (object)
+      - type: `object-custom-fields`
+      - attributes (ObjectCustomField)
+      - relationships (object)
+          - `custom-field` (object)
+              - data (object)
+                  - type: `custom-fields`
+                  - id: `4` (string, required) - Valid custom field id
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (ContactObjectCustomFieldResponse)
+          - relationships (object)
+              - `custom-field` (CustomFieldRelationship)
+        + included (array)
+          - (CustomFieldResponse)
+
+### List Object Custom Fields [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `http://localhost:8001/api/v1/object-custom-fields?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `http://localhost:8001/api/v1/object-custom-fields?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `http://localhost:8001/api/v1/object-custom-fields?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[ObjectCustomFieldResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Object Custom Field [GET /object-custom-fields/{object_custom_field_id}]
+
++ Parameters
+
+    - object_custom_field_id: `1` (string, required) - Valid object custom field ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (ContactObjectCustomFieldResponse)
+
+### Update Object Custom Field [PATCH /object-custom-fields/{object_custom_field_id}]
+
++ Parameters
+    - object_custom_field_id: `1` (string, required) - Valid object custom field ID
+
++ Attributes (object)
+  + data (object)
+      - type: `object-custom-fields`
+      - attributes (ObjectCustomField)
+      - relationships (object)
+          - `custom-field` (object)
+              - data (object)
+                  - type: `custom-fields`
+                  - id: `1` (string, required) - Valid custom field id
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (ContactObjectCustomFieldResponse)
+          - relationships (object)
+              - `custom-field` (CustomFieldRelationship)
+        + included (array)
+          - (CustomFieldResponse)
+
+### Delete Object Custom Field [DELETE /object-custom-fields/{object_custom_field_id}]
+
++ Parameters
+    - object_custom_field_id: `1` (string, required) - Valid object custom field ID
+
++ Response 204
+
+## System Meta [/system-metas]
+
+Store specific backend configuration for entity.
+
+For attaching system meta to contact, see Create / Update Contact.
+
+### Create System Meta [POST]
+
++ Attributes (object)
+  + data (object)
+      - type: `system-metas`
+      - attributes (SystemMeta)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (SystemMetaResponse)
+
+### List System Metas [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `http://localhost:8001/api/v1/system-metas?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `http://localhost:8001/api/v1/system-metas?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `http://localhost:8001/api/v1/system-metas?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[SystemMetaResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show System Meta [GET /system-metas/{system_meta_id}]
+
++ Parameters
+
+    - system_meta_id: `1` (string, required) - Valid system meta ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (SystemMetaResponse)
+
+### Update System Meta [PATCH /system-metas/{system_meta_id}]
+
++ Parameters
+    - system_meta_id: `1` (string, required) - Valid system meta ID
+
++ Attributes (object)
+    + data (object)
+        - type: `system-metas`
+        - attributes (SystemMeta)
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (SystemMetaResponse)
+
+### Delete System Meta [DELETE /system-metas/{system_meta_id}]
+
++ Parameters
+    - system_meta_id: `1` (string, required) - Valid system meta ID
+
++ Response 204
+
+## Piesync Access Token [/access-token/piesync]
+Get or generate piesync partner access token
+
+### Generate Piesync Partner Access Token [POST]
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (PiesyncAccessTokenResponse)
+
+## Source [/sources]
+
+Available include: `contacts`
+
+### Create Source [POST]
+
++ Attributes (object)
+  + data (object)
+      - type: sources
+      - attributes (Source)
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 201 (application/vnd.api+json)
+    + Attributes
+        + data (SourceResponse)
+
+### List Sources [GET]
+
++ Request (application/vnd.api+json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `http://localhost:8001/api/v1/sources?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `http://localhost:8001/api/v1/sources?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `http://localhost:8001/api/v1/sources?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[SourceResponse])
+
++ Response 401 (application/vnd.api+json)
+    + Attributes
+        + errors (Error)
+
+### Show Source [GET /sources/{source_id}]
+
++ Parameters
+
+    - source_id: `1` (string, required) - Valid source ID
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (SourceResponse)
+
+### Update Source [PATCH /sources/{source_id}]
+
++ Parameters
+    - source_id: `1` (string, required) - Valid source ID
+
++ Attributes (object)
+    + data (object)
+        - type: sources
+        - attributes (Source)
+
++ Request (application/vnd.api+json)
+
+     + Headers
+
+             Accept: application/vnd.api+json
+             Authorization: Bearer 51371b6f-55be-478b-b658-4d73b9c3ebc6
+
++ Response 400 (application/json)
+    + Attributes (object)
+        - status: `false` (boolean)
+        - error_code: 0 (number)
+        - errors (array)
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + data (SourceResponse)
+
+
+### Delete Source [DELETE /sources/{source_id}]
+
++ Parameters
+    - source_id: `3` (string, required) - Valid source ID
+
++ Response 400 (application/json)
+    + Attributes (object)
+        - status: `false` (boolean)
+        - error_code: 0 (number)
+        - errors (array)
+
++ Response 204
+
+## Data Structures
+
+### Error
++ links (string)
++ status (enum[number])
+    - 404
+    - 401
+    - 400
+    - 403
++ code (string)
++ title (string)
+
+### ContactRelation
++ contact
+    + data
+        - type: `persons` (string)
+        - id: 7 (number)
+
+### Address
+- `address_line_1`: `11036 Konopelski Shore Suite 447` (string, required)
+- `address_line_2`: `Suite 679` (string)
+- `address_line_3`: `Apt. 046` (string)
+- `address_line_4`: `Suite 557` (string)
+- `city`: `Boylehaven` (string)
+- `city_locality`: `cupiditate` (string)
+- `state_region`: `Missouri` (string)
+- `country`: `Iran` (string)
+- `postal_code`: `82371` (string)
+- `lat`: `-57.359989` (number)
+- `lng`: `54.022906` (number)
+- `is_current`: `false` (boolean)
+- `ownership_status`: `2` (enum[number], nullable)
+    - 1 - rent
+    - 2 - own primary
+    - 3 - own vacation
+    - 4 - own investment
+- `description`: `Best place in the world` (string, nullable)
+- `neighborhood`: `some neighborhood` (string)
+- `is_primary`: `false` (boolean)
+- `label`: `home` (string, nullable)
+- `is_mailing_address`: `true` (boolean)
+
+### AddressResponse
+- type: addresses (string)
+- id: `4` (string)
+- attributes (Address)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/addresses/4`
+
+### AddressContactsRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/addresses/1/relationships/contacts` (string)
+    - related: `https://localhost:8001/api/v1/addresses/1/contacts` (string)
+- data (array)
+    - (object)
+        - type: contacts (string)
+        - id: `1` (string)
+
+### AddressesRelationshipRequest
+- data (array)
+    - (object)
+        - id (string)
+        Valid address ID. If provided, will attach that address this contact.
+        - attributes (Address) - If ID provided, attribute value will update address. Otherwise, will setup new address.
+
+### AddressRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/contacts/1/relationships/addresses` (string)
+    - related: `https://localhost:8001/api/v1/contacts/1/addresses` (string)
+- data (array)
+    - (object)
+        - type: addresses (string)
+        - id: `50` (string)
+
+### Contact
+- `prefix`: `Miss` (string)
+- `first_name`: `Marina` (string, required)
+- `middle_name`: `Joanny` (string)
+- `last_name`: `Gibson` (string)
+- `preferred_name`: `Marina Gibson` (string)
+- `legal_name`: `Marina Joanny Gibson` (string)
+- `suffix`: `I` (string)
+- `date_of_birth`: `2002-02-02` (string)
+- `contact_types` (array[string])
+    - buyer
+    - seller
+    - vendor
+    - investor
+    - agent
+    - lender
+    - past clients
+- `motivations` (array[string])
+    - `moving-up`
+    - downsizing
+    - `vacation-home`
+    - `first-home`
+    - schools
+    - relocation
+    - retirement
+    - personal
+    - financial
+- `primary_motivation_note`: `Deleniti et nesciunt possimus qui cumque qui mollitia consequatur.` (string)
+- `is_pre_approved`: `true` (boolean)
+- `is_primary`: `true` (boolean)
+- `status`: `1` (number)
+- `stage`: `prospect` (enum[string], nullable)
+    - prospect
+    - nurture
+    - lead
+    - client
+    - past_client
+- `lead_type`: `rent` (enum[string], nullable)
+    - own
+    - rent
+- `is_starred`: `false` (boolean)
+- `available_to_contact_date`: `2017-10-03` (string, nullable)
+- `buyer_type` (string, nullable)
+- `pre_approved_amount` (number)
+- `number_in_household` (number)
+- `background_info` (string, nullable)
+- `initial_contact_date`: `2017-06-23 20:27:16` (string)
+- `profession_title`: `Teller` (string)
+- `profession_department`: `Logistics` (string)
+- is_connected: true (boolean) - Distinguish between captured and connected contact.
+- `system-metas` (array[SystemMetaOnEntity])
+- `team_id`: `1` (number)
+
+### ContactResponse
+- type: `contacts` (string)
+- id: `1` (string)
+- attributes (Contact)
+    - `profile_photo` (string)
+      path to uploaded profile photo
+    - `touch_count` (number)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `last_contact_date`: `2017-06-23 20:27:16` (string, nullable)
+    - `primary_email`: `jhodkiewicz@yahoo.com` (string, nullable)
+    - `primary_phone`: `+1 514-794-7832` (string)
+- links (object)
+    - self: `https://localhost:8001/api/v1/contacts/1`
+
+### ContactsRelationshipRequest
+- data (array)
+    - (object)
+        - id: 1 (number) - Valid contact ID
+        - type: contacts
+
+### Email
++ email: `foo123@baooz.com` (string, required)
++ label: `work` (string)
++ is_primary: false (boolean)
++ is_valid: true (boolean)
+
+### EmailResponse
+- type: emails (string)
+- id: `25` (string)
+- attributes (Email)
+  - `is_valid`: false (boolean)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/emails/45`
+
+### EmailRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/contacts/1/relationships/emails` (string)
+    - related: `https://localhost:8001/api/v1/contacts/1/emails` (string)
+- data (array)
+    - (object)
+        - type: emails (string)
+        - id: `25` (string)
+
+### EmailsRelationshipRequest
+- data (array)
+    - (object)
+        - id (string)
+        Valid email ID. If provided, will change that email owner to this contact.
+        - attributes (Email) - If ID provided, attribute value will update email. Otherwise, will setup new email.
+
+### EmailsRelationshipUpdateRequest
+- data (array)
+    - (object)
+        - id: 0 (number, nullable)
+        Valid email ID. If provided, will change that email owner to this contact.
+        - attributes (Email) - If ID provided, attribute value will update email. Otherwise, will setup new email.
+          - email: mgufronefendi@gmail.com
+
+### EmailContactRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/emails/45/relationships/contact` (string)
+    - related: `https://localhost:8001/api/v1/emails/45/contact` (string)
+- data (object)
+    - type: contacts (string)
+    - id: `1` (string)
+
+### Company
+- name: `Acme Inc` (string)
+- address: `3114 Farrell Mall South Cliffordville, OH 12336-2071` (string, nullable)
+
+### CompanyResponse
+- type: companies (string)
+- id: `20` (string)
+- attributes (Company)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/companies/20`
+
+### CompanyRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/contacts/1/relationships/companies` (string)
+    - related: `https://localhost:8001/api/v1/contacts/1/companies` (string)
+- data (object)
+    - type: companies (string)
+    - id: `20` (string)
+
+### CompanyRelationshipRequest
+- data (object)
+      - id (string)
+      Valid company ID. If provided, will use this company.
+      - attributes (Company) - If ID provided, attribute will update company. Otherwise, will setup new company.
+
+### SocialAccount
++ `social_network_id`: 1 (enum[number], required)
+  - 1 - facebook
+  - 2 - twitter
+  - 3 - google
+  - 4 - instagram
+  - 5 - path
+  - 6 - klout
+  - 7 - linkedin
+  - 8 - aboutme
+  - 9 - foursquare
+  - 10 - pinterest
+  - 11 - slideshare
+  - 12 - soundcloud
+  - 13 - tumblr
+  - 14 - imdb
+  - 15 - github
+  - 16 - google_plus
+  - 17 - snapchat
+  - 18 - whatsapp
+  - 19 - houzz
+  - 20 - link
++ `identifier`: `example1` (string, required)
++ `url`: `https://www.facebook.com/example1` (string) - **required** if `social_network_id` is `20` (link).
+
+### SocialAccountResponse
+- type: `social-accounts` (string)
+- id: `23` (string)
+- attributes (SocialAccount)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/social-accounts/23`
+
+### SocialAccountRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/contacts/1/relationships/social-accounts` (string)
+    - related: `https://localhost:8001/api/v1/contacts/1/social-accounts` (string)
+- data (array)
+    - (object)
+        - type: `social-accounts` (string)
+        - id: `23` (string)
+
+### SocialAccountRelationshipRequest
+- data (array)
+    - (object)
+        - id (string)
+        Valid social account ID. If provided, will change that social account owner to this contact.
+        - attributes (SocialAccount) - If ID provided, attribute value will update social account. Otherwise, will setup new social account.
+
+### SocialAccountContactRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/social-accounts/23/relationships/contact` (string)
+    - related: `https://localhost:8001/api/v1/social-accounts/23/contact` (string)
+- data (object)
+    - type: contacts (string)
+    - id: `1` (string)
+
+### Phone
+- `number`: `+1 514-794-7740` (string, required)
+- `country_code`: `US` (string, required)
+- `is_primary`: `true` (boolean)
+- `is_current`: `true` (boolean)
+- `label`: `home` (string)
+
+### FormattedPhone
+- `formatted_number`: '+6285778275565' (string, required)
+- `is_primary`: `true` (boolean)
+- `is_current`: `true` (boolean)
+- `label`: `home` (string)
+
+### PhoneResponse
+- type: phones (string)
+- id: `12` (string)
+- attributes (Phone)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/phones/12`
+
+### PhonesRelationshipRequest
+- data (array)
+    - (object)
+        - id (string)
+        Valid phone ID. If provided, will change that phone owner to this contact.
+        - attributes (Phone) - If ID provided, attribute value will update phone. Otherwise, will setup new phone.
+
+### FormattedPhoneRelationshipRequest
+- data (array)
+    - (object)
+        - id (string)
+        Valid phone ID. If provided, will change that phone owner to this contact.
+        - attributes (FormattedPhone) - If ID provided, attribute value will update phone. Otherwise, will setup new phone.
+
+
+### PhonesRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/contacts/1/relationships/phones` (string)
+    - related: `https://localhost:8001/api/v1/contacts/1/phones` (string)
+- data (array)
+    - (object)
+        - type: phones (string)
+        - id: `12` (string)
+
+### PhoneContactRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/phones/12/relationships/contact` (string)
+    - related: `https://localhost:8001/api/v1/phones/12/contact` (string)
+- data (object)
+    - type: contacts (string)
+    - id: `1` (string)
+
+### Tag
++ `tag`: Investor (string, required)
+
+### TagResponse
+- type: tags (string)
+- id: `3` (string)
+- attributes (Tag)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/tags/3`
+
+### TagsRelationshipRequest
+- data (array)
+    - (object)
+        - id: 3 (enum[number]) - If ID is provided, will attach tag with that ID.
+          - 1 - starred
+          - 2 - Vendor
+          - 3 - Investor
+          - 4 - Past Buyer
+          - 5 - Past Seller
+          - 6 - Loan Officer
+          - 7 - Talent
+          - 8 - Builder
+          - 9 - REO
+          - 10 - Short Sale
+          - 11 - Expired
+          - 12 - FSBO
+          - 13 - Sphere
+          - 14 - Allied Resource
+          - 15 - Referral Sources
+          - 16 - First Time Buyer
+          - 17 - Haven't Met
+          - 18 - Met
+          - 19 - Agent
+          - 20 - hot
+          - 21 - cold
+        - tag (string) - When ID not provided, will use this attribute to find or create new tag.
+
+### TagsRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/contacts/1/relationships/tags` (string)
+    - related: `https://localhost:8001/api/v1/contacts/1/tags` (string)
+- data (array)
+    - (object)
+        - type: tags (string)
+        - id: `3` (string)
+
+### TagRelationshipRequest
+- type: `tags`
+- tag: `TestTag`
+
+### TagRelationshipResponse
+- type: `tags`
+- attributes (object)
+    - tag: `TestTag`
+
+### ContactObjectCustomField
+- custom_field: notes (string)
+- custom_field_value: `Meet at property event.` (string)
+
+### ObjectCustomField
+- object_type: `contacts` (string, required) - Valid object type within custom field `availability` array.
+- object_id: 1 (string, required) - Valid exist id for given object type
+- custom_field_value: `Meet at property event` (string, required)
+  Unique based on `object_type`, `object_id` and `data.relationships.custom-field.data.id` attribute. Value should valid based on custom field `custom_field_type`.
+  - 1 - TEXT_FIELD (string)
+  - 2 - TEXT_AREA (string)
+  - 3 - DROPDOWN (string) - Valid `value_id` in related custom field value
+  - 4 - DATE (string) - Shoudl formatted as `Y-m-d`
+  - 5 - CHECKBOX (string) - Valid `value_id` in related custom field value
+  - 6 - NUMBER (number)
+  - 7 - URL (string) - Must a valid url
+  - 8 - PERCENTAGE (number)
+  - 9 - CURRENCY (enum)
+
+### ContactObjectCustomFieldResponse
+- type: `object-custom-fields` (string)
+- id: `1` (string)
+- attributes (ContactObjectCustomField)
+  - object_id: 1
+  - object_type: contacts
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/object-custom-fields/1`
+- relationships (object)
+  - `custom-field` (CustomFieldRelationship)
+
+### ObjectCustomFieldResponse
+- type: `object-custom-fields` (string)
+- id: `1` (string)
+- attributes (ContactObjectCustomField)
+  - object_id: 1
+  - object_type: contacts
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/object-custom-fields/1`
+
+### ContactObjectCustomFieldsRelationshipRequest
+- data (array)
+    - (object)
+        - attributes (ContactObjectCustomField) - If custom field with `name` same as `custom_field` attribute found, that one will be used. Otherwise, new custom field will be created.
+
+### ContactObjectCustomFieldsRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/contacts/1/relationships/object-custom-fields` (string)
+    - related: `https://localhost:8001/api/v1/contacts/1/object-custom-fields` (string)
+- data (array)
+    - (object)
+        - type: `object-custom-fields` (string)
+        - id: `1` (string)
+
+### CustomField
+- name: `notes` (required, string)
+- custom_field_type: 1 (enum[number])
+  - 1 - TEXT_FIELD
+  - 2 - TEXT_AREA
+  - 3 - DROPDOWN
+  - 4 - DATE
+  - 5 - CHECKBOX
+  - 6 - NUMBER
+  - 7 - URL
+  - 8 - PERCENTAGE
+  - 9 - CURRENCY
+- include_in_filters: true (boolean)
+- availability (array)
+  - `contacts` (string)
+  - `teams` (string)
+  - `users`(string)
+
+### CustomFieldCheckbox
+- name: `recomended_calling_time` (required, string)
+- custom_field_type: 3 (enum[number])
+  - 1 - TEXT_FIELD
+  - 2 - TEXT_AREA
+  - 3 - DROPDOWN
+  - 4 - DATE
+  - 5 - CHECKBOX
+  - 6 - NUMBER
+  - 7 - URL
+  - 8 - PERCENTAGE
+  - 9 - CURRENCY
+- include_in_filters: true (boolean)
+- availability (array)
+  - contacts
+  - teams
+  - users
+
+### CustomFieldRelationship
+- links (object)
+    - self: `http://localhost:8001/api/v1/object-custom-fields/1/relationships/custom-fields` (string)
+    - related: `http://localhost:8001/api/v1/object-custom-fields/1/custom-fields` (string)
+- data (object)
+    - type: `custom-fields` (string)
+    - id: `1` (string)
+
+### CustomFieldCheckboxRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/custom-field-values/1/relationships/custom-field` (string)
+    - related: `https://localhost:8001/api/v1/custom-field-values/1/custom-field` (string)
+- data (object)
+    - type: `custom-fields` (string)
+    - id: `3` (string)
+
+### CustomFieldResponse
+- type: `custom-fields` (string)
+- id: `1` (string)
+- attributes (CustomField)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/custom-fields/1`
+
+### CustomFieldCheckboxResponse
+- type: `custom-fields` (string)
+- id: `3` (string)
+- attributes (CustomFieldCheckbox)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/custom-fields/3`
+
+### CustomFieldValue
+- value: `morning` (required, string)
+
+### CustomFieldValueResponse
+- type: `custom-field-values` (string)
+- id: `3` (string)
+- attributes (CustomFieldValue)
+  - value_id: `a541e7c8-943c-11e6-b672-acbc32d3f651` (string) - random generated string
+  - value: `last year` (string)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/custom-field-values/3`
+
+### SystemMeta
+- name: `PieSync` (required, string)
+- variable: `piesync_trash` (required, string)
+- type: 1 (enum[number])
+  - 1 - boolean
+  - 2 - float
+  - 3 - int
+  - 4 - string
+  - 5 - array
+  - 6 - date
+  - 7 - datetime
+
+### SystemMetaOnEntity
+- id (number) - If ID is provided, will use system meta with that ID.
+- name: piesync (string) - **Required** if ID not provided. When ID not provided, will used to find or create new system meta.
+- variable: piesync_trash - **Required** if ID not provided. When ID not provided, will used to find or create new system meta.
+- type: 1 (enum) - **Required** if ID not provided. When ID not provided, will used to find or create new system meta. If existing system meta found, this field will be skipped. If new system meta created, this field will used to set its type.
+  - 1 - boolean
+  - 2 - float
+  - 3 - int
+  - 4 - string
+  - 5 - array
+  - 6 - date
+  - 7 - datetime
+- value: true  (required) - Data should match with system meta type.
+
+### SystemMetaResponse
+- type: `system-metas` (string)
+- id: `1` (string)
+- attributes (SystemMeta)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/system-metas/1`
+
+### Interaction
+- `interaction_type`: 3 (enum[number])
+    - 0 - UNKNOWN
+    - 1 - CALL
+    - 2 - MEET
+    - 3 - EMAIL
+    - 4 - TEXT
+    - 5 - SOCIAL_MEDIA
+    - 6 - GENERAL_NOTE
+- `interaction_at`: `2013-01-28` (string)
+- `phone_number`: `+1-606-620-0715` (string)
+- `attendees`: `at` (string)
+- `initiated_by`: 2 (enum[number])
+    - 1 - User
+    - 2 - Contact
+- `outcome`: 1 (enum[number])
+    - 0 - UNKNOWN
+    - 1 - INTERESTED
+    - 2 - NOT_INTERESTED_NOW
+    - 3 - LEFT_VOICEMAIL
+    - 4 - NO_ANSWER
+    - 5 - DO_NOT_CAL
+
+### InteractionResponse
+- type: interactions (string)
+- id: `12` (string)
+- attributes (Interaction)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/interactions/12`
+
+### Timeline
+- `timeline_type`: `12` (enum)
+    - 0 - UNKNOWN
+    - 1 - COMPLETED_REMINDER
+    - 2 - NOTE
+    - 3 - INTERACTION_MEETING
+    - 4 - INTERACTION_CALL
+    - 5 - STAGE_CHANGE
+    - 6 - REFERRAL
+    - 7 - PRIMARY_REFERRAL
+    - 8 - SOURCE
+    - 9 - INTERACTION_EMAIL
+    - 10 - INTERACTION_TEXT
+    - 11 - INTERACTION_SOCIAL_MEDIA
+    - 12 - INTERACTION_GENERAL_NOTE
+- `timelineable_type`: interactions
+- `timelineable_id`: 6,
+- `timelineable` (Interaction)
+- `activity_at`: `2017-06-29 15:35:25` (string)
+- `activity_type`: `2` (enum)
+    - 0 - UNKNOWN
+    - 1 - CHANGED
+    - 2 - ADDED
+    - 3 - DELETED
+
+### TimelineResponse
+- type: `timelines` (string)
+- id: `3` (string)
+- attributes (Timeline)
+- links (object)
+    - `self`: `https://localhost:8001/api/v1/tags/3`
+
+### Note
+- `noteable_id`: 1 (number, required)
+- `noteable_type`: `contacts` (enum, required)
+    - interactions
+    - contacts
+    - users
+- `note`: `quas` (string, required)
+
+### NoteResponse
+- type: notes (string)
+- id: `12` (string)
+- attributes (Note)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/notes/12`
+
+### Source
+- label: `Some Label` (string)
+- is_archived: `true` (boolean)
+- vendor: `Some Vendor` (string, nullable)
+
+### SourceResponse
+- type: sources (string)
+- id: `1` (string)
+- attributes (Source)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/sources/1`
+
+### SourcesRelationshipRequest
+- data (array)
+    - (object)
+        - type: `sources`
+        - id: `1` (number) - Valid source id
+
+### SourceRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/contacts/1/relationships/sources` (string)
+    - related: `https://localhost:8001/api/v1/contacts/1/sources` (string)
+- data (array)
+    - (object)
+        - type: sources (string)
+        - id: `1` (string)
+
+### Template
+- type: `import` (enum, required)
+      - import
+      - export
+- name: `Template` (string)
+- is_default: 1 (number)
+- fields: `{"prefix":{"column":"prefix","field":"prefix","type":"person","rules":"string"},"first_name":{"column":"first_name","field":"first_name","type":"person","rules":"required|string"}}` (string)
+
+### TemplateResponse
+- type: templates (string)
+- id: `1` (string)
+- attributes (Template)
+- links (object)
+  - `self`: `https://localhost:8001/api/v1/templates/1`
+
+### TemplateFields
+- name: `First Name`
+- type: `contact`
+- format: `string`
+- required: 1
+
+### MultipleDeleteResponse
+- delete_count: 3 (number) - Total resource deleted
++ status (array) - List of deleted resource with success status
+      + (object)
+          - id: 1 (number)
+          - is_deleted: true (boolean)
+      + (object)
+          - id: 2 (number)
+          - is_deleted: `true` (boolean)
+      + (object)
+          - id: 3 (number)
+          - is_deleted: `true` (boolean)
+
+### PiesyncAccessToken
+- provider: `piesync` (string)
+- team_id: 1 (number)
+- user_id: 1 (number)
+- `access_token`: `eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0.Hm4tWnV1MmB46LN6erbAoh314rvbh9YYGHGx92_AyovP6KRM0qXc2jjPP0bhuZ41OkJ8NeknPqcyOa4VrsmI2uuNYV6Z9Pvb-bdipk1VBtWx2SmYfgLozFhDO7FlsnaM9DGaL9nYwaNXGZPVmhiK6qWAXAC6Bg48uehkJ5IzekU.k6lO6TjB9tw-x-D8V8qlSw.bBUoV8ou` (string)
+- expire: 1501244884 (number)
+
+### PiesyncAccessTokenResponse
+- type: `access-token` (string)
+- attributes (PiesyncAccessToken)
+
+### Family
+- relative_type: 1 (enum[number])
+  - 1 - `father`
+  - 2 - `mother`
+  - 3 - `son`
+  - 4 - `daughter`
+  - 5 - `brother`
+  - 6 - `sister`
+  - 7 - `spouse`
+  - 8 - `sibling`
+  - 9 - `parent`
+  - 10 - `child`
+  - 11 - `sibling of parent`
+  - 12 - `child of sibling`
+  - 13 - `cousin`
+  - 14 - `grandparent`
+  - 15 - `grandchild`
+  - 16 - `step sibling`
+  - 17 - `step parent`
+  - 18 - `step child`
+  - 19 - `sibling in law`
+  - 20 - `parent in law`
+  - 21 - `child in law`
+  - 99 - `other`
+- label: `happy family`
+
+### FamilyContactRelationship
+- links (object)
+    - self: `https://localhost:8001/api/v1/family/1/relationships/contacts` (string)
+    - related: `https://localhost:8001/api/v1/family/1/contacts` (string)
+- data (object)
+    - id: 2 (string)
+
+### FamilyRelationship
+- `related-to` (FamilyContactRelationship)
+- contact (FamilyContactRelationship)
+    - data (object)
+      - id: 3 (string)
+    - links (object)
+        - self: `https://localhost:8001/api/v1/family/2/relationships/contacts` (string)
+        - related: `https://localhost:8001/api/v1/family/2/contacts` (string)
+
+### FamilyRequest
+- data (object)
+    - relationships (FamilyRelationship)
+    - attributes (Family)
+### FamilyDataResponse
+- type: family (string)
+- id: 1 (string, nullable)
+- attributes (Family)
+- links (object)
+    - self: `https://localhost:8001/api/v1/family/1/` (string)
+- relationships (FamilyRelationship)
+
+### FamilyResponse
+- data (FamilyDataResponse)
+
+### FamilyListResponse
+- included (array)
+    - (ContactResponse)
+
+### FamilyRelationshipRequest
+- data (array)
+    - (object)
+        - id (string)
+        Valid family ID.
