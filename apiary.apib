@@ -1,61 +1,94 @@
 FORMAT: 1A
-HOST: https://private-909ac-devsummit.apiary-mock.com
+HOST: https://private-58b9e3-devsummittest.apiary-mock.com
 
 # devsummit
 
 description
 
-## Register user [/auth/register]
+## User Auth [/auth]
 
-### Register a user [POST]
+### Register a user [POST /auth/register]
 
 + Request (application/json)
 
-        {
-            "first_name": "andy",
-            "last_name": "herman",
-            "role": "attendee",
-            "username": "andy",
-            "email": "shi88.andy@gmail.com",
-            "password": "andy123"
-        }
+    + Attributes (object)
+        + data (object)
+            - attributes (User)
 
 + Response 200 (application/json)
+    + Attributes
+        + meta 
+            - message: `User succesfully registered`
+            - success: true
+        + data (UserResponse) 
 
-        {
-            "message": "user succesfully registered",
-            "result": {
-               "id": 1,
-               "first_name": "andy",
-               "last_name": "herman",
-               "username": "andy",
-               "email": "shi88.andy@gmail.com",
-               "created_at": "Wed, 02 Aug 2017 15:18:31 GMT",
-               "updated_at": "Wed, 02 Aug 2017 15:18:31 GMT"
-            },
-            "success": true
-        }
 
-## Login User [/auth/login]
 
-### Login a User [POST]
+## User Management [/api/users]
+
+### List of Users [GET]
 
 + Request (application/json)
 
-        {
-            "username": "andy",
-            "password": "andy123"
-        }
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - count: 10,
+            - total: 10
+        + data (array[UserResponse]) 
 
-+ Response 201 (application/json)
 
-    + Body
+### Get a User [GET /api/users/{user_id}]
 
-            {
-                "message": "user logged in succesfully",
-                "result": {
-                    "access_token": "eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8",
-                    "refresh_token": "126991391b52558b"
-                },
-                "success": true
-            }
++ Parameters
+
+    - user_id: `1` (string, required) - Valid User ID
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - count: 1,
+            - total: 1
+        + data (UserResponse) 
+
+
+### Update a User [PATCH /api/users/{user_id}]
+
+    
++ Parameters
+    - user_id : `1` (string, required) - Valid User ID
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer 489312748932748932784732984732
+
+    + Attributes
+        + data (object)
+            - attributes (User)
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: 'User succesfully updated'
+            - success: true
+        + data (UserResponse)
+
+ 
+
+## Data Structures
+
+###  User
+- `first_name`: `andy` (string),
+- `last_name`: `herman` (string),
+- `username`: `andy` (string),
+- `email`: `shi88.andy@gmail.com` (string),
+- `created_at`: `Wed, 02 Aug 2017 15:18:31 GMT` (string),
+- `updated_at`: `Wed, 02 Aug 2017 15:18:31 GMT` (string)
+
+### UserResponse
+- type: 'User' (string)
+- id: 1 (number)
+- attributes (User)
