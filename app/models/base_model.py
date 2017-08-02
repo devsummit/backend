@@ -6,7 +6,7 @@ class BaseModel:
 	'''
 	def as_dict(self):
 		''' return readable field if set, and all field otherwise '''
-		if hasattr(self, 'readable'):
+		if hasattr(self, 'visible'):
 			return {c: getattr(self, c) for c in self.visible}
 		else:
 			return {c.name: getattr(self, c.name) for c in self.__table__.columns}

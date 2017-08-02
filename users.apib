@@ -1,0 +1,61 @@
+FORMAT: 1A
+HOST: http://localhost:5000
+
+# devsummit
+
+description
+
+## Register user [/auth/register]
+
+### Register a user [POST]
+
++ Request (application/json)
+
+        {
+            "first_name": "andy",
+            "last_name": "herman",
+            "role": "attendee"
+            "username": "andy",
+            "email": "shi88.andy@gmail.com",
+            "password": "andy123",
+        }
+
++ Response 200 (application/json)
+
+        {
+            "message": "user succesfully registered",
+            "result": {
+               "id": 1,
+               "first_name": "andy",
+               "last_name": "herman",
+               "username": "andy"
+               "email": "shi88.andy@gmail.com",
+               "created_at": "Wed, 02 Aug 2017 15:18:31 GMT",
+               "updated_at": "Wed, 02 Aug 2017 15:18:31 GMT",
+            },
+            "success": true
+        }
+
+## Login User
+
+### Login a User [POST]
+
++ Request (application/json)
+
+        {
+            "username": "andy",
+            "password": "andy123",
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+        {
+            "message": "user logged in succesfully",
+            "result": {
+                "access_token": "eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8",
+                "refresh_token": "126991391b52558b"
+            },
+            "success": true
+        }
