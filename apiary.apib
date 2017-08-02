@@ -96,7 +96,7 @@ description
     + Headers
 
             Accept: application/json
-            Authorization: Bearer 489312748932748932784732984732
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
         + data (object)
@@ -165,9 +165,6 @@ description
 
     + Attributes
         + data (object)
-            + meta (object)
-                - message: `Ticket updated successfully` (string)
-                - success: `true` (boolean)
             + attributes (Ticket)
 
 + Parameters
@@ -179,6 +176,27 @@ description
     + Attributes
         + meta (object)
             - message:  `Ticket successfully updated` (string)
+            - success: `true` (boolean)
+        + data (TicketResponse)
+
+### Post Ticket [POST /api/v1/tickets]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (object)
+            + attributes (Ticket)
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Ticket successfully created` (string)
             - success: `true` (boolean)
         + data (TicketResponse)
 
