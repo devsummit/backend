@@ -98,6 +98,9 @@ description
 
 + Response 200 (application/json)
     + Attributes
+        + meta (object)
+            - message: `Ticket retrieved successfully` (string)
+            - success: `true` (boolean)
         + data (TicketResponse)
 
 ### Edit ticket filter by id [PATCH /api/v1/tickets/{id}]
@@ -111,7 +114,11 @@ description
 
     + Attributes
         + data (object)
-           + attributes (Ticket)
+            + meta (object)
+                - message: `Ticket updated successfully` (string)
+                - success: `true` (boolean)
+            + attributes (Ticket)
+
 + Parameters
     
     - id: `1` (number, required) - valid ticket id
@@ -120,8 +127,8 @@ description
 
     + Attributes
         + meta (object)
-            - message:  `Ticket successfully updated`
-            - success: true
+            - message:  `Ticket successfully updated` (string)
+            - success: `true` (boolean)
         + data (TicketResponse)
 
 ### Delete ticket [DELETE /api/v1/tickets/{id}]
