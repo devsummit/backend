@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://private-58b9e3-devsummittest.apiary-mock.com
+HOST: https://private-909ac-devsummit.apiary-mock.com
 
 # devsummit
 
@@ -11,18 +11,53 @@ description
 
 + Request (application/json)
 
-    + Attributes (object)
-        + data (object)
-            - attributes (User)
+        {
+            "first_name": "andy",
+            "last_name": "herman",
+            "role": "attendee",
+            "username": "andy",
+            "email": "shi88.andy@gmail.com",
+            "password": "andy123"
+        }
 
 + Response 200 (application/json)
-    + Attributes
-        + meta 
-            - message: `User succesfully registered`
-            - success: true
-        + data (UserResponse) 
+
+        {
+            "message": "user succesfully registered",
+            "result": {
+               "id": 1,
+               "first_name": "andy",
+               "last_name": "herman",
+               "username": "andy",
+               "email": "shi88.andy@gmail.com",
+               "created_at": "Wed, 02 Aug 2017 15:18:31 GMT",
+               "updated_at": "Wed, 02 Aug 2017 15:18:31 GMT"
+            },
+            "success": true
+        }
 
 
+### Login a User [POST /auth/login]
+
++ Request (application/json)
+
+        {
+            "username": "andy",
+            "password": "andy123"
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "message": "user logged in succesfully",
+                "result": {
+                    "access_token": "eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8",
+                    "refresh_token": "126991391b52558b"
+                },
+                "success": true
+            }
 
 ## User Management [/api/users]
 
@@ -41,7 +76,6 @@ description
 ### Get a User [GET /api/users/{user_id}]
 
 + Parameters
-
     - user_id: `1` (string, required) - Valid User ID
 
 + Response 200 (application/json)
@@ -53,7 +87,6 @@ description
 
 
 ### Update a User [PATCH /api/users/{user_id}]
-
     
 + Parameters
     - user_id : `1` (string, required) - Valid User ID
@@ -76,7 +109,95 @@ description
             - success: true
         + data (UserResponse)
 
- 
+
+
+## Tickets [/api/v1/tickets]
+
+### Get list of tickets [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/tickets?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/tickets?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/tickets?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[TicketResponse])
+
+### Get ticket filter by id [GET /api/v1/tickets/{id}]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - id: `1` (number, required) - valid ticket id
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: `Ticket retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (TicketResponse)
+
+### Edit ticket filter by id [PATCH /api/v1/tickets/{id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (object)
+            + meta (object)
+                - message: `Ticket updated successfully` (string)
+                - success: `true` (boolean)
+            + attributes (Ticket)
+
++ Parameters
+    
+    - id: `1` (number, required) - valid ticket id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Ticket successfully updated` (string)
+            - success: `true` (boolean)
+        + data (TicketResponse)
+
+### Delete ticket [DELETE /api/v1/tickets/{id}]
+
++ Request (application/json)
+
+    + Headers
+
+        Accept: application/json
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - id: `1` (number, required) - valid ticket id
+
++ Response 204
+
+
 
 ## Data Structures
 
@@ -91,4 +212,22 @@ description
 ### UserResponse
 - type: 'User' (string)
 - id: 1 (number)
-- attributes (User)
+- attributes (User)            
+
+### Ticket
+- ticket_type: `gold` (string)
+- price: `10000` (number)
+- information: `ticket description` (string)
+
+### TicketResponse
+- type: `tickets` (string)
+- id: `1` (number)
+- attributes (Ticket)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+
+
+
+
+

@@ -33,4 +33,4 @@ hooks-worker-handler-host: 127.0.0.1
 hooks-worker-handler-port: 61321
 config: ./dredd.yml
 blueprint: apiary.apib
-endpoint: 'https://private-58b9e3-devsummittest.apiary-mock.com'
+endpoint: 'https://private-909ac-devsummit.apiary-mock.com'
