@@ -1,0 +1,36 @@
+reporter: apiary
+custom:
+  apiaryApiKey: 58c7e37c4119d849def6a6aeccf327a3
+  apiaryApiName: devsummit
+dry-run: null
+sandbox: false
+hookfiles: null
+language: null
+server: 'python manage.py server'
+server-wait: 5
+init: false
+names: false
+only: []
+output: []
+header: []
+sorted: false
+user: null
+inline-errors: false
+details: false
+method: []
+color: true
+level: info
+timestamp: false
+silent: false
+path: []
+hooks-worker-timeout: 5000
+hooks-worker-connect-timeout: 1500
+hooks-worker-connect-retry: 500
+hooks-worker-after-connect-wait: 100
+hooks-worker-term-timeout: 5000
+hooks-worker-term-retry: 500
+hooks-worker-handler-host: 127.0.0.1
+hooks-worker-handler-port: 61321
+config: ./dredd.yml
+blueprint: apiary.apib
+endpoint: 'http://localhost:500/api'
