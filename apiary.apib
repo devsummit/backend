@@ -209,7 +209,7 @@ Available include: `user`, `stage`
             - total: `10` (number)
             - message: `Booths successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (array[AttendeeResponse])
+        + data (array[BoothResponse])
         + links (object)
             - first: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=0` (string, nullable)
             - last: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=10` (string, nullable)
@@ -237,7 +237,9 @@ Available include: `user`, `stage`
             - message: `Booth successfully retrieved` (string)
             - success: `true` (boolean)
         + data (BoothResponse)
-        + included (UserResponse)
+        + included (object)
+            - user (UserResponse)
+            - stage (StageResponse)
 
 ### Edit Booth by id [PATCH /api/v1/booths/{booth_id}]
 
@@ -315,8 +317,8 @@ Available include: `user`, `material`
             - success: `true` (boolean)
         + data (SpeakerResponse)
         + included (object)
-            - (UserResponse)
-            - (array[MaterialResponse])
+            - user (UserResponse)
+            - materials (array[MaterialResponse])
 
 ### Edit Speaker by id [PATCH /api/v1/speakers/{speaker_id}]
 
@@ -449,10 +451,6 @@ Available include: `user`, `material`
 + Response 204
 
 
-
-
-
-
 ## Materials API [/api/v1/materials]
 
 
@@ -514,7 +512,7 @@ Speaker post new materials
 
     + Attributes
         + data (object)
-            + attributes (MaterialResponse)
+            + attributes (Material)
 
 + Response 200 (application/json)
 
@@ -523,6 +521,7 @@ Speaker post new materials
             - message:  `Material successfully created` (string)
             - success: `true` (boolean)
         + data (MaterialResponse)
+
 
 ### Delete Material [DELETE /api/v1/materials/{id}]
 
@@ -542,13 +541,563 @@ Speaker may delete his/her materials
 + Response 204
 
 
+## Events API [/api/v1/events]
+
+
+### Get list of events [GET]
+
+Get list of all events available filters: `user_id`, `time`, `stage_id`
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/events?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/events?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/events?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[EventResponse])
+
+### Get event filter by id [GET /api/v1/events/{event_id}]
+
+Request to spesific event
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - event_id: `1` (number, required) - valid event id
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: `Event retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (MaterialResponse)
+
+### Post Event [POST /api/v1/events]
+
+post new events
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (object)
+            + attributes (Event)
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Event successfully created` (string)
+            - success: `true` (boolean)
+        + data (EventResponse)
+
+### Edit event filter by id [PATCH /api/v1/tickets/{event_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (object)
+            + attributes (Event)
+
++ Parameters
+    
+    - event_id: `1` (number, required) - valid event id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Event successfully updated` (string)
+            - success: `true` (boolean)
+        + data (EventResponse)
+
+### Delete Event [DELETE /api/v1/events/{event_id}]
+
+Event may deleted 
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - event_id: `1` (number, required) - valid event id
+
++ Response 204
+
+
+## Stage API [/api/v1/stages]
+
+Management of stages
+
+### Get list of stages [GET]
+
+Get list of all stages
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/stages?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/stages?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/stages?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[EventResponse])
+
+### Get stage filter by id [GET /api/v1/stages/{stage_id}]
+
+Request to spesific stage
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: `Stage retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (StageResponse)
+
+
+### Get stage pictures by id [GET /api/v1/stages/{stage_id}/pictures]
+
+Get all spesific stage pictures
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: `Pictures retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[StagePictureResponse])
+
+
+### Get stage spots by id [GET /api/v1/stages/{stage_id}/spots]
+
+Get all spots included in spesific stage
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: `Spots retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[SpotResponse])
+
+### Post Stage [POST /api/v1/stages]
+
+post new stage
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (object)
+            + attributes (StageResponse)
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Stage successfully created` (string)
+            - success: `true` (boolean)
+        + data (StageResponse)
+
+### Post Stage Picture [POST /api/v1/stages/{stage_id}/pictures]
+
+Post stage pictures
+
++ Request With File (multipart/form-data; boundary=MultipartBoundry)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Body
+
+            --MultipartBoundry
+            Content-Disposition: form-data; name="photo"; filename="some-picture.jpg"
+            Content-Type: image/jpeg
+
+            RAW_FILE_DATA
+            --MultipartBoundry
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 200 (application/vnd.api+json)
+    + Attributes
+        + meta (object)
+            - message: `Photo succesfully uploaded` (string)
+            - success: `true` (boolean)
+        + data (StagePictureResponse)
+
+### Edit stage filter by id [PATCH /api/v1/stages/{event_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (object)
+            + attributes (Stage)
+
++ Parameters
+    
+    - event_id: `1` (number, required) - valid event id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Stage successfully updated` (string)
+            - success: `true` (boolean)
+        + data (StageResponse)
+
+### Delete Stage [DELETE /api/v1/stages/{stage_id}]
+
+Stage may be deleted 
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 204
+
+### Delete Stage Pictures [DELETE /api/v1/stages/{stage_id}/pictures/{picture_id}]
+
+Stage picture may be deleted
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+    - picture_id: `1` (number, required) - valid stage picture id
+
++ Response 204
 
 
 
+## Beacon API [/api/v1/beacons]
+
+Management of beacons
+
+### Get list of beacons [GET]
+
+Get list of all beacons
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/beacons?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/beacons?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/beacons?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[BeaconResponse])
+
+### Get beacon filter by id [GET /api/v1/beacons/{beacon_id}]
+
+Request to spesific beacon
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - beacon_id: `1` (number, required) - valid beacon id
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: `Beacon retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (BeaconResponse)
+        + included (object)
+            - stage (StageResponse)
+
+### Post Beacon [POST /api/v1/beacons]
+
+post new beacon
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Attributes (object)
+  + data (object)
+      - type: beacon
+      - attributes (Beacon)
+      - relationships (object)
+          - stage (object)
+              - data (object)
+                  - id: `1` (string, required) - Valid stage id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Beacon successfully created` (string)
+            - success: `true` (boolean)
+        + data (BeaconResponse)
+        + included (object)
+            - spot (SpotResponse)
+
+### Edit beacon filter by id [PATCH /api/v1/beacons/{beacon_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 
++ Attributes (object)
+  + data (object)
+      - type: beacon (string)
+      - attributes (object)
+        - stage_id: `1` (number) - valid stage id
+
++ Parameters
+    
+    - beacon_id: `1` (number, required) - valid beacon id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Beacon successfully updated` (string)
+            - success: `true` (boolean)
+        + data (BeaconResponse)
+        + included (object)
+          - stage (SpotResponse)
+
+### Delete Beacon [DELETE /api/v1/beacons/{beacon_id}]
+
+Beacon may be deleted
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - beacon_id: `1` (number, required) - valid beacon id
+
++ Response 204
+
+## Spots [/api/v1/spots]
+
+Management of stages
+
+### Get list of spots [GET]
+
+Get list of all spots
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/spots?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/spots?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/spots?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[SpotResponse])
+
+### Get spot filter by id [GET /api/v1/spots/{spot_id}]
+
+May include `beacon`
+
+Request to spesific spot
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - spot_id: `1` (number, required) - valid spot id
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: `Spot retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (SpotResponse)
+        + included (object)
+            - beacon (BeaconResponse)
+            - stage (StageResponse)
 
 
+### Edit spot filter by id [PATCH /api/v1/spots/{spot_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Attributes (object)
+    + data (object)
+        - type: spot (string)
+        - attributes (object)
+            - coordinate_x: `12` (number)
+            - coordinate_y: `10` (number)
+            - stage_id: `1` (number) - valid stage id
+            - beacon_id: `1` (number) - valid beacon id
+
++ Parameters
+    
+    - spot_id: `1` (number, required) - valid spot id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Spot successfully updated` (string)
+            - success: `true` (boolean)
+        + data (BeaconResponse)
+        + included (object)
+          - beacon (BeaconResponse)
+          - stage (StageResponse)
+
+### Delete Spot [DELETE /api/v1/spots/{spot_id}]
+
+Spot may be deleted 
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - spot_id: `1` (number, required) - valid spot id
+
++ Response 204
 
 
 ## Data Structures
@@ -618,5 +1167,59 @@ Speaker may delete his/her materials
 - type: `material` (string)
 - id: `1` (number)
 - attributes (Material)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### Event
+- information: `information about the event` (string)
+- time_start: `event starting time` (string)
+- time_end: `event ending time` (string)
+
+### EventResponse
+- type: `event` (string)
+- id: `1` (number)
+- attributes (Event)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### Stage
+- stage_type: `stage type` (string)
+- information: `information about the stage` (string)
+
+### StageResponse
+- type: `stage` (string)
+- id: `1` (number)
+- attributes (Event)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### Beacon
+- code: `beacon code` (string)
+
+### BeaconResponse
+- type: `beacon` (string)
+- id: `1` (number)
+- attributes (Beacon)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### Spot
+- coordinate_x: `12` (number)
+- coordinate_y: `14` (number)
+
+### SpotResponse
+- type: `spot` (string)
+- id: `1` (number)
+- attributes (Spot)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### StagePicture
+- url: `image/path` (string)
+
+### StagePictureResponse
+- type: `picture` (string)
+- id: `1` (number)
+- attributes (StagePicture)
     - `created_at`: `2017-06-23 20:27:16` (string, nullable)
     - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
