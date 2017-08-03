@@ -73,7 +73,7 @@ Dev summit API blueprints
         + data (array[UserResponse]) 
 
 
-### Get a User [GET /api/users/{user_id}]
+### Show User [GET /api/users/{user_id}]
 
 + Parameters
     - user_id: `1` (string, required) - Valid User ID
@@ -484,7 +484,7 @@ Available include: `user`, `material`
             - from (UserResponse)
             - to (UserResponse)
 
-### Ticket Transfer log [POST /api/v1/tickets/{ticket_id}/transfer/log]
+### Ticket Transfer log [GET /api/v1/tickets/transfer/log]
 
 + Request (application/json)
     
@@ -508,6 +508,11 @@ Available include: `user`, `material`
             - (object)
                 - sender (UserResponse)
                 - receiver (UserResponse)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/tickets/transfer/log?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/tickets/transfer/log?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/tickets/transfer/log?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
 
 
 ### Post Ticket [POST /api/v1/tickets]
@@ -572,7 +577,7 @@ Get list of all materials of: logged in speaker, all speakers, and material of r
           - prev: `null` (string, nullable)
         + data (array[MaterialResponse])
 
-### Get material filter by id [GET /api/v1/materials/{material_id}]
+### Show Material [GET /api/v1/materials/{material_id}]
 
 Request to spesific materials
 
@@ -661,7 +666,7 @@ Get list of all events available filters: `user_id`, `time`, `stage_id`
           - prev: `null` (string, nullable)
         + data (array[EventResponse])
 
-### Get event filter by id [GET /api/v1/events/{event_id}]
+### Show event [GET /api/v1/events/{event_id}]
 
 Request to spesific event
 
@@ -775,7 +780,7 @@ Get list of all stages
           - prev: `null` (string, nullable)
         + data (array[EventResponse])
 
-### Get stage filter by id [GET /api/v1/stages/{stage_id}]
+### Show Stage [GET /api/v1/stages/{stage_id}]
 
 Request to spesific stage
 
@@ -798,7 +803,7 @@ Request to spesific stage
         + data (StageResponse)
 
 
-### Get stage pictures by id [GET /api/v1/stages/{stage_id}/pictures]
+### Show Stage pictures [GET /api/v1/stages/{stage_id}/pictures]
 
 Get all spesific stage pictures
 
@@ -821,7 +826,7 @@ Get all spesific stage pictures
         + data (array[StagePictureResponse])
 
 
-### Get stage spots by id [GET /api/v1/stages/{stage_id}/spots]
+### Show stage spot [GET /api/v1/stages/{stage_id}/spots]
 
 Get all spots included in spesific stage
 
@@ -985,7 +990,7 @@ Get list of all beacons
           - prev: `null` (string, nullable)
         + data (array[BeaconResponse])
 
-### Get beacon filter by id [GET /api/v1/beacons/{beacon_id}]
+### Show Beacon [GET /api/v1/beacons/{beacon_id}]
 
 Request to spesific beacon
 
@@ -1107,7 +1112,7 @@ Get list of all spots
           - prev: `null` (string, nullable)
         + data (array[SpotResponse])
 
-### Get spot filter by id [GET /api/v1/spots/{spot_id}]
+### Show spot [GET /api/v1/spots/{spot_id}]
 
 May include `beacon`
 
