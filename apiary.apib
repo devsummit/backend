@@ -209,7 +209,7 @@ Available include: `user`, `stage`
             - total: `10` (number)
             - message: `Booths successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (array[AttendeeResponse])
+        + data (array[BoothResponse])
         + links (object)
             - first: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=0` (string, nullable)
             - last: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=10` (string, nullable)
@@ -237,7 +237,9 @@ Available include: `user`, `stage`
             - message: `Booth successfully retrieved` (string)
             - success: `true` (boolean)
         + data (BoothResponse)
-        + included (UserResponse)
+        + included (object)
+            - user (UserResponse)
+            - stage (StageResponse)
 
 ### Edit Booth by id [PATCH /api/v1/booths/{booth_id}]
 
@@ -539,28 +541,12 @@ Speaker may delete his/her materials
 + Response 204
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Events API [/api/v1/events]
 
 
 ### Get list of events [GET]
 
-Get list of all events
+Get list of all events available filters: `user_id`, `time`, `stage_id`
 
 + Request (application/json)
 
@@ -1112,7 +1098,6 @@ Spot may be deleted
     - spot_id: `1` (number, required) - valid spot id
 
 + Response 204
-
 
 
 ## Data Structures
