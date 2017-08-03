@@ -3,7 +3,7 @@ HOST: https://private-909ac-devsummit.apiary-mock.com
 
 # devsummit
 
-description
+Dev summit API blueprints
 
 ## User Auth [/auth]
 
@@ -109,6 +109,239 @@ description
             - success: true
         + data (UserResponse)
 
+
+
+## Attendee [/api/v1/attendees]
+
+Available include: `user`
+
+### Get list of attendee [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - count: `10` (number)
+            - total: `10` (number)
+            - message: `Attendees successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[AttendeeResponse])
+        + links (object)
+            - first: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=0` (string, nullable)
+            - last: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=10` (string, nullable)
+            - next: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=10` (string, nullable)
+            - prev: `null` (string, nullable)
+
+
+### Get Attendee by id [GET /api/v1/attendees/{attendee_id}]
+
++ Parameters 
+
+    - attendee_id: `1` (number, required) - Valid attendee id
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Attendee successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (AttendeeResponse)
+        + included (UserResponse)
+
+### Edit Attendee by id [PATCH /api/v1/attendees/{attendee_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (AttendeeResponse)
+
+
++ Parameters
+    
+    - attendee_id: `1` (number, required) - Valid attendee id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Attendee data succesfully updated` (string)
+            - success: `true` (boolean)
+        + data (AttendeeResponse)
+
+
+## Booth [/api/v1/booths]
+
+Available include: `user`, `stage`
+
+### Get list of booths [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - count: `10` (number)
+            - total: `10` (number)
+            - message: `Booths successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[AttendeeResponse])
+        + links (object)
+            - first: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=0` (string, nullable)
+            - last: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=10` (string, nullable)
+            - next: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=10` (string, nullable)
+            - prev: `null` (string, nullable)
+
+
+### Get Booth by id [GET /api/v1/booths/{booth_id}]
+
++ Parameters
+
+    - booth_id: `1` (number, required) - Valid booth id
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Booth successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (BoothResponse)
+        + included (UserResponse)
+
+### Edit Booth by id [PATCH /api/v1/booths/{booth_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (BoothResponse)
+
+
++ Parameters
+    
+    - booth_id: `1` (number, required) - Valid booth id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Booth data succesfully updated` (string)
+            - success: `true` (boolean)
+        + data (BoothResponse)
+
+
+## Speaker [/api/v1/speakers]
+
+Available include: `user`, `material`
+
+### Get list of speakers [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - count: `10` (number)
+            - total: `10` (number)
+            - message: `Speakers successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[AttendeeResponse])
+        + links (object)
+            - first: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=0` (string, nullable)
+            - last: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=10` (string, nullable)
+            - next: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=10` (string, nullable)
+            - prev: `null` (string, nullable)
+
+
+### Get Speaker by id [GET /api/v1/speakers/{speaker_id}]
+
++ Parameters
+
+    - speaker_id: `1` (number, required) - Valid speaker id
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Speaker successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (SpeakerResponse)
+        + included (object)
+            - (UserResponse)
+            - (array[MaterialResponse])
+
+### Edit Speaker by id [PATCH /api/v1/speakers/{speaker_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (BoothResponse)
+
+
++ Parameters
+    
+    - speaker_id: `1` (number, required) - Valid speaker id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Speaker data succesfully updated` (string)
+            - success: `true` (boolean)
+        + data (SpeakerResponse)
 
 
 ## Tickets [/api/v1/tickets]
@@ -217,6 +450,107 @@ description
 
 
 
+
+
+
+## Materials API [/api/v1/materials]
+
+
+### Get list of speaker materials [GET]
+
+Get list of all materials of: logged in speaker, all speakers, and material of related speaker by passing `?speaker_id=id` parameter
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/materials?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/materials?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/materials?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[MaterialResponse])
+
+### Get material filter by id [GET /api/v1/materials/{material_id}]
+
+Request to spesific materials
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - material_id: `1` (number, required) - valid material id
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: `Material retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (MaterialResponse)
+
+### Post Material [POST /api/v1/materials]
+
+Speaker post new materials
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (object)
+            + attributes (MaterialResponse)
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Material successfully created` (string)
+            - success: `true` (boolean)
+        + data (MaterialResponse)
+
+### Delete Material [DELETE /api/v1/materials/{id}]
+
+Speaker may delete his/her materials
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - id: `1` (number, required) - valid material id
+
++ Response 204
+
+
+
+
+
+
+
+
+
+
+
 ## Data Structures
 
 ###  User
@@ -241,5 +575,48 @@ description
 - type: `tickets` (string)
 - id: `1` (number)
 - attributes (Ticket)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### Attendee
+- feature_code: `123f` (string)
+- points: `100` (number)
+- summary: `some information about attendee` (string)
+
+### AttendeeResponse
+- type: `attendee` (string)
+- id: `1` (number)
+- attributes (Attendee)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### Booth
+- points: `100` (number)
+- summary: `some information about booth` (string)
+
+### BoothResponse
+- type: `booth` (string)
+- id: `1` (number)
+- attributes (Booth)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### Speaker
+- summary: `some information about speaker` (string)
+
+### SpeakerResponse
+- type: `speaker` (string)
+- id: `1` (number)
+- attributes (Speaker)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### Material
+- path: `material/path` (string)
+
+### MaterialResponse
+- type: `material` (string)
+- id: `1` (number)
+- attributes (Material)
     - `created_at`: `2017-06-23 20:27:16` (string, nullable)
     - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
