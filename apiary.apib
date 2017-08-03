@@ -73,7 +73,7 @@ Dev summit API blueprints
         + data (array[UserResponse]) 
 
 
-### Get a User [GET /api/users/{user_id}]
+### Show User [GET /api/users/{user_id}]
 
 + Parameters
     - user_id: `1` (string, required) - Valid User ID
@@ -187,6 +187,27 @@ Available include: `user`
             - success: `true` (boolean)
         + data (AttendeeResponse)
 
+### Get points log [GET /api/v1/pointslog]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Points log data succesfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[PointsLogResponse])
+        + included (array)
+            - (object)
+                - sender (BoothResponse)
+                - receiver (AttendeeResponse)
+
 
 ## Booth [/api/v1/booths]
 
@@ -265,6 +286,28 @@ Available include: `user`, `stage`
             - message: `Booth data succesfully updated` (string)
             - success: `true` (boolean)
         + data (BoothResponse)
+
+### Send points to attendee [PATCH /api/v1/booths/transfer]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (object)
+            - points: `100` (number, required) - amount of point to send
+            - receiver: `1` (number, required) - valid attendee id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Point sent succesfully` (string)
+            - success: `true` (boolean)
+        + data (PointTransactionResponse)
 
 
 ## Speaker [/api/v1/speakers]
@@ -414,6 +457,64 @@ Available include: `user`, `material`
             - success: `true` (boolean)
         + data (TicketResponse)
 
+### Transfer ticket [POST /api/v1/tickets/{ticket_id}/transfer]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (TicketTransferRequest)
+
++ Parameters
+    
+    - ticket_id: `1` (number, required) - valid ticket id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Ticket successfully transfered` (string)
+            - success: `true` (boolean)
+        + data (TicketResponse)
+        + included (object)
+            - from (UserResponse)
+            - to (UserResponse)
+
+### Ticket Transfer log [GET /api/v1/tickets/transfer/log]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+    
+    - ticket_id: `1` (number, required) - valid ticket id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Ticket transfer log succesfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[TransferTicketLog])
+        + included (array)
+            - (object)
+                - sender (UserResponse)
+                - receiver (UserResponse)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/tickets/transfer/log?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/tickets/transfer/log?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/tickets/transfer/log?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+
+
 ### Post Ticket [POST /api/v1/tickets]
 
 + Request (application/json)
@@ -424,8 +525,7 @@ Available include: `user`, `material`
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (object)
-            + attributes (Ticket)
+        + data (Ticket)
 
 + Response 200 (application/json)
 
@@ -477,7 +577,7 @@ Get list of all materials of: logged in speaker, all speakers, and material of r
           - prev: `null` (string, nullable)
         + data (array[MaterialResponse])
 
-### Get material filter by id [GET /api/v1/materials/{material_id}]
+### Show Material [GET /api/v1/materials/{material_id}]
 
 Request to spesific materials
 
@@ -511,8 +611,7 @@ Speaker post new materials
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (object)
-            + attributes (Material)
+        + data (Material)
 
 + Response 200 (application/json)
 
@@ -567,7 +666,7 @@ Get list of all events available filters: `user_id`, `time`, `stage_id`
           - prev: `null` (string, nullable)
         + data (array[EventResponse])
 
-### Get event filter by id [GET /api/v1/events/{event_id}]
+### Show event [GET /api/v1/events/{event_id}]
 
 Request to spesific event
 
@@ -601,8 +700,7 @@ post new events
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (object)
-            + attributes (Event)
+        + data (Event)
 
 + Response 200 (application/json)
 
@@ -682,7 +780,7 @@ Get list of all stages
           - prev: `null` (string, nullable)
         + data (array[EventResponse])
 
-### Get stage filter by id [GET /api/v1/stages/{stage_id}]
+### Show Stage [GET /api/v1/stages/{stage_id}]
 
 Request to spesific stage
 
@@ -705,7 +803,7 @@ Request to spesific stage
         + data (StageResponse)
 
 
-### Get stage pictures by id [GET /api/v1/stages/{stage_id}/pictures]
+### Show Stage pictures [GET /api/v1/stages/{stage_id}/pictures]
 
 Get all spesific stage pictures
 
@@ -728,7 +826,7 @@ Get all spesific stage pictures
         + data (array[StagePictureResponse])
 
 
-### Get stage spots by id [GET /api/v1/stages/{stage_id}/spots]
+### Show stage spot [GET /api/v1/stages/{stage_id}/spots]
 
 Get all spots included in spesific stage
 
@@ -762,8 +860,7 @@ post new stage
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (object)
-            + attributes (StageResponse)
+        + data (Stage)
 
 + Response 200 (application/json)
 
@@ -893,7 +990,7 @@ Get list of all beacons
           - prev: `null` (string, nullable)
         + data (array[BeaconResponse])
 
-### Get beacon filter by id [GET /api/v1/beacons/{beacon_id}]
+### Show Beacon [GET /api/v1/beacons/{beacon_id}]
 
 Request to spesific beacon
 
@@ -929,13 +1026,7 @@ post new beacon
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Attributes (object)
-  + data (object)
-      - type: beacon
-      - attributes (Beacon)
-      - relationships (object)
-          - stage (object)
-              - data (object)
-                  - id: `1` (string, required) - Valid stage id
+  + data (Beacon)
 
 + Response 200 (application/json)
 
@@ -1021,7 +1112,7 @@ Get list of all spots
           - prev: `null` (string, nullable)
         + data (array[SpotResponse])
 
-### Get spot filter by id [GET /api/v1/spots/{spot_id}]
+### Show spot [GET /api/v1/spots/{spot_id}]
 
 May include `beacon`
 
@@ -1098,6 +1189,7 @@ Spot may be deleted
     - spot_id: `1` (number, required) - valid spot id
 
 + Response 204
+
 
 
 ## Data Structures
@@ -1223,3 +1315,28 @@ Spot may be deleted
 - attributes (StagePicture)
     - `created_at`: `2017-06-23 20:27:16` (string, nullable)
     - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### PointTransactionResponse
+- attributes (object)
+    - `points`: `100` (number)
+    - `from`: `1` (number, required) - valid booth id
+    - `to`: `1` (number, required) - valid attendee id
+
+### PointsLogResponse
+- type: `pointslog` (string)
+- id: `1` (number)
+- attributes (object)
+    - `amount`: `100` (number) - amount of point transfered
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### TransferTicketLog
+- type: `ticket_transfer_log` (string)
+- id: `1` (number)
+- attributes (Ticket)
+    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
+    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### TicketTransferRequest
+- ticket_id: `1` (number) - valid ticket id
+- receiver_id: `1` (number) - valid user id
