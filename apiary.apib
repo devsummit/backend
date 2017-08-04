@@ -36,6 +36,25 @@ Dev summit API blueprints
             "success": true
         }
 
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+
+    + Attributes
+        + data (object)
+            - provider: `facebook` (string, required) - valid provider
+            - token: `1afe4345acc` (string, required) - valid token 
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Succesfully registered` (string)
+            - success: `true` (boolean)
+        + data (UserResponse)
+
 
 ### Login a User [POST /auth/login]
 
@@ -58,6 +77,27 @@ Dev summit API blueprints
                 },
                 "success": true
             }
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+
+    + Attributes
+        + data (object)
+            - provider: `facebook` (string, required) - valid provider
+            - email: `shi88.andy@gmail.com` (string, required) - valid email 
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `User logged in` (string)
+            - success: `true` (boolean)
+        + data (object)
+            - access_token: `eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8` (string, required) - a valid access token
+            - refresh_token: `126991391b52558b` (string, required) - a valid refresh token
 
 ## User Management [/api/users]
 
@@ -287,7 +327,7 @@ Available include: `user`, `stage`
             - success: `true` (boolean)
         + data (BoothResponse)
 
-### Send points to attendee [PATCH /api/v1/booths/transfer]
+### Send points to attendee [POST /api/v1/booths/transfer]
 
 + Request (application/json)
     
