@@ -17,10 +17,10 @@ class UserAuthorizationController(BaseController):
 					token = userservice.save_token()
 					return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
 				else:
-					return BaseController.send_response_api(None, 'wrong credentials')
+					return BaseController.send_error_api(None, 'wrong credentials')
 			else:
-				return BaseController.send_response_api(None, 'username not found')
-		return BaseController.send_response_api(None, 'username and password required')
+				return BaseController.send_error_api(None, 'username not found')
+		return BaseController.send_error_api(None, 'username and password required')
 
 	@staticmethod
 	def register(request):
