@@ -99,21 +99,37 @@ Dev summit API blueprints
             - access_token: `eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8` (string, required) - a valid access token
             - refresh_token: `126991391b52558b` (string, required) - a valid refresh token
 
-## User Management [/api/users]
+
+## User Management [/api/v1/users]
 
 ### List of Users [GET]
 
 + Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Response 200 (application/json)
     + Attributes
         + meta (object)
             - count: 10,
             - total: 10
-        + data (array[UserResponse]) 
+
+        + data (array[UserResponse])
+
+        + included (array[TicketResponse])
 
 
-### Show User [GET /api/users/{user_id}]
+### Show User [GET /api/v1/users/{user_id}]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Parameters
     - user_id: `1` (string, required) - Valid User ID
@@ -123,10 +139,13 @@ Dev summit API blueprints
         + meta (object)
             - count: 1,
             - total: 1
+
         + data (UserResponse) 
 
+        + included (TicketResponse)
 
-### Update a User [PATCH /api/users/{user_id}]
+
+### Update a User [PATCH /api/v1/users/{user_id}]
     
 + Parameters
     - user_id : `1` (string, required) - Valid User ID
@@ -148,6 +167,121 @@ Dev summit API blueprints
             - message: 'User succesfully updated'
             - success: true
         + data (UserResponse)
+
+
+## Orders [/api/v1/orders]
+
+### Order a Ticket [POST]
+
++ Request (application/json)
+
+    + Headers
+                
+                Accept: application/json
+                Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (OrderRequest)
+        
++ Response 200 (application/json)
+
+    + Attributes
+        + meta
+            - message: `order succesfull` (string)
+            - success: true (boolean)
+        + data (array[OrderDetail])
+
+
+### Edit Order by id [PATCH /api/v1/orders/{order_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (OrderRequest)
+
+
++ Parameters
+    
+    - order_id: `1` (number, required) - Valid order id
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message: `Order data succesfully updated` (string)
+            - success: `true` (boolean)
+        + data (OrderResponse)
+        
+
+### Order List [GET]
+
++ Request (application/ json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+    
++ Response 200 (application/json)
+    
+    + Attributes
+        + meta
+            - count: `10` (number)
+            - total: `10` (number)
+        + data (array[OrderResponse])
+        + included
+            - user (UserResponse)
+            - ticket (array[TicketResponse])
+        + links (object)
+            - first: `https://private-909ac-devsummit.apiary-mock.com/api/v1/orders?page[limit]=10&page[offset]=0` (string, nullable)
+            - last: `https://private-909ac-devsummit.apiary-mock.com/api/v1/orders?page[limit]=10&page[offset]=10` (string, nullable)
+            - next: `https://private-909ac-devsummit.apiary-mock.com/api/v1/orders?page[limit]=10&page[offset]=10` (string, nullable)
+            - prev: `null` (string, nullable)
+
+
+### Order Details [GET /api/v1/orders/{order_id}]
+
++ Request (application/ json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+    - order_id : `1` (string, required) - Valid Order ID
+    
++ Response 200 (application/json)
+    
+    + Attributes
+        + meta
+            - count: `10` (number)
+            - total: `10` (number)
+        + data (OrderResponse)
+        + included
+            - user (UserResponse)
+            - ticket (array[TicketResponse])
+
+
+### Delete Orders [DELETE /api/v1/orders/{order_id}]
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - order_id: `1` (number, required) - valid ticket id
+
++ Response 204
 
 
 
@@ -920,7 +1054,7 @@ Post stage pictures
     + Body
 
             --MultipartBoundry
-            Content-Disposition: form-data; name="photo"; filename="some-picture.jpg"
+            Content-Disposition: form-data; name="photo"; filename="https://placeimg.com/640/480/any"
             Content-Type: image/jpeg
 
             RAW_FILE_DATA
@@ -1103,6 +1237,7 @@ post new beacon
         + data (BeaconResponse)
         + included (object)
           - stage (SpotResponse)
+
 
 ### Delete Beacon [DELETE /api/v1/beacons/{beacon_id}]
 
@@ -1343,7 +1478,7 @@ Spot may be deleted
     - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
 
 ### StagePicture
-- url: `image/path` (string)
+- url: `https://placeimg.com/640/480/any` (string)
 
 ### StagePictureResponse
 - type: `picture` (string)
@@ -1375,4 +1510,25 @@ Spot may be deleted
 
 ### TicketTransferRequest
 - ticket_id: `1` (number) - valid ticket id
-- receiver_id: `1` (number) - valid user id
+- receiver_id: `1` (number) - valid user ID
+
+### OrderRequest
+
+- user_id: `1` (number)
+- attributes (array)
+    - (object)
+        - ticket_id: `1` (number) 
+ 
+ 
+### OrderDetail
+- order_id: `1` (number)
+- user_id: `1` (number)
+- attributes (array)
+    - (object)
+        - ticket_id: `1` (number)
+
+    
+### OrderResponse
+- type: `order` (string)
+- id: `1` (number)
+- attributes (OrderDetail)
