@@ -18,3 +18,28 @@ class BaseController:
 			result=[],
 			success=False
 		)
+
+	@staticmethod
+	def send_response_api(data, message='', links={}):
+		meta = {
+			'message': message,
+			'success': True
+		}
+		return jsonify(
+			meta=meta,
+			data=data,
+			links=links
+		)
+
+	@staticmethod
+	def send_error_api(data, message='', links={}):
+		meta = {
+			'message': message,
+			'success': False
+		}
+		return jsonify(
+			meta=meta,
+			data=data,
+			links=links
+		)
+	

@@ -15,12 +15,12 @@ class UserAuthorizationController(BaseController):
 			if user is not None:
 				if user.verify_password(password):
 					token = userservice.save_token()
-					return BaseController.send_response({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
+					return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
 				else:
-					return BaseController.send_response(None, 'wrong credentials')
+					return BaseController.send_response_api(None, 'wrong credentials')
 			else:
-				return BaseController.send_response(None, 'username not found')
-		return BaseController.send_response(None, 'username and password required')
+				return BaseController.send_response_api(None, 'username not found')
+		return BaseController.send_response_api(None, 'username and password required')
 
 	@staticmethod
 	def register(request):
@@ -41,11 +41,11 @@ class UserAuthorizationController(BaseController):
 				'password': password
 			}
 		else:
-			return BaseController.send_response(None, 'payloads not valid')
+			return BaseController.send_response_api(None, 'payloads not valid')
 		print('fooo')
 		result = userservice.register(payloads)
 		print(result)
 		if not result['error']:
-			return BaseController.send_response(result['data'], 'user succesfully registered')
+			return BaseController.send_response_api(result['data'], 'user succesfully registered')
 		else:
-			return BaseController.send_error(None, result['data'])
+			return BaseController.send_error_api(None, result['data'])
