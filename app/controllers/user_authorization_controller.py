@@ -7,8 +7,8 @@ class UserAuthorizationController(BaseController):
 
 	@staticmethod
 	def login(request):
-		username = request.form['username'] if 'username' in request.form else None
-		password = request.form['password'] if 'password' in request.form else None
+		username = request.json['username'] if 'username' in request.json else None
+		password = request.json['password'] if 'password' in request.json else None
 		if username and password:
 			# check if user exist
 			user = userservice.get_user(username)

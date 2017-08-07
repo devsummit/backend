@@ -11,6 +11,7 @@ from app.controllers.ticket_controller import TicketController
 from app.controllers.stage_controller import StageController
 from app.controllers.beacon_controller import BeaconController
 from app.controllers.spot_controller import SpotController
+from app.controllers.event_controller import EventController
 
 api = Blueprint('api', __name__)
 
@@ -19,6 +20,7 @@ api = Blueprint('api', __name__)
 @token_required
 def api_index(*args, **kwargs):
 	return 'api index'
+
 
 # Ticket api
 
@@ -105,3 +107,30 @@ def spot(*args, **kwargs):
 @token_required
 def spot_id(id, *args, **kwargs):
 	return SpotController.update(request, id)
+
+
+# Events API
+
+@api.route('/events', methods=['GET'])
+def index():
+	return EventController.index()
+
+
+@api.route('/events/<event_id>', methods=['GET'])
+def show(event_id):
+	return EventController.show(event_id)
+
+
+@api.route('/events', methods=['POST'])
+def create():
+	return EventController.create(request)
+
+
+@api.route('/events/<event_id>', methods=['PATCH'])
+def update(event_id):
+	return EventController.update(request, event_id)
+
+
+@api.route('/events/<event_id>', methods=['DELETE'])
+def delete(event_id):
+	return EventController.delete(event_id)

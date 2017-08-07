@@ -7,3 +7,6 @@ alembic==0.9.3
 
 # Linter
 flake8==2.4.0
+
+# faker - to generate fake data(used in seeder)
+Faker==0.7.18
