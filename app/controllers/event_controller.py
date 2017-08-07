@@ -1,7 +1,6 @@
 # parent class imports
 from app.controllers.base_controller import BaseController
 from app.services import eventservice
-from app.models.events import Events
 
 
 class EventController(BaseController):
@@ -10,7 +9,6 @@ class EventController(BaseController):
         def index():
                 result = eventservice.index()
                 return BaseController.send_response_api(result, 'events retrieved successfully')
-
 
         @staticmethod
         def show(id):

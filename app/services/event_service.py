@@ -20,16 +20,16 @@ class EventService:
             information = payloads['information'] if 'information' in payloads else None
             time_start = payloads['time_start'] if 'time_start' in payloads else None
             time_end = payloads['time_start'] if 'time_start' in payloads else None
-            
+
             self.events_model.information = information
             self.events_model.time_start = time_start
             self.events_model.time_end = time_end
-            
+
             db.session.add(self.events_model)
             db.session.commit()
-            
+
             data = self.events_model.as_dict()
-            
+
             return {
                 'error': False,
                 'data': data
@@ -48,7 +48,7 @@ class EventService:
             information = payloads['information'] if 'information' in payloads else None
             time_start = payloads['time_start'] if 'time_start' in payloads else None
             time_end = payloads['time_start'] if 'time_start' in payloads else None
-            
+
             new_event = {}
             if information:
                 new_event["information"] = information
@@ -58,7 +58,7 @@ class EventService:
                 new_event["time_end"] = time_end
 
             self.events_model.update(new_event)
-            
+
             db.session.commit()
             data = self.events_model.first().as_dict()
             return {
@@ -72,7 +72,7 @@ class EventService:
                 'error': True,
                 'data': data
             }
-    
+
     def delete(self, id):
         self.events_model = db.session.query(Events).filter_by(id=id)
         if self.events_model.first() is not None:
