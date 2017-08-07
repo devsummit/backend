@@ -1,3 +1,4 @@
+from functools import wraps
 from flask import jsonify, request, current_app
 from itsdangerous import (TimedJSONWebSignatureSerializer 
 	as Serializer, BadSignature, SignatureExpired
@@ -7,6 +8,7 @@ from app.models.user import User
 
 
 def token_required(f):
+	@wraps(f)
 	def decorated(*args, **kwargs):
 		if 'Authorization' not in request.headers:
 			return jsonify({'message': 'token is missing'})
