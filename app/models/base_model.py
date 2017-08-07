@@ -10,3 +10,13 @@ class BaseModel:
 			return {c: getattr(self, c) for c in self.visible}
 		else:
 			return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+	'''
+	method to return list of query resutl as array dict
+	'''
+	@staticmethod
+	def as_list(result):
+		result_list = []
+		for res in result:
+			result_list.append(res.as_dict())
+		return result_list

@@ -42,9 +42,7 @@ class UserAuthorizationController(BaseController):
 			}
 		else:
 			return BaseController.send_response_api(None, 'payloads not valid')
-		print('fooo')
 		result = userservice.register(payloads)
-		print(result)
 		if not result['error']:
 			return BaseController.send_response_api(result['data'], 'user succesfully registered')
 		else:
