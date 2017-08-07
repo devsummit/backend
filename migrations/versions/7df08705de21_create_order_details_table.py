@@ -25,6 +25,7 @@ def upgrade():
 		sa.Column('order_id', sa.Integer,
 			sa.ForeignKey('orders.id')),
 		sa.Column('count', sa.Integer),
+		sa.Column('price', sa.Integer),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime)
 		)

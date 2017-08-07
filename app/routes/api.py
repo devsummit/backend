@@ -11,6 +11,8 @@ from app.controllers.ticket_controller import TicketController
 from app.controllers.stage_controller import StageController
 from app.controllers.beacon_controller import BeaconController
 from app.controllers.spot_controller import SpotController
+from app.controllers.order_controller import OrderController
+from app.controllers.order_details_controller import OrderDetailsController
 from app.controllers.event_controller import EventController
 
 api = Blueprint('api', __name__)
@@ -109,7 +111,48 @@ def spot_id(id, *args, **kwargs):
 	return SpotController.update(request, id)
 
 
+# Ticket Order API
+
+@api.route('/orders', methods=['GET', 'POST'])
+@token_required
+def orders(*args, **kwargs):
+	user_id = kwargs['user'].id
+	if(request.method == 'GET'):
+		return OrderController.index()
+	elif(request.method == 'POST'):
+		return OrderController.create(request, user_id)
+
+
+@api.route('/orders/<id>', methods=['DELETE', 'GET'])
+@token_required
+def orders_id(id, *args, **kwargs):
+	if(request.method == 'GET'):
+		return OrderController.show(id)
+	elif(request.method == 'DELETE'):
+		return OrderController.delete(id)
+
+
+@api.route('/orders/<order_id>/details', methods=['GET', 'POST'])
+@token_required
+def orders_details(order_id, *args, **kwargs):
+	if(request.method == 'GET'):
+		return OrderDetailsController.index(order_id)
+	elif(request.method == 'POST'):
+		return OrderDetailsController.create(order_id, request)
+
+
+@api.route('/orders/<order_id>/details/<detail_id>', methods=['PUT', 'PATCH', 'DELETE', 'GET'])
+@token_required
+def orders_details_id(order_id, detail_id, *args, **kwargs):
+	if(request.method == 'GET'):
+		return OrderDetailsController.show(order_id, detail_id)
+	elif(request.method == 'PUT' or request.method == 'PATCH'):
+		return OrderDetailsController.update(detail_id, request)
+	elif(request.method == 'DELETE'):
+		return OrderDetailsController.delete(order_id, detail_id)
+
 # Events API
+
 
 @api.route('/events', methods=['GET'])
 def index():
