@@ -8,7 +8,7 @@ class OrderDetails(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'order_details'
 	# displayed fields
-	visible = ['id', 'ticket_id', 'order_id', 'count', 'created_at', 'updated_at']
+	visible = ['id', 'ticket_id', 'order_id', 'count', 'price', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -25,6 +25,7 @@ class OrderDetails(db.Model, BaseModel):
 	)
 	order = db.relationship('Order')
 	count = db.Column(db.Integer)
+	price = db.Column(db.Integer)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
