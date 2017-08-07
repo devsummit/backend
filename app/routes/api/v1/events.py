@@ -6,13 +6,13 @@ from app.controllers.event_controller import EventController
 
 events = Blueprint('events', __name__)
 
-
-@events.route('/events', methods=['GET'])
+BASE = '/events'
+@events.route(BASE, methods=['GET'])
 def index():
 	return EventController.index(request)
 
 
-@events.route('/events', methods=['PATCH'])
+@events.route(BASE, methods=['PATCH'])
 def edit():
 	return EventController.edit(request)
 
