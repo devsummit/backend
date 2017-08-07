@@ -2,8 +2,9 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
-from app.models.order_details import OrderDetails
+from app.models.ticket import Ticket
 
+from app.models.order_details import OrderDetails
 
 class OrderService():
 
@@ -33,6 +34,9 @@ class OrderService():
 				order_item.ticket_id = item['ticket_id']
 				order_item.count = item['count']
 				order_item.order_id = order_id
+				# get ticket data
+				ticket = self.get_ticket(item['ticket_id'])
+				order_item.price = ticket.price
 				db.session.add(order_item)
 			# save all items
 			db.session.commit()
@@ -64,3 +68,6 @@ class OrderService():
 				'error': True,
 				'data': data
 			}
+
+	def get_ticket(self, id):
+		return db.session.query(Ticket).filter_by(id=id).first()
