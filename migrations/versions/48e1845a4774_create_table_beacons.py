@@ -20,7 +20,8 @@ def upgrade():
     op.create_table('beacons',
                     sa.Column('id', sa.Integer, primary_key=True),
                     sa.Column('code', sa.String),
-                    sa.Column('timestamps', sa.DateTime)
+                    sa.Column('created_at', sa.DateTime),
+                    sa.Column('updated_at', sa.DateTime)
                     )
 
 

@@ -23,7 +23,10 @@ def upgrade():
                         'beacons.id', ondelete='CASCADE')),
                     sa.Column('stage_id', sa.Integer, sa.ForeignKey(
                         'stages.id', ondelete='CASCADE')),
-                    sa.Column('timestamps', sa.DateTime)
+                    sa.Column('coordinate_x', sa.Integer),
+                    sa.Column('coordinate_y', sa.Integer),
+                    sa.Column('created_at', sa.DateTime),
+                    sa.Column('updated_at', sa.DateTime)
                     )
 
 

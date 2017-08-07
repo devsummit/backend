@@ -49,6 +49,6 @@ class UserService:
         token_exist.refresh_token = self.model_user.generate_refresh_token()
         db.session.commit()
         return{
-            'error': False,
+            'error': True,
             'data': token_exist
         }
