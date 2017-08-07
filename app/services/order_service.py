@@ -6,6 +6,7 @@ from app.models.ticket import Ticket
 
 from app.models.order_details import OrderDetails
 
+
 class OrderService():
 
 	def __init__(self, model_order):

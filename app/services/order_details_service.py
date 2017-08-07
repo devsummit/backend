@@ -78,5 +78,6 @@ class OrderDetailsService():
 				'error': True,
 				'data': data
 			}
+
 	def get_ticket(self, id):
 		return db.session.query(Ticket).filter_by(id=id).first()
