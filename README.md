@@ -9,6 +9,8 @@
 - database migration can be done by the following steps:
 	- create a database file by `touch app.db`, naming convention follows the configuration in `alembic.ini` `sqlalchemy.url` value.
 	- migrate by run `alembic upgrade head`
+- seed the table by running:
+	`python manage.py seed`
 - run the server by `python manage.py server`.
 
 # Linting
