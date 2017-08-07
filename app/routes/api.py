@@ -9,6 +9,7 @@ from app.middlewares.authentication import token_required
 # controllers import
 from app.controllers.ticket_controller import TicketController
 from app.controllers.stage_controller import StageController
+from app.controllers.beacon_controller import BeaconController
 
 api = Blueprint('api', __name__)
 
@@ -29,7 +30,7 @@ def ticket(*args, **kwargs):
 	elif(request.method == 'GET'):
 		return TicketController.index()
 
-# Get ticket by id
+# Ticket route by id
 
 
 @api.route('/tickets/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
@@ -53,7 +54,7 @@ def stage(*args, **kwargs):
 	elif(request.method == 'GET'):
 		return StageController.index()
 
-# Get ticket by id
+# Stage route by id
 
 
 @api.route('/stages/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
@@ -65,3 +66,25 @@ def stage_id(id, *args, **kwargs):
 		return StageController.delete(id)
 	elif(request.method == 'GET'):
 		return StageController.show(id)
+
+# Beacon api
+
+
+@api.route('/beacons', methods=['GET', 'POST'])
+@token_required
+def beacon(*args, **kwargs):
+	if(request.method == 'POST'):
+		return BeaconController.create(request)
+	elif(request.method == 'GET'):
+		return BeaconController.index()
+
+# Beacon route by id
+
+
+@api.route('/beacons/<id>', methods=['PUT', 'PATCH', 'DELETE'])
+@token_required
+def beacon_id(id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return BeaconController.update(request, id)
+	elif(request.method == 'DELETE'):
+		return BeaconController.delete(id)
