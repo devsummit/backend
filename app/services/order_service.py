@@ -1,4 +1,3 @@
-import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
@@ -21,7 +20,6 @@ class OrderService():
 
 	def create(self, payloads):
 		order_details = payloads['order_details']
-		print(order_details)
 		self.model_order.user_id = payloads['user_id']
 		self.model_order.status = 'pending'
 		db.session.add(self.model_order)

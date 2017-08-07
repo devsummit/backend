@@ -8,7 +8,7 @@ class Order(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'orders'
 	# displayed fields
-	visible = ['id', 'user_id','status', 'created_at', 'updated_at']
+	visible = ['id', 'user_id', 'status', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)

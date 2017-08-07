@@ -1,13 +1,10 @@
 '''
 put api route in here
 '''
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 
 # import middlewares
 from app.middlewares.authentication import token_required
-
-# User model
-from app.models.user import User
 
 # controllers import
 from app.controllers.ticket_controller import TicketController
@@ -123,6 +120,7 @@ def orders(*args, **kwargs):
 	elif(request.method == 'POST'):
 		return OrderController.create(request, user_id)
 
+
 @api.route('/orders/<id>', methods=['DELETE', 'GET'])
 @token_required
 def orders_id(id, *args, **kwargs):
@@ -131,6 +129,7 @@ def orders_id(id, *args, **kwargs):
 	elif(request.method == 'DELETE'):
 		return OrderController.delete(id)
 
+
 @api.route('/orders/<order_id>/details', methods=['GET', 'POST'])
 @token_required
 def orders_details(order_id, *args, **kwargs):
@@ -138,6 +137,7 @@ def orders_details(order_id, *args, **kwargs):
 		return OrderDetailsController.index(order_id)
 	elif(request.method == 'POST'):
 		return OrderDetailsController.create(order_id, request)
+
 
 @api.route('/orders/<order_id>/details/<detail_id>', methods=['PUT', 'PATCH', 'DELETE', 'GET'])
 @token_required

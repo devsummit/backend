@@ -2,13 +2,13 @@ from app.controllers.base_controller import BaseController
 from app.models.base_model import BaseModel
 from app.services import orderdetailservice
 
+
 class OrderDetailsController(BaseController):
 
 	@staticmethod
 	def index(order_id):
 		order_details = orderdetailservice.get(order_id)
 		return BaseController.send_response_api(BaseModel.as_list(order_details), 'order details retrieved successfully')
-
 
 	@staticmethod
 	def show(order_id, detail_id):

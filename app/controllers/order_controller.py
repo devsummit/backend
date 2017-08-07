@@ -2,6 +2,7 @@ from app.controllers.base_controller import BaseController
 from app.models.base_model import BaseModel
 from app.services import orderservice
 
+
 class OrderController(BaseController):
 
 	@staticmethod
@@ -38,4 +39,3 @@ class OrderController(BaseController):
 		if order['error']:
 			return BaseController.send_response_api(None, 'order not found')
 		return BaseController.send_response_api(None, 'order with id: ' + id + ' has been succesfully deleted')
-
