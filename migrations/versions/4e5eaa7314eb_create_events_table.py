@@ -19,6 +19,7 @@ depends_on = None
 def upgrade():
 	op.create_table('events',
 		sa.Column('id', sa.Integer, primary_key=True),
+		sa.Column('title', sa.String),
 		sa.Column('information', sa.String),
 		sa.Column('time_start', sa.DateTime),
 		sa.Column('time_end', sa.DateTime),
