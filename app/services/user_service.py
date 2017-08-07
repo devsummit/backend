@@ -19,7 +19,7 @@ class UserService:
         db.session.add(self.model_user)
         try:
             db.session.commit()
-            data = self.model.user.as_dict()
+            data = self.model_user.as_dict()
             return {
                 'error': False,
                 'data': data
