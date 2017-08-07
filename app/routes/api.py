@@ -10,6 +10,7 @@ from app.middlewares.authentication import token_required
 from app.controllers.ticket_controller import TicketController
 from app.controllers.stage_controller import StageController
 from app.controllers.beacon_controller import BeaconController
+from app.controllers.spot_controller import SpotController
 
 api = Blueprint('api', __name__)
 
@@ -88,3 +89,19 @@ def beacon_id(id, *args, **kwargs):
 		return BeaconController.update(request, id)
 	elif(request.method == 'DELETE'):
 		return BeaconController.delete(id)
+
+# Spot api
+
+
+@api.route('/spots', methods=['GET'])
+@token_required
+def spot(*args, **kwargs):
+	return SpotController.index()
+
+# Spot route by id
+
+
+@api.route('/spots/<id>', methods=['PUT', 'PATCH'])
+@token_required
+def spot_id(id, *args, **kwargs):
+	return SpotController.update(request, id)
