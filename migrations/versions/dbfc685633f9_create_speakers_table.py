@@ -20,7 +20,9 @@ def upgrade():
 	op.create_table('speakers',
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
+		sa.Column('job', sa.String),
 		sa.Column('summary', sa.String),
+		sa.Column('information', sa.Text),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)
