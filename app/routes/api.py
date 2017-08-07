@@ -19,6 +19,8 @@ def api_index(*args, **kwargs):
 
 # Ticket api
 # Fetch ticket list
+
+
 @api.route('/tickets', methods=['GET', 'POST'])
 @token_required
 def ticket_get(*args, **kwargs):
@@ -28,6 +30,8 @@ def ticket_get(*args, **kwargs):
 		return TicketController.index()
 
 # Get ticket by id
+
+
 @api.route('/tickets/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @token_required
 def ticket_show(id, *args, **kwargs):
