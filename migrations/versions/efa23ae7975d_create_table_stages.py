@@ -22,7 +22,8 @@ def upgrade():
                     sa.Column('name', sa.String, unique=True),
                     sa.Column('stage_type', sa.String),
                     sa.Column('information', sa.String),
-                    sa.Column('timestamps', sa.DateTime)
+                    sa.Column('created_at', sa.DateTime),
+                    sa.Column('updated_at', sa.DateTime)
                     )
 
 
