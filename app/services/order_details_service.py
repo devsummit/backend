@@ -3,6 +3,7 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order_details import OrderDetails
+from app.models.ticket import Ticket
 
 
 class OrderDetailsService():
@@ -22,7 +23,9 @@ class OrderDetailsService():
 		self.model_order_details.ticket_id = payloads['ticket_id']
 		self.model_order_details.count = payloads['count']
 		self.model_order_details.order_id = order_id
-
+		# get ticket data
+		ticket = self.get_ticket(payloads['ticket_id'])
+		self.model_order_details.price = ticket.price
 		db.session.add(self.model_order_details)
 		try:
 			db.session.commit()
@@ -75,3 +78,5 @@ class OrderDetailsService():
 				'error': True,
 				'data': data
 			}
+	def get_ticket(self, id):
+		return db.session.query(Ticket).filter_by(id=id).first()
