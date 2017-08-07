@@ -4,6 +4,7 @@ class BaseModel:
 	'''
 	method to return model class as dict
 	'''
+
 	def as_dict(self):
 		''' return readable field if set, and all field otherwise '''
 		if hasattr(self, 'visible'):
