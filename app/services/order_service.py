@@ -30,6 +30,7 @@ class OrderService():
 			data = self.model_order.as_dict()
 			# insert the order details
 			order_id = data['id']
+			order_items = []
 			for item in order_details:
 				order_item = OrderDetails()
 				order_item.ticket_id = item['ticket_id']
@@ -38,13 +39,14 @@ class OrderService():
 				# get ticket data
 				ticket = self.get_ticket(item['ticket_id'])
 				order_item.price = ticket.price
+				order_items.append(order_item.as_dict())
 				db.session.add(order_item)
 			# save all items
 			db.session.commit()
-			data['details'] = order_details
 			return {
 				'error': False,
-				'data': data
+				'data': data,
+				'included': order_items
 			}
 		except SQLAlchemyError as e:
 			data = e.orig.args

@@ -29,7 +29,7 @@ class OrderController(BaseController):
 		result = orderservice.create(payloads)
 
 		if not result['error']:
-			return BaseController.send_response_api(result['data'], 'order succesfully created')
+			return BaseController.send_response_api(result['data'], 'order succesfully created', result['included'])
 		else:
 			return BaseController.send_error_api(None, result['data'])
 
