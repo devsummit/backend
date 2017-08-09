@@ -14,6 +14,7 @@ from app.controllers.spot_controller import SpotController
 from app.controllers.order_controller import OrderController
 from app.controllers.order_details_controller import OrderDetailsController
 from app.controllers.event_controller import EventController
+from app.controllers.schedule_controller import ScheduleController
 
 api = Blueprint('api', __name__)
 
@@ -177,3 +178,28 @@ def update(event_id):
 @api.route('/events/<event_id>', methods=['DELETE'])
 def delete(event_id):
 	return EventController.delete(event_id)
+
+
+# Schedule api
+
+
+@api.route('/schedules', methods=['GET', 'POST'])
+@token_required
+def schedule(*args, **kwargs):
+	if(request.method == 'POST'):
+		return ScheduleController.create(request)
+	elif(request.method == 'GET'):
+		return ScheduleController.index()
+
+# Beacon route by id
+
+
+@api.route('/schedules/<id>', methods=['PUT', 'PATCH', 'DELETE', 'GET'])
+@token_required
+def schedule_id(id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return ScheduleController.update(request, id)
+	elif(request.method == 'GET'):
+		return ScheduleController.show(id)
+	elif(request.method == 'DELETE'):
+		return ScheduleController.delete(id)
