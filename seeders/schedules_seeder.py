@@ -26,10 +26,10 @@ class SchedulesSeeder():
         stages = BaseModel.as_list(db.session.query(Stage).all())
         for i in range(0, 30):
             user_id = random.choice(users)['id']
-            event_id = random.choice(users)['id']
-            stage_id = random.choice(users)['id']
+            event_id = random.choice(events)['id']
+            stage_id = random.choice(stages)['id']
             time_start = fake.future_datetime()
-            rand_int = random.randint(5,50)
+            rand_int = random.randint(5, 50)
             time_end = time_start + timedelta(hours=rand_int)
             schedule = {
                 'user_id': user_id,
@@ -46,5 +46,3 @@ class SchedulesSeeder():
             new_schedule.time_end = schedule['time_end']
             db.session.add(new_schedule)
             db.session.commit()
-        
-        

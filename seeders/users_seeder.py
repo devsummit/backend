@@ -1,5 +1,4 @@
 from faker import Faker
-from datetime import timedelta
 from app.models.user import User
 from app.models import db
 from random import randint
@@ -23,7 +22,7 @@ class UsersSeeder():
             email = fake.safe_email()
             username = fake.user_name()
             password = fake.md5(raw_output=False)
-            role_id = randint(1,4)
+            role_id = randint(1, 4)
             user = {
                 'first_name': first_name,
                 'last_name': last_name,

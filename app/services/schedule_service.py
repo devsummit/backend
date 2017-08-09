@@ -14,7 +14,6 @@ class ScheduleService():
 		schedules = db.session.query(Schedule).all()
 		# add includes
 		included = self.get_includes(schedules)
-		
 		return {
 			'data': schedules,
 			'included': included
@@ -60,8 +59,8 @@ class ScheduleService():
 				'user_id': payloads['user_id'],
 				'event_id': payloads['event_id'],
 				'stage_id': payloads['stage_id'],
-				'time_start':  datetime.datetime.strptime(payloads['time_start'], '%b %d %Y %I:%M%p'),
-				'time_end':  datetime.datetime.strptime(payloads['time_end'], '%b %d %Y %I:%M%p'),
+				'time_start': datetime.datetime.strptime(payloads['time_start'], '%b %d %Y %I:%M%p'),
+				'time_end': datetime.datetime.strptime(payloads['time_end'], '%b %d %Y %I:%M%p'),
 				'updated_at': datetime.datetime.now()
 			})
 			db.session.commit()
@@ -96,7 +95,7 @@ class ScheduleService():
 				'data': data
 			}
 
-	def get_includes(self, schedules) :
+	def get_includes(self, schedules):
 		included = []
 		if isinstance(schedules, list):
 			for schedule in schedules:

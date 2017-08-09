@@ -1,5 +1,4 @@
 from faker import Faker
-from datetime import timedelta
 from app.models.beacon import Beacon
 from app.models import db
 
@@ -21,7 +20,6 @@ class BeaconsSeeder():
             beacon = {
                 'code': code
             }
-            
             new_beacon = Beacon()
             new_beacon.code = beacon['code']
             db.session.add(new_beacon)

@@ -5,6 +5,7 @@ from app.models import db
 from app.models.event import Event
 from app.models.stage import Stage
 
+
 class Schedule(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'schedules'

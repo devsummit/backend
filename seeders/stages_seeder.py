@@ -1,5 +1,4 @@
 from faker import Faker
-from datetime import timedelta
 from app.models.stage import Stage
 from app.models import db
 import random
@@ -17,7 +16,7 @@ class StagesSeeder():
         Create 20 Users seeds
         """
         fake = Faker()
-        stage_types = ['podium','booth','mainstage']
+        stage_types = ['podium', 'booth', 'mainstage']
         for i in range(0, 10):
             name = fake.name()
             stage_type = random.choice(stage_types)
