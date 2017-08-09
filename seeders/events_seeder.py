@@ -17,19 +17,17 @@ class EventsSeeder():
         """
         fake = Faker()
         for i in range(0, 10):
-            time_start = fake.future_datetime(end_date="+30d", tzinfo=None)
-            time_end = time_start + timedelta(hours=3)
+            title = fake.sentence(
+                nb_words=3, variable_nb_words=True, ext_word_list=None)
             information = fake.sentence(
                 nb_words=6, variable_nb_words=True, ext_word_list=None)
             event = {
                 'information': information,
-                'time_start': time_start,
-                'time_end': time_end
+                'title': title
             }
 
             new_event = Events()
             new_event.information = event['information']
-            new_event.time_start = event['time_start']
-            new_event.time_end = event['time_end']
+            new_event.title = event['title']
             db.session.add(new_event)
             db.session.commit()
