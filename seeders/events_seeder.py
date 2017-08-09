@@ -13,10 +13,10 @@ class EventsSeeder():
     @staticmethod
     def run():
         """
-        Create 10 Event seeds
+        Create 20 Event seeds
         """
         fake = Faker()
-        for i in range(0, 10):
+        for i in range(0, 20):
             title = fake.sentence(
                 nb_words=3, variable_nb_words=True, ext_word_list=None)
             information = fake.sentence(
