@@ -25,24 +25,14 @@ class SchedulesSeeder():
         events = BaseModel.as_list(db.session.query(Event).all())
         stages = BaseModel.as_list(db.session.query(Stage).all())
         for i in range(0, 30):
-            user_id = random.choice(users)['id']
-            event_id = random.choice(events)['id']
-            stage_id = random.choice(stages)['id']
             time_start = fake.future_datetime()
             rand_int = random.randint(5, 50)
             time_end = time_start + timedelta(hours=rand_int)
-            schedule = {
-                'user_id': user_id,
-                'event_id': event_id,
-                'stage_id': stage_id,
-                'time_start': time_start,
-                'time_end': time_end
-            }
             new_schedule = Schedule()
-            new_schedule.user_id = schedule['user_id']
-            new_schedule.event_id = schedule['event_id']
-            new_schedule.stage_id = schedule['stage_id']
-            new_schedule.time_start = schedule['time_start']
-            new_schedule.time_end = schedule['time_end']
+            new_schedule.user_id = random.choice(users)['id']
+            new_schedule.event_id = random.choice(events)['id']
+            new_schedule.stage_id = random.choice(stages)['id']
+            new_schedule.time_start = time_start
+            new_schedule.time_end = time_end
             db.session.add(new_schedule)
             db.session.commit()
