@@ -1,6 +1,6 @@
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from app.models.events import Events
+from app.models.event import Event
 
 
 class EventService:
