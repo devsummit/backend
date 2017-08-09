@@ -4,7 +4,7 @@ from app.models.base_model import BaseModel
 from app.models import db
 
 
-class Events(db.Model, BaseModel):
+class Event(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'events'
 	# displayed fields
