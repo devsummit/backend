@@ -9,7 +9,7 @@ env:
 	# sudo pacman -S python-virtualenv 
 	sudo apt-get install -y python3.6 python-virtualenv
 	virtualenv -p python3.6 env && \
-	. env/bin/activate && \
+	. env/bin/activate
 
 lint:
 	flake8 --config=flake8.ini .
