@@ -1,5 +1,4 @@
 from faker import Faker
-from datetime import timedelta
 from app.models.event import Event
 from app.models import db
 
