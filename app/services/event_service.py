@@ -8,18 +8,17 @@ class EventService:
         self.events_model = events_model
 
     def index(self):
-        events = db.session.query(Events).all()
+        events = db.session.query(Event).all()
         return self.events_model.as_list(events)
 
     def show(self, id):
-        self.events_model = db.session.query(Events).filter_by(id=id).first()
+        self.events_model = db.session.query(Event).filter_by(id=id).first()
         return self.events_model.as_dict()
 
     def create(self, payloads):
         try:
             information = payloads['information'] if 'information' in payloads else None
-            time_end = payloads['title'] if 'title' in payloads else None
-
+            title = payloads['title'] if 'title' in payloads else None
             self.events_model.information = information
             self.events_model.title = title
 
@@ -42,7 +41,7 @@ class EventService:
 
     def update(self, id, payloads):
         try:
-            self.events_model = db.session.query(Events).filter_by(id=id)
+            self.events_model = db.session.query(Event).filter_by(id=id)
             information = payloads['information'] if 'information' in payloads else None
             title = payloads['title'] if 'title' in payloads else None
 
@@ -69,7 +68,7 @@ class EventService:
             }
 
     def delete(self, id):
-        self.events_model = db.session.query(Events).filter_by(id=id)
+        self.events_model = db.session.query(Event).filter_by(id=id)
         if self.events_model.first() is not None:
             # delete row
             self.events_model.delete()
