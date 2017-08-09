@@ -1,6 +1,6 @@
 from faker import Faker
 from datetime import timedelta
-from app.models.events import Events
+from app.models.event import Event
 from app.models import db
 
 '''
@@ -26,7 +26,7 @@ class EventsSeeder():
                 'title': title
             }
 
-            new_event = Events()
+            new_event = Event()
             new_event.information = event['information']
             new_event.title = event['title']
             db.session.add(new_event)
