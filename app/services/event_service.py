@@ -19,7 +19,6 @@ class EventService:
         try:
             information = payloads['information'] if 'information' in payloads else None
             title = payloads['title'] if 'title' in payloads else None
-
             self.events_model.information = information
             self.events_model.title = title
 
