@@ -16,11 +16,7 @@ class BeaconsSeeder():
         """
         fake = Faker()
         for i in range(0, 20):
-            code = fake.pystr(min_chars=8, max_chars=8)
-            beacon = {
-                'code': code
-            }
             new_beacon = Beacon()
-            new_beacon.code = beacon['code']
+            new_beacon.code = fake.pystr(min_chars=8, max_chars=8)
             db.session.add(new_beacon)
             db.session.commit()
