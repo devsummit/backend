@@ -8,6 +8,7 @@ from app.services.spot_service import SpotService
 from app.services.order_service import OrderService
 from app.services.order_details_service import OrderDetailsService
 from app.services.event_service import EventService
+from app.services.schedule_service import ScheduleService
 
 # models import
 from app.models.user import User
@@ -18,7 +19,8 @@ from app.models.spot import Spot
 from app.models.order import Order
 from app.models.order_details import OrderDetails
 from app.models.access_token import AccessToken
-from app.models.events import Events
+from app.models.event import Event
+from app.models.schedule import Schedule
 
 # Intantiate models
 user = User()
@@ -29,7 +31,8 @@ spot = Spot()
 order = Order()
 order_details = OrderDetails()
 access_token = AccessToken()
-events = Events()
+events = Event()
+schedules = Schedule()
 
 
 # instantiate service
@@ -41,3 +44,4 @@ spotservice = SpotService(spot)
 orderservice = OrderService(order)
 orderdetailservice = OrderDetailsService(order_details)
 eventservice = EventService(events)
+scheduleservice = ScheduleService(schedules)

@@ -1,6 +1,6 @@
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from app.models.events import Events
+from app.models.event import Event
 
 
 class EventService:
@@ -18,12 +18,10 @@ class EventService:
     def create(self, payloads):
         try:
             information = payloads['information'] if 'information' in payloads else None
-            time_start = payloads['time_start'] if 'time_start' in payloads else None
-            time_end = payloads['time_start'] if 'time_start' in payloads else None
+            time_end = payloads['title'] if 'title' in payloads else None
 
             self.events_model.information = information
-            self.events_model.time_start = time_start
-            self.events_model.time_end = time_end
+            self.events_model.title = title
 
             db.session.add(self.events_model)
             db.session.commit()
@@ -46,16 +44,13 @@ class EventService:
         try:
             self.events_model = db.session.query(Events).filter_by(id=id)
             information = payloads['information'] if 'information' in payloads else None
-            time_start = payloads['time_start'] if 'time_start' in payloads else None
-            time_end = payloads['time_start'] if 'time_start' in payloads else None
+            title = payloads['title'] if 'title' in payloads else None
 
             new_event = {}
             if information:
                 new_event["information"] = information
-            if time_start:
-                new_event["time_start"] = time_start
-            if time_end:
-                new_event["time_end"] = time_end
+            if title:
+                new_event["title"] = title
 
             self.events_model.update(new_event)
 

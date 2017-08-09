@@ -22,6 +22,8 @@ def upgrade():
 		sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
 		sa.Column('event_id', sa.Integer, sa.ForeignKey('events.id')),
 		sa.Column('stage_id', sa.Integer, sa.ForeignKey('stages.id')),
+		sa.Column('time_start', sa.DateTime),
+		sa.Column('time_end', sa.DateTime),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)

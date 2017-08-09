@@ -21,8 +21,6 @@ def upgrade():
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('title', sa.String),
 		sa.Column('information', sa.String),
-		sa.Column('time_start', sa.DateTime),
-		sa.Column('time_end', sa.DateTime),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)
