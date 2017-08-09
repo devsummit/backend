@@ -15,6 +15,7 @@ from app.controllers.order_controller import OrderController
 from app.controllers.order_details_controller import OrderDetailsController
 from app.controllers.event_controller import EventController
 from app.controllers.schedule_controller import ScheduleController
+from app.controllers.points_controller import PointsController
 
 api = Blueprint('api', __name__)
 
@@ -203,3 +204,21 @@ def schedule_id(id, *args, **kwargs):
 		return ScheduleController.show(id)
 	elif(request.method == 'DELETE'):
 		return ScheduleController.delete(id)
+
+# Point endpoint
+
+
+@api.route('/points/transfer', methods=['POST'])
+@token_required
+def transfer_points(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(user['role_id'] == 1 or user['role_id'] == 3):
+		return PointsController.transfer_point(request, user['id'])
+	return 'You cannot transfer points'
+
+
+@api.route('/points/logs', methods=['GET'])
+@token_required
+def transfer_points_log(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return PointsController.transfer_point_log(request, user)
