@@ -9,6 +9,7 @@ from app.services.order_service import OrderService
 from app.services.order_details_service import OrderDetailsService
 from app.services.event_service import EventService
 from app.services.schedule_service import ScheduleService
+from app.services.points_transaction_service import PointsTransactionService
 
 # models import
 from app.models.user import User
@@ -45,3 +46,4 @@ orderservice = OrderService(order)
 orderdetailservice = OrderDetailsService(order_details)
 eventservice = EventService(events)
 scheduleservice = ScheduleService(schedules)
+pointtransactionservice = PointsTransactionService()
