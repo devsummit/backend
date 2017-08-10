@@ -12,7 +12,6 @@ from app.services.schedule_service import ScheduleService
 from app.services.points_transaction_service import PointsTransactionService
 
 # models import
-from app.models.user import User
 from app.models.ticket import Ticket
 from app.models.stage import Stage
 from app.models.beacon import Beacon
@@ -24,7 +23,6 @@ from app.models.event import Event
 from app.models.schedule import Schedule
 
 # Intantiate models
-user = User()
 ticket = Ticket()
 stage = Stage()
 beacon = Beacon()
@@ -37,7 +35,7 @@ schedules = Schedule()
 
 
 # instantiate service
-userservice = UserService(user, access_token)
+userservice = UserService()
 ticketservice = TicketService(ticket)
 stageservice = StageService(stage)
 beaconservice = BeaconService(beacon)
