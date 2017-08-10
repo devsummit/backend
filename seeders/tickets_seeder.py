@@ -12,13 +12,21 @@ class TicketsSeeder():
     @staticmethod
     def run():
         """
-        Create 20 Ticket seeds
+        Create 4 Ticket seeds
         """
+        TICKET = dict([('gold', 150000), ('ruby', 100000),
+                       ('siver', 50000), ('bacan', 25000)])
+
         fake = Faker()
-        for i in range(0, 20):
+
+        for key, value in TICKET.items():
             new_ticket = Ticket()
-            new_ticket.ticket_type = fake.random_element(elements=('gold', 'silver', 'ruby'))
-            new_ticket.price = fake.price()
-            new_ticket.information = fake.sentence(nb_words=6, variable_nb_words=True, ext_word_list=None)
+
+            new_ticket.ticket_type = key
+
+            new_ticket.price = value
+
+            new_ticket.information = fake.sentence(
+                nb_words=6, variable_nb_words=True, ext_word_list=None)
             db.session.add(new_ticket)
             db.session.commit()
