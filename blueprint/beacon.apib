@@ -1,0 +1,121 @@
+## Beacon API [/api/v1/beacons]
+
+Management of beacons
+
+### Get list of beacons [GET]
+
+Get list of all beacons
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/beacons?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/beacons?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/beacons?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[BeaconResponse])
+
+### Show Beacon [GET /api/v1/beacons/{beacon_id}]
+
+Request to spesific beacon
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - beacon_id: `1` (number, required) - valid beacon id
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Beacon retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[BeaconResponse])
+        + included (object)
+            - stage (array[StageResponse])
+
+### Post Beacon [POST /api/v1/beacons]
+
+post new beacon
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Attributes (Beacon)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message:  `Beacon successfully created` (string)
+            - success: `true` (boolean)
+        + data (array[BeaconResponse])
+        + included (object)
+            - spot (array[SpotResponse])
+
+### Edit beacon filter by id [PATCH /api/v1/beacons/{beacon_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+
++ Attributes (object)
+  + data (object)
+      - type: beacon (string)
+      - attributes (object)
+        - stage_id: `1` (number) - valid stage id
+
++ Parameters
+    
+    - beacon_id: `1` (number, required) - valid beacon id
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message:  `Beacon successfully updated` (string)
+            - success: `true` (boolean)
+        + data (array[BeaconResponse])
+        + included (object)
+          - stage (array[SpotResponse])
+
+
+### Delete Beacon [DELETE /api/v1/beacons/{beacon_id}]
+
+Beacon may be deleted
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - beacon_id: `1` (number, required) - valid beacon id
+
++ Response 204
