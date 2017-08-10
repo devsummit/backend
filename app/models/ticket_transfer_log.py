@@ -9,13 +9,13 @@ class TicketTransferLog(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'ticket_transfer_log'
 	# displayed fields
-	visible = ['ticket_id', 'sender_user_id', 'receiver_user']
+	visible = ['ticket_id', 'sender_user_id', 'receiver_user_id']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
-	ticket_type = db.Column(db.String)
-	price = db.Column(db.Integer)
-	information = db.Column(db.String)
+	ticket_id = db.Column(db.Integer)
+	sender_user_id = db.Column(db.Integer)
+	receiver_user_id = db.Column(db.Integer)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
