@@ -7,9 +7,17 @@ from app.models.ticket_transfer_log import TicketTransferLog
 
 
 class TicketTransferService():
-    
-    def get(self):
-        transferslogs = db.session.query(TicketTransferLog).all()
+
+    # query = meta.Session.query(User).filter(or_(User.firstname.like(searchVar),User.lastname.like(searchVar)))
+
+    def get_logs(self, user_id=''):
+        if user_id == '':
+            transferslogs = db.session.query(TicketTransferLog).all()
+        else:
+            transferslogsends = db.session.query(TicketTransferLog).filter(TicketTransferLog.sender_user_id==user_id)
+            transferslogreceives = db.session.query(TicketTransferLog).filter(TicketTransferLog.sender_user_id==user_id)
+            transferslogs = transferslogsends.union(transferslogreceives)
+
         return transferslogs
 
     def show(self, id):
@@ -17,4 +25,3 @@ class TicketTransferService():
 
     def create(self, payloads):
         pass
-    

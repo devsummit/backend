@@ -227,8 +227,8 @@ def transfer_points_log(*args, **kwargs):
 
 # Ticket Transfer endpoint
 
-@pi.route('/tickets/transfer/logs', methods=['POST'])
+@api.route('/tickets/transfer/logs', methods=['GET'])
 @token_required
-def ticket_transfer.logs(*args, **kwargs):
+def ticket_transfer_logs(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return TicketTransferController.ticket_transfer_logs(request, user)
