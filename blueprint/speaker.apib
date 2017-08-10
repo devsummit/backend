@@ -19,7 +19,7 @@ Available include: `user`, `material`
             - total: `10` (number)
             - message: `Speakers successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (array[Attendee])
+        + data (array[SpeakerResponse])
         + links (object)
             - first: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=0` (string, nullable)
             - last: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=10` (string, nullable)
@@ -46,9 +46,9 @@ Available include: `user`, `material`
         + meta (object)
             - message: `Speaker successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (Speaker)
+        + data (array[SpeakerResponse])
         + included (object)
-            - user (array[User])
+            - user (array[UserResponse])
             - materials (array[MaterialResponse])
 
 ### Edit Speaker by id [PATCH /api/v1/speakers/{speaker_id}]
@@ -61,7 +61,7 @@ Available include: `user`, `material`
             Authorization: Bearer :[Gist](data/token.apib)
 
     + Attributes
-        + data (Booth)
+        + data (Speaker)
 
 
 + Parameters
@@ -74,4 +74,4 @@ Available include: `user`, `material`
         + meta (object)
             - message: `Speaker data succesfully updated` (string)
             - success: `true` (boolean)
-        + data (array[Speaker])
+        + data (array[SpeakerResponse])

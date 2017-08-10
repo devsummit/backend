@@ -14,11 +14,9 @@
         + meta
             - count: 10,
             - total: 10
-
-        + data (array[User])
-
+        + data (array[UserResponse])
         + included 
-            - ticket (array[Ticket])
+            - ticket (array[TicketResponse])
 
 
 ### Show User [GET /api/v1/users/{user_id}]
@@ -38,11 +36,9 @@
         + meta
             - count: 1,
             - total: 1
-
-        + data (array[User]) 
-
+        + data (array[UserResponse]) 
         + included 
-            - ticket (array[Ticket])
+            - ticket (array[TicketResponse])
 
 
 ### Update a User [PATCH /api/v1/users/{user_id}]
@@ -66,4 +62,4 @@
         + meta
             - message: 'User succesfully updated'
             - success: true
-        + data (array[User])
+        + data (array[UserResponse])

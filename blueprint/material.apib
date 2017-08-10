@@ -10,10 +10,10 @@ Get list of all materials of: logged in speaker, all speakers, and material of r
     + Headers
 
             Accept: application/json
-            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+            Authorization: Bearer :[Gist](data/token.apib)
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
           - count: `10` (number)
           - total: `10` (number)
@@ -33,14 +33,14 @@ Request to spesific materials
     + Headers
 
             Accept: application/json
-            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+            Authorization: Bearer :[Gist](data/token.apib)
 
 + Parameters
 
     - material_id: `1` (number, required) - valid material id
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Material retrieved successfully` (string)
             - success: `true` (boolean)
@@ -55,18 +55,18 @@ Speaker post new materials
     + Headers
 
             Accept: application/json
-            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+            Authorization: Bearer :[Gist](data/token.apib)
 
     + Attributes
         + data (Material)
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Material successfully created` (string)
             - success: `true` (boolean)
-        + data (MaterialResponse)
+        + data (array[MaterialResponse])
 
 
 ### Delete Material [DELETE /api/v1/materials/{id}]
@@ -78,7 +78,7 @@ Speaker may delete his/her materials
     + Headers
     
             Accept: application/json
-            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+            Authorization: Bearer :[Gist](data/token.apib)
 
 + Parameters
 

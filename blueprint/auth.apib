@@ -19,7 +19,7 @@
 
     + Attributes (BaseResponse)
 
-        + data (array[User])
+        + data (array[UserResponse])
 
 
 + Request (application/json)
@@ -38,7 +38,7 @@
 
     + Attributes (BaseResponse)
 
-        + data (array[User])
+        + data (array[UserResponse])
 
 
 ### Login a User [POST /auth/login]
@@ -56,7 +56,7 @@
 
     + Attributes (BaseResponse)
 
-        + data (array[Tokens])
+        + data (Tokens)
             
 
 + Request (application/json)
@@ -77,5 +77,5 @@
         + meta
             - message: `User logged in` (string)
             - success: `true` (boolean)
-        + data (array[Tokens])
+        + data (Tokens)
 

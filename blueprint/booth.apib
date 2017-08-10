@@ -19,7 +19,7 @@ Available include: `user`, `stage`
             - total: `10` (number)
             - message: `Booths successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (array[array][Booth])
+        + data (array[BoothResponse])
         + links
             - first: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=0` (string, nullable)
             - last: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=10` (string, nullable)
@@ -46,10 +46,10 @@ Available include: `user`, `stage`
         + meta
             - message: `Booth successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (array[Booth])
+        + data (array[BoothResponse])
         + included
-            - user (array[User])
-            - stage (array[Stage])
+            - user (array[UserResponse])
+            - stage (array[StageResponse])
 
 ### Edit Booth by id [PATCH /api/v1/booths/{booth_id}]
 
@@ -74,7 +74,7 @@ Available include: `user`, `stage`
         + meta
             - message: `Booth data succesfully updated` (string)
             - success: `true` (boolean)
-        + data (array[Booth])
+        + data (array[BoothResponse])
 
 ### Send points to attendee [POST /api/v1/booths/transfer]
 
@@ -96,4 +96,4 @@ Available include: `user`, `stage`
         + meta
             - message: `Point sent succesfully` (string)
             - success: `true` (boolean)
-        + data (array[Point]TransactionResponse)
+        + data (array[PointTransactionResponse])

@@ -19,7 +19,7 @@ Available include: `user`
             - total: `10` (number)
             - message: `Attendees successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (array[Attendee])
+        + data (array[AttendeeResponse])
         + links 
             - first: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=0` (string, nullable)
             - last: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=10` (string, nullable)
@@ -42,13 +42,13 @@ Available include: `user`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta 
             - message: `Attendee successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (array[Attendee])
+        + data (array[AttendeeResponse])
         + included 
-            - user (array[User])
+            - user (array[UserResponse])
 
 ### Edit Attendee by id [PATCH /api/v1/attendees/{attendee_id}]
 
@@ -69,11 +69,11 @@ Available include: `user`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta 
             - message: `Attendee data succesfully updated` (string)
             - success: `true` (boolean)
-        + data (array[Attendee])
+        + data (array[AttendeeResponse])
 
 ### Get points log [GET /api/v1/pointslog]
 
@@ -86,11 +86,11 @@ Available include: `user`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta 
             - message: `Points log data succesfully retrieved` (string)
             - success: `true` (boolean)
         + data (array[PointsLogResponse])
         + included 
-            - sender (array[Booth])
-            - receiver (array[Attendee])
+            - sender (array[BoothResponse])
+            - receiver (array[AttendeeResponse])

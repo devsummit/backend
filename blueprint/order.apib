@@ -10,7 +10,7 @@
                 Authorization: Bearer :[Gist](data/token.apib)
 
     + Attributes
-        + data (OrderRequest)
+        + data (Order)
         
 + Response 200 (application/json)
 
@@ -18,7 +18,7 @@
         + meta
             - message: `order succesfull` (string)
             - success: true (boolean)
-        + data (array[Order])
+        + data (array[OrderResponse])
 
 
 ### Edit Order by id [PATCH /api/v1/orders/{order_id}]
@@ -31,7 +31,7 @@
             Authorization: Bearer :[Gist](data/token.apib)
 
     + Attributes
-        + data (OrderRequest)
+        + data (Order)
 
 
 + Parameters
@@ -44,7 +44,7 @@
         + meta (object)
             - message: `Order data succesfully updated` (string)
             - success: `true` (boolean)
-        + data (array[Order])
+        + data (array[OrderResponse])
         
 
 ### Order List [GET]
@@ -62,7 +62,7 @@
         + meta
             - count: `10` (number)
             - total: `10` (number)
-        + data (array[array[Order]])
+        + data (array[OrderResponse])
         + included
             - user (array[User])
             - ticket (array[Ticket])
@@ -93,8 +93,8 @@
             - total: `10` (number)
         + data (array[Order])
         + included
-            - user (array[User])
-            - ticket (array[Ticket])
+            - user (array[UserResponse])
+            - ticket (array[TicketResponse])
 
 
 ### Delete Orders [DELETE /api/v1/orders/{order_id}]
