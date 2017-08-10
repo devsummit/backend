@@ -8,9 +8,6 @@ from app.models.ticket import Ticket
 
 class OrderDetailsService():
 
-	def __init__(self, model_order_details):
-		self.model_order_details = model_order_details
-
 	def get(self, order_id):
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
 		return order_details
@@ -20,6 +17,7 @@ class OrderDetailsService():
 		return order_details
 
 	def create(self, payloads, order_id):
+		self.model_order_details = OrderDetails()
 		self.model_order_details.ticket_id = payloads['ticket_id']
 		self.model_order_details.count = payloads['count']
 		self.model_order_details.order_id = order_id

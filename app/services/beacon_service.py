@@ -7,14 +7,12 @@ from app.models.beacon import Beacon
 
 class BeaconService():
 
-	def __init__(self, model_beacon):
-		self.model_beacon = model_beacon
-
 	def get(self):
 		beacons = db.session.query(Beacon).all()
 		return beacons
 
 	def create(self, payloads):
+		self.model_beacon = Beacon()
 		self.model_beacon.code = payloads['code']
 		db.session.add(self.model_beacon)
 		try:
