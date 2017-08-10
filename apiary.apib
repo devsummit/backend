@@ -5,6 +5,7 @@ HOST: https://private-909ac-devsummit.apiary-mock.com
 
 Dev summit API blueprints
 
+
 ## User Auth [/auth]
 
 ### Register a user [POST /auth/register]
@@ -12,29 +13,22 @@ Dev summit API blueprints
 + Request (application/json)
 
         {
-            "first_name": "andy",
-            "last_name": "herman",
-            "role": "attendee",
-            "username": "andy",
-            "email": "shi88.andy@gmail.com",
-            "password": "andy123"
+            "data": {
+                "first_name": "andy",
+                "last_name": "herman",
+                "role": "attendee",
+                "username": "andy",
+                "email": "shi88.andy@gmail.com",
+                "password": "andy123"
+            }
         }
 
 + Response 200 (application/json)
 
-        {
-            "message": "user succesfully registered",
-            "result": {
-               "id": 1,
-               "first_name": "andy",
-               "last_name": "herman",
-               "username": "andy",
-               "email": "shi88.andy@gmail.com",
-               "created_at": "Wed, 02 Aug 2017 15:18:31 GMT",
-               "updated_at": "Wed, 02 Aug 2017 15:18:31 GMT"
-            },
-            "success": true
-        }
+    + Attributes (BaseResponse)
+
+        + data (array[UserResponse])
+
 
 + Request (application/json)
     
@@ -43,17 +37,16 @@ Dev summit API blueprints
             Accept: application/json
 
     + Attributes
-        + data (object)
+
+        + data
             - provider: `facebook` (string, required) - valid provider
             - token: `1afe4345acc` (string, required) - valid token 
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
-            - message: `Succesfully registered` (string)
-            - success: `true` (boolean)
-        + data (UserResponse)
+    + Attributes (BaseResponse)
+
+        + data (array[UserResponse])
 
 
 ### Login a User [POST /auth/login]
@@ -61,22 +54,18 @@ Dev summit API blueprints
 + Request (application/json)
 
         {
-            "username": "andy",
-            "password": "andy123"
+            data: {
+                "username": "andy",
+                "password": "andy123"
+            }
         }
 
 + Response 200 (application/json)
 
-    + Body
+    + Attributes (BaseResponse)
 
-            {
-                "message": "user logged in succesfully",
-                "result": {
-                    "access_token": "eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8",
-                    "refresh_token": "126991391b52558b"
-                },
-                "success": true
-            }
+        + data (Tokens)
+            
 
 + Request (application/json)
     
@@ -85,19 +74,18 @@ Dev summit API blueprints
             Accept: application/json
 
     + Attributes
-        + data (object)
+        + data
             - provider: `facebook` (string, required) - valid provider
             - email: `shi88.andy@gmail.com` (string, required) - valid email 
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+    
+        + meta
             - message: `User logged in` (string)
             - success: `true` (boolean)
-        + data (object)
-            - access_token: `eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8` (string, required) - a valid access token
-            - refresh_token: `126991391b52558b` (string, required) - a valid refresh token
+        + data (Tokens)
 
 
 ## User Management [/api/v1/users]
@@ -112,14 +100,13 @@ Dev summit API blueprints
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Response 200 (application/json)
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta
             - count: 10,
             - total: 10
-
         + data (array[UserResponse])
-
-        + included (array[TicketResponse])
+        + included 
+            - ticket (array[TicketResponse])
 
 
 ### Show User [GET /api/v1/users/{user_id}]
@@ -135,14 +122,13 @@ Dev summit API blueprints
     - user_id: `1` (string, required) - Valid User ID
 
 + Response 200 (application/json)
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta
             - count: 1,
             - total: 1
-
-        + data (UserResponse) 
-
-        + included (TicketResponse)
+        + data (array[UserResponse]) 
+        + included 
+            - ticket (array[TicketResponse])
 
 
 ### Update a User [PATCH /api/v1/users/{user_id}]
@@ -158,16 +144,15 @@ Dev summit API blueprints
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (object)
+        + data
             - attributes (User)
 
 + Response 200 (application/json)
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta
             - message: 'User succesfully updated'
             - success: true
-        + data (UserResponse)
-
+        + data (array[UserResponse])
 
 ## Orders [/api/v1/orders]
 
@@ -181,15 +166,15 @@ Dev summit API blueprints
                 Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (OrderRequest)
+        + data (Order)
         
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta
             - message: `order succesfull` (string)
             - success: true (boolean)
-        + data (array[OrderDetail])
+        + data (array[OrderResponse])
 
 
 ### Edit Order by id [PATCH /api/v1/orders/{order_id}]
@@ -202,7 +187,7 @@ Dev summit API blueprints
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (OrderRequest)
+        + data (Order)
 
 
 + Parameters
@@ -211,11 +196,11 @@ Dev summit API blueprints
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Order data succesfully updated` (string)
             - success: `true` (boolean)
-        + data (OrderResponse)
+        + data (array[OrderResponse])
         
 
 ### Order List [GET]
@@ -229,14 +214,14 @@ Dev summit API blueprints
     
 + Response 200 (application/json)
     
-    + Attributes
+    + Attributes (BaseResponse)
         + meta
             - count: `10` (number)
             - total: `10` (number)
         + data (array[OrderResponse])
         + included
-            - user (UserResponse)
-            - ticket (array[TicketResponse])
+            - user (array[User])
+            - ticket (array[Ticket])
         + links (object)
             - first: `https://private-909ac-devsummit.apiary-mock.com/api/v1/orders?page[limit]=10&page[offset]=0` (string, nullable)
             - last: `https://private-909ac-devsummit.apiary-mock.com/api/v1/orders?page[limit]=10&page[offset]=10` (string, nullable)
@@ -258,13 +243,13 @@ Dev summit API blueprints
     
 + Response 200 (application/json)
     
-    + Attributes
+    + Attributes (BaseResponse)
         + meta
             - count: `10` (number)
             - total: `10` (number)
-        + data (OrderResponse)
+        + data (array[Order])
         + included
-            - user (UserResponse)
+            - user (array[UserResponse])
             - ticket (array[TicketResponse])
 
 
@@ -283,8 +268,6 @@ Dev summit API blueprints
 
 + Response 204
 
-
-
 ## Attendee [/api/v1/attendees]
 
 Available include: `user`
@@ -300,14 +283,14 @@ Available include: `user`
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta 
             - count: `10` (number)
             - total: `10` (number)
             - message: `Attendees successfully retrieved` (string)
             - success: `true` (boolean)
         + data (array[AttendeeResponse])
-        + links (object)
+        + links 
             - first: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=0` (string, nullable)
             - last: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=10` (string, nullable)
             - next: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=10` (string, nullable)
@@ -329,12 +312,13 @@ Available include: `user`
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta 
             - message: `Attendee successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (AttendeeResponse)
-        + included (UserResponse)
+        + data (array[AttendeeResponse])
+        + included 
+            - user (array[UserResponse])
 
 ### Edit Attendee by id [PATCH /api/v1/attendees/{attendee_id}]
 
@@ -346,7 +330,7 @@ Available include: `user`
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (AttendeeResponse)
+        + data (Attendee)
 
 
 + Parameters
@@ -355,11 +339,11 @@ Available include: `user`
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta 
             - message: `Attendee data succesfully updated` (string)
             - success: `true` (boolean)
-        + data (AttendeeResponse)
+        + data (array[AttendeeResponse])
 
 ### Get points log [GET /api/v1/pointslog]
 
@@ -372,16 +356,14 @@ Available include: `user`
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta 
             - message: `Points log data succesfully retrieved` (string)
             - success: `true` (boolean)
         + data (array[PointsLogResponse])
-        + included (array)
-            - (object)
-                - sender (BoothResponse)
-                - receiver (AttendeeResponse)
-
+        + included 
+            - sender (array[BoothResponse])
+            - receiver (array[AttendeeResponse])
 
 ## Booth [/api/v1/booths]
 
@@ -398,14 +380,14 @@ Available include: `user`, `stage`
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta
             - count: `10` (number)
             - total: `10` (number)
             - message: `Booths successfully retrieved` (string)
             - success: `true` (boolean)
         + data (array[BoothResponse])
-        + links (object)
+        + links
             - first: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=0` (string, nullable)
             - last: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=10` (string, nullable)
             - next: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=10` (string, nullable)
@@ -427,14 +409,14 @@ Available include: `user`, `stage`
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta
             - message: `Booth successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (BoothResponse)
-        + included (object)
-            - user (UserResponse)
-            - stage (StageResponse)
+        + data (array[BoothResponse])
+        + included
+            - user (array[UserResponse])
+            - stage (array[StageResponse])
 
 ### Edit Booth by id [PATCH /api/v1/booths/{booth_id}]
 
@@ -446,7 +428,7 @@ Available include: `user`, `stage`
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (BoothResponse)
+        + data (Booth)
 
 
 + Parameters
@@ -455,11 +437,11 @@ Available include: `user`, `stage`
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta
             - message: `Booth data succesfully updated` (string)
             - success: `true` (boolean)
-        + data (BoothResponse)
+        + data (array[BoothResponse])
 
 ### Send points to attendee [POST /api/v1/booths/transfer]
 
@@ -471,18 +453,17 @@ Available include: `user`, `stage`
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (object)
+        + data
             - points: `100` (number, required) - amount of point to send
             - receiver: `1` (number, required) - valid attendee id
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+        + meta
             - message: `Point sent succesfully` (string)
             - success: `true` (boolean)
-        + data (PointTransactionResponse)
-
+        + data (array[PointTransactionResponse])
 
 ## Speaker [/api/v1/speakers]
 
@@ -499,13 +480,13 @@ Available include: `user`, `material`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - count: `10` (number)
             - total: `10` (number)
             - message: `Speakers successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (array[AttendeeResponse])
+        + data (array[SpeakerResponse])
         + links (object)
             - first: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=0` (string, nullable)
             - last: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=10` (string, nullable)
@@ -528,13 +509,13 @@ Available include: `user`, `material`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Speaker successfully retrieved` (string)
             - success: `true` (boolean)
-        + data (SpeakerResponse)
+        + data (array[SpeakerResponse])
         + included (object)
-            - user (UserResponse)
+            - user (array[UserResponse])
             - materials (array[MaterialResponse])
 
 ### Edit Speaker by id [PATCH /api/v1/speakers/{speaker_id}]
@@ -547,7 +528,7 @@ Available include: `user`, `material`
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (BoothResponse)
+        + data (Speaker)
 
 
 + Parameters
@@ -556,12 +537,11 @@ Available include: `user`, `material`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Speaker data succesfully updated` (string)
             - success: `true` (boolean)
-        + data (SpeakerResponse)
-
+        + data (array[SpeakerResponse])
 
 ## Tickets [/api/v1/tickets]
 
@@ -575,7 +555,7 @@ Available include: `user`, `material`
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
           - count: `10` (number)
           - total: `10` (number)
@@ -600,11 +580,11 @@ Available include: `user`, `material`
     - id: `1` (number, required) - valid ticket id
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Ticket retrieved successfully` (string)
             - success: `true` (boolean)
-        + data (TicketResponse)
+        + data (array[TicketResponse])
 
 ### Edit ticket filter by id [PATCH /api/v1/tickets/{id}]
 
@@ -616,8 +596,7 @@ Available include: `user`, `material`
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (object)
-            + attributes (Ticket)
+        + data (Ticket)
 
 + Parameters
     
@@ -625,11 +604,11 @@ Available include: `user`, `material`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Ticket successfully updated` (string)
             - success: `true` (boolean)
-        + data (TicketResponse)
+        + data (array[TicketResponse])
 
 ### Transfer ticket [POST /api/v1/tickets/{ticket_id}/transfer]
 
@@ -649,14 +628,14 @@ Available include: `user`, `material`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Ticket successfully transfered` (string)
             - success: `true` (boolean)
-        + data (TicketResponse)
+        + data (array[TicketResponse])
         + included (object)
-            - from (UserResponse)
-            - to (UserResponse)
+            - from (array[UserResponse])
+            - to (array[UserResponse])
 
 ### Ticket Transfer log [GET /api/v1/tickets/transfer/log]
 
@@ -669,19 +648,19 @@ Available include: `user`, `material`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Ticket transfer log succesfully retrieved` (string)
             - success: `true` (boolean)
-        + data (array[TransferTicketLog])
+        + data (array[TicketTransferLog])
         + included (array)
             - (object)
-                - sender (UserResponse)
-                - receiver (UserResponse)
+                - sender (array[UserResponse])
+                - receiver (array[UserResponse])
         + links (object)
-          - first: `https://localhost:5000/api/v1/tickets/transfer/log?page[limit]=10&page[offset]=0` (string, nullable)
-          - last: `https://localhost:5000/api/v1/tickets/transfer/log?page[limit]=10&page[offset]=10` (string, nullable)
-          - next: `https://localhost:5000/api/v1/tickets/transfer/log?page[limit]=10&page[offset]=10` (string, nullable)
+          - first: `https://localhost:5000/api/v1/tickets/transfer/logs?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/tickets/transfer/logs?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/tickets/transfer/logs?page[limit]=10&page[offset]=10` (string, nullable)
           - prev: `null` (string, nullable)
 
 
@@ -699,11 +678,11 @@ Available include: `user`, `material`
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Ticket successfully created` (string)
             - success: `true` (boolean)
-        + data (TicketResponse)
+        + data (array[TicketResponse])
 
 ### Delete ticket [DELETE /api/v1/tickets/{id}]
 
@@ -720,7 +699,6 @@ Available include: `user`, `material`
 
 + Response 204
 
-
 ## Materials API [/api/v1/materials]
 
 
@@ -736,7 +714,7 @@ Get list of all materials of: logged in speaker, all speakers, and material of r
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
           - count: `10` (number)
           - total: `10` (number)
@@ -763,11 +741,11 @@ Request to spesific materials
     - material_id: `1` (number, required) - valid material id
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Material retrieved successfully` (string)
             - success: `true` (boolean)
-        + data (MaterialResponse)
+        + data (array[MaterialResponse])
 
 ### Post Material [POST /api/v1/materials]
 
@@ -785,11 +763,11 @@ Speaker post new materials
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Material successfully created` (string)
             - success: `true` (boolean)
-        + data (MaterialResponse)
+        + data (array[MaterialResponse])
 
 
 ### Delete Material [DELETE /api/v1/materials/{id}]
@@ -809,7 +787,6 @@ Speaker may delete his/her materials
 
 + Response 204
 
-
 ## Events API [/api/v1/events]
 
 
@@ -825,7 +802,7 @@ Get list of all events available filters: `user_id`, `time`, `stage_id`
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
           - count: `10` (number)
           - total: `10` (number)
@@ -852,11 +829,11 @@ Request to spesific event
     - event_id: `1` (number, required) - valid event id
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Event retrieved successfully` (string)
             - success: `true` (boolean)
-        + data (MaterialResponse)
+        + data (array[EventResponse])
 
 ### Post Event [POST /api/v1/events]
 
@@ -874,11 +851,11 @@ post new events
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Event successfully created` (string)
             - success: `true` (boolean)
-        + data (EventResponse)
+        + data (array[EventResponse])
 
 ### Edit event filter by id [PATCH /api/v1/tickets/{event_id}]
 
@@ -890,8 +867,7 @@ post new events
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (object)
-            + attributes (Event)
+        + data (Event)
 
 + Parameters
     
@@ -899,11 +875,11 @@ post new events
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes(BaseResponse)
         + meta (object)
             - message:  `Event successfully updated` (string)
             - success: `true` (boolean)
-        + data (EventResponse)
+        + data (array[EventResponse])
 
 ### Delete Event [DELETE /api/v1/events/{event_id}]
 
@@ -922,7 +898,6 @@ Event may deleted
 
 + Response 204
 
-
 ## Stage API [/api/v1/stages]
 
 Management of stages
@@ -939,7 +914,7 @@ Get list of all stages
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
           - count: `10` (number)
           - total: `10` (number)
@@ -948,7 +923,7 @@ Get list of all stages
           - last: `https://localhost:5000/api/v1/stages?page[limit]=10&page[offset]=10` (string, nullable)
           - next: `https://localhost:5000/api/v1/stages?page[limit]=10&page[offset]=10` (string, nullable)
           - prev: `null` (string, nullable)
-        + data (array[EventResponse])
+        + data (array[StageResponse])
 
 ### Show Stage [GET /api/v1/stages/{stage_id}]
 
@@ -966,11 +941,11 @@ Request to spesific stage
     - stage_id: `1` (number, required) - valid stage id
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Stage retrieved successfully` (string)
             - success: `true` (boolean)
-        + data (StageResponse)
+        + data (array[StageResponse])
 
 
 ### Show Stage pictures [GET /api/v1/stages/{stage_id}/pictures]
@@ -989,7 +964,7 @@ Get all spesific stage pictures
     - stage_id: `1` (number, required) - valid stage id
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Pictures retrieved successfully` (string)
             - success: `true` (boolean)
@@ -1012,7 +987,7 @@ Get all spots included in spesific stage
     - stage_id: `1` (number, required) - valid stage id
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Spots retrieved successfully` (string)
             - success: `true` (boolean)
@@ -1034,42 +1009,36 @@ post new stage
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Stage successfully created` (string)
             - success: `true` (boolean)
-        + data (StageResponse)
+        + data (array[StageResponse])
 
 ### Post Stage Picture [POST /api/v1/stages/{stage_id}/pictures]
 
 Post stage pictures
 
-+ Request With File (multipart/form-data; boundary=MultipartBoundry)
++ Request (application/json)
 
     + Headers
 
             Accept: application/vnd.api+json
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
-    + Body
-
-            --MultipartBoundry
-            Content-Disposition: form-data; name="photo"; filename="https://placeimg.com/640/480/any"
-            Content-Type: image/jpeg
-
-            RAW_FILE_DATA
-            --MultipartBoundry
+    + Attributes
+        + data (StagePicture)
 
 + Parameters
 
     - stage_id: `1` (number, required) - valid stage id
 
 + Response 200 (application/vnd.api+json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Photo succesfully uploaded` (string)
             - success: `true` (boolean)
-        + data (StagePictureResponse)
+        + data (array[StagePictureResponse])
 
 ### Edit stage filter by id [PATCH /api/v1/stages/{event_id}]
 
@@ -1081,8 +1050,7 @@ Post stage pictures
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
     + Attributes
-        + data (object)
-            + attributes (Stage)
+        + data (Stage)
 
 + Parameters
     
@@ -1090,11 +1058,11 @@ Post stage pictures
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Stage successfully updated` (string)
             - success: `true` (boolean)
-        + data (StageResponse)
+        + data (array[StageResponse])
 
 ### Delete Stage [DELETE /api/v1/stages/{stage_id}]
 
@@ -1131,8 +1099,6 @@ Stage picture may be deleted
 
 + Response 204
 
-
-
 ## Beacon API [/api/v1/beacons]
 
 Management of beacons
@@ -1149,7 +1115,7 @@ Get list of all beacons
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
           - count: `10` (number)
           - total: `10` (number)
@@ -1176,13 +1142,13 @@ Request to spesific beacon
     - beacon_id: `1` (number, required) - valid beacon id
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Beacon retrieved successfully` (string)
             - success: `true` (boolean)
-        + data (BeaconResponse)
+        + data (array[BeaconResponse])
         + included (object)
-            - stage (StageResponse)
+            - stage (array[StageResponse])
 
 ### Post Beacon [POST /api/v1/beacons]
 
@@ -1195,18 +1161,17 @@ post new beacon
             Accept: application/json
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
-+ Attributes (object)
-  + data (Beacon)
++ Attributes (Beacon)
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Beacon successfully created` (string)
             - success: `true` (boolean)
-        + data (BeaconResponse)
+        + data (array[BeaconResponse])
         + included (object)
-            - spot (SpotResponse)
+            - spot (array[SpotResponse])
 
 ### Edit beacon filter by id [PATCH /api/v1/beacons/{beacon_id}]
 
@@ -1230,13 +1195,13 @@ post new beacon
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Beacon successfully updated` (string)
             - success: `true` (boolean)
-        + data (BeaconResponse)
+        + data (array[BeaconResponse])
         + included (object)
-          - stage (SpotResponse)
+          - stage (array[SpotResponse])
 
 
 ### Delete Beacon [DELETE /api/v1/beacons/{beacon_id}]
@@ -1272,7 +1237,7 @@ Get list of all spots
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
           - count: `10` (number)
           - total: `10` (number)
@@ -1301,14 +1266,14 @@ Request to spesific spot
     - spot_id: `1` (number, required) - valid spot id
 
 + Response 200 (application/json)
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message: `Spot retrieved successfully` (string)
             - success: `true` (boolean)
-        + data (SpotResponse)
+        + data (array[SpotResponse])
         + included (object)
-            - beacon (BeaconResponse)
-            - stage (StageResponse)
+            - beacon (array[BeaconResponse])
+            - stage (array[StageResponse])
 
 
 ### Edit spot filter by id [PATCH /api/v1/spots/{spot_id}]
@@ -1335,14 +1300,14 @@ Request to spesific spot
 
 + Response 200 (application/json)
 
-    + Attributes
+    + Attributes (BaseResponse)
         + meta (object)
             - message:  `Spot successfully updated` (string)
             - success: `true` (boolean)
-        + data (BeaconResponse)
+        + data (array[BeaconResponse])
         + included (object)
-          - beacon (BeaconResponse)
-          - stage (StageResponse)
+          - beacon (array[BeaconResponse])
+          - stage (array[StageResponse])
 
 ### Delete Spot [DELETE /api/v1/spots/{spot_id}]
 
@@ -1363,75 +1328,162 @@ Spot may be deleted
 
 
 
+
+
+
+
 ## Data Structures
 
-###  User
-- `first_name`: `andy` (string),
-- `last_name`: `herman` (string),
-- `username`: `andy` (string),
-- `email`: `shi88.andy@gmail.com` (string),
-- `created_at`: `Wed, 02 Aug 2017 15:18:31 GMT` (string),
-- `updated_at`: `Wed, 02 Aug 2017 15:18:31 GMT` (string)
+### BaseResponse
+- `data` (array[object])
+- `links` (nullable)
+- `included` (array[object])
+- `meta`
+    - message: `operation complete succesfully`
+    - success: true (boolean)
 
-### UserResponse
-- type: 'User' (string)
+### ErrorResponse
+- `data` (nullable)
+- `links` (nullable)
+- `included` (nullable)
+- `meta`
+    - message: `operation fail`
+    - success: false (boolean)
+
+
+###  User
+- first_name: `andy` (string),
+- last_name: `herman` (string),
+- username: `andy` (string),
+- email: `shi88.andy@gmail.com` (string),
+
+###  UserResponse
 - id: 1 (number)
-- attributes (User)            
+- Include User
+- created_at: `Wed, 02 Aug 2017 15:18:31 GMT` (string),
+- updated_at: `Wed, 02 Aug 2017 15:18:31 GMT` (string)
+
+### Tokens
+- access_token: `eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8` (string) - a valid access token
+- refresh_token: `126991391b52558b` (string) - a valid refresh token
 
 ### Ticket
 - ticket_type: `gold` (string)
-- price: `10000` (number)
-- information: `ticket description` (string)
+- price: 100000 (number)
+- information: `information about the ticket` (string)
 
 ### TicketResponse
-- type: `tickets` (string)
-- id: `1` (number)
-- attributes (Ticket)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+- id: 1 (number)
+- Include Ticket
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
 
-### Attendee
-- feature_code: `123f` (string)
-- points: `100` (number)
-- summary: `some information about attendee` (string)
+### TicketTransferLog
+- id: 1 (number)
+- user_ticket_id: (number)
+- sender_user_id: (number)
+- receiver_user_id: (number)
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
 
-### AttendeeResponse
-- type: `attendee` (string)
-- id: `1` (number)
-- attributes (Attendee)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+
+### TicketTransferRequest
+- user_ticket_id: 1 (number) - valid user ID
+- receiver_user_id: 1 (number) - valid user ID
+
+### Order
+- user_id: 1 (number)
+- order (array)
+    - (object)
+        - ticket_id: 1 (number) 
+ 
+ 
+### OrderResponse
+- id: 1 (number)
+- Include Order
+
+    
+
 
 ### Booth
-- points: `100` (number)
+- points: 100 (number)
 - summary: `some information about booth` (string)
 
 ### BoothResponse
-- type: `booth` (string)
-- id: `1` (number)
-- attributes (Booth)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+- id: 1 (number)
+- Include Booth
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
+
+### Attendee
+- feature_code: `123f` (string)
+- points: 100 (number)
+- summary: `some information about attendee` (string)
+
+### AttendeeResponse
+- id: 1 (number)
+- Include Attendee
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
+
+### Stage
+- stage_type: `stage type` (string)
+- information: `information about the stage` (string)
+
+### StageResponse
+- id: 1 (number)
+- Include Stage
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
+
+
+### StagePicture
+- url: `https://placeimg.com/640/480/any` (string)
+
+### StagePictureResponse
+- id: 1 (number)
+- Include StagePicture
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
 
 ### Speaker
 - summary: `some information about speaker` (string)
 
 ### SpeakerResponse
-- type: `speaker` (string)
-- id: `1` (number)
-- attributes (Speaker)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+- id: 1 (number)
+- Include Speaker
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
 
 ### Material
 - path: `material/path` (string)
 
 ### MaterialResponse
-- type: `material` (string)
-- id: `1` (number)
-- attributes (Material)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+- id: 1 (number)
+- Include Material
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
+
+### PointTransactionResponse
+- points: 100 (number)
+- from: 1 (number, required) - valid booth id
+- to: 1 (number, required) - valid attendee id
+
+### PointsLogResponse
+- id: 1 (number)
+- amount: 100 (number) - amount of point transfered
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
+
+### Spot
+- coordinate_x: 12 (number)
+- coordinate_y: 14 (number)
+
+### SpotResponse
+- id: 1 (number)
+- Include Spot
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
 
 ### Event
 - information: `information about the event` (string)
@@ -1439,96 +1491,17 @@ Spot may be deleted
 - time_end: `event ending time` (string)
 
 ### EventResponse
-- type: `event` (string)
-- id: `1` (number)
-- attributes (Event)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
-
-### Stage
-- stage_type: `stage type` (string)
-- information: `information about the stage` (string)
-
-### StageResponse
-- type: `stage` (string)
-- id: `1` (number)
-- attributes (Event)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+- id: 1 (number)
+- Include Event
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
 
 ### Beacon
 - code: `beacon code` (string)
 
 ### BeaconResponse
-- type: `beacon` (string)
-- id: `1` (number)
-- attributes (Beacon)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
+- id: 1 (number)
+- Include Beacon
+- created_at: `2017-06-23 20:27:16` (string, nullable)
+- updated_at: `2017-06-23 20:27:16` (string, nullable)
 
-### Spot
-- coordinate_x: `12` (number)
-- coordinate_y: `14` (number)
-
-### SpotResponse
-- type: `spot` (string)
-- id: `1` (number)
-- attributes (Spot)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
-
-### StagePicture
-- url: `https://placeimg.com/640/480/any` (string)
-
-### StagePictureResponse
-- type: `picture` (string)
-- id: `1` (number)
-- attributes (StagePicture)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
-
-### PointTransactionResponse
-- attributes (object)
-    - `points`: `100` (number)
-    - `from`: `1` (number, required) - valid booth id
-    - `to`: `1` (number, required) - valid attendee id
-
-### PointsLogResponse
-- type: `pointslog` (string)
-- id: `1` (number)
-- attributes (object)
-    - `amount`: `100` (number) - amount of point transfered
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
-
-### TransferTicketLog
-- type: `ticket_transfer_log` (string)
-- id: `1` (number)
-- attributes (Ticket)
-    - `created_at`: `2017-06-23 20:27:16` (string, nullable)
-    - `updated_at`: `2017-06-23 20:27:16` (string, nullable)
-
-### TicketTransferRequest
-- ticket_id: `1` (number) - valid ticket id
-- receiver_id: `1` (number) - valid user ID
-
-### OrderRequest
-
-- user_id: `1` (number)
-- attributes (array)
-    - (object)
-        - ticket_id: `1` (number) 
- 
- 
-### OrderDetail
-- order_id: `1` (number)
-- user_id: `1` (number)
-- attributes (array)
-    - (object)
-        - ticket_id: `1` (number)
-
-    
-### OrderResponse
-- type: `order` (string)
-- id: `1` (number)
-- attributes (OrderDetail)
