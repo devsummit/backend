@@ -7,9 +7,6 @@ from app.models.ticket import Ticket
 
 class TicketService():
 
-	def __init__(self, model_ticket):
-		self.model_ticket = model_ticket
-
 	def get(self):
 		tickets = db.session.query(Ticket).all()
 		return tickets
@@ -19,6 +16,7 @@ class TicketService():
 		return ticket
 
 	def create(self, payloads):
+		self.model_ticket = Ticket()
 		self.model_ticket.ticket_type = payloads['ticket_type']
 		self.model_ticket.price = payloads['price']
 		self.model_ticket.information = payloads['information']

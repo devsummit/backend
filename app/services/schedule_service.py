@@ -7,9 +7,6 @@ from app.models.schedule import Schedule
 
 class ScheduleService():
 
-	def __init__(self, model_schedule):
-		self.model_schedule = model_schedule
-
 	def get(self):
 		schedules = db.session.query(Schedule).all()
 		# add includes
@@ -30,6 +27,7 @@ class ScheduleService():
 		}
 
 	def create(self, payloads):
+		self.model_schedule = Schedule()
 		self.model_schedule.user_id = payloads['user_id']
 		self.model_schedule.stage_id = payloads['stage_id']
 		self.model_schedule.event_id = payloads['event_id']

@@ -9,9 +9,6 @@ from app.models.order_details import OrderDetails
 
 class OrderService():
 
-	def __init__(self, model_order):
-		self.model_order = model_order
-
 	def get(self):
 		orders = db.session.query(Order).all()
 		return orders
@@ -21,6 +18,7 @@ class OrderService():
 		return order
 
 	def create(self, payloads):
+		self.model_order = Order()
 		order_details = payloads['order_details']
 		self.model_order.user_id = payloads['user_id']
 		self.model_order.status = 'pending'

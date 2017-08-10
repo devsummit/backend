@@ -7,9 +7,6 @@ from app.models.spot import Spot
 
 class SpotService():
 
-	def __init__(self, model_spot):
-		self.model_spot = model_spot
-
 	def get(self):
 		spots = db.session.query(Spot).all()
 		return spots

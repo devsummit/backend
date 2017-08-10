@@ -7,9 +7,6 @@ from app.models.stage import Stage
 
 class StageService():
 
-	def __init__(self, model_stage):
-		self.model_stage = model_stage
-
 	def get(self):
 		stages = db.session.query(Stage).all()
 		return stages
@@ -19,6 +16,7 @@ class StageService():
 		return stage
 
 	def create(self, payloads):
+		self.model_stage = Stage()
 		self.model_stage.name = payloads['name']
 		self.model_stage.stage_type = payloads['stage_type']
 		self.model_stage.information = payloads['information']

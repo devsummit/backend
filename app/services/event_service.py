@@ -4,8 +4,6 @@ from app.models.event import Event
 
 
 class EventService:
-    def __init__(self, events_model):
-        self.events_model = events_model
 
     def index(self):
         events = db.session.query(Event).all()
@@ -19,6 +17,7 @@ class EventService:
         try:
             information = payloads['information'] if 'information' in payloads else None
             title = payloads['title'] if 'title' in payloads else None
+            self.events_model = Event()
             self.events_model.information = information
             self.events_model.title = title
 
