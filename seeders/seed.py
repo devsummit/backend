@@ -4,6 +4,7 @@ from seeders.stages_seeder import StagesSeeder
 from seeders.events_seeder import EventsSeeder
 from seeders.beacons_seeder import BeaconsSeeder
 from seeders.schedules_seeder import SchedulesSeeder
+from seeders.tickets_seeder import TicketsSeeder
 
 
 class Seed():
@@ -32,4 +33,8 @@ class Seed():
 
 		print('seeding schedules...')
 		SchedulesSeeder.run()
+		print('finish seeding schedules')
+
+		print('seeding schedules...')
+		TicketsSeeder.run()
 		print('finish seeding schedules')
