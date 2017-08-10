@@ -23,6 +23,7 @@ def upgrade():
         sa.Column('ticket_type', sa.String, unique=True),
         sa.Column('price', sa.Integer),
         sa.Column('information', sa.String),
+        sa.Column('used', sa.Boolean),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
         )
