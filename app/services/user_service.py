@@ -5,11 +5,9 @@ from app.models.user import User
 
 
 class UserService:
-    def __init__(self, model_user, model_access_token):
-        self.model_user = model_user
-        self.model_access_token = model_access_token
 
     def register(self, payloads):
+        self.model_user = User()
         self.model_user.first_name = payloads['first_name']
         self.model_user.last_name = payloads['last_name']
         self.model_user.email = payloads['email']
