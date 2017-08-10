@@ -231,4 +231,11 @@ def transfer_points_log(*args, **kwargs):
 @token_required
 def ticket_transfer_logs(*args, **kwargs):
 	user = kwargs['user'].as_dict()
-	return TicketTransferController.ticket_transfer_logs(request, user)
+	return TicketTransferController.ticket_transfer_logs(user)
+
+
+@api.route('/tickets/transfer', methods=['POST'])
+@token_required
+def ticket_transfer(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return TicketTransferController.ticket_transfer(request, user)
