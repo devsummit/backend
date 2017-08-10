@@ -8,8 +8,7 @@ from app.models.speaker import Speaker
 from app.configs.constants import ROLE
 
 
-class UserService:
-    
+class UserService:    
     def register(self, payloads):
         self.model_user = User()
         self.model_access_token = AccessToken()
@@ -30,8 +29,6 @@ class UserService:
                 self.create_speaker()
             elif(int(payloads['role']) == ROLE['booth']):
                 self.create_booth()
-
-
             return {
                 'error': False,
                 'data': data
@@ -64,7 +61,6 @@ class UserService:
             'error': True,
             'data': token_exist
         }
-
 
     def create_attendee(self):
         attendee = Attendee()
