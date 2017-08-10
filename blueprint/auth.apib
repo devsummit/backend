@@ -5,29 +5,22 @@
 + Request (application/json)
 
         {
-            "first_name": "andy",
-            "last_name": "herman",
-            "role": "attendee",
-            "username": "andy",
-            "email": "shi88.andy@gmail.com",
-            "password": "andy123"
+            "data": {
+                "first_name": "andy",
+                "last_name": "herman",
+                "role": "attendee",
+                "username": "andy",
+                "email": "shi88.andy@gmail.com",
+                "password": "andy123"
+            }
         }
 
 + Response 200 (application/json)
 
-        {
-            "message": "user succesfully registered",
-            "result": {
-               "id": 1,
-               "first_name": "andy",
-               "last_name": "herman",
-               "username": "andy",
-               "email": "shi88.andy@gmail.com",
-               "created_at": "Wed, 02 Aug 2017 15:18:31 GMT",
-               "updated_at": "Wed, 02 Aug 2017 15:18:31 GMT"
-            },
-            "success": true
-        }
+    + Attributes (BaseResponse)
+
+        + data (array[User])
+
 
 + Request (application/json)
     
@@ -36,17 +29,16 @@
             Accept: application/json
 
     + Attributes
-        + data (object)
+
+        + data
             - provider: `facebook` (string, required) - valid provider
             - token: `1afe4345acc` (string, required) - valid token 
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
-            - message: `Succesfully registered` (string)
-            - success: `true` (boolean)
-        + data (UserResponse)
+    + Attributes (BaseResponse)
+
+        + data (array[User])
 
 
 ### Login a User [POST /auth/login]
@@ -54,22 +46,18 @@
 + Request (application/json)
 
         {
-            "username": "andy",
-            "password": "andy123"
+            data: {
+                "username": "andy",
+                "password": "andy123"
+            }
         }
 
 + Response 200 (application/json)
 
-    + Body
+    + Attributes (BaseResponse)
 
-            {
-                "message": "user logged in succesfully",
-                "result": {
-                    "access_token": ":[Gist](data/token.apib)",
-                    "refresh_token": "126991391b52558b"
-                },
-                "success": true
-            }
+        + data (array[Tokens])
+            
 
 + Request (application/json)
     
@@ -78,85 +66,16 @@
             Accept: application/json
 
     + Attributes
-        + data (object)
+        + data
             - provider: `facebook` (string, required) - valid provider
             - email: `shi88.andy@gmail.com` (string, required) - valid email 
 
 + Response 200 (application/json)
 
-    + Attributes
-        + meta (object)
+    + Attributes (BaseResponse)
+    
+        + meta
             - message: `User logged in` (string)
             - success: `true` (boolean)
-        + data (object)
-            - access_token: `:[Gist](data/token.apib)` (string, required) - a valid access token
-            - refresh_token: `126991391b52558b` (string, required) - a valid refresh token
+        + data (array[Tokens])
 
-
-## User Management [/api/v1/users]
-
-### List of Users [GET]
-
-+ Request (application/json)
-
-    + Headers
-
-            Accept: application/json
-            Authorization: Bearer :[Gist](data/token.apib)
-
-+ Response 200 (application/json)
-    + Attributes
-        + meta (object)
-            - count: 10,
-            - total: 10
-
-        + data (array[UserResponse])
-
-        + included (array[TicketResponse])
-
-
-### Show User [GET /api/v1/users/{user_id}]
-
-+ Request (application/json)
-
-    + Headers
-
-            Accept: application/json
-            Authorization: Bearer :[Gist](data/token.apib)
-
-+ Parameters
-    - user_id: `1` (string, required) - Valid User ID
-
-+ Response 200 (application/json)
-    + Attributes
-        + meta (object)
-            - count: 1,
-            - total: 1
-
-        + data (UserResponse) 
-
-        + included (TicketResponse)
-
-
-### Update a User [PATCH /api/v1/users/{user_id}]
-    
-+ Parameters
-    - user_id : `1` (string, required) - Valid User ID
-
-+ Request (application/json)
-
-    + Headers
-
-            Accept: application/json
-            Authorization: Bearer :[Gist](data/token.apib)
-
-    + Attributes
-        + data (object)
-            - attributes (User)
-
-+ Response 200 (application/json)
-    + Attributes
-        + meta (object)
-            - message: 'User succesfully updated'
-            - success: true
-        + data (UserResponse)

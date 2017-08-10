@@ -1,0 +1,87 @@
+## Materials API [/api/v1/materials]
+
+
+### Get list of speaker materials [GET]
+
+Get list of all materials of: logged in speaker, all speakers, and material of related speaker by passing `?speaker_id=id` parameter
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/materials?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/materials?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/materials?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[MaterialResponse])
+
+### Show Material [GET /api/v1/materials/{material_id}]
+
+Request to spesific materials
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - material_id: `1` (number, required) - valid material id
+
++ Response 200 (application/json)
+    + Attributes
+        + meta (object)
+            - message: `Material retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[MaterialResponse])
+
+### Post Material [POST /api/v1/materials]
+
+Speaker post new materials
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
+    + Attributes
+        + data (Material)
+
++ Response 200 (application/json)
+
+    + Attributes
+        + meta (object)
+            - message:  `Material successfully created` (string)
+            - success: `true` (boolean)
+        + data (MaterialResponse)
+
+
+### Delete Material [DELETE /api/v1/materials/{id}]
+
+Speaker may delete his/her materials
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwMTY2MjYxNywiZXhwIjoxNTAxNjY4NjE3fQ.eyJpZCI6MX0.9-XppdnTm-FoLgOpR8DIjAAHAr7pkimu-RJL-oma9-8
+
++ Parameters
+
+    - id: `1` (number, required) - valid material id
+
++ Response 204

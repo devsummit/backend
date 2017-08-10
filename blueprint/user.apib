@@ -1,0 +1,69 @@
+## User Management [/api/v1/users]
+
+### List of Users [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta
+            - count: 10,
+            - total: 10
+
+        + data (array[User])
+
+        + included 
+            - ticket (array[Ticket])
+
+
+### Show User [GET /api/v1/users/{user_id}]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+    - user_id: `1` (string, required) - Valid User ID
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta
+            - count: 1,
+            - total: 1
+
+        + data (array[User]) 
+
+        + included 
+            - ticket (array[Ticket])
+
+
+### Update a User [PATCH /api/v1/users/{user_id}]
+    
++ Parameters
+    - user_id : `1` (string, required) - Valid User ID
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data
+            - attributes (User)
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta
+            - message: 'User succesfully updated'
+            - success: true
+        + data (array[User])

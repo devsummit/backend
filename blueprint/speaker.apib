@@ -1,0 +1,77 @@
+## Speaker [/api/v1/speakers]
+
+Available include: `user`, `material`
+
+### Get list of speakers [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - count: `10` (number)
+            - total: `10` (number)
+            - message: `Speakers successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[Attendee])
+        + links (object)
+            - first: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=0` (string, nullable)
+            - last: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=10` (string, nullable)
+            - next: `https://localhost:5000/api/v1/speakers?page[limit]=10&page[offset]=10` (string, nullable)
+            - prev: `null` (string, nullable)
+
+
+### Get Speaker by id [GET /api/v1/speakers/{speaker_id}]
+
++ Parameters
+
+    - speaker_id: `1` (number, required) - Valid speaker id
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Speaker successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (Speaker)
+        + included (object)
+            - user (array[User])
+            - materials (array[MaterialResponse])
+
+### Edit Speaker by id [PATCH /api/v1/speakers/{speaker_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (Booth)
+
+
++ Parameters
+    
+    - speaker_id: `1` (number, required) - Valid speaker id
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Speaker data succesfully updated` (string)
+            - success: `true` (boolean)
+        + data (array[Speaker])

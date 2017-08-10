@@ -1,0 +1,99 @@
+## Booth [/api/v1/booths]
+
+Available include: `user`, `stage`
+
+### Get list of booths [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta
+            - count: `10` (number)
+            - total: `10` (number)
+            - message: `Booths successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[array][Booth])
+        + links
+            - first: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=0` (string, nullable)
+            - last: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=10` (string, nullable)
+            - next: `https://localhost:5000/api/v1/booths?page[limit]=10&page[offset]=10` (string, nullable)
+            - prev: `null` (string, nullable)
+
+
+### Get Booth by id [GET /api/v1/booths/{booth_id}]
+
++ Parameters
+
+    - booth_id: `1` (number, required) - Valid booth id
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta
+            - message: `Booth successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[Booth])
+        + included
+            - user (array[User])
+            - stage (array[Stage])
+
+### Edit Booth by id [PATCH /api/v1/booths/{booth_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (Booth)
+
+
++ Parameters
+    
+    - booth_id: `1` (number, required) - Valid booth id
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta
+            - message: `Booth data succesfully updated` (string)
+            - success: `true` (boolean)
+        + data (array[Booth])
+
+### Send points to attendee [POST /api/v1/booths/transfer]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data
+            - points: `100` (number, required) - amount of point to send
+            - receiver: `1` (number, required) - valid attendee id
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta
+            - message: `Point sent succesfully` (string)
+            - success: `true` (boolean)
+        + data (array[Point]TransactionResponse)
