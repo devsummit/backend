@@ -16,13 +16,16 @@ depends_on = None
 
 def upgrade():
 	op.create_table('ticket_transfer_logs',
-		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('user_ticket_id', sa.Integer, sa.ForeignKey('user_tickets.id')),
-		sa.Column('sender_user_id', sa.Integer, sa.ForeignKey('users.id')),
-		sa.Column('receiver_user_id', sa.Integer, sa.ForeignKey('users.id')),
-		sa.Column('created_at', sa.DateTime),
-		sa.Column('updated_at', sa.DateTime),
-		)
+                 sa.Column('id', sa.Integer, primary_key=True),
+                 sa.Column('user_ticket_id', sa.Integer,
+                           sa.ForeignKey('user_tickets.id')),
+                 sa.Column('sender_user_id', sa.Integer,
+                           sa.ForeignKey('users.id')),
+                 sa.Column('receiver_user_id', sa.Integer,
+                           sa.ForeignKey('users.id')),
+                 sa.Column('created_at', sa.DateTime),
+                 sa.Column('updated_at', sa.DateTime),
+                 )
 
 
 def downgrade():

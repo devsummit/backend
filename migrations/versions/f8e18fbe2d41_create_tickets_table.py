@@ -24,7 +24,7 @@ def upgrade():
         sa.Column('used', sa.Boolean),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
-        )
+    )
 
 
 def downgrade():

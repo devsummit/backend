@@ -9,7 +9,6 @@ from seeders.user_tickets_seeder import UserTicketsSeeder
 from seeders.ticket_transfer_logs_seeder import TicketTransferLogsSeeder
 
 
-
 class Seed():
 
 	@staticmethod

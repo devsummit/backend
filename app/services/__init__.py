@@ -23,5 +23,4 @@ orderdetailservice = OrderDetailsService()
 eventservice = EventService()
 scheduleservice = ScheduleService()
 pointtransactionservice = PointsTransactionService()
-tickettransferservice =  TicketTransferService()
-
+tickettransferservice = TicketTransferService()
