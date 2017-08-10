@@ -39,8 +39,12 @@ class UserService:
             user_id=self.model_user.id).first()
         if not token_exist:
             self.model_access_token = AccessToken()
+<<<<<<< HEAD
             payload = self.model_access_token.init_token(self.model_user.generate_auth_token(
             ), self.model_user.generate_refresh_token(), self.model_user.id)
+=======
+            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(), self.model_user.generate_refresh_token(), self.model_user.id)            
+>>>>>>> b3eb7eb42100c08609c170fdba295d02945762c6
             db.session.add(payload)
             db.session.commit()
             return {
