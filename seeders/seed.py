@@ -1,6 +1,5 @@
 from seeders.role_seeder import RoleSeeder
 from seeders.users_seeder import UsersSeeder
-from seeders.stages_seeder import StagesSeeder
 from seeders.events_seeder import EventsSeeder
 from seeders.beacons_seeder import BeaconsSeeder
 from seeders.schedules_seeder import SchedulesSeeder
