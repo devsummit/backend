@@ -119,21 +119,15 @@ post new stage
 
 Post stage pictures
 
-+ Request With File (multipart/form-data; boundary=MultipartBoundry)
++ Request (application/json)
 
     + Headers
 
             Accept: application/vnd.api+json
             Authorization: Bearer :[Gist](data/token.apib)
 
-    + Body
-
-            --MultipartBoundry
-            Content-Disposition: form-data; name="photo"; filename="https://placeimg.com/640/480/any"
-            Content-Type: image/jpeg
-
-            RAW_FILE_DATA
-            --MultipartBoundry
+    + Attributes
+        + data (StagePicture)
 
 + Parameters
 
