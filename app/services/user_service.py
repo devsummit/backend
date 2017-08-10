@@ -47,6 +47,7 @@ class UserService:
     def save_token(self):
         token_exist = db.session.query(AccessToken).filter_by(user_id=self.model_user.id).first()
         if not token_exist:
+            self.model_access_token = AccessToken()
             payload = self.model_access_token.init_token(self.model_user.generate_auth_token(), self.model_user.generate_refresh_token(), self.model_user.id)            
             db.session.add(payload)
             db.session.commit()
