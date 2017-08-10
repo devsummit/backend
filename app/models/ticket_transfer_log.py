@@ -7,7 +7,7 @@ from app.models.base_model import BaseModel
 class TicketTransferLog(db.Model, BaseModel):
 
 	# table name
-	__tablename__ = 'ticket_transfer_log'
+	__tablename__ = 'ticket_transfer_logs'
 	# displayed fields
 	visible = ['user_ticket_id', 'sender_user_id', 'receiver_user_id']
 
