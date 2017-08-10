@@ -16,6 +16,7 @@ from app.controllers.order_details_controller import OrderDetailsController
 from app.controllers.event_controller import EventController
 from app.controllers.schedule_controller import ScheduleController
 from app.controllers.points_controller import PointsController
+from app.controllers.ticket_transfer_controller import TicketTransferController
 
 api = Blueprint('api', __name__)
 
@@ -222,3 +223,19 @@ def transfer_points(*args, **kwargs):
 def transfer_points_log(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return PointsController.transfer_point_log(request, user)
+
+
+# Ticket Transfer endpoint
+
+@api.route('/tickets/transfer/logs', methods=['GET'])
+@token_required
+def ticket_transfer_logs(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return TicketTransferController.ticket_transfer_logs(user)
+
+
+@api.route('/tickets/transfer', methods=['POST'])
+@token_required
+def ticket_transfer(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return TicketTransferController.ticket_transfer(request, user)
