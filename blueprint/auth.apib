@@ -1,0 +1,81 @@
+## User Auth [/auth]
+
+### Register a user [POST /auth/register]
+
++ Request (application/json)
+
+        {
+            "data": {
+                "first_name": "andy",
+                "last_name": "herman",
+                "role": "attendee",
+                "username": "andy",
+                "email": "shi88.andy@gmail.com",
+                "password": "andy123"
+            }
+        }
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+
+        + data (array[UserResponse])
+
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+
+    + Attributes
+
+        + data
+            - provider: `facebook` (string, required) - valid provider
+            - token: `1afe4345acc` (string, required) - valid token 
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+
+        + data (array[UserResponse])
+
+
+### Login a User [POST /auth/login]
+
++ Request (application/json)
+
+        {
+            data: {
+                "username": "andy",
+                "password": "andy123"
+            }
+        }
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+
+        + data (Tokens)
+            
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+
+    + Attributes
+        + data
+            - provider: `facebook` (string, required) - valid provider
+            - email: `shi88.andy@gmail.com` (string, required) - valid email 
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+    
+        + meta
+            - message: `User logged in` (string)
+            - success: `true` (boolean)
+        + data (Tokens)
+

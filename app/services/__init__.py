@@ -11,39 +11,14 @@ from app.services.event_service import EventService
 from app.services.schedule_service import ScheduleService
 from app.services.points_transaction_service import PointsTransactionService
 
-# models import
-from app.models.user import User
-from app.models.ticket import Ticket
-from app.models.stage import Stage
-from app.models.beacon import Beacon
-from app.models.spot import Spot
-from app.models.order import Order
-from app.models.order_details import OrderDetails
-from app.models.access_token import AccessToken
-from app.models.event import Event
-from app.models.schedule import Schedule
-
-# Intantiate models
-user = User()
-ticket = Ticket()
-stage = Stage()
-beacon = Beacon()
-spot = Spot()
-order = Order()
-order_details = OrderDetails()
-access_token = AccessToken()
-events = Event()
-schedules = Schedule()
-
-
 # instantiate service
-userservice = UserService(user, access_token)
-ticketservice = TicketService(ticket)
-stageservice = StageService(stage)
-beaconservice = BeaconService(beacon)
-spotservice = SpotService(spot)
-orderservice = OrderService(order)
-orderdetailservice = OrderDetailsService(order_details)
-eventservice = EventService(events)
-scheduleservice = ScheduleService(schedules)
+userservice = UserService()
+ticketservice = TicketService()
+stageservice = StageService()
+beaconservice = BeaconService()
+spotservice = SpotService()
+orderservice = OrderService()
+orderdetailservice = OrderDetailsService()
+eventservice = EventService()
+scheduleservice = ScheduleService()
 pointtransactionservice = PointsTransactionService()

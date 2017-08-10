@@ -1,0 +1,200 @@
+## Stage API [/api/v1/stages]
+
+Management of stages
+
+### Get list of stages [GET]
+
+Get list of all stages
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/stages?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/stages?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/stages?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[StageResponse])
+
+### Show Stage [GET /api/v1/stages/{stage_id}]
+
+Request to spesific stage
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Stage retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[StageResponse])
+
+
+### Show Stage pictures [GET /api/v1/stages/{stage_id}/pictures]
+
+Get all spesific stage pictures
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Pictures retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[StagePictureResponse])
+
+
+### Show stage spot [GET /api/v1/stages/{stage_id}/spots]
+
+Get all spots included in spesific stage
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Spots retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[SpotResponse])
+
+### Post Stage [POST /api/v1/stages]
+
+post new stage
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (Stage)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message:  `Stage successfully created` (string)
+            - success: `true` (boolean)
+        + data (array[StageResponse])
+
+### Post Stage Picture [POST /api/v1/stages/{stage_id}/pictures]
+
+Post stage pictures
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/vnd.api+json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (StagePicture)
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 200 (application/vnd.api+json)
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Photo succesfully uploaded` (string)
+            - success: `true` (boolean)
+        + data (array[StagePictureResponse])
+
+### Edit stage filter by id [PATCH /api/v1/stages/{event_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (Stage)
+
++ Parameters
+    
+    - event_id: `1` (number, required) - valid event id
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message:  `Stage successfully updated` (string)
+            - success: `true` (boolean)
+        + data (array[StageResponse])
+
+### Delete Stage [DELETE /api/v1/stages/{stage_id}]
+
+Stage may be deleted 
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 204
+
+### Delete Stage Pictures [DELETE /api/v1/stages/{stage_id}/pictures/{picture_id}]
+
+Stage picture may be deleted
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+    - picture_id: `1` (number, required) - valid stage picture id
+
++ Response 204

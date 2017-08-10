@@ -1,0 +1,110 @@
+## Events API [/api/v1/events]
+
+
+### Get list of events [GET]
+
+Get list of all events available filters: `user_id`, `time`, `stage_id`
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/events?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/events?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/events?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[EventResponse])
+
+### Show event [GET /api/v1/events/{event_id}]
+
+Request to spesific event
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - event_id: `1` (number, required) - valid event id
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Event retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[EventResponse])
+
+### Post Event [POST /api/v1/events]
+
+post new events
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (Event)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message:  `Event successfully created` (string)
+            - success: `true` (boolean)
+        + data (array[EventResponse])
+
+### Edit event filter by id [PATCH /api/v1/tickets/{event_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (Event)
+
++ Parameters
+    
+    - event_id: `1` (number, required) - valid event id
+
++ Response 200 (application/json)
+
+    + Attributes(BaseResponse)
+        + meta (object)
+            - message:  `Event successfully updated` (string)
+            - success: `true` (boolean)
+        + data (array[EventResponse])
+
+### Delete Event [DELETE /api/v1/events/{event_id}]
+
+Event may deleted 
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - event_id: `1` (number, required) - valid event id
+
++ Response 204
