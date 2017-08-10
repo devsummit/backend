@@ -1,0 +1,113 @@
+## Orders [/api/v1/orders]
+
+### Order a Ticket [POST]
+
++ Request (application/json)
+
+    + Headers
+                
+                Accept: application/json
+                Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (Order)
+        
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta
+            - message: `order succesfull` (string)
+            - success: true (boolean)
+        + data (array[OrderResponse])
+
+
+### Edit Order by id [PATCH /api/v1/orders/{order_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (Order)
+
+
++ Parameters
+    
+    - order_id: `1` (number, required) - Valid order id
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Order data succesfully updated` (string)
+            - success: `true` (boolean)
+        + data (array[OrderResponse])
+        
+
+### Order List [GET]
+
++ Request (application/ json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+    
++ Response 200 (application/json)
+    
+    + Attributes (BaseResponse)
+        + meta
+            - count: `10` (number)
+            - total: `10` (number)
+        + data (array[OrderResponse])
+        + included
+            - user (array[User])
+            - ticket (array[Ticket])
+        + links (object)
+            - first: `https://private-909ac-devsummit.apiary-mock.com/api/v1/orders?page[limit]=10&page[offset]=0` (string, nullable)
+            - last: `https://private-909ac-devsummit.apiary-mock.com/api/v1/orders?page[limit]=10&page[offset]=10` (string, nullable)
+            - next: `https://private-909ac-devsummit.apiary-mock.com/api/v1/orders?page[limit]=10&page[offset]=10` (string, nullable)
+            - prev: `null` (string, nullable)
+
+
+### Order Details [GET /api/v1/orders/{order_id}]
+
++ Request (application/ json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+    - order_id : `1` (string, required) - Valid Order ID
+    
++ Response 200 (application/json)
+    
+    + Attributes (BaseResponse)
+        + meta
+            - count: `10` (number)
+            - total: `10` (number)
+        + data (array[Order])
+        + included
+            - user (array[UserResponse])
+            - ticket (array[TicketResponse])
+
+
+### Delete Orders [DELETE /api/v1/orders/{order_id}]
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - order_id: `1` (number, required) - valid ticket id
+
++ Response 204

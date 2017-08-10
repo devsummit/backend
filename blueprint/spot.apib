@@ -1,0 +1,104 @@
+## Spots [/api/v1/spots]
+
+Management of stages
+
+### Get list of spots [GET]
+
+Get list of all spots
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+          - count: `10` (number)
+          - total: `10` (number)
+        + links (object)
+          - first: `https://localhost:5000/api/v1/spots?page[limit]=10&page[offset]=0` (string, nullable)
+          - last: `https://localhost:5000/api/v1/spots?page[limit]=10&page[offset]=10` (string, nullable)
+          - next: `https://localhost:5000/api/v1/spots?page[limit]=10&page[offset]=10` (string, nullable)
+          - prev: `null` (string, nullable)
+        + data (array[SpotResponse])
+
+### Show spot [GET /api/v1/spots/{spot_id}]
+
+May include `beacon`
+
+Request to spesific spot
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - spot_id: `1` (number, required) - valid spot id
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Spot retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[SpotResponse])
+        + included (object)
+            - beacon (array[BeaconResponse])
+            - stage (array[StageResponse])
+
+
+### Edit spot filter by id [PATCH /api/v1/spots/{spot_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Attributes (object)
+    + data (object)
+        - type: spot (string)
+        - attributes (object)
+            - coordinate_x: `12` (number)
+            - coordinate_y: `10` (number)
+            - stage_id: `1` (number) - valid stage id
+            - beacon_id: `1` (number) - valid beacon id
+
++ Parameters
+    
+    - spot_id: `1` (number, required) - valid spot id
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message:  `Spot successfully updated` (string)
+            - success: `true` (boolean)
+        + data (array[BeaconResponse])
+        + included (object)
+          - beacon (array[BeaconResponse])
+          - stage (array[StageResponse])
+
+### Delete Spot [DELETE /api/v1/spots/{spot_id}]
+
+Spot may be deleted 
+
++ Request (application/json)
+
+    + Headers
+    
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - spot_id: `1` (number, required) - valid spot id
+
++ Response 204
