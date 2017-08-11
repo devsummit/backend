@@ -16,6 +16,7 @@ from app.controllers.order_details_controller import OrderDetailsController
 from app.controllers.event_controller import EventController
 from app.controllers.schedule_controller import ScheduleController
 from app.controllers.points_controller import PointsController
+from app.controllers.speaker_controller import SpeakerController
 from app.controllers.ticket_transfer_controller import TicketTransferController
 
 api = Blueprint('api', __name__)
@@ -205,6 +206,24 @@ def schedule_id(id, *args, **kwargs):
 		return ScheduleController.show(id)
 	elif(request.method == 'DELETE'):
 		return ScheduleController.delete(id)
+
+# Speakers endpoint
+
+
+@api.route('/speakers', methods=['GET'])
+@token_required
+def speaker(*args, **kwargs):
+	if(request.method == 'GET'):
+		return SpeakerController.index()
+
+
+@api.route('/speakers/<id>', methods=['PUT', 'PATCH', 'GET'])
+@token_required
+def speaker_id(id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return SpeakerController.update(request, id)
+	elif(request.method == 'GET'):
+		return SpeakerController.show(id)
 
 # Point endpoint
 
