@@ -47,7 +47,6 @@ class SpeakerService():
                 'data': data
             }
 
-
     def get_includes(self, speakers):
         included = []
         if isinstance(speakers, list):

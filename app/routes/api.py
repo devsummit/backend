@@ -207,11 +207,14 @@ def schedule_id(id, *args, **kwargs):
 		return ScheduleController.delete(id)
 
 # Speakers endpoint
+
+
 @api.route('/speakers', methods=['GET'])
 @token_required
 def speaker(*args, **kwargs):
 	if(request.method == 'GET'):
 		return SpeakerController.index()
+
 
 @api.route('/speakers/<id>', methods=['PUT', 'PATCH', 'GET'])
 @token_required
@@ -238,5 +241,3 @@ def transfer_points(*args, **kwargs):
 def transfer_points_log(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return PointsController.transfer_point_log(request, user)
-
-
