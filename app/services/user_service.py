@@ -7,6 +7,14 @@ from app.models.user import User
 class UserService:
 
     def register(self, payloads):
+
+        # payloads validation
+        if not isinstance(payloads['role'], int):
+            return {
+                'error': True,
+                'data': 'payload not valid'
+            }
+
         self.model_user = User()
         self.model_user.first_name = payloads['first_name']
         self.model_user.last_name = payloads['last_name']
@@ -15,6 +23,7 @@ class UserService:
         self.model_user.role = payloads['role']
         self.model_user.hash_password(payloads['password'])
         db.session.add(self.model_user)
+
         try:
             db.session.commit()
             data = self.model_user.as_dict()
