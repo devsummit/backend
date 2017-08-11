@@ -1,5 +1,4 @@
 from faker import Faker
-from datetime import timedelta
 from app.models.base_model import BaseModel
 from app.models.user import User
 from app.models.speaker import Speaker
@@ -20,7 +19,7 @@ class SpeakersSeeder():
         """
         fake = Faker()
         users = BaseModel.as_list(db.session.query(User).all())
-        for i in range (0, 10):
+        for i in range(0, 10):
             job = fake.sentence(
                 nb_words=6, variable_nb_words=True, ext_word_list=None
             )
