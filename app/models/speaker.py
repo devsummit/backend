@@ -1,8 +1,8 @@
 import datetime
-
 # import classes
 from app.models.base_model import BaseModel
 from app.models import db
+from app.models.user import User  # noqa
 
 
 class Speaker(db.Model, BaseModel):

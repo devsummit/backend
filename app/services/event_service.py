@@ -7,7 +7,7 @@ class EventService:
 
     def index(self):
         events = db.session.query(Event).all()
-        return self.events_model.as_list(events)
+        return Event().as_list(events)
 
     def show(self, id):
         self.events_model = db.session.query(Event).filter_by(id=id).first()
