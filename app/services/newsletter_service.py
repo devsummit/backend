@@ -8,8 +8,12 @@ from app.models.newsletter import Newsletter
 class NewsletterService():
 
 	def get(self):
-		newsletters = db.session.query(Newsletter).all()
-		return newsletters
+		subscribers = db.session.query(Newsletter).all()
+		return subscribers
+
+	def show(self, id):
+		subscriber = db.session.query(Newsletter).filter_by(id=id).first()
+		return subscriber
 
 	def create(self, payloads):
 		self.model_newsletter = Newsletter()

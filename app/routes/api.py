@@ -318,10 +318,12 @@ def newsletter(*args, **kwargs):
 
 # Newsletter route by id
 
-@api.route('/newsletters/<id>', methods=['PUT', 'PATCH', 'DELETE'])
+@api.route('/newsletters/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 def newsletter_id(id, *args, **kwargs):
 	if(request.method == 'PUT' or request.method == 'PATCH'):
 		return NewsletterController.update(request, id)
+	elif(request.method == 'GET'):
+		return NewsletterController.show(id)
 	elif(request.method == 'DELETE'):
 		return NewsletterController.delete(id)
 

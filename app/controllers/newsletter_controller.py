@@ -11,6 +11,13 @@ class NewsletterController(BaseController):
 		return BaseController.send_response_api(BaseModel.as_list(newsletters), 'newsletters retrieved successfully')
 
 	@staticmethod
+	def show(id):
+		subscriber = newsletterservice.show(id)
+		if subscriber is None:
+			return BaseController.send_error_api(None, 'subscriber not found')
+		return BaseController.send_response_api(subscriber.as_dict(), 'newsletter retrieved successfully')
+
+	@staticmethod
 	def create(request):
 		email = request.json['email'] if 'email' in request.json else None
 
