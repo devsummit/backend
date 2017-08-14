@@ -4,7 +4,6 @@ Flask==0.12.2
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.2
 alembic==0.9.3
-Flask.Uploads==0.2.1
 
 # Linter
 flake8==2.4.0
