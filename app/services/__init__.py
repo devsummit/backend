@@ -13,6 +13,7 @@ from app.services.points_transaction_service import PointsTransactionService
 from app.services.user_photo_service import UserPhotoService
 from app.services.speaker_service import SpeakerService
 from app.services.ticket_transfer_service import TicketTransferService
+from app.services.newsletter_service import NewsletterService
 
 # instantiate service
 userservice = UserService()
@@ -28,3 +29,4 @@ pointtransactionservice = PointsTransactionService()
 userphotoservice = UserPhotoService()
 speakerservice = SpeakerService()
 tickettransferservice = TicketTransferService()
+newsletterservice = NewsletterService()
