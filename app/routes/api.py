@@ -17,6 +17,7 @@ from app.controllers.event_controller import EventController
 from app.controllers.schedule_controller import ScheduleController
 from app.controllers.points_controller import PointsController
 from app.controllers.ticket_transfer_controller import TicketTransferController
+from app.controllers.newsletter_controller import NewsletterController
 
 api = Blueprint('api', __name__)
 
@@ -239,3 +240,23 @@ def ticket_transfer_logs(*args, **kwargs):
 def ticket_transfer(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return TicketTransferController.ticket_transfer(request, user)
+
+
+# Newsletter api
+
+@api.route('/newsletters', methods=['GET', 'POST'])
+def newsletter(*args, **kwargs):
+	if(request.method == 'POST'):
+		return NewsletterController.create(request)
+	elif(request.method == 'GET'):
+		return NewsletterController.index()
+
+# Newsletter route by id
+
+@api.route('/newsletters/<id>', methods=['PUT', 'PATCH', 'DELETE'])
+def newsletter_id(id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return NewsletterController.update(request, id)
+	elif(request.method == 'DELETE'):
+		return NewsletterController.delete(id)
+
