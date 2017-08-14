@@ -19,12 +19,9 @@ from app.controllers.points_controller import PointsController
 from app.controllers.user_photo_controller import UserPhotoController
 from app.controllers.speaker_controller import SpeakerController
 from app.controllers.ticket_transfer_controller import TicketTransferController
-<<<<<<< HEAD
 from app.controllers.speaker_document_controller import SpeakerDocumentController
-=======
 from app.controllers.newsletter_controller import NewsletterController
 
->>>>>>> develop
 api = Blueprint('api', __name__)
 
 
@@ -289,13 +286,15 @@ def user_photo(*args, **kwargs):
 	elif(request.method == 'GET'):
 		return UserPhotoController.show(user_id)
 
+
 @api.route('/user/photos', methods=['GET'])
 @token_required
 def user_photos(*args, **kwargs):
 	if(request.method == 'GET'):
 		return UserPhotoController.index()
-  
+
 # Ticket Transfer endpoint
+
 
 @api.route('/tickets/transfer/logs', methods=['GET'])
 @token_required
@@ -312,6 +311,8 @@ def ticket_transfer(*args, **kwargs):
 
 # Speaker Document api
 # UPLOAD FILES AND GET LIST OF FILES UPLOADED BY THE SPEAKER
+
+
 @api.route('/documents', methods=['POST', 'GET'])
 @token_required
 def speaker_document(*args, **kwargs):
@@ -322,6 +323,8 @@ def speaker_document(*args, **kwargs):
 		return SpeakerDocumentController.show(user)
 
 # GET SPECIFIC FILE UPLOADED BY THE SPEAKER || DELETE SPECIFIC FILE
+
+
 @api.route('/documents/<id>', methods=['DELETE', 'GET'])
 @token_required
 def _speaker_document(id, *args, **kwargs):
@@ -332,6 +335,8 @@ def _speaker_document(id, *args, **kwargs):
 		return SpeakerDocumentController.delete(user, id)
 
 # GET LIST OF FILES BASED ON USER ID
+
+
 @api.route('/speaker/<speaker_id>/documents', methods=['GET'])
 @token_required
 def speaker_document_user(speaker_id, *args, **kwargs):
@@ -339,6 +344,7 @@ def speaker_document_user(speaker_id, *args, **kwargs):
 		return SpeakerDocumentController._show(speaker_id)
 
 # Newsletter api
+
 
 @api.route('/newsletters', methods=['GET', 'POST'])
 def newsletter(*args, **kwargs):
@@ -349,6 +355,7 @@ def newsletter(*args, **kwargs):
 
 # Newsletter route by id
 
+
 @api.route('/newsletters/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 def newsletter_id(id, *args, **kwargs):
 	if(request.method == 'PUT' or request.method == 'PATCH'):
@@ -357,4 +364,3 @@ def newsletter_id(id, *args, **kwargs):
 		return NewsletterController.show(id)
 	elif(request.method == 'DELETE'):
 		return NewsletterController.delete(id)
-

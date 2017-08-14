@@ -2,6 +2,7 @@ import datetime
 from app.models import db
 from app.models.base_model import BaseModel
 
+
 class SpeakerDocument(db.Model, BaseModel):
     __tablename__ = 'materials'
 

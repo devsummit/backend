@@ -1,6 +1,7 @@
 from flask import request
 import datetime
 
+
 class Helper():
     # Document URL helper, turn into domain based url
     @staticmethod
@@ -11,10 +12,10 @@ class Helper():
     @staticmethod
     def allowed_file(file_name, config):
         return '.' in file_name and \
-            file_name.rsplit('.',1)[1] in config
+            file_name.rsplit('.', 1)[1] in config
 
-    #timestamp string maker
+    # Timestamp string maker
     @staticmethod
     def time_string():
         now = datetime.datetime.now()
-        return str(now.year) +  str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond)
+        return str(now.year) + str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond)

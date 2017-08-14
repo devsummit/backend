@@ -1,10 +1,10 @@
 from app.controllers.base_controller import BaseController
-from app.models.base_model import BaseModel
 from app.services import speakerdocumentservice
 from app.configs.constants import ROLE
 from app.models import db
 from app.models.speaker import Speaker
 from app.models.speaker_document import SpeakerDocument
+
 
 class SpeakerDocumentController(BaseController):
 
@@ -12,7 +12,7 @@ class SpeakerDocumentController(BaseController):
     def show(user):
         speaker = db.session.query(Speaker).filter_by(user_id=user['id']).first()
         if speaker is None:
-            return BaseController.send_error_api(None,'speaker not found')
+            return BaseController.send_error_api(None, 'speaker not found')
         speaker = speaker.as_dict()
         _speaker_documents = speakerdocumentservice.show(speaker['id'])
         if _speaker_documents is None:
@@ -38,7 +38,7 @@ class SpeakerDocumentController(BaseController):
         if(user['role_id'] == ROLE['speaker']):
             speaker = db.session.query(Speaker).filter_by(user_id=user['id']).first()
             if speaker is None:
-                return BaseController.send_error_api(None,'speaker not found')
+                return BaseController.send_error_api(None, 'speaker not found')
             speaker = speaker.as_dict()
             speaker_id = speaker['id']
             document_data = request.files['document_data']
@@ -48,14 +48,14 @@ class SpeakerDocumentController(BaseController):
                     'speaker_id': speaker_id
                 }
             else:
-                return BaseController.send_error_api(None,'field is not complete')
+                return BaseController.send_error_api(None, 'field is not complete')
             result = speakerdocumentservice.create(payloads)
             if not result['error']:
                 return BaseController.send_response_api(result['data'], 'speaker document succesfully uploaded')
             else:
                 return BaseController.send_error_api(None, result['data'])
         else:
-            return BaseController.send_error_api(None,'Unauthorized user')
+            return BaseController.send_error_api(None, 'Unauthorized user')
 
     @staticmethod
     def delete(user, id):

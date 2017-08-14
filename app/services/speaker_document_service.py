@@ -1,22 +1,22 @@
-import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from flask import Flask, request
 import os
 from app.services.helper import Helper 
-#import model class
+# import model class
 from app.models.speaker_document import SpeakerDocument
 from app.models.base_model import BaseModel
 
 
 app = Flask(__name__)
-#default saving, database saving and domain based url
+# default saving, database saving and domain based url
 app.config['POST_SPEAKER_DOC_DEST'] = 'app/static/documents/speakers/'
 app.config['SAVE_SPEAKER_DOC_DEST'] = 'documents/speakers/'
 app.config['GET_SPEAKER_DOC_DEST'] = 'static/'
 app.config['STATIC_DEST'] = 'app/static/'
-#These are the extentions that we are accepting to be upload
+# These are the extentions that we are accepting to be upload
 app.config['ALLOWED_SPEAKER_DOC_EXTENSIONS'] = set(['pdf', 'ppt'])
+
 
 class SpeakerDocumentService():
 
@@ -31,7 +31,7 @@ class SpeakerDocumentService():
             data = 'data not found'
             return {
                 'error': True,
-                'data':data
+                'data': data
             }   
 
     def shows(self, speaker_id):
@@ -45,7 +45,7 @@ class SpeakerDocumentService():
             data = 'data not found'
             return {
                 'error': True,
-                'data':data
+                'data': data
             }   
 
     def view(self, id):
@@ -58,14 +58,12 @@ class SpeakerDocumentService():
                 data = 'data not found'
                 return {
                     'error': True,
-                    'data':data
+                    'data': data
                 }   
 
     def create(self, payloads):
-        document_data = payloads['document_data']
         speaker_id = payloads['speaker_id']
         file = request.files['document_data']
-        ext =(file.filename.rsplit('.', 1)[1])
         if file and Helper().allowed_file(file.filename, app.config['ALLOWED_SPEAKER_DOC_EXTENSIONS']):
             self.model_speaker_document = SpeakerDocument()
             db.session.add(self.model_speaker_document)
@@ -79,7 +77,7 @@ class SpeakerDocumentService():
                 data['material'] = Helper().url_helper(self.model_speaker_document.material, app.config['GET_SPEAKER_DOC_DEST'])
                 return {
                     'error': False,
-                    'data':data
+                    'data': data
                 }
             except SQLAlchemyError as e:
                 data = e.orig.args
@@ -91,9 +89,9 @@ class SpeakerDocumentService():
     def delete(self, id):
         self.model_speaker_document = db.session.query(SpeakerDocument).filter_by(id=id)
         if self.model_speaker_document.first() is not None:
-            #delete file
+            # delete file
             os.remove(app.config['STATIC_DEST'] + self.model_speaker_document.first().material)
-            #delete row
+            # delete row
             self.model_speaker_document.delete()
             db.session.commit()
             return {
@@ -104,5 +102,5 @@ class SpeakerDocumentService():
             data = 'data not found'
             return {
                 'error': True,
-                'data':data
+                'data': data
             }   

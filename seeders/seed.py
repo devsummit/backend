@@ -54,7 +54,7 @@ class Seed():
 		print('seeding newsletter subscriber...')
 		NewsletterSeeder.run()
 		print('finish seeding newsletter subscriber')
-		
+
 		print('seeding speakers...')
 		SpeakersSeeder.run()
 		print('finish seeding speakers')

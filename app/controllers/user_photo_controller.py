@@ -1,6 +1,6 @@
 from app.controllers.base_controller import BaseController
-from app.models.base_model import BaseModel
 from app.services import userphotoservice
+
 
 class UserPhotoController(BaseController):
 
@@ -10,7 +10,7 @@ class UserPhotoController(BaseController):
         if user_photos is None:
             return BaseController.send_error_api(None, 'photo not found')
         return BaseController.send_response_api(user_photos, 'photos retrieved succesfully')
-    
+
     @staticmethod
     def show(user_id):
         user_photo = userphotoservice.show(user_id)
@@ -36,7 +36,6 @@ class UserPhotoController(BaseController):
         else:
             return BaseController.send_error_api(None, result['data'])
 
-    
     @staticmethod
     def update(request, user_id):
         image_data = request.files
