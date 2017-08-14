@@ -7,20 +7,33 @@ class UserAuthorizationController(BaseController):
 
 	@staticmethod
 	def login(request):
-		username = request.json['username'] if 'username' in request.json else None
-		password = request.json['password'] if 'password' in request.json else None
-		if username and password:
-			# check if user exist
-			user = userservice.get_user(username)
-			if user is not None:
-				if user.verify_password(password):
+		provider = request.json['provider'] if 'provider' in request.json else None
+		if provider is not None:
+			# social sign in
+			social_token = request.json['token'] if 'token' in request.json else None
+			user_social_id = userservice.social_sign_in(provider, social_token)
+			if (user_social_id is not None):
+				user = userservice.check_social_account(provider, social_id)
+				if user is not None:
 					token = userservice.save_token()
 					return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
-				else:
-					return BaseController.send_error_api(None, 'wrong credentials')
 			else:
-				return BaseController.send_error_api(None, 'username not found')
-		return BaseController.send_error_api(None, 'username and password required')
+				return BaseController.send_error_api(None, 'token is invalid'); 
+		else:
+			username = request.json['username'] if 'username' in request.json else None
+			password = request.json['password'] if 'password' in request.json else None
+			if username and password:
+				# check if user exist
+				user = userservice.get_user(username)
+				if user is not None:
+					if user.verify_password(password):
+						token = userservice.save_token()
+						return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
+					else:
+						return BaseController.send_error_api(None, 'wrong credentials')
+				else:
+					return BaseController.send_error_api(None, 'username not found')
+			return BaseController.send_error_api(None, 'username and password required')
 
 	@staticmethod
 	def register(request):
@@ -30,6 +43,9 @@ class UserAuthorizationController(BaseController):
 		username = request.json['username'] if 'username' in request.json else None
 		role = request.json['role'] if 'role' in request.json else None
 		password = request.json['password'] if 'password' in request.json else None
+		social_id = request.json['social_id'] if 'social_id' in request.json else None
+
+		# if social_id = None then normal registration
 
 		if firstname and email and username and role and password:
 			payloads = {
@@ -38,7 +54,8 @@ class UserAuthorizationController(BaseController):
 				'email': email,
 				'username': username,
 				'role': role,
-				'password': password
+				'password': password,
+				'social_id': social_id
 			}
 		else:
 			return BaseController.send_response_api(None, 'payloads not valid')
