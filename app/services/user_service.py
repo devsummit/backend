@@ -50,7 +50,7 @@ class UserService:
         self.model_user = db.session.query(User).filter_by(username=username).first()
         return self.model_user
 
-    def social_sign_in(self, provider, social_token):
+    def social_sign_in(self, provider, social_token, token_secret = ''):
         if (provider == 'google'):
             # check token integrity
             try:
@@ -79,6 +79,20 @@ class UserService:
                 return userid
             except Exception as e:
                 return None
+        elif(provider == 'twitter'):
+            # check token integrity
+            try:
+                CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
+                oauth = {
+                    'consumer_key': CLIENT_ID.client_id,
+                    'consumer_secret': CLIENT_ID.client_secret,
+                    'token': social_token,
+                    'token_secret': token_secret
+                }
+                result = requests.post('https://api.twitter.com/1.1/account/verify_credentials.json', oauth)
+            except Exception as e:
+                return None
+            return result
 
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
