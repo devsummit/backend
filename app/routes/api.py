@@ -16,6 +16,7 @@ from app.controllers.order_details_controller import OrderDetailsController
 from app.controllers.event_controller import EventController
 from app.controllers.schedule_controller import ScheduleController
 from app.controllers.points_controller import PointsController
+from app.controllers.user_photo_controller import UserPhotoController
 from app.controllers.speaker_controller import SpeakerController
 from app.controllers.ticket_transfer_controller import TicketTransferController
 
@@ -267,7 +268,28 @@ def transfer_points_log(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return PointsController.transfer_point_log(request, user)
 
+# User Photo api
 
+
+@api.route('/userphoto', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@token_required
+def userphoto(*args, **kwargs):
+	user_id = kwargs['user'].id
+	if(request.method == 'POST'):
+		return UserPhotoController.create(request, user_id)
+	elif(request.method == 'PATCH'):
+		return UserPhotoController.update(request, user_id)
+	elif(request.method == 'DELETE'):
+		return UserPhotoController.delete(user_id)
+	elif(request.method == 'GET'):
+		return UserPhotoController.show(user_id)
+
+@api.route('/userphotos', methods=['GET'])
+@token_required
+def userphotos(*args, **kwargs):
+	if(request.method == 'GET'):
+		return UserPhotoController.index()
+  
 # Ticket Transfer endpoint
 
 @api.route('/tickets/transfer/logs', methods=['GET'])
