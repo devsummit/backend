@@ -58,34 +58,27 @@ class UserService:
                 CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
                 print(CLIENT_ID.client_id)
                 idinfo = client.verify_id_token(social_token, CLIENT_ID.client_id)
-                print(idinfo)
-                # Or, if multiple clients access the backend server:
-                #idinfo = client.verify_id_token(token, None)
-                #if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
-                #    raise crypt.AppIdentityError("Unrecognized client.")
                 if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-                    return None
-                # safely get the user social id
-                
-                # If auth request is from a G Suite domain:
-                #if idinfo['hd'] != GSUITE_DOMAIN_NAME:
-                #    raise crypt.AppIdentityError("Wrong hosted domain.")
+                    raise crypt.AppIdentityError("Wrong issuer.")
             except crypt.AppIdentityError:
                 # Invalid token
                 return None
-                # return user social id
-            userid = idinfo['sub']
+            # user id valid, load it.
+            userid = idinfo['sub'] 
             return userid
 
         elif(provider == 'facebook'):
             # check token integrity
             try:
                 CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
-                facebook_endpoint = 'graph.facebook.com/debug_token?input_token=' + social_token + '&access_token=' + CLIENT_ID.client_id
-                result = requests.get(facebook_endpoint).content
-                # check for result -> app_id -> user_id
+                facebook_endpoint = 'https://graph.facebook.com/debug_token?input_token=' + social_token + '&access_token=' + CLIENT_ID.client_id + '|' + CLIENT_ID.client_secret
+                result = requests.get(facebook_endpoint)
+                payload = result.json()
+                if(payload['data']['is_valid']):
+                    userid = payload['data']['user_id']
+                return userid
             except Exception as e:
-                raise
+                return None
 
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
