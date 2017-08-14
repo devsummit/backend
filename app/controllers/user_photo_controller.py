@@ -2,7 +2,7 @@ from app.controllers.base_controller import BaseController
 from app.models.base_model import BaseModel
 from app.services import userphotoservice
 
-class UserImageController(BaseController):
+class UserPhotoController(BaseController):
 
     @staticmethod
     def index():
@@ -18,7 +18,7 @@ class UserImageController(BaseController):
 
     @staticmethod 
     def create(request, user_id):
-        image_data = request.files
+        image_data = request.files['image_data']
         if image_data and user_id:
             payloads = {
                 'image_data': image_data,
@@ -58,4 +58,4 @@ class UserImageController(BaseController):
         userPhoto = userphotoservice.delete(user_id)
         if userPhoto['error']:
             return BaseController.send_response_api(None, 'user photo not found')
-        return BaseController.send_response_api(None, 'user photo for user id: ' + user_id + ' has been succesfully deleted')
+        return BaseController.send_response_api(None, 'user photo for user id: ' + str(user_id) + ' has been succesfully deleted')
