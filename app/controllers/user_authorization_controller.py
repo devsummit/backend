@@ -13,9 +13,9 @@ class UserAuthorizationController(BaseController):
 			social_token = request.json['token'] if 'token' in request.json else None
 			user_social_id = userservice.social_sign_in(provider, social_token)
 			if (user_social_id is not None):
-				user = userservice.check_social_account(provider, social_id)
+				user = userservice.check_social_account(provider, user_social_id)
 				if user is not None:
-					token = userservice.save_token()
+					token = userservice.save_token(provider)
 					return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
 			else:
 				return BaseController.send_error_api(None, 'token is invalid'); 
