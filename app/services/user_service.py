@@ -77,11 +77,14 @@ class UserService:
             # check token integrity
             try:
                 CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
-                facebook_endpoint = 'graph.facebook.com/debug_token?input_token=' + social_token + '&access_token=' + CLIENT_ID.client_id
-                result = requests.get(facebook_endpoint).content
-                # check for result -> app_id -> user_id
+                facebook_endpoint = 'https://graph.facebook.com/debug_token?input_token=' + social_token + '&access_token=' + CLIENT_ID.client_id + '|' + CLIENT_ID.client_secret
+                result = requests.get(facebook_endpoint)
+                payload = result.json()
+                if(payload['data']['is_valid']):
+                    userid = payload['data']['user_id']
+                return userid
             except Exception as e:
-                raise
+                return False
 
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
