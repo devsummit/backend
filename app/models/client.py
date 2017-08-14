@@ -15,6 +15,7 @@ class Client(db.Model, BaseModel):
 	id = db.Column(db.Integer, primary_key=True)
 	app_name = db.Column(db.String)
 	client_secret = db.Column(db.String)
+	client_id = db.Column(db.String)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
