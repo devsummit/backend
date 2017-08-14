@@ -25,6 +25,7 @@ def upgrade():
 		sa.Column('username', sa.String, unique=True),
 		sa.Column('email', sa.String, unique=True),
 		sa.Column('password', sa.String),
+		sa.Column('social_id', sa.String),
 		sa.Column('role_id', sa.Integer, sa.ForeignKey('roles.id')),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
