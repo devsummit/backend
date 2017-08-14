@@ -2,6 +2,7 @@ import datetime
 
 from app.models import db
 from app.models.base_model import BaseModel
+from app.models.client import Client
 
 
 class AccessToken(db.Model, BaseModel):
@@ -9,7 +10,7 @@ class AccessToken(db.Model, BaseModel):
 	__tablename__ = 'access_tokens'
 
 	# visible fields
-	visible = ['id', 'access_token', 'refresh_token', 'created_at', 'updated_at']
+	visible = ['id', 'access_token', 'refresh_token', 'client_id', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -19,6 +20,12 @@ class AccessToken(db.Model, BaseModel):
 		nullable=False
 	)
 	user = db.relationship('User')
+	client_id = db.Column(
+		db.String(40),
+		db.ForeignKey('clients.id'),
+		nullable=False
+	)
+	client = db.relationship('Client')
 	access_token = db.Column(db.String)
 	refresh_token = db.Column(db.String)
 	created_at = db.Column(db.DateTime)
