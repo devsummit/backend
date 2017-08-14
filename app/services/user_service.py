@@ -57,21 +57,13 @@ class UserService:
                 # get client id
                 CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
                 idinfo = client.verify_id_token(social_token, CLIENT_ID.client_id)
-                # Or, if multiple clients access the backend server:
-                #idinfo = client.verify_id_token(token, None)
-                #if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
-                #    raise crypt.AppIdentityError("Unrecognized client.")
                 if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
                     raise crypt.AppIdentityError("Wrong issuer.")
-                # safely get the user social id
-                userid = idinfo['sub'] 
-                # If auth request is from a G Suite domain:
-                #if idinfo['hd'] != GSUITE_DOMAIN_NAME:
-                #    raise crypt.AppIdentityError("Wrong hosted domain.")
             except crypt.AppIdentityError:
                 # Invalid token
-                userid = idinfo['sub']
-                # return user social id
+                return None
+            # user id valid, load it.
+            userid = idinfo['sub'] 
             return userid
         elif(provider == 'facebook'):
             # check token integrity
@@ -84,7 +76,7 @@ class UserService:
                     userid = payload['data']['user_id']
                 return userid
             except Exception as e:
-                return False
+                return None
 
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
