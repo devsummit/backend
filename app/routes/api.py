@@ -76,6 +76,30 @@ def stage_id(id, *args, **kwargs):
 	elif(request.method == 'GET'):
 		return StageController.show(id)
 
+# Stage Picture api
+
+
+@api.route('/stages/<stage_id>/pictures', methods=['GET', 'POST'])
+@token_required
+def stage_picture(stage_id, *args, **kwargs):
+	if(request.method == 'POST'):
+		return StageController.createPicture(request, stage_id)
+	elif(request.method == 'GET'):
+		return StageController.indexPicture(stage_id)
+
+# Stage Picture route by id
+
+
+@api.route('/stages/<stage_id>/pictures/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def stage_picture_id(stage_id, id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return StageController.updatePicture(request, stage_id, id)
+	elif(request.method == 'DELETE'):
+		return StageController.deletePicture(stage_id, id)
+	elif(request.method == 'GET'):
+		return StageController.showPicture(stage_id, id)
+
 # Beacon api
 
 
