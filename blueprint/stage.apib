@@ -71,6 +71,29 @@ Get all spesific stage pictures
         + data (array[StagePictureResponse])
 
 
+### Show Single Stage pictures [GET /api/v1/stages/{stage_id}/pictures/{id}]
+
+Get single spesific stage pictures
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+
++ Response 200 (application/json)
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Pictures retrieved successfully` (string)
+            - success: `true` (boolean)
+        + data (array[StagePictureResponse])
+
+
 ### Show stage spot [GET /api/v1/stages/{stage_id}/spots]
 
 Get all spots included in spesific stage
@@ -123,7 +146,7 @@ Post stage pictures
 
     + Headers
 
-            Accept: application/vnd.api+json
+            Accept: application/json
             Authorization: Bearer :[Gist](data/token.apib)
 
     + Attributes
@@ -139,6 +162,34 @@ Post stage pictures
             - message: `Photo succesfully uploaded` (string)
             - success: `true` (boolean)
         + data (array[StagePictureResponse])
+
+
+### Edit Stage Picture [PATCH /api/v1/stages/{stage_id}/pictures/{id}]
+
+Edit stage pictures
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (StagePicture)
+
++ Parameters
+
+    - stage_id: `1` (number, required) - valid stage id
+    - id: `1` (number, required) - valid id
+
++ Response 200 (application/vnd.api+json)
+    + Attributes (BaseResponse)
+        + meta (object)
+            - message: `Photo succesfully uploaded` (string)
+            - success: `true` (boolean)
+        + data (array[StagePictureResponse])
+
 
 ### Edit stage filter by id [PATCH /api/v1/stages/{event_id}]
 
