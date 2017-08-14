@@ -11,6 +11,7 @@ from app.services.event_service import EventService
 from app.services.schedule_service import ScheduleService
 from app.services.points_transaction_service import PointsTransactionService
 from app.services.ticket_transfer_service import TicketTransferService
+from app.services.newsletter_service import NewsletterService
 
 # instantiate service
 userservice = UserService()
@@ -24,3 +25,4 @@ eventservice = EventService()
 scheduleservice = ScheduleService()
 pointtransactionservice = PointsTransactionService()
 tickettransferservice = TicketTransferService()
+newsletterservice = NewsletterService()
