@@ -1,26 +1,24 @@
 import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from flask import Flask, request, redirect, url_for, send_from_directory
-from flask.ext.uploads import UploadSet, configure_uploads, IMAGES
-from werkzeug import secure_filename
+from flask import Flask, request
 import os
 #import model class
 from app.models.user_photo import UserPhoto
 from app.models.base_model import BaseModel
 
 app = Flask(__name__)
-#defaul saving, database saving & domain based url
+#default saving, database saving & domain based url
 app.config['POST_USER_PHOTO_DEST'] = 'app/static/images/users/'
 app.config['SAVE_USER_PHOTO_DEST'] = 'images/users/'
 app.config['GET_USER_PHOTO_DEST'] = 'static/'
+app.config['STATIC_DEST'] = 'app/static/'
 # These are the extension that we are accepting to be uploaded
 app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg'])
 
 class UserPhotoService():
 
     # Photo URL helper, turn into domain based url
-
     def urlHelper(self, url):
         return request.url_root  + app.config['GET_USER_PHOTO_DEST'] + url
 
@@ -81,7 +79,7 @@ class UserPhotoService():
                 newUrl = app.config['SAVE_USER_PHOTO_DEST'] + filename
                 self.model_user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id)
                 self.user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
-                os.remove(self.user_photo.url)
+                os.remove(app.config['STATIC_DEST'] + self.user_photo.url)
                 self.model_user_photo.update({
                     'url': newUrl,
                     'updated_at': datetime.datetime.now()
@@ -103,6 +101,8 @@ class UserPhotoService():
     def delete(self, user_id):
         self.model_user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id)
         if self.model_user_photo.first() is not None:
+            #delete file
+            os.remove(app.config['STATIC_DEST'] + self.model_user_photo.first().url)
             #delete row
             self.model_user_photo.delete()
             db.session.commit()
