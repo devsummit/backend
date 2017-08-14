@@ -10,3 +10,5 @@ flake8==2.4.0
 
 # faker - to generate fake data(used in seeder)
 Faker==0.7.18
+# google token check
+oauth2client==4.1.2
