@@ -11,6 +11,9 @@ from app.services.event_service import EventService
 from app.services.schedule_service import ScheduleService
 from app.services.points_transaction_service import PointsTransactionService
 from app.services.user_photo_service import UserPhotoService
+from app.services.speaker_service import SpeakerService
+from app.services.ticket_transfer_service import TicketTransferService
+
 # instantiate service
 userservice = UserService()
 ticketservice = TicketService()
@@ -23,3 +26,5 @@ eventservice = EventService()
 scheduleservice = ScheduleService()
 pointtransactionservice = PointsTransactionService()
 userphotoservice = UserPhotoService()
+speakerservice = SpeakerService()
+tickettransferservice = TicketTransferService()

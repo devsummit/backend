@@ -9,11 +9,15 @@
 - created_at: `2017-06-23 20:27:16` (string, nullable)
 - updated_at: `2017-06-23 20:27:16` (string, nullable)
 
-### TransferTicketLog
+### TicketTransferLog
 - id: 1 (number)
-
-### TicketTransferRequest
-- ticket_id: 1 (number) - valid ticket id
-- receiver_id: 1 (number) - valid user ID
+- user_ticket_id: 1 (number)
+- sender_user_id: 1 (number)
+- receiver_user_id: 2 (number)
 - created_at: `2017-06-23 20:27:16` (string, nullable)
 - updated_at: `2017-06-23 20:27:16` (string, nullable)
+
+
+### TicketTransferRequest
+- user_ticket_id: 1 (number) - valid user ID
+- receiver_user_id: 1 (number) - valid user ID
