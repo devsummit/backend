@@ -2,7 +2,6 @@ import datetime
 
 from app.models import db
 from app.models.base_model import BaseModel
-from app.models.stage import Stage
 
 
 class StagePhotos(db.Model, BaseModel):
