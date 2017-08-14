@@ -19,7 +19,12 @@ from app.controllers.points_controller import PointsController
 from app.controllers.user_photo_controller import UserPhotoController
 from app.controllers.speaker_controller import SpeakerController
 from app.controllers.ticket_transfer_controller import TicketTransferController
+<<<<<<< HEAD
 from app.controllers.speaker_document_controller import SpeakerDocumentController
+=======
+from app.controllers.newsletter_controller import NewsletterController
+
+>>>>>>> develop
 api = Blueprint('api', __name__)
 
 
@@ -332,3 +337,24 @@ def _speaker_document(id, *args, **kwargs):
 def speaker_document_user(speaker_id, *args, **kwargs):
 	if(request.method == 'GET'):
 		return SpeakerDocumentController._show(speaker_id)
+
+# Newsletter api
+
+@api.route('/newsletters', methods=['GET', 'POST'])
+def newsletter(*args, **kwargs):
+	if(request.method == 'POST'):
+		return NewsletterController.create(request)
+	elif(request.method == 'GET'):
+		return NewsletterController.index()
+
+# Newsletter route by id
+
+@api.route('/newsletters/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+def newsletter_id(id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return NewsletterController.update(request, id)
+	elif(request.method == 'GET'):
+		return NewsletterController.show(id)
+	elif(request.method == 'DELETE'):
+		return NewsletterController.delete(id)
+
