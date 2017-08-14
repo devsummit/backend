@@ -2,8 +2,7 @@ import datetime
 from app.models import db
 from app.models.base_model import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
-from flask import Flask, request, redirect, url_for, send_from_directory
-from flask_uploads import UploadSet, configure_uploads
+from flask import Flask, request
 from werkzeug import secure_filename
 import os
 # import model class
@@ -11,7 +10,7 @@ from app.models.stage import Stage
 from app.models.stage_photos import StagePhotos
 
 app = Flask(__name__)
-#defaul saving directory
+# defaul saving directory
 app.config['POST_STAGE_PHOTO_DEST'] = 'app/static/images/stages/'
 app.config['SAVE_STAGE_PHOTO_DEST'] = 'images/stages/'
 app.config['GET_STAGE_PHOTO_DEST'] = 'static/'
@@ -25,9 +24,9 @@ class StageService():
 	def allowed_file(self, filename):
 		return '.' in filename and \
 			filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
-	
+
 	def urlHelper(self, url):
-		return request.url_root  + app.config['GET_STAGE_PHOTO_DEST'] + url
+		return request.url_root + app.config['GET_STAGE_PHOTO_DEST'] + url
 
 	def get(self):
 		stages = db.session.query(Stage).all()
@@ -67,15 +66,14 @@ class StageService():
 				'error': True,
 				'data': data
 			}
-	
+
 	def createPicture(self, payloads):
-		image_file = payloads['image_file']
 		file = request.files['image_file']
-		ext = (file.filename.rsplit('.',1)[1])
+		ext = (file.filename.rsplit('.', 1)[1])
 		if file and self.allowed_file(file.filename):
 			filename = secure_filename(file.filename)
 			now = datetime.datetime.now()
-			filename = str(now.year) +  str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond) + '.' + ext
+			filename = str(now.year) + str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond) + '.' + ext
 			file.save(os.path.join(app.config['POST_STAGE_PHOTO_DEST'], filename))
 			self.model_stage_picture = StagePhotos()
 			self.model_stage_picture.stage_id = payloads['stage_id']
@@ -124,21 +122,20 @@ class StageService():
 			self.model_stage_picture = db.session.query(StagePhotos).filter_by(stage_id=stage_id).filter_by(id=id)
 			self.url = self.model_stage_picture.first().url
 			os.remove(app.config['STATIC_DEST'] + self.url)
-			image_file = payloads['image_file']
 			file = request.files['image_file']
-			ext = (file.filename.rsplit('.',1)[1])
+			ext = (file.filename.rsplit('.', 1)[1])
 			if file and self.allowed_file(file.filename):
 				filename = secure_filename(file.filename)
 				now = datetime.datetime.now()
-				filename = str(now.year) +  str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond) + '.' + ext
+				filename = str(now.year) + str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond) + '.' + ext
 				file.save(os.path.join(app.config['POST_STAGE_PHOTO_DEST'], filename))
 				self.model_stage_picture.update({
-					'url':  app.config['SAVE_STAGE_PHOTO_DEST'] + filename,
+					'url': app.config['SAVE_STAGE_PHOTO_DEST'] + filename,
 					'updated_at': datetime.datetime.now()
 				})
 				db.session.commit()
 				data = self.model_stage_picture.first().as_dict()
-				data['url'] =self.urlHelper(data['url'])
+				data['url'] = self.urlHelper(data['url'])
 				return {
 					'error': False,
 					'data': data
