@@ -52,13 +52,12 @@ class UserService:
         self.model_user = db.session.query(User).filter_by(username=username).first()
         return self.model_user
 
-    def social_sign_in(self, provider, social_token, token_secret = ''):
+    def social_sign_in(self, provider, social_token, token_secret=''):
         if (provider == 'google'):
             # check token integrity
             try:
                 # get client id
                 CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
-                print(CLIENT_ID.client_id)
                 idinfo = client.verify_id_token(social_token, CLIENT_ID.client_id)
                 if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
                     raise crypt.AppIdentityError("Wrong issuer.")
@@ -84,8 +83,7 @@ class UserService:
         elif(provider == 'twitter'):
             # check token integrity
             try:
-                CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
-                
+                CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()                
                 consumer = oauth.Consumer(key=CLIENT_ID.client_id, secret=CLIENT_ID.client_secret)
                 access_token = oauth.Token(key=social_token, secret=token_secret)
 

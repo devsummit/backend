@@ -22,7 +22,7 @@ class UserAuthorizationController(BaseController):
 					token = userservice.save_token(provider)
 					return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
 			else:
-				return BaseController.send_error_api(None, 'token is invalid'); 
+				return BaseController.send_error_api(None, 'token is invalid') 
 		else:
 			username = request.json['username'] if 'username' in request.json else None
 			password = request.json['password'] if 'password' in request.json else None
