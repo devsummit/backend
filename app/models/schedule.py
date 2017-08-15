@@ -2,8 +2,8 @@ import datetime
 # import classes
 from app.models.base_model import BaseModel
 from app.models import db
-from app.models.event import Event
-from app.models.stage import Stage
+from app.models.event import Event  # noqa
+from app.models.stage import Stage  # noqa
 
 
 class Schedule(db.Model, BaseModel):

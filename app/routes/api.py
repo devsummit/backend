@@ -16,6 +16,12 @@ from app.controllers.order_details_controller import OrderDetailsController
 from app.controllers.event_controller import EventController
 from app.controllers.schedule_controller import ScheduleController
 from app.controllers.points_controller import PointsController
+from app.controllers.user_photo_controller import UserPhotoController
+from app.controllers.speaker_controller import SpeakerController
+from app.controllers.ticket_transfer_controller import TicketTransferController
+from app.controllers.speaker_document_controller import SpeakerDocumentController
+from app.controllers.newsletter_controller import NewsletterController
+from app.controllers.booth_controller import BoothController
 
 api = Blueprint('api', __name__)
 
@@ -73,6 +79,30 @@ def stage_id(id, *args, **kwargs):
 		return StageController.delete(id)
 	elif(request.method == 'GET'):
 		return StageController.show(id)
+
+# Stage Picture api
+
+
+@api.route('/stages/<stage_id>/pictures', methods=['GET', 'POST'])
+@token_required
+def stage_picture(stage_id, *args, **kwargs):
+	if(request.method == 'POST'):
+		return StageController.createPicture(request, stage_id)
+	elif(request.method == 'GET'):
+		return StageController.indexPicture(stage_id)
+
+# Stage Picture route by id
+
+
+@api.route('/stages/<stage_id>/pictures/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def stage_picture_id(stage_id, id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return StageController.updatePicture(request, stage_id, id)
+	elif(request.method == 'DELETE'):
+		return StageController.deletePicture(stage_id, id)
+	elif(request.method == 'GET'):
+		return StageController.showPicture(stage_id, id)
 
 # Beacon api
 
@@ -205,6 +235,47 @@ def schedule_id(id, *args, **kwargs):
 	elif(request.method == 'DELETE'):
 		return ScheduleController.delete(id)
 
+# Speakers endpoint
+
+
+@api.route('/speakers', methods=['GET'])
+@token_required
+def speaker(*args, **kwargs):
+	if(request.method == 'GET'):
+		return SpeakerController.index()
+
+
+@api.route('/speakers/<id>', methods=['PUT', 'PATCH', 'GET'])
+@token_required
+def speaker_id(id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return SpeakerController.update(request, id)
+	elif(request.method == 'GET'):
+		return SpeakerController.show(id)
+
+# Booth api
+
+
+@api.route('/booths', methods=['GET', 'POST'])
+@token_required
+def booth(*args, **kwargs):
+	if(request.method == 'POST'):
+		return BoothController.create(request)
+	elif(request.method == 'GET'):
+		return BoothController.index()
+
+# Booth route by id
+
+
+@api.route('/booths/<booth_id>', methods=['PUT', 'PATCH', 'GET'])
+@token_required
+def booth_id(booth_id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return BoothController.update(request, booth_id)
+	elif(request.method == 'GET'):
+		return BoothController.show(booth_id)
+
+
 # Point endpoint
 
 
@@ -222,3 +293,98 @@ def transfer_points(*args, **kwargs):
 def transfer_points_log(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return PointsController.transfer_point_log(request, user)
+
+# User Photo api
+
+
+@api.route('/user/photo', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@token_required
+def user_photo(*args, **kwargs):
+	user_id = kwargs['user'].id
+	if(request.method == 'POST'):
+		return UserPhotoController.create(request, user_id)
+	elif(request.method == 'PATCH'):
+		return UserPhotoController.update(request, user_id)
+	elif(request.method == 'DELETE'):
+		return UserPhotoController.delete(user_id)
+	elif(request.method == 'GET'):
+		return UserPhotoController.show(user_id)
+
+
+@api.route('/user/photos', methods=['GET'])
+@token_required
+def user_photos(*args, **kwargs):
+	if(request.method == 'GET'):
+		return UserPhotoController.index()
+
+# Ticket Transfer endpoint
+
+
+@api.route('/tickets/transfer/logs', methods=['GET'])
+@token_required
+def ticket_transfer_logs(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return TicketTransferController.ticket_transfer_logs(user)
+
+
+@api.route('/tickets/transfer', methods=['POST'])
+@token_required
+def ticket_transfer(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return TicketTransferController.ticket_transfer(request, user)
+
+# Speaker Document api
+# UPLOAD FILES AND GET LIST OF FILES UPLOADED BY THE SPEAKER
+
+
+@api.route('/documents', methods=['POST', 'GET'])
+@token_required
+def speaker_document(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(request.method == 'POST'):
+		return SpeakerDocumentController.create(request, user)
+	elif(request.method == 'GET'):
+		return SpeakerDocumentController.show(user)
+
+# GET SPECIFIC FILE UPLOADED BY THE SPEAKER || DELETE SPECIFIC FILE
+
+
+@api.route('/documents/<id>', methods=['DELETE', 'GET'])
+@token_required
+def _speaker_document(id, *args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(request.method == 'GET'):
+		return SpeakerDocumentController.view(id)
+	elif(request.method == 'DELETE'):
+		return SpeakerDocumentController.delete(user, id)
+
+# GET LIST OF FILES BASED ON USER ID
+
+
+@api.route('/speaker/<speaker_id>/documents', methods=['GET'])
+@token_required
+def speaker_document_user(speaker_id, *args, **kwargs):
+	if(request.method == 'GET'):
+		return SpeakerDocumentController._show(speaker_id)
+
+# Newsletter api
+
+
+@api.route('/newsletters', methods=['GET', 'POST'])
+def newsletter(*args, **kwargs):
+	if(request.method == 'POST'):
+		return NewsletterController.create(request)
+	elif(request.method == 'GET'):
+		return NewsletterController.index()
+
+# Newsletter route by id
+
+
+@api.route('/newsletters/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+def newsletter_id(id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return NewsletterController.update(request, id)
+	elif(request.method == 'GET'):
+		return NewsletterController.show(id)
+	elif(request.method == 'DELETE'):
+		return NewsletterController.delete(id)

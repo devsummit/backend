@@ -4,6 +4,12 @@ from seeders.stages_seeder import StagesSeeder
 from seeders.events_seeder import EventsSeeder
 from seeders.beacons_seeder import BeaconsSeeder
 from seeders.schedules_seeder import SchedulesSeeder
+from seeders.tickets_seeder import TicketsSeeder
+from seeders.user_tickets_seeder import UserTicketsSeeder
+from seeders.ticket_transfer_logs_seeder import TicketTransferLogsSeeder
+from seeders.newsletters_seeder import NewsletterSeeder
+from seeders.speakers_seeder import SpeakersSeeder
+from seeders.booths_seeder import BoothsSeeder
 
 
 class Seed():
@@ -33,3 +39,27 @@ class Seed():
 		print('seeding schedules...')
 		SchedulesSeeder.run()
 		print('finish seeding schedules')
+
+		print('seeding tickets...')
+		TicketsSeeder.run()
+		print('finish seeding tickets')
+
+		print('seeding user_ticket ...')
+		UserTicketsSeeder.run()
+		print('finish seeding user_ticket')
+
+		print('seeding ticket transfer logs...')
+		TicketTransferLogsSeeder.run()
+		print('finish seeding ticket transfer logs')
+
+		print('seeding newsletter subscriber...')
+		NewsletterSeeder.run()
+		print('finish seeding newsletter subscriber')
+
+		print('seeding speakers...')
+		SpeakersSeeder.run()
+		print('finish seeding speakers')
+
+		print('seeding booths...')
+		BoothsSeeder.run()
+		print('finish seeding booths')

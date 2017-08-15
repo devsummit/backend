@@ -11,6 +11,7 @@ flake8==2.4.0
 # faker - to generate fake data(used in seeder)
 Faker==0.7.18
 
+
 # google token check
 oauth2client==4.1.2
 
@@ -19,3 +20,4 @@ requests==2.18.3
 
 #handle twitter oauth
 oauth2==1.9.0
+Flask-Uploads==0.2.1

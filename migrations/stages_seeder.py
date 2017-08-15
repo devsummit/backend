@@ -17,7 +17,7 @@ class StagesSeeder():
         """
         fake = Faker()
         stage_types = ['podium', 'booth', 'mainstage']
-        for i in range(0, 10):
+        for i in range(0, 10): 
             new_stage = Stage()
             new_stage.name = fake.name()
             new_stage.stage_type = random.choice(stage_types)
