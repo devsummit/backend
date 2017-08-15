@@ -1,3 +1,5 @@
+import oauth2 as oauth
+import json
 import requests
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -83,16 +85,22 @@ class UserService:
             # check token integrity
             try:
                 CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
-                oauth = {
-                    'consumer_key': CLIENT_ID.client_id,
-                    'consumer_secret': CLIENT_ID.client_secret,
-                    'token': social_token,
-                    'token_secret': token_secret
-                }
-                result = requests.post('https://api.twitter.com/1.1/account/verify_credentials.json', oauth)
+                
+                consumer = oauth.Consumer(key=CLIENT_ID.client_id, secret=CLIENT_ID.client_secret)
+                access_token = oauth.Token(key=social_token, secret=token_secret)
+
+                client = oauth.Client(consumer, access_token)
+                account_endpoint = "https://api.twitter.com/1.1/account/verify_credentials.json"
+                response, data = client.request(account_endpoint)
+                payload = json.loads(data)
+                if('id' in payload):
+                    userid = payload['id_str']
+                else:
+                    return None
+                # check if error exist in data
             except Exception as e:
                 return None
-            return result
+            return userid
 
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
