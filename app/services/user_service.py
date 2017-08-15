@@ -1,7 +1,9 @@
+import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.access_token import AccessToken
 from app.models.user import User
+from werkzeug.security import generate_password_hash
 
 
 class UserService:
@@ -63,3 +65,50 @@ class UserService:
             'error': True,
             'data': token_exist
         }
+
+    def change_name(self, payloads):
+        try:
+            self.model_user = db.session.query(User).filter_by(id=payloads['user']['id'])
+            self.model_user.update({
+                'first_name': payloads['first_name'],
+                'last_name': payloads['last_name'],
+                'updated_at': datetime.datetime.now()
+            })  
+            db.session.commit()
+            data = self.model_user.first().as_dict()
+            return {
+                'error': False,
+                'data': data
+            }
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return {
+                'error': True,
+                'data': data
+            }
+
+    def change_password(self, payloads):
+        user = self.get_user(payloads['user']['username'])
+        try:
+            if user.verify_password(payloads['old_password']):
+                self.model_user = db.session.query(User).filter_by(id=payloads['user']['id'])
+                self.model_user.update({
+                    'password': generate_password_hash(payloads['new_password']),
+                    'updated_at': datetime.datetime.now()
+                })
+                db.session.commit()
+                data = self.model_user.first().as_dict()
+                return {
+                    'error': False,
+                    'data': data
+                }
+            return {
+                'error': True,
+                'data': "Invalid password"
+            }
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return {
+                'error': True,
+                'data': data
+            }
