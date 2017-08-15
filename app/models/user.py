@@ -15,7 +15,7 @@ class User(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'users'
 	# displayed fields
-	visible = ['id', 'first_name', 'last_name', 'role_id', 'username', 'email', 'created_at', 'updated_at']
+	visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id', 'username', 'email', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -25,6 +25,7 @@ class User(db.Model, BaseModel):
 	email = db.Column(db.String, index=True, unique=True)
 	password = db.Column(db.String)
 	role_id = db.Column(db.Integer)
+	social_id = db.Column(db.String)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
