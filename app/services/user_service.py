@@ -14,13 +14,12 @@ class UserService:
                 'error': True,
                 'data': 'payload not valid'
             }
-
         self.model_user = User()
         self.model_user.first_name = payloads['first_name']
         self.model_user.last_name = payloads['last_name']
         self.model_user.email = payloads['email']
         self.model_user.username = payloads['username']
-        self.model_user.role = payloads['role']
+        self.model_user.role_id = payloads['role']
         self.model_user.hash_password(payloads['password'])
         db.session.add(self.model_user)
 
