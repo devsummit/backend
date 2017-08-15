@@ -24,20 +24,20 @@ class UserPhotoService():
         return request.url_root + app.config['GET_USER_PHOTO_DEST'] + url
 
     # For a given file, return whether it's an allowed type or not
-    def allowed_file(self, filename):
-        return '.' in filename and \
-            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
+    def allowed_file(self, file_name):
+        return '.' in file_name and \
+            file_name.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
     def get(self):
-        userPhotos = BaseModel.as_list(db.session.query(UserPhoto).all())
-        for userPhoto in userPhotos:
-            userPhoto['url'] = self.urlHelper(userPhoto['url'])
-        return userPhotos
+        user_photos = BaseModel.as_list(db.session.query(UserPhoto).all())
+        for user_photo in user_photos:
+            user_photo['url'] = self.urlHelper(user_photo['url'])
+        return user_photos
 
     def show(self, user_id):
-        userPhoto = db.session.query(UserPhoto).filter_by(user_id=user_id).first().as_dict()
-        userPhoto['url'] = self.urlHelper(userPhoto['url'])
-        return userPhoto
+        user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id).first().as_dict()
+        user_photo['url'] = self.urlHelper(user_photo['url'])
+        return user_photo
 
     def create(self, payloads):
         user_id = payloads['user_id']

@@ -1,23 +1,21 @@
 import datetime
-
 from app.models import db
 from app.models.base_model import BaseModel
 
 
-class UserPhoto(db.Model, BaseModel):
-    __tablename__ = 'user_photo'
+class SpeakerDocument(db.Model, BaseModel):
+    __tablename__ = 'materials'
 
-    visible = ['id', 'user_id', 'url', 'created_at', 'updated_at']
+    visible = ['id', 'speaker_id', 'material', 'created_at', 'updated_at']
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(
+    speaker_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id'),
+        db.ForeignKey('speakers.id'),
         nullable=False
     )
-    user = db.relationship('User')
-    url = db.Column(db.String)
+    speaker = db.relationship('Speaker')
+    material = db.Column(db.String)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
 
