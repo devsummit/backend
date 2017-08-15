@@ -19,6 +19,7 @@ from app.controllers.points_controller import PointsController
 from app.controllers.user_photo_controller import UserPhotoController
 from app.controllers.speaker_controller import SpeakerController
 from app.controllers.ticket_transfer_controller import TicketTransferController
+from app.controllers.speaker_document_controller import SpeakerDocumentController
 from app.controllers.newsletter_controller import NewsletterController
 
 api = Blueprint('api', __name__)
@@ -272,9 +273,9 @@ def transfer_points_log(*args, **kwargs):
 # User Photo api
 
 
-@api.route('/userphoto', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@api.route('/user/photo', methods=['GET', 'POST', 'PATCH', 'DELETE'])
 @token_required
-def userphoto(*args, **kwargs):
+def user_photo(*args, **kwargs):
 	user_id = kwargs['user'].id
 	if(request.method == 'POST'):
 		return UserPhotoController.create(request, user_id)
@@ -285,13 +286,15 @@ def userphoto(*args, **kwargs):
 	elif(request.method == 'GET'):
 		return UserPhotoController.show(user_id)
 
-@api.route('/userphotos', methods=['GET'])
+
+@api.route('/user/photos', methods=['GET'])
 @token_required
-def userphotos(*args, **kwargs):
+def user_photos(*args, **kwargs):
 	if(request.method == 'GET'):
 		return UserPhotoController.index()
-  
+
 # Ticket Transfer endpoint
+
 
 @api.route('/tickets/transfer/logs', methods=['GET'])
 @token_required
@@ -306,8 +309,42 @@ def ticket_transfer(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return TicketTransferController.ticket_transfer(request, user)
 
+# Speaker Document api
+# UPLOAD FILES AND GET LIST OF FILES UPLOADED BY THE SPEAKER
+
+
+@api.route('/documents', methods=['POST', 'GET'])
+@token_required
+def speaker_document(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(request.method == 'POST'):
+		return SpeakerDocumentController.create(request, user)
+	elif(request.method == 'GET'):
+		return SpeakerDocumentController.show(user)
+
+# GET SPECIFIC FILE UPLOADED BY THE SPEAKER || DELETE SPECIFIC FILE
+
+
+@api.route('/documents/<id>', methods=['DELETE', 'GET'])
+@token_required
+def _speaker_document(id, *args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(request.method == 'GET'):
+		return SpeakerDocumentController.view(id)
+	elif(request.method == 'DELETE'):
+		return SpeakerDocumentController.delete(user, id)
+
+# GET LIST OF FILES BASED ON USER ID
+
+
+@api.route('/speaker/<speaker_id>/documents', methods=['GET'])
+@token_required
+def speaker_document_user(speaker_id, *args, **kwargs):
+	if(request.method == 'GET'):
+		return SpeakerDocumentController._show(speaker_id)
 
 # Newsletter api
+
 
 @api.route('/newsletters', methods=['GET', 'POST'])
 def newsletter(*args, **kwargs):
@@ -318,6 +355,7 @@ def newsletter(*args, **kwargs):
 
 # Newsletter route by id
 
+
 @api.route('/newsletters/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 def newsletter_id(id, *args, **kwargs):
 	if(request.method == 'PUT' or request.method == 'PATCH'):
@@ -326,4 +364,3 @@ def newsletter_id(id, *args, **kwargs):
 		return NewsletterController.show(id)
 	elif(request.method == 'DELETE'):
 		return NewsletterController.delete(id)
-

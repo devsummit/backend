@@ -1,20 +1,22 @@
 from app.controllers.base_controller import BaseController
-from app.models.base_model import BaseModel
 from app.services import userphotoservice
+
 
 class UserPhotoController(BaseController):
 
     @staticmethod
     def index():
-        userPhotos = userphotoservice.get()
-        return BaseController.send_response_api(userPhotos, 'photos retrieved succesfully')
-    
+        user_photos = userphotoservice.get()
+        if user_photos is None:
+            return BaseController.send_error_api(None, 'photo not found')
+        return BaseController.send_response_api(user_photos, 'photos retrieved succesfully')
+
     @staticmethod
     def show(user_id):
-        userPhoto = userphotoservice.show(user_id)
-        if userPhoto is None:
+        user_photo = userphotoservice.show(user_id)
+        if user_photo is None:
             return BaseController.send_error_api(None, 'photo not found')
-        return BaseController.send_response_api(userPhoto, 'photo retrieved successfully')
+        return BaseController.send_response_api(user_photo, 'photo retrieved successfully')
 
     @staticmethod 
     def create(request, user_id):
@@ -34,7 +36,6 @@ class UserPhotoController(BaseController):
         else:
             return BaseController.send_error_api(None, result['data'])
 
-    
     @staticmethod
     def update(request, user_id):
         image_data = request.files
@@ -55,7 +56,7 @@ class UserPhotoController(BaseController):
 
     @staticmethod
     def delete(user_id):
-        userPhoto = userphotoservice.delete(user_id)
-        if userPhoto['error']:
+        user_photo = userphotoservice.delete(user_id)
+        if user_photo['error']:
             return BaseController.send_response_api(None, 'user photo not found')
         return BaseController.send_response_api(None, 'user photo for user id: ' + str(user_id) + ' has been succesfully deleted')

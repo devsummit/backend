@@ -1,6 +1,5 @@
 # services import
 from app.services.user_service import UserService
-
 from app.services.ticket_service import TicketService
 from app.services.stage_service import StageService
 from app.services.beacon_service import BeaconService
@@ -13,6 +12,7 @@ from app.services.points_transaction_service import PointsTransactionService
 from app.services.user_photo_service import UserPhotoService
 from app.services.speaker_service import SpeakerService
 from app.services.ticket_transfer_service import TicketTransferService
+from app.services.speaker_document_service import SpeakerDocumentService
 from app.services.newsletter_service import NewsletterService
 
 # instantiate service
@@ -29,4 +29,5 @@ pointtransactionservice = PointsTransactionService()
 userphotoservice = UserPhotoService()
 speakerservice = SpeakerService()
 tickettransferservice = TicketTransferService()
+speakerdocumentservice = SpeakerDocumentService()
 newsletterservice = NewsletterService()
