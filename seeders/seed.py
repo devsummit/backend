@@ -9,6 +9,7 @@ from seeders.user_tickets_seeder import UserTicketsSeeder
 from seeders.ticket_transfer_logs_seeder import TicketTransferLogsSeeder
 from seeders.newsletters_seeder import NewsletterSeeder
 from seeders.speakers_seeder import SpeakersSeeder
+from seeders.booths_seeder import BoothsSeeder
 
 
 class Seed():
@@ -58,3 +59,7 @@ class Seed():
 		print('seeding speakers...')
 		SpeakersSeeder.run()
 		print('finish seeding speakers')
+
+		print('seeding booths...')
+		BoothsSeeder.run()
+		print('finish seeding booths')

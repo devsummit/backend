@@ -21,6 +21,7 @@ from app.controllers.speaker_controller import SpeakerController
 from app.controllers.ticket_transfer_controller import TicketTransferController
 from app.controllers.speaker_document_controller import SpeakerDocumentController
 from app.controllers.newsletter_controller import NewsletterController
+from app.controllers.booth_controller import BoothController
 
 api = Blueprint('api', __name__)
 
@@ -251,6 +252,29 @@ def speaker_id(id, *args, **kwargs):
 		return SpeakerController.update(request, id)
 	elif(request.method == 'GET'):
 		return SpeakerController.show(id)
+
+# Booth api
+
+
+@api.route('/booths', methods=['GET', 'POST'])
+@token_required
+def booth(*args, **kwargs):
+	if(request.method == 'POST'):
+		return BoothController.create(request)
+	elif(request.method == 'GET'):
+		return BoothController.index()
+
+# Booth route by id
+
+
+@api.route('/booths/<booth_id>', methods=['PUT', 'PATCH', 'GET'])
+@token_required
+def booth_id(booth_id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return BoothController.update(request, booth_id)
+	elif(request.method == 'GET'):
+		return BoothController.show(booth_id)
+
 
 # Point endpoint
 
