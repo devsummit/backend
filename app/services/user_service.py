@@ -14,7 +14,7 @@ class UserService:
                 'error': True,
                 'data': 'payload not valid'
             }
-            
+
         self.model_user = User()
         self.model_user.first_name = payloads['first_name']
         self.model_user.last_name = payloads['last_name']
