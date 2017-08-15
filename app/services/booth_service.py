@@ -69,6 +69,7 @@ class BoothService():
                 temp['user'] = booth.user.as_dict()
                 temp['stage'] = booth.stage.as_dict()
                 included.append(temp)
+
         else:
             temp = {}
             temp['user'] = booths.user.as_dict()

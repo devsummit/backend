@@ -30,5 +30,7 @@ class BoothsSeeder():
             new_booth = Booth()
             new_booth.user_id = random.choice(users)['id']
             new_booth.stage_id = random.choice(stages)['id']
+            new_booth.points = points
+            new_booth.summary = summary
             db.session.add(new_booth)
             db.session.commit()

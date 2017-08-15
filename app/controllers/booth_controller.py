@@ -61,7 +61,7 @@ class BoothController(BaseController):
             }
         else:
             return BaseController.send_error_api(None, 'field is not complete')
-        
+
         result = boothservice.create(payloads)
 
         if not result['error']:

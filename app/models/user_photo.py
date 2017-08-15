@@ -8,7 +8,7 @@ class UserPhoto(db.Model, BaseModel):
     __tablename__ = 'user_photo'
 
     visible = ['id', 'user_id', 'url', 'created_at', 'updated_at']
-    
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
     url = db.Column(db.String)

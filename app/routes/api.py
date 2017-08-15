@@ -273,7 +273,7 @@ def booth_id(booth_id, *args, **kwargs):
 		return BoothController.update(request, booth_id)
 	elif(request.method == 'GET'):
 		return BoothController.show(booth_id)
-	
+
 
 # Point endpoint
 
@@ -309,13 +309,15 @@ def userphoto(*args, **kwargs):
 	elif(request.method == 'GET'):
 		return UserPhotoController.show(user_id)
 
+
 @api.route('/userphotos', methods=['GET'])
 @token_required
 def userphotos(*args, **kwargs):
 	if(request.method == 'GET'):
 		return UserPhotoController.index()
-  
+
 # Ticket Transfer endpoint
+
 
 @api.route('/tickets/transfer/logs', methods=['GET'])
 @token_required
@@ -333,6 +335,7 @@ def ticket_transfer(*args, **kwargs):
 
 # Newsletter api
 
+
 @api.route('/newsletters', methods=['GET', 'POST'])
 def newsletter(*args, **kwargs):
 	if(request.method == 'POST'):
@@ -341,6 +344,7 @@ def newsletter(*args, **kwargs):
 		return NewsletterController.index()
 
 # Newsletter route by id
+
 
 @api.route('/newsletters/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 def newsletter_id(id, *args, **kwargs):
