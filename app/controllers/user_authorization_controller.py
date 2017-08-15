@@ -11,7 +11,11 @@ class UserAuthorizationController(BaseController):
 		if provider is not None:
 			# social sign in
 			social_token = request.json['token'] if 'token' in request.json else None
-			user_social_id = userservice.social_sign_in(provider, social_token)
+			if(provider == 'twitter'):
+				token_secret = request.json['token_secret'] if 'token_secret' in request.json else None
+				user_social_id = userservice.social_sign_in(provider, social_token, token_secret)
+			else:
+				user_social_id = userservice.social_sign_in(provider, social_token)
 			if (user_social_id is not None):
 				user = userservice.check_social_account(provider, user_social_id)
 				if user is not None:
