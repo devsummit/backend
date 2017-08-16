@@ -23,6 +23,7 @@ from app.controllers.speaker_document_controller import SpeakerDocumentControlle
 from app.controllers.newsletter_controller import NewsletterController
 from app.controllers.booth_controller import BoothController
 from app.controllers.user_ticket_controller import UserTicketController
+from app.controllers.attendee_controller import AttendeeController
 
 api = Blueprint('api', __name__)
 
@@ -401,3 +402,20 @@ def user_tickets(*args, **kwargs):
 		return UserTicketController.show(user_id)
 	elif(request.method == 'PATCH' or request.method == 'PUT'):
 		return UserTicketController.update(user_id, request)
+	
+# Attendee api
+
+
+@api.route('/attendees', methods=['GET'])
+def attendees(*args, **kwargs):
+	if(request.method == 'GET'):
+		return AttendeeController.index()
+
+# Attendee route by id
+
+
+@api.route('/attendees/<id>', methods=['GET'])
+def attendees_id(id, *args, **kwargs):
+	if(request.method == 'GET'):
+		return AttendeeController.show(id)
+
