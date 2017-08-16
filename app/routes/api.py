@@ -22,6 +22,7 @@ from app.controllers.ticket_transfer_controller import TicketTransferController
 from app.controllers.speaker_document_controller import SpeakerDocumentController
 from app.controllers.newsletter_controller import NewsletterController
 from app.controllers.booth_controller import BoothController
+from app.controllers.user_ticket_controller import UserTicketController
 
 api = Blueprint('api', __name__)
 
@@ -388,3 +389,15 @@ def newsletter_id(id, *args, **kwargs):
 		return NewsletterController.show(id)
 	elif(request.method == 'DELETE'):
 		return NewsletterController.delete(id)
+
+# User ticket api
+
+
+@api.route('/user/tickets', methods=['GET', 'PATCH', 'PUT'])
+@token_required
+def user_tickets(*args, **kwargs):
+	user_id = kwargs['user'].id
+	if(request.method == 'GET'):
+		return UserTicketController.show(user_id)
+	elif(request.method == 'PATCH' or request.method == 'PUT'):
+		return UserTicketController.update(user_id, request)
