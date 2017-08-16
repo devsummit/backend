@@ -8,7 +8,7 @@ class AttendeeController(BaseController):
     def index():
         attendees = attendeeservice.get()
         return BaseController.send_response_api(BaseModel.as_list(attendees), 'attendees retrieved successfully')
-    
+
     @staticmethod
     def show(id):
         attendee = attendeeservice.show(id)
