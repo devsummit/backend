@@ -402,7 +402,7 @@ def user_tickets(*args, **kwargs):
 		return UserTicketController.show(user_id)
 	elif(request.method == 'PATCH' or request.method == 'PUT'):
 		return UserTicketController.update(user_id, request)
-	
+
 # Attendee api
 
 
@@ -418,4 +418,3 @@ def attendees(*args, **kwargs):
 def attendees_id(id, *args, **kwargs):
 	if(request.method == 'GET'):
 		return AttendeeController.show(id)
-
