@@ -8,11 +8,11 @@ from oauth2client import client, crypt
 
 from app.models.access_token import AccessToken
 from app.models.user import User
-from app.models.booth import Booth
-from app.models.attendee import Attendee
-from app.models.speaker import Speaker
+from app.models.booth import Booth  # noqa
+from app.models.attendee import Attendee  # noqa
+from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
-from app.configs.constants import ROLE
+from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 
 
@@ -131,7 +131,7 @@ class UserService:
         token_exist.refresh_token = self.model_user.generate_refresh_token()
         # get id of client app
         client = db.session.query(Client).filter_by(app_name=provider).first()
-        token_exist.client_id =client.id
+        token_exist.client_id = client.id
 
         db.session.commit()
         return{
