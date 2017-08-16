@@ -20,7 +20,7 @@ class UserAuthorizationController(BaseController):
 				user = userservice.check_social_account(provider, user_social_id)
 				if user is not None:
 					token = userservice.save_token(provider)
-					return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
+					return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user.as_dict())
 			else:
 				return BaseController.send_error_api(None, 'token is invalid') 
 		else:
@@ -32,7 +32,7 @@ class UserAuthorizationController(BaseController):
 				if user is not None:
 					if user.verify_password(password):
 						token = userservice.save_token()
-						return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully')
+						return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user.as_dict())
 					else:
 						return BaseController.send_error_api(None, 'wrong credentials')
 				else:
