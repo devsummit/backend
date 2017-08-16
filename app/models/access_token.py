@@ -2,7 +2,7 @@ import datetime
 
 from app.models import db
 from app.models.base_model import BaseModel
-from app.models.client import Client
+from app.models.client import Client  # noqa
 
 
 class AccessToken(db.Model, BaseModel):
