@@ -1,7 +1,7 @@
 """create newsletters table
 
 Revision ID: d0f006ed40b0
-Revises: 55d9b9bc9d9c
+Revises: e431e5b0f9c3
 Create Date: 2017-08-11 18:06:32.159516
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'd0f006ed40b0'
-down_revision = '55d9b9bc9d9c'
+down_revision = 'e431e5b0f9c3'
 branch_labels = None
 depends_on = None
 
