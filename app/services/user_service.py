@@ -5,9 +5,11 @@ import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from oauth2client import client, crypt
+from flask import request
 
 from app.models.access_token import AccessToken
 from app.models.user import User
+from app.models.user_photo import UserPhoto
 from app.models.booth import Booth  # noqa
 from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
@@ -56,6 +58,13 @@ class UserService:
         self.model_user = db.session.query(
             User).filter_by(username=username).first()
         return self.model_user
+
+    def get_user_photo(self, id):
+        self.model_user_photo = db.session.query(UserPhoto).filter_by(user_id=id).first()
+        url = ''
+        if self.model_user_photo:
+            url = request.url_root + 'static/' + self.model_user_photo.as_dict()['url']
+        return url
 
     def social_sign_in(self, provider, social_token, token_secret=''):
         if (provider == 'google'):
