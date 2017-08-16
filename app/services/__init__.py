@@ -15,7 +15,7 @@ from app.services.ticket_transfer_service import TicketTransferService
 from app.services.speaker_document_service import SpeakerDocumentService
 from app.services.newsletter_service import NewsletterService
 from app.services.booth_service import BoothService
-
+from app.services.user_ticket_service import UserTicketService
 # instantiate service
 userservice = UserService()
 ticketservice = TicketService()
@@ -33,3 +33,4 @@ tickettransferservice = TicketTransferService()
 speakerdocumentservice = SpeakerDocumentService()
 newsletterservice = NewsletterService()
 boothservice = BoothService()
+userticketservice = UserTicketService()
