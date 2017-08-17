@@ -393,6 +393,8 @@ def newsletter_id(id, *args, **kwargs):
 
 # User ticket api
 
+# PATCH - ticket_id, receiver_id
+
 
 @api.route('/user/tickets', methods=['GET', 'PATCH', 'PUT'])
 @token_required
