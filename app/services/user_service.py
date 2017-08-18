@@ -194,3 +194,32 @@ class UserService:
                 'error': True,
                 'data': data
             }
+
+    def check_refresh_token(self, refresh_token):
+        refresh_token_exist = db.session.query(AccessToken).filter_by(refresh_token=refresh_token).first()
+        if refresh_token_exist:
+            id = refresh_token_exist.as_dict()['id']
+            return id
+        return None
+
+    def get_new_token(self, id):
+        try:
+            self.model_access_token = db.session.query(AccessToken).filter_by(id=id)
+            self.model_user = db.session.query(User).filter_by(id=self.model_access_token.first().as_dict()['user_id']).first()
+            self.model_access_token.update({
+				'access_token': self.model_user.generate_auth_token().decode(),
+				'refresh_token': self.model_user.generate_refresh_token(),
+				'updated_at': datetime.datetime.now()
+			})
+            db.session.commit()
+            data = self.model_access_token.first().as_dict()
+            return {
+                'error': False,
+                'data': data
+            }
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return {
+                'error': True,
+                'data': data
+            }

@@ -10,7 +10,7 @@ class AccessToken(db.Model, BaseModel):
 	__tablename__ = 'access_tokens'
 
 	# visible fields
-	visible = ['id', 'access_token', 'refresh_token', 'client_id', 'created_at', 'updated_at']
+	visible = ['id', 'user_id', 'access_token', 'refresh_token', 'client_id', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)

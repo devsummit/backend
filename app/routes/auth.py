@@ -18,6 +18,11 @@ def register():
 	return UserAuthorizationController.register(request)
 
 
+@auth.route('/refreshtoken', methods=['POST'])
+def refreshtoken():
+	return UserAuthorizationController.refreshtoken(request)
+
+
 @auth.route('/me/changesetting', methods=['PATCH', 'PUT'])
 @token_required
 def change_setting(*args, **kwargs):
