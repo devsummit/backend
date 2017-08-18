@@ -42,7 +42,7 @@ class UserAuthorizationController(BaseController):
 				else:
 					return BaseController.send_error_api(None, 'username not found')
 			return BaseController.send_error_api(None, 'username and password required')
-	
+
 	@staticmethod
 	def refreshtoken(request):
 		refresh_token = request.json['refresh_token'] if 'refresh_token' in request.json else None
