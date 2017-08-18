@@ -1,4 +1,3 @@
-import datetime
 import oauth2 as oauth
 import json
 import requests
@@ -224,4 +223,3 @@ class UserService:
                 'error': True,
                 'data': data
             }
-
