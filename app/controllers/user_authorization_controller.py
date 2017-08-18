@@ -42,6 +42,17 @@ class UserAuthorizationController(BaseController):
 				else:
 					return BaseController.send_error_api(None, 'username not found')
 			return BaseController.send_error_api(None, 'username and password required')
+	
+	@staticmethod
+	def refreshtoken(request):
+		refresh_token = request.json['refresh_token'] if 'refresh_token' in request.json else None
+		if refresh_token:
+			id = userservice.check_refresh_token(refresh_token)
+			if id:
+				new_token = userservice.get_new_token(id)
+				return BaseController.send_response_api({'access_token': new_token['data']['access_token'], 'refresh_token': new_token['data']['refresh_token']}, 'token successfully refreshed')
+			return BaseController.send_response_api(None, 'refresh token not exist')
+		return BaseController.send_error_api(None, 'refresh token required')
 
 	@staticmethod
 	def register(request):
