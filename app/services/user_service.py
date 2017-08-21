@@ -4,7 +4,6 @@ import requests
 import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from oauth2client import client, crypt
 from flask import request
 
 from app.models.access_token import AccessToken
