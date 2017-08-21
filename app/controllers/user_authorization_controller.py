@@ -65,17 +65,36 @@ class UserAuthorizationController(BaseController):
 		firstname = request.json['first_name'] if 'first_name' in request.json else None
 		lastname = request.json['last_name'] if 'last_name' in request.json else ''
 		email = request.json['email'] if 'email' in request.json else None
+		# For mobile/number verification, Phone number is sent as user name
 		username = request.json['username'] if 'username' in request.json else None
 		role = request.json['role'] if 'role' in request.json else None
 		password = request.json['password'] if 'password' in request.json else None
 		social_id = request.json['social_id'] if 'social_id' in request.json else None
 
-		if provider == 'mobile':
-			return UserAuthorizationController.phone_register(request)
-
 		# if social_id = None then normal registration
+		
+		payloads = None
+		if (provider=='mobile'): 
+			token = request.json['token'] if 'token' in request.json else None
+			url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + token
+			result = requests.get(url)
+			payload = result.json()
+			accountId = None
+			if 'error' not in payload:
+				accountId = payload['id'] if 'id' in payload else None
+			verified = (social_id==accountId)
+			if verified:
+				payloads = {
+					'first_name': firstname,
+					'last_name': lastname,
+					'username': username,
+					'role': role,
+					'password': '',
+					'social_id': social_Id,
+					'email': email,
 
-		if firstname and email and username and role and password:
+				}
+		elif firstname and email and username and role and password:
 			payloads = {
 				'first_name': firstname,
 				'last_name': lastname,
@@ -87,53 +106,13 @@ class UserAuthorizationController(BaseController):
 			}
 		else:
 			return BaseController.send_response_api(None, 'payloads not valid')
+		
 		result = userservice.register(payloads)
 		if not result['error']:
 			return BaseController.send_response_api(result['data'], 'user succesfully registered')
 		else:
 			return BaseController.send_error_api(None, result['data'])
 	
-
-	@staticmethod
-	def phone_register(request):
-		firstname = request.json['first_name'] if 'first_name' in request.json else None
-		lastname = request.json['last_name'] if 'last_name' in request.json else None
-		# Phone number is sent as user name
-		username = request.json['username'] if 'username' in request.json else None
-		role = request.json['role'] if 'role' in request.json else None
-		socialId = request.json['socialId'] if 'socialId' in request.json else None
-		email = request.json['email'] if 'email' in request.json else None
-		token = request.json['token'] if 'token' in request.json else None
-
-		url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + token
-		result = requests.get(url)
-		payload = result.json()
-
-		accountId = None
-		if 'error' not in payload:
-			accountId = payload['id'] if 'id' in payload else None
-
-		verified = (socialId==accountId)
-		
-		if verified:
-			payloads = {
-				'first_name': firstname,
-				'last_name': lastname,
-				'username': username,
-				'role': role,
-				'password': '',
-				'social_id': socialId,
-				'email': email,
-
-			}
-		else:
-			return BaseController.send_response_api(None, 'failed to register, phone authorization result not verified')
-		result = userservice.register(payloads)
-		if not result['error']:
-			return BaseController.send_response_api(result['data'], 'user succesfully registered')
-		else:
-			return BaseController.send_error_api(None, result['data'])	
-		
 	@staticmethod
 	def change_name(request, user):
 		firstname = request.json['first_name'] if 'first_name' in request.json else None

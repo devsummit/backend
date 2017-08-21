@@ -23,7 +23,7 @@ class UserService:
     def register(self, payloads):
 
         # payloads validation
-        if not isinstance(payloads['role'], int):
+        if (payloads==None) or (not isinstance(payloads['role'], int)):
             return {
                 'error': True,
                 'data': 'payload not valid'
@@ -113,6 +113,21 @@ class UserService:
             except Exception as e:
                 return None
             return userid
+
+        elif(provider == 'mobile'):
+            #check token to grap fb server
+            try:
+                CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
+                url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + token
+                result = requests.get(url)
+                payload = result.json()
+                accountId = None
+                if 'error' not in payload:
+                    accountId = payload['id'] if 'id' in payload else None
+                return accountId
+            except Exception as e:
+                return None
+
 
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
