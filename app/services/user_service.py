@@ -4,7 +4,6 @@ import requests
 import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from oauth2client import client, crypt
 from flask import request
 
 from app.models.access_token import AccessToken
@@ -73,18 +72,16 @@ class UserService:
             # check token integrity
             try:
                 # get client id
-                CLIENT_ID = db.session.query(Client).filter_by(
-                    app_name=provider).first()
-                idinfo = client.verify_id_token(
-                    social_token, CLIENT_ID.client_id)
-                if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-                    raise crypt.AppIdentityError("Wrong issuer.")
+                google_endpoint = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + social_token
+                result = requests.get(google_endpoint)
+                payload = result.json()
+                if 'error_description' in payload:
+                    return None
+                else:
+                    return payload['sub']
             except crypt.AppIdentityError:
                 # Invalid token
                 return None
-            # user id valid, load it.
-            userid = idinfo['sub']
-            return userid
 
         elif(provider == 'facebook'):
             # check token integrity
@@ -141,9 +138,7 @@ class UserService:
 
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
-        self.model_user = db.session.query(
-            User).filter_by(social_id=social_id).first()
-        print(self.model_user.as_dict())
+        self.model_user = db.session.query(User).filter_by(social_id=social_id).first()
         if self.model_user is not None:
             # user with social_id exist
             # return the user
