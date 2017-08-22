@@ -34,6 +34,12 @@ class ClientsSeeder():
                 'client_secret': "eJBRnVvE0YplptEelYJOuHYw2YLdOf9v39YNnfdM6Rkv3kNShC",
                 'client_id': "iJoptl48l8j5OseOI1lrS3r9N"
             },
+            {
+                # SET THIS ALSO IN android/app/src/main/res/values/string.xml
+                'app_name': "mobile",
+                'client_secret': "de6a4f2b416bca74714745f4372ad6e4",
+                'client_id': "1429376450515465"
+            }
         ]
 
         for _data in data:
