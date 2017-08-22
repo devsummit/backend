@@ -23,7 +23,7 @@ class UserService:
     def register(self, payloads):
 
         # payloads validation
-        if (payloads==None) or (not isinstance(payloads['role'], int)):
+        if (payloads is None) or (not isinstance(payloads['role'], int)):
             return {
                 'error': True,
                 'data': 'payload not valid'
@@ -60,10 +60,12 @@ class UserService:
         return self.model_user
 
     def get_user_photo(self, id):
-        self.model_user_photo = db.session.query(UserPhoto).filter_by(user_id=id).first()
+        self.model_user_photo = db.session.query(
+            UserPhoto).filter_by(user_id=id).first()
         url = ''
         if self.model_user_photo:
-            url = request.url_root + 'static/' + self.model_user_photo.as_dict()['url']
+            url = request.url_root + 'static/' + \
+                self.model_user_photo.as_dict()['url']
         return url
 
     def social_sign_in(self, provider, social_token, token_secret=''):
@@ -71,22 +73,27 @@ class UserService:
             # check token integrity
             try:
                 # get client id
-                CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
-                idinfo = client.verify_id_token(social_token, CLIENT_ID.client_id)
+                CLIENT_ID = db.session.query(Client).filter_by(
+                    app_name=provider).first()
+                idinfo = client.verify_id_token(
+                    social_token, CLIENT_ID.client_id)
                 if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
                     raise crypt.AppIdentityError("Wrong issuer.")
             except crypt.AppIdentityError:
                 # Invalid token
                 return None
             # user id valid, load it.
-            userid = idinfo['sub'] 
+            userid = idinfo['sub']
             return userid
 
         elif(provider == 'facebook'):
             # check token integrity
             try:
-                CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
-                facebook_endpoint = 'https://graph.facebook.com/debug_token?input_token=' + social_token + '&access_token=' + CLIENT_ID.client_id + '|' + CLIENT_ID.client_secret
+                CLIENT_ID = db.session.query(Client).filter_by(
+                    app_name=provider).first()
+                facebook_endpoint = 'https://graph.facebook.com/debug_token?input_token=' + \
+                    social_token + '&access_token=' + \
+                    CLIENT_ID.client_id + '|' + CLIENT_ID.client_secret
                 result = requests.get(facebook_endpoint)
                 payload = result.json()
                 if(payload['data']['is_valid']):
@@ -97,9 +104,12 @@ class UserService:
         elif(provider == 'twitter'):
             # check token integrity
             try:
-                CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()                
-                consumer = oauth.Consumer(key=CLIENT_ID.client_id, secret=CLIENT_ID.client_secret)
-                access_token = oauth.Token(key=social_token, secret=token_secret)
+                CLIENT_ID = db.session.query(Client).filter_by(
+                    app_name=provider).first()
+                consumer = oauth.Consumer(
+                    key=CLIENT_ID.client_id, secret=CLIENT_ID.client_secret)
+                access_token = oauth.Token(
+                    key=social_token, secret=token_secret)
 
                 client = oauth.Client(consumer, access_token)
                 account_endpoint = "https://api.twitter.com/1.1/account/verify_credentials.json"
@@ -115,10 +125,11 @@ class UserService:
             return userid
 
         elif(provider == 'mobile'):
-            #check token to grap fb server
+            # check token to grap fb server
             try:
-                CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
-                url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + token
+                CLIENT_ID = db.session.query(Client).filter_by(
+                    app_name=provider).first()
+                url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + social_token
                 result = requests.get(url)
                 payload = result.json()
                 accountId = None
@@ -128,10 +139,10 @@ class UserService:
             except Exception as e:
                 return None
 
-
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
-        self.model_user = db.session.query(User).filter_by(social_id=social_id).first()
+        self.model_user = db.session.query(
+            User).filter_by(social_id=social_id).first()
         print(self.model_user.as_dict())
         if self.model_user is not None:
             # user with social_id exist
@@ -141,10 +152,12 @@ class UserService:
             return None
 
     def save_token(self, provider='password_grant'):
-        token_exist = db.session.query(AccessToken).filter_by(user_id=self.model_user.id).first()
+        token_exist = db.session.query(AccessToken).filter_by(
+            user_id=self.model_user.id).first()
         if not token_exist:
             self.model_access_token = AccessToken()
-            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(), self.model_user.generate_refresh_token(), self.model_user.id)
+            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(
+            ), self.model_user.generate_refresh_token(), self.model_user.id)
             db.session.add(payload)
             db.session.commit()
             return {
@@ -165,12 +178,13 @@ class UserService:
 
     def change_name(self, payloads):
         try:
-            self.model_user = db.session.query(User).filter_by(id=payloads['user']['id'])
+            self.model_user = db.session.query(
+                User).filter_by(id=payloads['user']['id'])
             self.model_user.update({
                 'first_name': payloads['first_name'],
                 'last_name': payloads['last_name'],
                 'updated_at': datetime.datetime.now()
-            })  
+            })
             db.session.commit()
             data = self.model_user.first().as_dict()
             return {
@@ -188,7 +202,8 @@ class UserService:
         user = self.get_user(payloads['user']['username'])
         try:
             if user.verify_password(payloads['old_password']):
-                self.model_user = db.session.query(User).filter_by(id=payloads['user']['id'])
+                self.model_user = db.session.query(
+                    User).filter_by(id=payloads['user']['id'])
                 self.model_user.update({
                     'password': generate_password_hash(payloads['new_password']),
                     'updated_at': datetime.datetime.now()
@@ -211,7 +226,8 @@ class UserService:
             }
 
     def check_refresh_token(self, refresh_token):
-        refresh_token_exist = db.session.query(AccessToken).filter_by(refresh_token=refresh_token).first()
+        refresh_token_exist = db.session.query(AccessToken).filter_by(
+            refresh_token=refresh_token).first()
         if refresh_token_exist:
             id = refresh_token_exist.as_dict()['id']
             return id
@@ -219,13 +235,15 @@ class UserService:
 
     def get_new_token(self, id):
         try:
-            self.model_access_token = db.session.query(AccessToken).filter_by(id=id)
-            self.model_user = db.session.query(User).filter_by(id=self.model_access_token.first().as_dict()['user_id']).first()
+            self.model_access_token = db.session.query(
+                AccessToken).filter_by(id=id)
+            self.model_user = db.session.query(User).filter_by(
+                id=self.model_access_token.first().as_dict()['user_id']).first()
             self.model_access_token.update({
-				'access_token': self.model_user.generate_auth_token().decode(),
-				'refresh_token': self.model_user.generate_refresh_token(),
-				'updated_at': datetime.datetime.now()
-			})
+                'access_token': self.model_user.generate_auth_token().decode(),
+                'refresh_token': self.model_user.generate_refresh_token(),
+                'updated_at': datetime.datetime.now()
+            })
             db.session.commit()
             data = self.model_access_token.first().as_dict()
             return {
