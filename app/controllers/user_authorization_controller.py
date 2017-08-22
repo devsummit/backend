@@ -17,7 +17,6 @@ class UserAuthorizationController(BaseController):
 				return BaseController.send_response_api(None, 'refresh token not exist')
 			return BaseController.send_error_api(None, 'refresh token required')
 
-
 		@staticmethod
 		def login(request):
 			provider = request.json['provider'] if 'provider' in request.json else None
