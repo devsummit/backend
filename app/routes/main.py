@@ -6,4 +6,4 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return render_template('resources/views/admin/base/index.html', entries='hellooooooo')
+    return render_template('resources/views/admin/base/index.html')
