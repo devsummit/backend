@@ -1,7 +1,9 @@
 from faker import Faker
 from random import randint
-from app.models.base_models import BaseModel
+import random
+from app.models.base_model import BaseModel
 from app.models.payment import Payment
+from app.models import db
 from app.models.order import Order
 
 '''
@@ -17,7 +19,7 @@ class PaymentsSeeder():
         Create 10 Payments seeds
         """
         fake = Faker()
-        orders = BaseModel.as_list(db.session.query(Order)).all())
+        orders = BaseModel.as_list(db.session.query(Order).all())
         range_start = 10 ** ( 7 - 1 )
         range_end = ( 10 ** 7 ) - 1
 
