@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/dist/css/bootswatch-united.min.css') }}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/font-awesome/css/font-awesome.min.css') }}">
+
+    <title>Devsummit Admin Login</title>
+</head>
+<body>
+    <div class="container">
+            <div class="row" style="height: 100px">
+            </div>
+        <div class="row">
+                <div class="col-sm-6 col-sm-offset-3">
+                    <img src="{{ url_for('static', filename='images/apps/devsummit.png') }}" alt="devsummit" style="width:100%">
+                </div> 
+        </div>
+        <div class="row" style="height: 20px">
+                <div class="col-sm-6 col-sm-offset-3">
+                </div> 
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+              <div class="well bs-component">
+                <form class="form-horizontal">
+                  <fieldset>
+                    <legend>Please sign in</legend>
+                    <div class="form-group">
+                      <label for="inputUserName" class="col-lg-2 control-label">UserName</label>
+                      <div class="col-lg-10">
+                        <input type="text" class="form-control" id="inputUserName" placeholder="User Name">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                      <div class="col-lg-10">
+                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox"> Remember me
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-lg-10 col-lg-offset-2" style="text-align: center">
+                        <button type="submit" class="btn btn-primary btn-sm btn-block">LOGIN</button>
+                      </div>
+                    </div>
+                  </fieldset>
+                </form>
+            </div>
+          </div>
+    </div>
+</body>
+</html>
