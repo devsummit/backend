@@ -14,7 +14,6 @@ class Payment(db.Model, BaseModel):
                 'order_id',
                 'saved_token_id', 
                 'transaction_id', 
-                'midtrans_order_id', 
                 'payment_type',
                 'gross_amount',
                 'transaction_time',
@@ -32,9 +31,9 @@ class Payment(db.Model, BaseModel):
                 db.ForeignKey('orders.id'),
                 nullable=False
         )
+        order = db.relationship('Order')
         saved_token_id = db.Column(db.Integer)
         transaction_id = db.Column(db.Integer)
-        midtrans_order_id = db.Column(db.Integer)
         payment_type = db.Column(db.String)
         gross_amount = db.Column(db.Integer)
         transaction_time = db.Column(db.String)
@@ -42,7 +41,6 @@ class Payment(db.Model, BaseModel):
         masked_card = db.Column(db.String)
         bank = db.Column(db.String)
         fraud_status = db.Column(db.String)
-        order = db.relationship('Order')
         created_at = db.Column(db.DateTime)
         updated_at = db.Column(db.DateTime)
 
