@@ -1,10 +1,10 @@
 import datetime
 
 from app.models import db
-from app.model.base_models import BaseModel
+from app.models.base_model import BaseModel
 
 
-class Payment(db.model, BaseModel):
+class Payment(db.Model, BaseModel):
 
         # table name
         __tablename__ = 'payments'
@@ -25,9 +25,14 @@ class Payment(db.model, BaseModel):
         total = db.Column(db.Integer)
         additional_information = db.Column(db.String)
         sender = db.Column(db.String)
-        order_id = db.Column(db.Integer)
-        created_at = db.Column(db.Datetime)
-        updated_at = db.Column(db.Datetime)
+        order_id = db.Column(
+                db.Integer,
+                db.ForeignKey('orders.id'),
+                nullable=False
+        )
+        order = db.relationship('Order')
+        created_at = db.Column(db.DateTime)
+        updated_at = db.Column(db.DateTime)
 
         def __init__(self):
             self.created_at = datetime.datetime.now()
