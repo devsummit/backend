@@ -117,7 +117,6 @@ class UserService:
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
         self.model_user = db.session.query(User).filter_by(social_id=social_id).first()
-        print(self.model_user.as_dict())
         if self.model_user is not None:
             # user with social_id exist
             # return the user
