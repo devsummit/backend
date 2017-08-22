@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 
 
 main = Blueprint('main', __name__)
@@ -6,4 +6,4 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return 'index page'
+    return render_template('resources/views/admin/base/index.html', entries='hellooooooo')
