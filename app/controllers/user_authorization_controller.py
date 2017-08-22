@@ -23,6 +23,8 @@ class UserAuthorizationController(BaseController):
 					user = user.as_dict()
 					user['url'] = userservice.get_user_photo(user['id'])
 					return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
+				else:
+					return BaseController.send_error_api(None, 'user is not registered')
 			else:
 				return BaseController.send_error_api(None, 'token is invalid') 
 		else:
