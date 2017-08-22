@@ -21,9 +21,9 @@ from werkzeug.security import generate_password_hash
 class UserService:
 
     def register(self, payloads):
-
+        role = int(payloads['role'])
         # payloads validation
-        if (payloads==None) or (not isinstance(payloads['role'], int)):
+        if (payloads is None) or (not isinstance(role, int)):
             return {
                 'error': True,
                 'data': 'payload not valid'
@@ -34,10 +34,9 @@ class UserService:
         self.model_user.last_name = payloads['last_name']
         self.model_user.email = payloads['email']
         self.model_user.username = payloads['username']
-        self.model_user.role_id = payloads['role']
+        self.model_user.role_id = role
         self.model_user.social_id = payloads['social_id']
         self.model_user.hash_password(payloads['password'])
-
         db.session.add(self.model_user)
 
         try:
@@ -115,10 +114,10 @@ class UserService:
             return userid
 
         elif(provider == 'mobile'):
-            #check token to grap fb server
+            # check token to grap fb server
             try:
                 CLIENT_ID = db.session.query(Client).filter_by(app_name=provider).first()
-                url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + token
+                url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + social_token
                 result = requests.get(url)
                 payload = result.json()
                 accountId = None
