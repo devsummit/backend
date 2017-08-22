@@ -17,46 +17,49 @@ class UserAuthorizationController(BaseController):
             return BaseController.send_response_api(None, 'refresh token not exist')
         return BaseController.send_error_api(None, 'refresh token required')
 
-	
-	@staticmethod
-	def login(request):
-		provider = request.json['provider'] if 'provider' in request.json else None
-		if provider is not None:
-			# social sign in
-			social_token = request.json['token'] if 'token' in request.json else None
-			if(provider == 'twitter'):
-				token_secret = request.json['token_secret'] if 'token_secret' in request.json else None
-				user_social_id = userservice.social_sign_in(provider, social_token, token_secret)
-			else:
-				user_social_id = userservice.social_sign_in(provider, social_token)
-			if (user_social_id is not None):
-				user = userservice.check_social_account(provider, user_social_id)
-				if user is not None:
-					token = userservice.save_token(provider)
-					user = user.as_dict()
-					user['url'] = userservice.get_user_photo(user['id'])
-					return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
-				else:
-					return BaseController.send_error_api(None, 'user is not registered')
-			else:
-				return BaseController.send_error_api(None, 'token is invalid') 
-		else:
-			username = request.json['username'] if 'username' in request.json else None
-			password = request.json['password'] if 'password' in request.json else None
-			if username and password:
-				# check if user exist
-				user = userservice.get_user(username)
-				if user is not None:
-					if user.verify_password(password):
-						token = userservice.save_token()
-						user = user.as_dict()
-						user['url'] = userservice.get_user_photo(user['id'])
-						return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
-					else:
-						return BaseController.send_error_api(None, 'wrong credentials')
-				else:
-					return BaseController.send_error_api(None, 'username not found')
-			return BaseController.send_error_api(None, 'username and password required')
+        @staticmethod
+        def login(request):
+            provider = request.json['provider'] if 'provider' in request.json else None
+            if provider is not None:
+                # social sign in
+                social_token = request.json['token'] if 'token' in request.json else None
+                if(provider == 'twitter'):
+                    token_secret = request.json['token_secret'] if 'token_secret' in request.json else None
+                    user_social_id = userservice.social_sign_in(
+                        provider, social_token, token_secret)
+                else:
+                    user_social_id = userservice.social_sign_in(
+                        provider, social_token)
+                if (user_social_id is not None):
+                    user = userservice.check_social_account(
+                        provider, user_social_id)
+                    if user is not None:
+                        token = userservice.save_token(provider)
+                        user = user.as_dict()
+                        user['url'] = userservice.get_user_photo(user['id'])
+                        return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
+                    else:
+                        return BaseController.send_error_api(None, 'user is not registered')
+                else:
+                    return BaseController.send_error_api(None, 'token is invalid')
+            else:
+                username = request.json['username'] if 'username' in request.json else None
+                password = request.json['password'] if 'password' in request.json else None
+                if username and password:
+                    # check if user exist
+                    user = userservice.get_user(username)
+                    if user is not None:
+                        if user.verify_password(password):
+                            token = userservice.save_token()
+                            user = user.as_dict()
+                            user['url'] = userservice.get_user_photo(
+                                user['id'])
+                            return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
+                        else:
+                            return BaseController.send_error_api(None, 'wrong credentials')
+                    else:
+                        return BaseController.send_error_api(None, 'username not found')
+                return BaseController.send_error_api(None, 'username and password required')
 
     @staticmethod
     def register(request):
