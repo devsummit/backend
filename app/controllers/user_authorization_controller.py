@@ -60,7 +60,7 @@ class UserAuthorizationController(BaseController):
 	@staticmethod
 	def register(request):
 		provider = request.json['provider'] if 'provider' in request.json else None
-
+		
 
 		firstname = request.json['first_name'] if 'first_name' in request.json else None
 		lastname = request.json['last_name'] if 'last_name' in request.json else ''
@@ -75,6 +75,7 @@ class UserAuthorizationController(BaseController):
 		
 		payloads = None
 		if (provider=='mobile'): 
+					
 			token = request.json['token'] if 'token' in request.json else None
 			url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + token
 			result = requests.get(url)
@@ -90,10 +91,10 @@ class UserAuthorizationController(BaseController):
 					'username': username,
 					'role': role,
 					'password': '',
-					'social_id': social_Id,
+					'social_id': social_id,
 					'email': email,
 
-				}
+				}	
 		elif firstname and email and username and role and password:
 			payloads = {
 				'first_name': firstname,
