@@ -120,6 +120,9 @@ class PaymentService():
             data['customer_details']['last_name'] = payloads['last_name']
             data['customer_details']['phone'] = payloads['phone']
             data['item_details'] = details
+            data['transaction_details'] = {}
+            data['transaction_details']['order_id'] = payloads['order_id']
+            data['transaction_details']['gross_amount'] = payloads['gross_amount']
        
         if(payloads['bank'] == 'mandiri_bill'):
             # payload validation for bni

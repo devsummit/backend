@@ -429,3 +429,5 @@ def attendees_id(id, *args, **kwargs):
 def bank_transfer(*args, **kwargs):
     if (request.method == 'POST'):
         return PaymentController.create(request)
+
+

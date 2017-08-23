@@ -83,21 +83,22 @@ class PaymentController(BaseController):
 
             result = paymentservice.bank_transfer(payloads)
 
-            if not result['error']:
-                return BaseController.send_response_api(result['data'], 'bank transfer transaction is created')
+            if not result['status_code'] == '201':
+                return BaseController.send_response_api(result, 'bank transfer transaction is created')
             else:
-                return BaseController.send_error_api(None, result['data'])
+                return BaseController.send_error_api(None, result)
 
         if(bank == 'mandiri_bill'):
             payloads = {
                 'payment_type': 'echannel',
+                'bank': bank,
                 'gross_amount': gross_amount,
                 'order_id': order_id,
             }
 
             result = paymentservice.bank_transfer(payloads)
 
-            if not result['error']:
-                return BaseController.send_response_api(result['data'], 'bank transfer transaction is created')
+            if not result['status_code'] == '201':
+                return BaseController.send_response_api(result, 'bank transfer transaction is created')
             else:
-                return BaseController.send_error_api(None, result['data'])
+                return BaseController.send_error_api(None, result)
