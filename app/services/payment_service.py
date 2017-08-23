@@ -142,6 +142,11 @@ class PaymentService():
             data['transaction_details'] = {}
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
+            data['echannel'] = {}
+            data['echannel']['bill_info1'] = 'Payment for: order-' + payloads['order_id']
+            data['echannel']['bill_info2'] = 'Event: DevSummit 2017'
+
+
 
         try:
             endpoint = url + 'charge'
