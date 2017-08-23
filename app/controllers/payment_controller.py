@@ -37,7 +37,6 @@ class PaymentController(BaseController):
             last_name = request.json['last_name'] if 'last_name' in request.json else None
             phone = request.json['phone'] if 'phone' in request.json else None
             va_number = request.json['va_number'] if 'va_number' in request.json else None
-            # using order_id to get ticket_id, price, quantity, ticket_type(name) in payment service
 
             if payment_type and gross_amount and order_id and email and first_name and last_name and phone and bank and va_number:
                 payloads = {
@@ -48,13 +47,12 @@ class PaymentController(BaseController):
                     'first_name': first_name,
                     'last_name': last_name,
                     'phone': phone,
-                    'name': name,
                     'bank': bank,
                     'va_number': va_number
                 }
             else:
                 return BaseController.send_error_api(None, 'field is not complete')
-
+            
             result = paymentservice.bank_transfer(payloads)
 
             if result['status_code'] == '201':
