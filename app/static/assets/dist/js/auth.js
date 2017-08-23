@@ -49,11 +49,14 @@ document.getElementsByTagName('head')[0].appendChild(script);
             success    : function(result){
                 const success=result['meta']['success']
                 if (success) {
-                    const credential_name = result['included']['username'];
-                    const data = result['data']
+                    var data = result['data']
+                    //store token and refresh token
+                    storeCredential(data);
+                    //store user data
+                    data = result['included'];
                     storeCredential(data);
                 }
-                onSuccess(success);
+                onSuccess(success, result);
             }
         });
     };
@@ -67,6 +70,22 @@ document.getElementsByTagName('head')[0].appendChild(script);
     /* isLogin func */
     DevsummitAuth.isLogin = function() {
         return (!!DevsummitAuth.acess_token())
+    }
+
+    /* get user data */
+    DevsummitAuth.getUser = function(source='storage') {
+        var user = {};
+        if (source='storage') {
+            user.first_name = localStorage[baseStorage+'-first_name'];
+            user.last_name = localStorage[baseStorage+'-last_name'];
+            user.username = localStorage[baseStorage+'-username'];
+            user.role_id = localStorage[baseStorage+'-role_id'];
+            user.id = localStorage[baseStorage+'-id'];
+            user.avatar = localStorage[baseStorage+'-url'];
+            user.email = localStorage[baseStorage+'-email'];
+            user.created_at = localStorage[baseStorage+'-created_at'];
+        }
+        return user;
     }
 
     // set module alias
