@@ -17,13 +17,12 @@ class PaymentService():
         
         payloads['gross_amount'] = int(payloads['gross_amount'])
 
-        self.authorization = str(base64.b64encode(bytes(SERVER_KEY, 'utf-8')))[1:]
+        self.authorization = base64.b64encode(bytes(SERVER_KEY, 'utf-8')).decode()
 
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': self.authorization}
 
         # generate order details payload
         details = self.get_order_details(payloads['order_id'])
-        # print(details)
 
         if (payloads['bank'] == 'bca'):
 
@@ -44,17 +43,32 @@ class PaymentService():
                     }
             # todo create payload for BCA virtual account
             data = {}
-            data.payment_type = payloads['payment_type']
-            data.transaction_details = {}
-            data.grass_amount = payloads['grass_amount']
-            data.order_id = payloads['order_id']
-            data.customer_details = {}
-            data.email = payloads['email']
-            data.first_name = payloads['first_name']
-            data.last_name = payloads['last_name']
-            data.phone = payloads['phone']
-            
-            order_details = self.get_order_details(payloads['order_id'])
+            data['payment_type'] = payloads['payment_type']
+            data['transaction_details'] = {}
+            data['transaction_details']['gross_amount'] = payloads['gross_amount']
+            data['transaction_details']['order_id'] = payloads['order_id']
+            data['customer_details'] = {}
+            data['customer_details']['email ']= payloads['email']
+            data['customer_details']['first_name '] = payloads['first_name']
+            data['customer_details']['last_name '] = payloads['last_name']
+            data['customer_details']['phone '] = payloads['phone']
+            data['item_details'] = details
+            data['bank_transfer'] = {}
+            data['bank_transfer']['bank'] = payloads['bank']
+            data['bank_transfer']['va_number'] = payloads['va_number']
+            data['bank_transfer']['free_text'] = {}
+            data['bank_transfer']['free_text']['inquiry'] = [
+                {
+                    "id": "Free Text ID Free Text ID Free Text ID",
+                    "en": "Free Text EN Free Text EN Free Text EN"
+                }
+            ]
+            data['bank_transfer']['free_text']['payment'] = [
+                {
+                    "id": "Free Text ID Free Text ID Free Text ID",
+                    "en": "Free Text EN Free Text EN Free Text EN"
+                }
+            ]
 
         if (payloads['bank'] == 'permata'):
 
@@ -77,27 +91,6 @@ class PaymentService():
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
-            try:
-                endpoint = url + 'charge'
-                result = requests.post(
-                        endpoint,
-                        headers={
-                            'Accept': 'application/json',
-                            'Content-Type':'application/json', 
-                            'Authorization': 'Basic VlQtc2VydmVyLW5qaHFnaG5GVVpidFpnT2c5bGROdFkwbDo='
-                        }, json=data
-                )
-
-                payload = result.json()
-
-                if (payload['status_code'] == '201'):
-                    self.savePayload(payload)
-
-                return payload
-
-            except Exception as e:
-                # Invalid payloads
-                return None
 
         if(payloads['bank'] == 'bni'):
             # payload validation for bni
@@ -127,8 +120,29 @@ class PaymentService():
             data['customer_details']['last_name'] = payloads['last_name']
             data['customer_details']['phone'] = payloads['phone']
             data['item_details'] = details
-            print('data')
+
+        try:
             print(data)
+            endpoint = url + 'charge'
+            result = requests.post(
+                    endpoint,
+                    headers={
+                        'Accept': 'application/json',
+                        'Content-Type':'application/json', 
+                        'Authorization': 'Basic ' + self.authorization
+                    }, json=data
+            )
+
+            payload = result.json()
+
+            if (payload['status_code'] == '201'):
+                self.save_payload(payload)
+
+            return payload
+
+        except Exception as e:
+            # Invalid payloads
+            return None
 
 
     def get_order_details(self, order_id):
@@ -144,7 +158,6 @@ class PaymentService():
             temp['quantity'] = item['count']
             temp['id'] = item['id']
             result.append(temp)
-        print(result)
         return result
 
     def save_payload(self, data):
