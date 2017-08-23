@@ -431,3 +431,7 @@ def bank_transfer(*args, **kwargs):
         return PaymentController.create(request)
 
 
+@api.route('/status/<id>', methods=['PATCH', 'PUT'])
+def status(id, *args, **kwargs):
+    if (request.method == 'PATCH' or request.method == 'PUT'):
+        return PaymentController.status(id)
