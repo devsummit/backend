@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+from app.controllers.main_controller import MainController
 
 
 main = Blueprint('main', __name__)
@@ -6,7 +7,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return render_template('resources/views/admin/base/index.html')
+    return MainController.index()
 
 
 @main.route('/login')
