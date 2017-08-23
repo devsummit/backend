@@ -183,13 +183,12 @@ class PaymentService():
         status = payment_status.json()
 
         if (status['status_code'] == '201'):
-            payment = db.session.query(Payment).filter_by(id=id)
+            payment = db.session.query(Payment).filter_by(id=id).first().as_dict()
 
-            payment_data = payment.first().as_dict()
-
-            if (payment_data['transaction_status'] != status['transaction_status']):
+            if (payment['transaction_status'] != status['transaction_status']):
 
                 payment.update({
+                    'updated_at': datetime.datetime.now(),
                     'transaction_status': status['transaction_status']
                 })
 
