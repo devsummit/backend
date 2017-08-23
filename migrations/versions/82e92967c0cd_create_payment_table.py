@@ -23,7 +23,6 @@ def upgrade():
             sa.Column('order_id', sa.Integer, sa.ForeignKey('order.id')),
             sa.Column('saved_token_id', sa.Integer),
             sa.Column('transaction_id', sa.Integer),
-            sa.Column('midtrans_order_id', sa.Integer),
             sa.Column('payment_type', sa.String),
             sa.Column('gross_amount', sa.Integer),
             sa.Column('transaction_time', sa.String),

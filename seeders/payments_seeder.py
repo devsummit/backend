@@ -32,7 +32,6 @@ class PaymentsSeeder():
             order_id = random.choice(orders)['id']
             saved_token_id = randint(range_start, range_end)
             transaction_id = randint(range_start, range_end)
-            midtrans_order_id = randint(range_start, range_end)
             gross_amount = randint(range_start, range_end)
             transaction_time = fake.sentence(  
                 nb_words=6, variable_nb_words=True, ext_word_list=None
@@ -47,7 +46,6 @@ class PaymentsSeeder():
             new_payment.order_id = order_id
             new_payment.saved_token_id = saved_token_id
             new_payment.transaction_id = transaction_id
-            new_payment.midtrans_order_id = midtrans_order_id
             new_payment.gross_amount = gross_amount
             new_payment.transaction_time = transaction_time
             new_payment.transaction_status = transaction_status
