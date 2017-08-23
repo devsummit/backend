@@ -120,9 +120,27 @@ class PaymentService():
             data['customer_details']['last_name'] = payloads['last_name']
             data['customer_details']['phone'] = payloads['phone']
             data['item_details'] = details
+       
+        if(payloads['bank'] == 'mandiri_bill'):
+            # payload validation for bni
+            if not all(isinstance(string, str) for string in [
+                    payloads['payment_type'],
+                ]
+            ) and not isinstance(payloads['gross_amount'], int):
+                return {
+                    'error': True,
+                    'data': 'payloads is not valid'
+                }
+
+            # create payload for midtrans
+            data = {}
+            data['payment_type'] = payloads['payment_type']
+            data['item_details'] = details
+            data['transaction_details'] = {}
+            data['transaction_details']['order_id'] = payloads['order_id']
+            data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
         try:
-            print(data)
             endpoint = url + 'charge'
             result = requests.post(
                     endpoint,
@@ -143,7 +161,9 @@ class PaymentService():
         except Exception as e:
             # Invalid payloads
             return None
-
+            data['transaction_details'] = {}
+            data['transaction_details']['order_id'] = payloads['order_id']
+            data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
     def get_order_details(self, order_id):
         # using order_id to get ticket_id, price, quantity, ticket_type(name) in payment service
