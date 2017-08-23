@@ -21,6 +21,10 @@ class PaymentService():
 
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': self.authorization}
 
+        # generate order details payload
+        details = self.get_order_details(payloads['order_id'])
+        # print(details)
+
         if (payloads['bank'] == 'bca'):
 
             # payloads validation for BCA virtual account
@@ -125,12 +129,26 @@ class PaymentService():
             data['customer_details']['first_name'] = payloads['first_name']
             data['customer_details']['last_name'] = payloads['last_name']
             data['customer_details']['phone'] = payloads['phone']
-            data['transaction_details']['gross_amount'] = payloads['gross_amount']
+            data['item_details'] = details
+            print('data')
+            print(data)
+
 
     def get_order_details(self, order_id):
         # using order_id to get ticket_id, price, quantity, ticket_type(name) in payment service
         item_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
-        return BaseModel().as_list(item_details)
+        result = []
+        for item in item_details:
+            ticket = item.ticket.as_dict()
+            item = item.as_dict()
+            temp = {}
+            temp['name'] = ticket['ticket_type']
+            temp['price'] = item['price']
+            temp['quantity'] = item['count']
+            temp['id'] = item['id']
+            result.append(temp)
+        print(result)
+        return result
 
     def save_payload(self, data):
         new_payment = Payment()
