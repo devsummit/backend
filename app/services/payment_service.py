@@ -51,7 +51,6 @@ class PaymentService():
             data.phone = payloads['phone']
             
             order_details = self.get_order_details(payloads['order_id'])
-            print(order_details)
 
         if (payloads['bank'] == 'permata'):
 

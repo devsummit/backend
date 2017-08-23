@@ -60,5 +60,30 @@ class PaymentController(BaseController):
             else:
                 return BaseController.send_error_api(None, result)
 
+        if(bank == 'bni'):
+            email = request.json['email'] if 'email' in request.json else None
+            first_name = request.json['first_name'] if 'first_name' in request.json else None
+            last_name = request.json['last_name'] if 'last_name' in request.json else ''
+            phone = request.json['phone'] if 'phone' in request.json else None
+            va_number = request.json['va_number'] if 'va_number' in request.json else None
+            if email and first_name and last_name and phone and va_number:
+                payloads = {
+                    'payment_type': payment_type,
+                    'gross_amount': gross_amount,
+                    'order_id': order_id,
+                    'email': email,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'phone': phone,
+                    'bank': bank,
+                    'va_number': va_number
+                }
+            else:
+                return BaseController.send_error_api(None, 'field is not complete')
 
+            result = paymentservice.bank_transfer(payloads)
 
+            if not result['error']:
+                return BaseController.send_response_api(result['data'], 'bank transfer transaction is created')
+            else:
+                return BaseController.send_error_api(None, result['data'])
