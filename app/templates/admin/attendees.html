@@ -1,0 +1,26 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %}List Attendees{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Attendes
+        <small>List of registered attendees</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="#"><i class="fa fa-dashboard"></i> Attendees</a></li>
+    <li class="active">List</li>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <ul>
+            {% for attendee in attendees %}
+                <li>{{ attendee.id|e }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

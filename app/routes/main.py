@@ -9,7 +9,12 @@ main = Blueprint('main', __name__)
 def index():
     return MainController.index()
 
+@main.route('/attendees')
+def getAttendees():
+    return MainController.getAttendees()
+
+
 
 @main.route('/login')
 def login():
-    return render_template('resources/views/admin/auth/login.html')
+    return render_template('admin/auth/login.html')
