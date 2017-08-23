@@ -36,7 +36,7 @@
     <!-- Logo -->
     <a href="index2.html" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>A</b>LT</span>
+      <span class="logo-mini"><b>I</b>DS</span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg"><b>Devsummit</b>Admin</span>
     </a>
@@ -231,9 +231,13 @@
 
       <!-- Sidebar Menu -->
       <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">HEADER</li>
+        <li class="header">MENUS</li>
         <!-- Optionally, you can add icons to the links -->
-        <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
+        <li class="active">
+          <a href="/attendees">
+            <i class="fa fa-link"></i> <span>Attendess</span>
+          </a>
+        </li>
         <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
         <li class="treeview">
           <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
@@ -256,22 +260,20 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-        Dashboard
-        <small>Administration Page</small>
-      </h1>
+      
+      {% block page_header %}
+      {% endblock %}
+
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active">Overview</li>
+          {% block breadcrumb %}
+          {% endblock %}
       </ol>
     </section>
 
     <!-- Main content -->
     <section class="content container-fluid">
-
-      <!--------------------------
-        | Your Page Content Here |
-        -------------------------->
+      
+        {% block content %}{% endblock %}
 
     </section>
     <!-- /.content -->
@@ -285,7 +287,7 @@
       Anything you want
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2017 <a href="#">DEVSUMMIT</a>.</strong> All rights reserved.
   </footer>
 
   <!-- Control Sidebar -->
