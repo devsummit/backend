@@ -45,6 +45,23 @@ class PaymentService():
                     'data': 'payload not valid'
                 }
             # todo create payload for BCA virtual account
+            for item_detail in item_details:
+                data = {}
+                data.payment_type = payloads['payment_type']
+                data.transaction_details = {}
+                data.grass_amount = payloads['grass_amount']
+                data.order_id = payloads['order_id']
+                data.customer_details = {}
+                data.email = payloads['email']
+                data.first_name = payloads['first_name']
+                data.last_name = payloads['last_name']
+                data.phone = payloads['phone']
+                data.item_details = payloads['item_details']
+                data.ticket_id = payloads['ticket_id']
+                data.item_detail.ticket_id = payloads['item_detail']
+
+
+
 
         if (payloads['bank'] == 'permata'):
 
@@ -59,7 +76,7 @@ class PaymentService():
                     'error': True,
                     'data': 'payloads is not valid'
                 }
-            # get transaction_id and transaction_status from midtrans
+            # create paylod for midtrans
             data = {}
             data['payment_type'] = payloads['payment_type']
             data['bank_transfer'] = {}
@@ -69,22 +86,40 @@ class PaymentService():
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
             try:
+                endpoint = url + 'charge'
                 result = requests.post(
-                        'https://api.sandbox.midtrans.com/v2/charge', 
+                        endpoint,
                         headers={
                             'Accept': 'application/json',
                             'Content-Type':'application/json', 
                             'Authorization': 'Basic VlQtc2VydmVyLW5qaHFnaG5GVVpidFpnT2c5bGROdFkwbDo='
                         }, json=data
                 )
+
                 payload = result.json()
+
+                if (payload['status_code'] == '201'):
+                    self.savePayload(payload)
+
                 return payload
-                # todo checkout the response from mid trans here
+
             except Exception as e:
                 # Invalid payloads
                 return None
 
+    def savePayload(self, data):
 
+        new_payment = Payment()
+        new_payment.transaction_id = data['transaction_id']
+        new_payment.order_id = data['order_id']
+        new_payment.gross_amount = data['gross_amount']
+        new_payment.payment_type = data['payment_type']
+        new_payment.transaction_time = data['transaction_time']
+        new_payment.transaction_status = data['transaction_status']
+        new_payment.fraud_status = data['fraud_status']
+
+        db.session.add(new_payment)
+        db.session.commit()
 
 
 
