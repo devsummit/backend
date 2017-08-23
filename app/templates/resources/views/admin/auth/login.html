@@ -13,8 +13,8 @@
 </head>
 <body>
     <div class="container">
-            <div class="row" style="height: 100px">
-            </div>
+        <div class="row" style="height: 100px">
+        </div>
         <div class="row">
                 <div class="col-sm-6 col-sm-offset-3">
                     <img src="{{ url_for('static', filename='images/apps/devsummit.png') }}" alt="devsummit" style="width:100%">
@@ -25,37 +25,85 @@
                 </div> 
         </div>
         <div class="row">
-            <div class="col-sm-6 col-sm-offset-3">
-              <div class="well bs-component">
-                <form class="form-horizontal">
-                  <fieldset>
-                    <legend>Please sign in</legend>
-                    <div class="form-group">
-                      <label for="inputUserName" class="col-lg-2 control-label">UserName</label>
-                      <div class="col-lg-10">
-                        <input type="text" class="form-control" id="inputUserName" placeholder="User Name">
-                      </div>
+          <div class="col-sm-6 col-sm-offset-3">
+            <div class="well bs-component">
+              <form class="form-horizontal">
+                <fieldset>
+                  <legend><span class="label label-default" id="logInfo">Please log in</span></legend>
+                  <div class="form-group" id="divUserName">
+                    <label for="inputUserName" class="col-lg-2 control-label">UserName</label>
+                    <div class="col-lg-10">
+                      <input type="text" class="form-control" id="inputUserName" placeholder="User Name" name="username" required="true">
                     </div>
-                    <div class="form-group">
-                      <label for="inputPassword" class="col-lg-2 control-label">Password</label>
-                      <div class="col-lg-10">
-                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-                        <div class="checkbox">
-                          <label>
-                            <input type="checkbox"> Remember me
-                          </label>
-                        </div>
-                      </div>
+                  </div>
+                  <div class="form-group" id="divPassword">
+                    <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                    <div class="col-lg-10">
+                      <input type="password" class="form-control" id="inputPassword" placeholder="Password" name="password" required="true">
                     </div>
-                    <div class="form-group">
-                      <div class="col-lg-10 col-lg-offset-2" style="text-align: center">
-                        <button type="submit" class="btn btn-primary btn-sm btn-block">LOGIN</button>
-                      </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2" style="text-align: center">
+                      <button class="btn btn-primary btn-sm btn-block" id="btnSubmit">LOGIN</button>
                     </div>
-                  </fieldset>
-                </form>
-            </div>
+                  </div>
+                </fieldset>
+              </form>
           </div>
+        </div>
     </div>
+    <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
+    <script>
+
+      function showInfo(infoType, info) {
+        $('#logInfo').removeClass('label-default');
+        $('#logInfo').removeClass('label-success');
+        $('#logInfo').removeClass('label-danger');
+        $('#logInfo').removeClass('label-primary');
+        $('#logInfo').removeClass('label-warning');
+        $('#logInfo').addClass(infoType);
+        $('#logInfo').html(info);
+      }
+
+      $(function(){
+        
+        showInfo('label-default', 'Please log in');
+
+        $('.form-control').keypress((event)=>{
+          $(event.target).parent().parent().removeClass('has-error');
+        })
+        
+        $('#btnSubmit').click((event)=>{
+          event.preventDefault();
+          
+          $('#inputUserName').val()=='' ? $('#divUserName').addClass('has-error') : $('#divUserName').removeClass('has-error'); 
+          $('#inputPassword').val()=='' ? $('#divPassword').addClass('has-error') : $('#divPassword').removeClass('has-error');
+          
+          if ($('#inputUserName').val()=='' || $('#inputPassword').val()=='') {
+            $('#inputUserName').attr('placeholder', 'user name cannot be empty');
+            $('#inputPassword').attr('placeholder', 'password cannot be empty');
+            showInfo('label-warning', 'error!');
+            return
+          }
+          
+          payloads = {
+            username: $('input[name=username]').val(),
+            password: $('input[name=password]').val(),
+            provider: 'web'
+          }
+
+          dsa.login(payloads, function(success){
+            if(success) {
+              showInfo('label-succes', 'Login success');
+              window.location.href = '/';
+            } else {
+              showInfo('label-danger', 'Login failed, invalid username or password!');
+            }
+          })
+          
+        });
+      });
+    </script>
 </body>
 </html>
