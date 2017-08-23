@@ -36,13 +36,10 @@ class PaymentController(BaseController):
             first_name = request.json['first_name'] if 'first_name' in request.json else None
             last_name = request.json['last_name'] if 'last_name' in request.json else None
             phone = request.json['phone'] if 'phone' in request.json else None
-            ticket_id = request.json['ticket_id'] if 'ticket_id' in request.json else None
-            price = request.json['price'] if 'price' in request.json else None
-            quantity = request.json['quantity'] if 'quantity' in request.json else None
-            name =  request.json['name'] if 'name' in request.json else None
             va_number = request.json['va_number'] if 'va_number' in request.json else None
+            # using order_id to get ticket_id, price, quantity, ticket_type(name) in payment service
 
-            if payment_type and gross_amount and order_id and email and first_name and last_name and phone and ticket_id and price and quantity and name and bank and va_number:
+            if payment_type and gross_amount and order_id and email and first_name and last_name and phone and bank and va_number:
                 payloads = {
                     'payment_type': payment_type,
                     'gross_amount': gross_amount,
@@ -51,9 +48,6 @@ class PaymentController(BaseController):
                     'first_name': first_name,
                     'last_name': last_name,
                     'phone': phone,
-                    'ticket_id': ticket_id,
-                    'price': price,
-                    'quantity': quantity,
                     'name': name,
                     'bank': bank,
                     'va_number': va_number
@@ -63,10 +57,10 @@ class PaymentController(BaseController):
 
             result = paymentservice.bank_transfer(payloads)
 
-            if not result['error']:
-                return BaseController.send_response_api(result['data'], 'bank transfer transaction is created')
+            if result['status_code'] == '201':
+                return BaseController.send_response_api(result, 'Succesfully')
             else:
-                return BaseController.send_error_api(None, result['data'])
+                return BaseController.send_error_api(None, result)
 
         if(bank == 'bni'):
             email = request.json['email'] if 'email' in request.json else None
