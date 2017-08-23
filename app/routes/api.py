@@ -435,3 +435,5 @@ def bank_transfer(*args, **kwargs):
 def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
         return PaymentController.status(id)
+
+
