@@ -11,26 +11,36 @@ class Payment(db.Model, BaseModel):
         # displayed fields
         visible = [
                 'id', 
-                'card_id', 
-                'total', 
-                'additional_information', 
-                'sender', 
-                'order_id', 
+                'order_id',
+                'saved_token_id', 
+                'transaction_id', 
+                'payment_type',
+                'gross_amount',
+                'transaction_time',
+                'transaction_status',
+                'masked_card',
+                'bank', 
+                'fraud_status',
                 'created_at', 
                 'updated_at'
         ]
 
         id = db.Column(db.Integer, primary_key=True)
-        card_id = db.Column(db.Integer)
-        total = db.Column(db.Integer)
-        additional_information = db.Column(db.String)
-        sender = db.Column(db.String)
         order_id = db.Column(
                 db.Integer,
                 db.ForeignKey('orders.id'),
                 nullable=False
         )
         order = db.relationship('Order')
+        saved_token_id = db.Column(db.Integer)
+        transaction_id = db.Column(db.Integer)
+        payment_type = db.Column(db.String)
+        gross_amount = db.Column(db.Integer)
+        transaction_time = db.Column(db.String)
+        transaction_status = db.Column(db.String)
+        masked_card = db.Column(db.String)
+        bank = db.Column(db.String)
+        fraud_status = db.Column(db.String)
         created_at = db.Column(db.DateTime)
         updated_at = db.Column(db.DateTime)
 
