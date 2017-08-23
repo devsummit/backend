@@ -61,8 +61,6 @@ class PaymentService():
                 data.item_detail.ticket_id = payloads['item_detail']
 
 
-
-
         if (payloads['bank'] == 'permata'):
 
             # payload validation for permata
@@ -106,6 +104,35 @@ class PaymentService():
             except Exception as e:
                 # Invalid payloads
                 return None
+
+        if(payloads['bank'] == 'bni'):
+            # payload validation for bni
+            if not all(isinstance(string, str) for string in [
+                    payloads['payment_type'],
+                    payloads['email'],
+                    payloads['first_name'],
+                    payloads['last_name'],
+                    payloads['phone'],
+                    payloads['va_number']
+                ]
+            ) and not isinstance(payloads['gross_amount'], int):
+                return {
+                    'error': True,
+                    'data': 'payloads is not valid'
+                }
+
+            # create payload for midtrans
+            data = {}
+            data['payment_type'] = payloads['payment_type']
+            data['bank_transfer'] = {}
+            data['bank_transfer']['bank'] = payloads['bank']
+            data['bank_transfer']['va_number'] = payloads['va_number']
+            data['customer_details'] = {}
+            data['customer_details']['email'] = payloads['email']
+            data['customer_details']['first_name'] = payloads['first_name']
+            data['customer_details']['last_name'] = payloads['last_name']
+            data['customer_details']['phone'] = payloads['phone']
+            data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
     def savePayload(self, data):
 
