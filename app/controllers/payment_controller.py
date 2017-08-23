@@ -103,7 +103,7 @@ class PaymentController(BaseController):
                     return BaseController.send_response_api(result, 'bank transfer transaction is created')
                 else:
                     return BaseController.send_error_api(None, result)
-        else:
+        elif payment_type == 'credit_card':
             if gross_amount and order_id:
                 email = request.json['email'] if 'email' in request.json else None
                 first_name = request.json['first_name'] if 'first_name' in request.json else None
@@ -145,6 +145,7 @@ class PaymentController(BaseController):
                     return BaseController.send_response_api(result, 'credit card transaction is created')
                 else:
                     return BaseController.send_error_api(None, result)
+            
 
 
     @staticmethod
