@@ -142,6 +142,17 @@ class PaymentController(BaseController):
                 result = paymentservice.credit_payment(payloads)
 
                 if not result['status_code'] == '201':
-                    return BaseController.send_response_api(result, 'bank transfer transaction is created')
+                    return BaseController.send_response_api(result, 'credit card transaction is created')
                 else:
                     return BaseController.send_error_api(None, result)
+
+
+    @staticmethod
+    def status(id):
+
+        payment = paymentservice.update(id)
+
+        if not payment['status_code'] == '404':
+            return BaseController.send_response_api('Your payment status is ' + payment['transaction_status'], payment['status_message'])
+        else:
+            return BaseController.send_error_api(None, payment)

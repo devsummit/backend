@@ -12,6 +12,9 @@ from app.configs.constants import MIDTRANS_API_BASE_URL as url, MERCHANT_ID as m
 from app.models.base_model import BaseModel
 
 class PaymentService():
+    
+    def __init__(self):
+        self.authorization = base64.b64encode(bytes(SERVER_KEY, 'utf-8')).decode()
 
     def credit_payment(self, payloads):
 
@@ -89,7 +92,6 @@ class PaymentService():
         
         payloads['gross_amount'] = int(payloads['gross_amount'])
 
-        self.authorization = base64.b64encode(bytes(SERVER_KEY, 'utf-8')).decode()
 
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': self.authorization}
 
@@ -214,9 +216,6 @@ class PaymentService():
             data['transaction_details'] = {}
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
-            data['echannel'] = {}
-            data['echannel']['bill_info1'] = 'Payment for: order-' + str(payloads['order_id'])
-            data['echannel']['bill_info2'] = 'Event: DevSummit 2017'
 
         try:
             endpoint = url + 'charge'
@@ -240,6 +239,32 @@ class PaymentService():
             # Invalid payloads
             return None
             
+
+    def update(self, id):
+        payment_status = requests.get(
+            url + str(id) + '/status',
+            headers={
+                'Accept': 'application/json',
+                'Content-Type':'application/json', 
+                'Authorization': 'Basic ' + self.authorization
+            }
+        ) 
+
+        status = payment_status.json()
+
+        if (status['status_code'] == '201'):
+            payment = db.session.query(Payment).filter_by(id=id).first().as_dict()
+
+            if (payment['transaction_status'] != status['transaction_status']):
+
+                payment.update({
+                    'updated_at': datetime.datetime.now(),
+                    'transaction_status': status['transaction_status']
+                })
+
+                db.session.commit()
+
+        return status
 
     def get_order_details(self, order_id):
         # using order_id to get ticket_id, price, quantity, ticket_type(name) in payment service
