@@ -33,12 +33,11 @@ class PaymentService():
                         payloads['last_name'],
                         payloads['phone'],
                         payloads['va_number']
-                ] and not isinstance(payloads['gross_amount'], int)
-            ):
-                return {
-                    'error': True,
-                    'data': 'payload not valid'
-                }
+                ]) and not isinstance(payloads['gross_amount'], int):
+                    return {
+                        'error': True,
+                        'data': 'payload not valid'
+                    }
             # todo create payload for BCA virtual account
             data = {}
             data.payment_type = payloads['payment_type']
@@ -51,11 +50,8 @@ class PaymentService():
             data.last_name = payloads['last_name']
             data.phone = payloads['phone']
             
-            self.get_order_details(payloads['order_id'])
-            #  data.item_details = []
-
-
-
+            order_details = self.get_order_details(payloads['order_id'])
+            print(order_details)
 
         if (payloads['bank'] == 'permata'):
 
