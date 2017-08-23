@@ -16,78 +16,6 @@ class PaymentService():
     def __init__(self):
         self.authorization = base64.b64encode(bytes(SERVER_KEY, 'utf-8')).decode()
 
-    def credit_payment(self, payloads):
-
-        self.authorization = base64.b64encode(bytes(SERVER_KEY, 'utf-8')).decode()
-
-        headers = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': self.authorization}
-        # generate order details payload
-        details = self.get_order_details(payloads['order_id'])    
-        # register and get credit card token 
-        token = self.get_credit_token(payloads)
-
-        data = {}
-        data['payment_type'] = 'credit_card'
-        data['transaction_detail'] = {}
-        data['transaction_detail']['order_id'] = payloads['order_id']
-        data['transaction_detail']['gross_amount'] = payloads['gross_amount']
-        data['credit_card'] = {}
-        data['credit_card']['token_id'] = token
-        data['item_details'] = details
-        data['customer_details'] = {}
-        data['customer_details']['first_name'] = payloads['first_name']
-        data['customer_details']['last_name'] = payloads['last_name']
-        data['customer_details']['email'] = payloads['email']
-        data['customer_details']['phone'] = payloads['phone']
-        data['customer_details']['billing_address'] = payloads['billing_address']
-        data['customer_details']['shipping_address'] = payloads['shipping_address']
-        data['transaction_details'] = {}
-        data['transaction_details']['order_id'] = payloads['order_id']
-        data['transaction_details']['gross_amount'] = payloads['gross_amount']
-        
-        try:
-            endpoint = url + 'charge'
-            result = requests.post(
-                    endpoint,
-                    headers={
-                        'Accept': 'application/json',
-                        'Content-Type':'application/json', 
-                        'Authorization': 'Basic ' + self.authorization
-                    }, json=data
-            )
-
-            payload = result.json()
-            print(payload)
-            if (payload['status_code'] == '201'):
-                self.save_payload(payload)
-
-            return payload
-
-        except Exception as e:
-            # Invalid payloads
-            return None
-
-
-
-    def get_credit_token(self, payloads):
-        endpoint = 'https://api.sandbox.midtrans.com/v2/card/register?'
-        card_number = 'card_number=' + payloads['card_number']
-        card_exp_month = '&card_exp_month=' + payloads['card_exp_month']
-        card_exp_year= '&card_exp_year=' + payloads['card_exp_year'] 
-        card_cvv = '&card_cvv=' + payloads['card_cvv']
-        bank = '&bank=' + payloads['bank']
-        gross_amount= '&gross_amount=' + str(payloads['gross_amount'])
-        client_key = '&client_key=' + payloads['client_key']
-        result_endpoint = endpoint + card_number + card_exp_month + card_exp_year + card_cvv + bank + '&secure=true' + gross_amount + gross_amount + client_key
-        try:
-            headers = {'Accept': 'application/json', 'Content-Type':'application/json'}
-            result = requests.get(result_endpoint, headers=headers)
-            res = result.json()
-            return res['saved_token_id']
-        except Exception as e:
-            # Invalid payloads
-            return None
-
     def bank_transfer(self, payloads):
         
         payloads['gross_amount'] = int(payloads['gross_amount'])
@@ -217,6 +145,33 @@ class PaymentService():
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
+    def internet_banking(self, payloads):
+        if not all(isinstance(string, str) for string in [
+            payloads['order_id'],
+            payloads['first_name'],
+            payloads['last_name'],
+            payloads['email'],
+            payloads['phone']
+        ]) and not isinstance(payloads['gross_amount', int]):
+            return {
+                'error': True,
+                'message': 'payloads is not valid'
+            }
+
+        details = self.get_order_details(payloads['order_id'])
+            
+        data = {}
+        data['payment_type'] = payloads['payment_type']
+        data['transaction_details'] = {}
+        data['transaction_details']['order_id'] = payloads['order_id']
+        data['transaction_details']['gross_amount'] = payloads['gross_amount']
+        data['item_details'] = details
+        data['customer_details'] = {}
+        data['customer_details']['first_name'] = payloads['first_name']
+        data['customer_details']['last_name'] = payloads['last_name']
+        data['customer_details']['email'] = payloads['email']
+        data['customer_details']['phone'] = payloads['phone']        
+
         try:
             endpoint = url + 'charge'
             result = requests.post(
@@ -238,7 +193,9 @@ class PaymentService():
         except Exception as e:
             # Invalid payloads
             return None
-            
+            data['transaction_details'] = {}
+            data['transaction_details']['order_id'] = payloads['order_id']
+            data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
     def update(self, id):
         payment_status = requests.get(
@@ -294,3 +251,6 @@ class PaymentService():
 
         db.session.add(new_payment)
         db.session.commit()
+
+
+

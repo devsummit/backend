@@ -145,8 +145,36 @@ class PaymentController(BaseController):
                     return BaseController.send_response_api(result, 'credit card transaction is created')
                 else:
                     return BaseController.send_error_api(None, result)
-            
+        
+        else:
+            if (payment_type == 'bri_epay'):
+                order_id = request.json['order_id'] if 'order_id' in request.json else None
+                gross_amount = request.json['gross_amount'] if 'gross_amount' in request.json else None
+                first_name = request.json['first_name'] if 'first_name' in request.json else None
+                last_name = request.json['last_name'] if 'last_name' in request.json else None
+                email = request.json['email'] if 'email' in request.json else None
+                phone = request.json['phone'] if 'phone' in request.json else None
 
+                if order_id and gross_amount and first_name and last_name and email and phone:
+                    payloads = {
+                        'payment_type': payment_type,
+                        'order_id': order_id,
+                        'gross_amount': gross_amount,
+                        'first_name': first_name,
+                        'last_name': last_name,
+                        'email': email,
+                        'phone': phone
+                    }
+
+                else:
+                    return BaseController.send_error_api(None, 'field is not complete')
+                
+                result = paymentservice.internet_banking(payloads)
+
+                if not result['status_code'] == '201':
+                    return BaseController.send_response_api(result, 'Internet banking created transaction succesfully')
+                else:
+                    return BaseController.send_error_api(None, result)
 
     @staticmethod
     def status(id):
@@ -157,3 +185,5 @@ class PaymentController(BaseController):
             return BaseController.send_response_api('Your payment status is ' + payment['transaction_status'], payment['status_message'])
         else:
             return BaseController.send_error_api(None, payment)
+
+
