@@ -7,7 +7,9 @@ from sqlalchemy.exc import SQLAlchemyError
 #import model class
 from app.models.payment import Payment
 from app.models.order import Order
+from app.models.order_details import OrderDetails
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, MERCHANT_ID as merchant_id, CLIENT_KEY, SERVER_KEY
+from app.models.base_model import BaseModel
 
 class PaymentService():
 
@@ -30,35 +32,27 @@ class PaymentService():
                         payloads['first_name'],
                         payloads['last_name'],
                         payloads['phone'],
-                        payloads['ticket_id'],
-                        payloads['name'],
-                        payloads['bank'],
                         payloads['va_number']
-                ] and isinstance(number, int) for number in [
-                        payloads['gross_amount'],
-                        payloads['price'],
-                        payloads['quantity']
-                ]
+                ] and not isinstance(payloads['gross_amount'], int)
             ):
                 return {
                     'error': True,
                     'data': 'payload not valid'
                 }
             # todo create payload for BCA virtual account
-            for item_detail in item_details:
-                data = {}
-                data.payment_type = payloads['payment_type']
-                data.transaction_details = {}
-                data.grass_amount = payloads['grass_amount']
-                data.order_id = payloads['order_id']
-                data.customer_details = {}
-                data.email = payloads['email']
-                data.first_name = payloads['first_name']
-                data.last_name = payloads['last_name']
-                data.phone = payloads['phone']
-                data.item_details = payloads['item_details']
-                data.ticket_id = payloads['ticket_id']
-                data.item_detail.ticket_id = payloads['item_detail']
+            data = {}
+            data.payment_type = payloads['payment_type']
+            data.transaction_details = {}
+            data.grass_amount = payloads['grass_amount']
+            data.order_id = payloads['order_id']
+            data.customer_details = {}
+            data.email = payloads['email']
+            data.first_name = payloads['first_name']
+            data.last_name = payloads['last_name']
+            data.phone = payloads['phone']
+            
+            self.get_order_details(payloads['order_id'])
+            #  data.item_details = []
 
 
 
@@ -68,7 +62,6 @@ class PaymentService():
             # payload validation for permata
             if not all(isinstance(string, str) for string in [
                     payloads['payment_type'],
-                    payloads['bank'],
                     payloads['order_id'],
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
@@ -107,7 +100,12 @@ class PaymentService():
                 # Invalid payloads
                 return None
 
-    def savePayload(self, data):
+    def get_order_details(self, order_id):
+        # using order_id to get ticket_id, price, quantity, ticket_type(name) in payment service
+        item_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
+        return BaseModel().as_list(item_details)
+
+    def save_payload(self, data):
 
         new_payment = Payment()
         new_payment.transaction_id = data['transaction_id']
