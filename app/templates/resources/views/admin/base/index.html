@@ -186,7 +186,7 @@
                   <a href="#" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="#" class="btn btn-default btn-flat" id="logOutBtn">Sign out</a>
                 </div>
               </li>
             </ul>
@@ -390,6 +390,10 @@
   if (!dsa.isLogin()) {
     window.location.href = '/login';
   }  
+
+  $('#logOutBtn').click((event)=>{
+    dsa.logout();
+  })
 </script>
 
 </body>
