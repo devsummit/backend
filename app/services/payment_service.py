@@ -172,6 +172,11 @@ class PaymentService():
         data['customer_details']['email'] = payloads['email']
         data['customer_details']['phone'] = payloads['phone']        
 
+        if (payloads['payment_type'] == 'cimb_clicks'):
+            data['cimb_clicks'] = {}
+            data['cimb_clicks']['description'] = payloads['description']
+
+        # this will send the all payment methods payload to midtrand api
         try:
             endpoint = url + 'charge'
             result = requests.post(
@@ -247,7 +252,7 @@ class PaymentService():
         new_payment.payment_type = data['payment_type']
         new_payment.transaction_time = data['transaction_time']
         new_payment.transaction_status = data['transaction_status']
-        new_payment.fraud_status = data['fraud_status']
+        new_payment.fraud_status = data['fraud_status'] if 'fraud_status' in data else None
 
         db.session.add(new_payment)
         db.session.commit()
