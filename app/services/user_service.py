@@ -38,9 +38,35 @@ class UserService:
         self.model_user.hash_password(payloads['password'])
         db.session.add(self.model_user)
 
+
+
         try:
             db.session.commit()
             data = self.model_user.as_dict()
+
+            # insert role model
+            if(role == ROLE['attendee']):
+                attendee = Attendee()
+                attendee.user_id = data['id']
+                attendee.points = 0
+                db.session.add(attendee)
+                db.session.commit()
+            elif(role == ROLE['booth']):
+                booth = Booth()
+                booth.user_id = data['id']
+                booth.points = 0
+                booth.summary = ''
+                db.session.add(booth)
+                db.session.commit()
+            elif(role == ROLE['speaker']):
+                speaker = Speaker()
+                speaker.user_id = data['id']
+                speaker.job = ''
+                speaker.summary = ''
+                speaker.information = ''
+                db.session.add(speaker)
+                db.session.commit()
+                
             return {
                 'error': False,
                 'data': data
