@@ -8,7 +8,10 @@ class OrderController(BaseController):
 	@staticmethod
 	def index():
 		orders = orderservice.get()
-		return BaseController.send_response_api(orders, 'orders retrieved successfully')
+		if(len(orders) != 0):
+			return BaseController.send_response_api(orders, 'orders retrieved successfully')
+		else:
+			return BaseController.send_response_api([], 'orders is empty')
 
 	@staticmethod
 	def show(id):
