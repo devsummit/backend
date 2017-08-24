@@ -1,6 +1,13 @@
 {% extends "admin/base/index.html" %}
 
-{% block title %}List Attendees{% endblock %}
+{% block title %} <title> Attendees list </title>  {% endblock %}
+
+{% block header_link %}
+
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+
+{% endblock %}
 
 {% block page_header %}
     {{ super() }}
@@ -15,11 +22,51 @@
 {% endblock %}
 
 {% block content %}
-    <div>
-        <ul>
-            {% for attendee in attendees %}
-                <li>{{ attendee.id|e }}</li>
-            {% endfor %}
-        </ul>
-    </div>
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Attendee Name</th>
+                    <th>Email</th>
+                    <th>Points</th>
+                    <th>Registered At</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for attendee in attendees %}
+                    <tr>
+                        <td>
+                            <a href="">{{ attendee.user['last_name'] + ', ' + attendee.user['first_name']|e }}</a> 
+                        </td>
+                        <td>
+                            {{ attendee.user['email']|e }}
+                        </td>
+                        <td>
+                            {{ attendee['points']|e }}
+                        </td>
+                        <td>
+                            {{ attendee.user['created_at']|e }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    $(function () {
+        $('#example1').DataTable()
+    })
+</script>
+
 {% endblock %}
