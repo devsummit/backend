@@ -1,6 +1,5 @@
-from flask import render_template, request
+from flask import render_template
 from app.controllers.base_controller import BaseController
-import requests
 
 
 class MainController(BaseController):
