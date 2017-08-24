@@ -17,6 +17,7 @@ from app.services.newsletter_service import NewsletterService
 from app.services.booth_service import BoothService
 from app.services.user_ticket_service import UserTicketService
 from app.services.attendee_service import AttendeeService
+from app.services.payment_service import PaymentService 
 
 # instantiate service
 userservice = UserService()
@@ -37,3 +38,4 @@ newsletterservice = NewsletterService()
 boothservice = BoothService()
 userticketservice = UserTicketService()
 attendeeservice = AttendeeService()
+paymentservice = PaymentService()

@@ -38,7 +38,7 @@ class BoothController(BaseController):
         else:
             return BaseController.send_error_api(None, 'field is not complete')
 
-        result = boothservice.update(payloads, id)
+        result = boothservice.update(id)
 
         if not result['error']:
             return BaseController.send_response_api(result['data'], 'booth succesfully updated')

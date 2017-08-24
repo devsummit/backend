@@ -11,6 +11,8 @@ from seeders.newsletters_seeder import NewsletterSeeder
 from seeders.speakers_seeder import SpeakersSeeder
 from seeders.booths_seeder import BoothsSeeder
 from seeders.clients_seeder import ClientsSeeder
+from seeders.payments_seeder import PaymentsSeeder
+from seeders.orders_seeder import OrdersSeeder
 
 
 class Seed():
@@ -61,10 +63,18 @@ class Seed():
 		SpeakersSeeder.run()
 		print('finish seeding speakers')
 
+		print('seeding orders...')
+		OrdersSeeder.run()
+		print('finish seeding orders')
+
 		print('seeding booths...')
 		BoothsSeeder.run()
 		print('finish seeding booths')
 
-		print('seeding booths...')
+		print('seeding client...')
 		ClientsSeeder.run()
-		print('finish seeding booths')
+		print('finish seeding client')
+
+		print('seeding payments...')
+		PaymentsSeeder.run()
+		print('finish seeding payment')

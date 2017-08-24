@@ -24,6 +24,7 @@ from app.controllers.newsletter_controller import NewsletterController
 from app.controllers.booth_controller import BoothController
 from app.controllers.user_ticket_controller import UserTicketController
 from app.controllers.attendee_controller import AttendeeController
+from app.controllers.payment_controller import PaymentController
 
 api = Blueprint('api', __name__)
 
@@ -420,3 +421,17 @@ def attendees(*args, **kwargs):
 def attendees_id(id, *args, **kwargs):
 	if(request.method == 'GET'):
 		return AttendeeController.show(id)
+
+# Payment api
+
+
+@api.route('/payments', methods=['POST'])
+def bank_transfer(*args, **kwargs):
+    if (request.method == 'POST'):
+        return PaymentController.create(request)
+
+
+@api.route('/status/<id>', methods=['PATCH', 'PUT'])
+def status(id, *args, **kwargs):
+    if (request.method == 'PATCH' or request.method == 'PUT'):
+        return PaymentController.status(id)
