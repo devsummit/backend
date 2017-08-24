@@ -2,7 +2,8 @@ from app.models import db
 # import model class
 from app.models.attendee import Attendee
 from app.models.user import User
-
+from flask import jsonify, json
+from pprint import pprint
 
 class AttendeeService():
     def get(self):
@@ -15,6 +16,10 @@ class AttendeeService():
         return _attendees
 
     def show(self, id):
-        attendee = db.session.query(Attendee).filter_by(id=id).first().as_dict()
-        attendee['user'] = db.session.query(User).filter_by(id=attendee['user_id']).first().as_dict()
+        attendee = db.session.query(Attendee).filter_by(id=id).first()
+        if attendee:
+            attendee = attendee.as_dict()
+            attendee['user'] = db.session.query(User).filter_by(id=attendee['user_id']).first().as_dict()
+        else:
+            attendee = {}
         return attendee
