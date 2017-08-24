@@ -48,25 +48,19 @@ class UserService:
             if(role == ROLE['attendee']):
                 attendee = Attendee()
                 attendee.user_id = data['id']
-                attendee.points = 0
                 db.session.add(attendee)
                 db.session.commit()
             elif(role == ROLE['booth']):
                 booth = Booth()
                 booth.user_id = data['id']
-                booth.points = 0
-                booth.summary = ''
                 db.session.add(booth)
                 db.session.commit()
             elif(role == ROLE['speaker']):
                 speaker = Speaker()
                 speaker.user_id = data['id']
-                speaker.job = ''
-                speaker.summary = ''
-                speaker.information = ''
                 db.session.add(speaker)
                 db.session.commit()
-                
+
             return {
                 'error': False,
                 'data': data
