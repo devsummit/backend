@@ -29,6 +29,9 @@
   <!-- Google Font -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  
+  <!-- Devsummit Auth Client -->
+  <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
 
   {% block header_link %}
   {% endblock %}
@@ -36,6 +39,15 @@
 </head>
 
 <body class="hold-transition skin-yellow sidebar-mini">
+
+<script>
+  // check if user is login when enter this page
+  // use dsa client from auth.js
+  if (!dsa.isLogin()) {
+    window.location.href = '/login';
+  }  
+</script>
+
 <div class="wrapper">
 
   <!-- Main Header -->
@@ -415,9 +427,6 @@
 <!-- AdminLTE App -->
 <script src="{{ url_for('static', filename='assets/dist/js/adminlte.min.js') }}"></script>
 
-<!-- Devsummit Auth Client -->
-<script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
-
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
   Both of these plugins are recommended to enhance the
   user experience. -->
@@ -428,11 +437,7 @@
 <script src="{{ url_for('static', filename='assets/fastclick/lib/fastclick.js') }}"></script>
 
 <script>
-  // check if user is login when enter this page
-  // use dsa client from auth.js
-  if (!dsa.isLogin()) {
-    window.location.href = '/login';
-  }  
+  
 
   $('#logOutBtn').click((event)=>{
     dsa.logout();
