@@ -9,9 +9,9 @@ class AttendeeService():
         attendees = db.session.query(Attendee).all()
         _attendees = []
         for attendee in attendees:
-            attendee = attendee.as_dict()
-            attendee['user'] = db.session.query(User).filter_by(id=attendee['user_id']).first().as_dict()
-            _attendees.append(attendee)
+            data = attendee.as_dict()
+            data['user'] = attendee.user.as_dict()
+            _attendees.append(data)
         return _attendees
 
     def show(self, id):

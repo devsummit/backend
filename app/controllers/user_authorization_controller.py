@@ -1,4 +1,5 @@
 # parent class imports
+from flask import session
 from app.controllers.base_controller import BaseController
 from app.services import userservice
 import requests
@@ -56,6 +57,8 @@ class UserAuthorizationController(BaseController):
                         user = user.as_dict()
                         user['url'] = userservice.get_user_photo(
                             user['id'])
+                        # store user session for web app consumed
+                        session['user'] =  user
                         return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
                         return BaseController.send_error_api(None, 'wrong credentials')
