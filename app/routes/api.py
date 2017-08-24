@@ -425,7 +425,7 @@ def attendees_id(id, *args, **kwargs):
 # Payment api
 
 
-@api.route('/payments/banktransfer', methods=['POST'])
+@api.route('/payments', methods=['POST'])
 def bank_transfer(*args, **kwargs):
     if (request.method == 'POST'):
         return PaymentController.create(request)
