@@ -1,7 +1,6 @@
 from faker import Faker
 from random import randint
 import random
-from datetime import date
 from app.models.base_model import BaseModel
 from app.models.payment import Payment
 from app.models import db
@@ -25,8 +24,8 @@ class PaymentsSeeder():
         statuses = ['accept', 'challenge', 'deny']
         payment_types = ['bank_transfer', 'credit_card']
         banks = ['bri', 'bni', 'permata', 'maybank', 'mandiri', 'bca', 'cimb']
-        range_start = 10 ** ( 7 - 1 )
-        range_end = ( 10 ** 7 ) - 1
+        range_start = 10 ** (7 - 1)
+        range_end = (10 ** 7) - 1
 
         for i in range(0, 10):
             order_id = random.choice(orders)['id']
@@ -55,5 +54,3 @@ class PaymentsSeeder():
             new_payment.fraud_status = fraud_status
             db.session.add(new_payment)
             db.session.commit()
-
-

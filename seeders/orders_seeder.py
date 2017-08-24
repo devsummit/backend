@@ -29,4 +29,3 @@ class OrdersSeeder():
             new_order.status = status
             db.session.add(new_order)
             db.session.commit()
-

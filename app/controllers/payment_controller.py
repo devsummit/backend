@@ -1,5 +1,4 @@
 from app.controllers.base_controller import BaseController
-from app.models.base_model import BaseModel
 from app.services import paymentservice
 
 
@@ -53,7 +52,7 @@ class PaymentController(BaseController):
                     }
                 else:
                     return BaseController.send_error_api(None, 'field is not complete')
-                
+
                 result = paymentservice.bank_transfer(payloads)
 
                 if result['status_code'] == '201':
@@ -145,7 +144,7 @@ class PaymentController(BaseController):
                     return BaseController.send_response_api(result, 'credit card transaction is created')
                 else:
                     return BaseController.send_error_api(None, result)
-        
+
         else:
             payloads = {
                 'order_id': PaymentController.is_field_exist(request, 'order_id'),
@@ -162,7 +161,7 @@ class PaymentController(BaseController):
             if (payment_type == 'bca_klikpay'):
 
                 payloads['payment_type'] = payment_type
-                
+
                 result = paymentservice.internet_banking(payloads)
 
                 if result['status_code'] == '201':
@@ -176,7 +175,6 @@ class PaymentController(BaseController):
                 payloads['description'] = PaymentController.is_field_exist(request, 'description')
                 payloads['user_id'] = PaymentController.is_field_exist(request, 'user_id')
 
-                
                 result = paymentservice.internet_banking(payloads)
 
                 if result['status_code'] == '201':
@@ -191,7 +189,7 @@ class PaymentController(BaseController):
                 payloads['token'] = PaymentController.is_field_exist(request, 'token')
                 payloads['input1'] = PaymentController.is_field_exist(request, 'input1')
                 payloads['input3'] = PaymentController.is_field_exist(request, 'random')
-                
+
                 result = paymentservice.internet_banking(payloads)
 
                 if result['status_code'] == '201':
@@ -202,7 +200,7 @@ class PaymentController(BaseController):
             if (payment_type == 'bri_epay'):
 
                 payloads['payment_type'] = payment_type
-                
+
                 result = paymentservice.internet_banking(payloads)
 
                 if result['status_code'] == '201':
@@ -234,8 +232,6 @@ class PaymentController(BaseController):
                 else:
                     return BaseController.send_error_api(None, result)
 
-                
-
     @staticmethod
     def status(id):
 
@@ -251,6 +247,4 @@ class PaymentController(BaseController):
         if field_name in request.json:
             return request.json[field_name]
         else:
-            return None 
-
-
+            return None

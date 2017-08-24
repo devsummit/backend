@@ -1,27 +1,21 @@
 import datetime
-import json
 import base64
 import requests
 from app.models import db
-from sqlalchemy.exc import SQLAlchemyError
-#import model class
+# import model class
 from app.models.payment import Payment
-from app.models.order import Order
 from app.models.order_details import OrderDetails
-from app.configs.constants import MIDTRANS_API_BASE_URL as url, MERCHANT_ID as merchant_id, CLIENT_KEY, SERVER_KEY
-from app.models.base_model import BaseModel
+from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
+
 
 class PaymentService():
-    
+
     def __init__(self):
         self.authorization = base64.b64encode(bytes(SERVER_KEY, 'utf-8')).decode()
 
     def bank_transfer(self, payloads):
-        
+
         payloads['gross_amount'] = int(payloads['gross_amount'])
-
-
-        headers = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': self.authorization}
 
         # generate order details payload
         details = self.get_order_details(payloads['order_id'])
@@ -38,11 +32,12 @@ class PaymentService():
                         payloads['last_name'],
                         payloads['phone'],
                         payloads['va_number']
-                ]) and not isinstance(payloads['gross_amount'], int):
-                    return {
-                        'error': True,
-                        'data': 'payload not valid'
-                    }
+                ]
+            ) and not isinstance(payloads['gross_amount'], int):
+                return {
+                    'error': True,
+                    'data': 'payload not valid'
+                }
             # todo create payload for BCA virtual account
             data = {}
             data['payment_type'] = payloads['payment_type']
@@ -50,10 +45,10 @@ class PaymentService():
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
             data['transaction_details']['order_id'] = payloads['order_id']
             data['customer_details'] = {}
-            data['customer_details']['email ']= payloads['email']
-            data['customer_details']['first_name '] = payloads['first_name']
-            data['customer_details']['last_name '] = payloads['last_name']
-            data['customer_details']['phone '] = payloads['phone']
+            data['customer_details']['email'] = payloads['email']
+            data['customer_details']['first_name'] = payloads['first_name']
+            data['customer_details']['last_name'] = payloads['last_name']
+            data['customer_details']['phone'] = payloads['phone']
             data['item_details'] = details
             data['bank_transfer'] = {}
             data['bank_transfer']['bank'] = payloads['bank']
@@ -75,9 +70,10 @@ class PaymentService():
         if (payloads['bank'] == 'permata'):
 
             # payload validation for permata
-            if not all(isinstance(string, str) for string in [
+            if not all(
+                isinstance(string, str) for string in [
                     payloads['payment_type'],
-                    payloads['order_id'],
+                    payloads['order_id']
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
                 return {
@@ -93,10 +89,10 @@ class PaymentService():
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
-
         if(payloads['bank'] == 'bni'):
             # payload validation for bni
-            if not all(isinstance(string, str) for string in [
+            if not all(
+                isinstance(string, str) for string in [
                     payloads['payment_type'],
                     payloads['email'],
                     payloads['first_name'],
@@ -125,10 +121,11 @@ class PaymentService():
             data['transaction_details'] = {}
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
-       
+
         if(payloads['bank'] == 'mandiri_bill'):
             # payload validation for bni
-            if not all(isinstance(string, str) for string in [
+            if not all(
+                isinstance(string, str) for string in [
                     payloads['payment_type'],
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
@@ -159,7 +156,7 @@ class PaymentService():
             }
 
         details = self.get_order_details(payloads['order_id'])
-            
+
         data = {}
         data['payment_type'] = payloads['payment_type']
         data['transaction_details'] = {}
@@ -185,7 +182,7 @@ class PaymentService():
             data['bca_klikbca'] = {}
             data['bca_klikbca']['user_id'] = payloads['user_id']
             data['bca_klikbca']['description'] = payloads['description']
-        
+
         if (payloads['payment_type'] == 'mandiri_clickpay'):
             data['mandiri_clickpay'] = {}
             data['mandiri_clickpay']['card_number'] = payloads['card_number']
@@ -194,9 +191,6 @@ class PaymentService():
             data['mandiri_clickpay']['input3'] = payloads['input3']
             data['mandiri_clickpay']['token'] = payloads['token']
 
-
-
-
         # this will send the all payment methods payload to midtrand api
         try:
             endpoint = url + 'charge'
@@ -204,31 +198,32 @@ class PaymentService():
                     endpoint,
                     headers={
                         'Accept': 'application/json',
-                        'Content-Type':'application/json', 
+                        'Content-Type': 'application/json', 
                         'Authorization': 'Basic ' + self.authorization
                     }, json=data
             )
 
             payload = result.json()
+            print(payload)
 
-            if (payload['status_code'] == '201'):
+            if ('status_code' in payload and payload['status_code'] == '201'):
                 self.save_payload(payload)
 
             return payload
 
-        except Exception as e:
+        except requests.exceptions.HTTPError as err:
             # Invalid payloads
-            return None
-            data['transaction_details'] = {}
-            data['transaction_details']['order_id'] = payloads['order_id']
-            data['transaction_details']['gross_amount'] = payloads['gross_amount']
+            return {
+                'status_code': err.response.status_code,
+                'message': err.response.reason
+            }
 
     def update(self, id):
         payment_status = requests.get(
             url + str(id) + '/status',
             headers={
                 'Accept': 'application/json',
-                'Content-Type':'application/json', 
+                'Content-Type': 'application/json', 
                 'Authorization': 'Basic ' + self.authorization
             }
         ) 
@@ -277,6 +272,3 @@ class PaymentService():
 
         db.session.add(new_payment)
         db.session.commit()
-
-
-

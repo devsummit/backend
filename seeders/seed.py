@@ -14,6 +14,7 @@ from seeders.clients_seeder import ClientsSeeder
 from seeders.payments_seeder import PaymentsSeeder
 from seeders.orders_seeder import OrdersSeeder
 
+
 class Seed():
 
 	@staticmethod
@@ -65,11 +66,11 @@ class Seed():
 		print('seeding orders...')
 		OrdersSeeder.run()
 		print('finish seeding orders')
-		
+
 		print('seeding booths...')
 		BoothsSeeder.run()
 		print('finish seeding booths')
-		
+
 		print('seeding client...')
 		ClientsSeeder.run()
 		print('finish seeding client')
