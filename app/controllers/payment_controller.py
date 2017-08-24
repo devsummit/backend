@@ -156,6 +156,46 @@ class PaymentController(BaseController):
                 'phone': PaymentController.is_request_valid(request, 'phone')
             }
 
+            if (payment_type == 'bca_klikpay'):
+
+                payloads['payment_type'] = payment_type
+                
+                result = paymentservice.internet_banking(payloads)
+
+                if result['status_code'] == '201':
+                    return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
+                else:
+                    return BaseController.send_error_api(None, result)
+
+            if (payment_type == 'bca_klikbca'):
+
+                payloads['payment_type'] = payment_type
+                payloads['description'] = BaseController.is_request_valid(request, 'description')
+                payloads['user_id'] = BaseController.is_request_valid(request, 'user_id')
+
+                
+                result = paymentservice.internet_banking(payloads)
+
+                if result['status_code'] == '201':
+                    return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
+                else:
+                    return BaseController.send_error_api(None, result)
+
+            if (payment_type == 'mandiri_clickpay'):
+
+                payloads['payment_type'] = payment_type
+                payloads['card_number'] = BaseController.is_request_valid(request, 'card_number')
+                payloads['token'] = BaseController.is_request_valid(request, 'token')
+                payloads['input1'] = BaseController.is_request_valid(request, 'input1')
+                payloads['input3'] = BaseController.is_request_valid(request, 'random')
+                
+                result = paymentservice.internet_banking(payloads)
+
+                if result['status_code'] == '201':
+                    return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
+                else:
+                    return BaseController.send_error_api(None, result)
+
             if (payment_type == 'bri_epay'):
 
                 payloads['payment_type'] = payment_type

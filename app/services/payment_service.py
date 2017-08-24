@@ -176,6 +176,26 @@ class PaymentService():
             data['cimb_clicks'] = {}
             data['cimb_clicks']['description'] = payloads['description']
 
+        if (payloads['payment_type'] == 'bca_klikpay'):
+            data['bca_klikpay'] = {}
+            data['bca_klikpay']['type'] = 1
+            data['bca_klikpay']['description'] = 'Devsummit tickets purchase'
+
+        if (payloads['payment_type'] == 'bca_klikbca'):
+            data['bca_klikbca'] = {}
+            data['bca_klikbca']['user_id'] = payloads['user_id']
+            data['bca_klikpay']['description'] = payloads['description']
+        
+        if (payment_type == 'mandiri_clickpay'):
+            data['mandiri_clickpay'] = {}
+            data['mandiri_clickpay']['card_number'] = payloads['card_number']
+            data['mandiri_clickpay']['input1'] = payloads['card_number']
+            data['mandiri_clickpay']['input2'] = payloads['gross_amount']
+            data['mandiri_clickpay']['input3'] = payloads['input3']
+
+
+
+
         # this will send the all payment methods payload to midtrand api
         try:
             endpoint = url + 'charge'
