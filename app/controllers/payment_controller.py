@@ -148,13 +148,16 @@ class PaymentController(BaseController):
         
         else:
             payloads = {
-                'order_id': PaymentController.is_request_valid(request, 'order_id'),
-                'gross_amount': PaymentController.is_request_valid(request, 'gross_amount'),
-                'first_name': PaymentController.is_request_valid(request, 'first_name'),
-                'last_name': PaymentController.is_request_valid(request, 'last_name'),
-                'email': PaymentController.is_request_valid(request, 'email'),
-                'phone': PaymentController.is_request_valid(request, 'phone')
+                'order_id': PaymentController.is_field_exist(request, 'order_id'),
+                'gross_amount': PaymentController.is_field_exist(request, 'gross_amount'),
+                'first_name': PaymentController.is_field_exist(request, 'first_name'),
+                'last_name': PaymentController.is_field_exist(request, 'last_name'),
+                'email': PaymentController.is_field_exist(request, 'email'),
+                'phone': PaymentController.is_field_exist(request, 'phone')
             }
+
+            if None in payloads.values():
+                return BaseController.send_error_api(None, 'Field is not complete')
 
             if (payment_type == 'bca_klikpay'):
 
@@ -170,24 +173,24 @@ class PaymentController(BaseController):
             if (payment_type == 'bca_klikbca'):
 
                 payloads['payment_type'] = payment_type
-                payloads['description'] = BaseController.is_request_valid(request, 'description')
-                payloads['user_id'] = BaseController.is_request_valid(request, 'user_id')
+                payloads['description'] = PaymentController.is_field_exist(request, 'description')
+                payloads['user_id'] = PaymentController.is_field_exist(request, 'user_id')
 
                 
                 result = paymentservice.internet_banking(payloads)
 
                 if result['status_code'] == '201':
-                    return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
+                    return BaseController.send_response_api(result, 'BCA klikbca transaction created succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
 
             if (payment_type == 'mandiri_clickpay'):
 
                 payloads['payment_type'] = payment_type
-                payloads['card_number'] = BaseController.is_request_valid(request, 'card_number')
-                payloads['token'] = BaseController.is_request_valid(request, 'token')
-                payloads['input1'] = BaseController.is_request_valid(request, 'input1')
-                payloads['input3'] = BaseController.is_request_valid(request, 'random')
+                payloads['card_number'] = PaymentController.is_field_exist(request, 'card_number')
+                payloads['token'] = PaymentController.is_field_exist(request, 'token')
+                payloads['input1'] = PaymentController.is_field_exist(request, 'input1')
+                payloads['input3'] = PaymentController.is_field_exist(request, 'random')
                 
                 result = paymentservice.internet_banking(payloads)
 
@@ -211,7 +214,7 @@ class PaymentController(BaseController):
 
                 payloads['payment_type'] = payment_type
 
-                payloads['description'] = PaymentController.is_request_valid(request, 'description') 
+                payloads['description'] = PaymentController.is_field_exist(request, 'description') 
 
                 result = paymentservice.internet_banking(payloads)
 
@@ -244,10 +247,10 @@ class PaymentController(BaseController):
             return BaseController.send_error_api(None, payment)
 
     @staticmethod
-    def is_request_valid(request, field_name):
+    def is_field_exist(request, field_name):
         if field_name in request.json:
             return request.json[field_name]
         else:
-            return BaseController.send_error_api(None, 'field is not complete')
+            return None 
 
 

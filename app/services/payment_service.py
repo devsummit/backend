@@ -184,14 +184,15 @@ class PaymentService():
         if (payloads['payment_type'] == 'bca_klikbca'):
             data['bca_klikbca'] = {}
             data['bca_klikbca']['user_id'] = payloads['user_id']
-            data['bca_klikpay']['description'] = payloads['description']
+            data['bca_klikbca']['description'] = payloads['description']
         
-        if (payment_type == 'mandiri_clickpay'):
+        if (payloads['payment_type'] == 'mandiri_clickpay'):
             data['mandiri_clickpay'] = {}
             data['mandiri_clickpay']['card_number'] = payloads['card_number']
-            data['mandiri_clickpay']['input1'] = payloads['card_number']
+            data['mandiri_clickpay']['input1'] = payloads['input1']
             data['mandiri_clickpay']['input2'] = payloads['gross_amount']
             data['mandiri_clickpay']['input3'] = payloads['input3']
+            data['mandiri_clickpay']['token'] = payloads['token']
 
 
 
