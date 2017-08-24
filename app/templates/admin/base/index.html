@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Devsummit Admin App</title>
+
+  {% block title %}
+    <title> Devsummit Dashboard </title>   
+  {% endblock %}
+  
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/dist/css/bootstrap.min.css') }}">
@@ -25,6 +29,10 @@
   <!-- Google Font -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+  {% block header_link %}
+  {% endblock %}
+  
 </head>
 
 <body class="hold-transition skin-yellow sidebar-mini">
@@ -232,24 +240,52 @@
       <!-- Sidebar Menu -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MENUS</li>
-        <!-- Optionally, you can add icons to the links -->
+        
+        <!-- Dashboard -->
         <li class="active">
-          <a href="/attendees">
-            <i class="fa fa-link"></i> <span>Attendess</span>
+          <a href="#">
+            <i class="fa fa fa-dashboard"></i> <span>Dashboard</span>
           </a>
         </li>
-        <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
+
+        <!-- Attendee -->
         <li class="treeview">
-          <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
+          <a href="#"><i class="fa fa-users"></i> <span>Attendees</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#">Link in level 2</a></li>
-            <li><a href="#">Link in level 2</a></li>
+            <li><a href="/attendees">Attendee List</a></li>
           </ul>
         </li>
+
+        <!-- Events -->
+        <li class="treeview">
+          <a href="#"><i class="fa fa-calendar"></i> <span>Events</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#">Schedules</a></li>
+            <li><a href="#">Stages</a></li>
+            <li><a href="#">Speakers</a></li>
+          </ul>
+        </li>
+
+        <!-- Boots -->
+        <li class="treeview">
+            <a href="#"><i class="fa fa-object-group"></i> <span>Boots</span>
+              <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+              <li><a href="#">Boots List</a></li>
+            </ul>
+          </li>
+        
       </ul>
       <!-- /.sidebar-menu -->
     </section>
@@ -265,6 +301,7 @@
       {% endblock %}
 
       <ol class="breadcrumb">
+          <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
           {% block breadcrumb %}
           {% endblock %}
       </ol>
@@ -381,10 +418,14 @@
 <!-- Devsummit Auth Client -->
 <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
 
-
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. -->
+  Both of these plugins are recommended to enhance the
+  user experience. -->
+
+<!-- SlimScroll -->
+<script src="{{ url_for('static', filename='assets/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
+<!-- FastClick -->
+<script src="{{ url_for('static', filename='assets/fastclick/lib/fastclick.js') }}"></script>
 
 <script>
   // check if user is login when enter this page
@@ -405,6 +446,9 @@
     
   });
 </script>
+
+{% block footer_link %}
+{% endblock %}
 
 </body>
 </html>
