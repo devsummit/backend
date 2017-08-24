@@ -153,7 +153,7 @@
               <!-- The user image in the navbar-->
               <img src="{{ url_for('static', filename='assets/dist/img/avatar5.png') }}" class="user-image" alt="User Image">
               <!-- hidden-xs hides the username on small devices so only the image appears. -->
-              <span class="hidden-xs">UserName</span>
+              <span class="hidden-xs userNameLabel">UserName</span>
             </a>
             <ul class="dropdown-menu">
               <!-- The user image in the menu -->
@@ -161,8 +161,8 @@
                 <img src="{{ url_for('static', filename='assets/dist/img/avatar5.png') }}" class="img-circle" alt="User Image">
 
                 <p>
-                  UserName - Web Developer
-                  <small>Member since Nov. 2012</small>
+                    <span class="completeNameLabel">UserName</span> - Administer
+                  <small class="userCreatedAtLabel">Registered since Nov. 2012</small>
                 </p>
               </li>
               <!-- Menu Body -->
@@ -186,7 +186,7 @@
                   <a href="#" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="#" class="btn btn-default btn-flat" id="logOutBtn">Sign out</a>
                 </div>
               </li>
             </ul>
@@ -211,7 +211,7 @@
           <img src="{{ url_for('static', filename='assets/dist/img/avatar5.png') }}" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p>UserName</p>
+          <p class="completeNameLabel">UserName</p>
           <!-- Status -->
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
@@ -376,8 +376,33 @@
 <!-- AdminLTE App -->
 <script src="{{ url_for('static', filename='assets/dist/js/adminlte.min.js') }}"></script>
 
+<!-- Devsummit Auth Client -->
+<script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
+
+
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. -->
+
+<script>
+  // check if user is login when enter this page
+  // use dsa client from auth.js
+  if (!dsa.isLogin()) {
+    window.location.href = '/login';
+  }  
+
+  $('#logOutBtn').click((event)=>{
+    dsa.logout();
+  });
+
+  $(function(){
+    const user = dsa.getUser();
+    $('.userNameLabel').html(user['username']);
+    $('.completeNameLabel').html(`${user['first_name']} ${user['last_name']}`);
+    $('.userCreatedAtLabel').html(`Registered since ${user['created_at']}`);
+    
+  });
+</script>
+
 </body>
 </html>
