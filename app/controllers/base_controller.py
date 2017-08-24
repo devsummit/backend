@@ -25,6 +25,7 @@ class BaseController:
 			'message': message,
 			'success': True
 		}
+		data = data if isinstance(data, list) else [data]
 		return jsonify(
 			meta=meta,
 			data=data,
