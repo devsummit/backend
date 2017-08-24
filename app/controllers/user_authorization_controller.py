@@ -58,7 +58,7 @@ class UserAuthorizationController(BaseController):
                         user['url'] = userservice.get_user_photo(
                             user['id'])
                         # store user session for web app consumed
-                        session['user'] =  user
+                        session['user'] = user
                         return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
                         return BaseController.send_error_api(None, 'wrong credentials')
