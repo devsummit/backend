@@ -29,10 +29,7 @@
   <!-- Google Font -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  
-  <!-- Devsummit Auth Client -->
-  <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
-
+      
   {% block header_link %}
   {% endblock %}
   
@@ -422,10 +419,12 @@
 
 <!-- jQuery 3 -->
 <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
+
 <!-- Bootstrap 3.3.7 -->
 <script src="{{ url_for('static', filename='assets/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<!-- AdminLTE App -->
-<script src="{{ url_for('static', filename='assets/dist/js/adminlte.min.js') }}"></script>
+
+{% block footer_link %}
+{% endblock %}
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
   Both of these plugins are recommended to enhance the
@@ -435,7 +434,12 @@
 <script src="{{ url_for('static', filename='assets/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
 <!-- FastClick -->
 <script src="{{ url_for('static', filename='assets/fastclick/lib/fastclick.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ url_for('static', filename='assets/dist/js/adminlte.min.js') }}"></script>
 
+
+<!-- Devsummit Auth Client -->
+<script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
 <script>
   
 
@@ -452,8 +456,6 @@
   });
 </script>
 
-{% block footer_link %}
-{% endblock %}
 
 </body>
 </html>
