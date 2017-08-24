@@ -23,7 +23,27 @@ class UserAuthorizationController(BaseController):
 
         provider = request.json['provider'] if 'provider' in request.json else None
 
-        if provider != 'web':
+        if provider is None:
+            username = request.json['username'] if 'username' in request.json else None
+            password = request.json['password'] if 'password' in request.json else None
+            if username and password:
+                # check if user exist
+                user = userservice.get_user(username)
+                if user is not None:
+                    if user.verify_password(password):
+                        token = userservice.save_token()
+                        user = user.as_dict()
+                        user['url'] = userservice.get_user_photo(
+                            user['id'])
+                        # store user session for web app consumed
+                        session['user'] =  user
+                        return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
+                    else:
+                        return BaseController.send_error_api(None, 'wrong credentials')
+                else:
+                    return BaseController.send_error_api(None, 'username not found')
+            return BaseController.send_error_api(None, 'username and password required')
+        else:
             # social sign in
             social_token = request.json['token'] if 'token' in request.json else None
             if(provider == 'twitter'):
@@ -45,26 +65,7 @@ class UserAuthorizationController(BaseController):
                     return BaseController.send_error_api(None, 'user is not registered')
             else:
                 return BaseController.send_error_api(None, 'token is invalid')
-        else:
-            username = request.json['username'] if 'username' in request.json else None
-            password = request.json['password'] if 'password' in request.json else None
-            if username and password:
-                # check if user exist
-                user = userservice.get_user(username)
-                if user is not None:
-                    if user.verify_password(password):
-                        token = userservice.save_token()
-                        user = user.as_dict()
-                        user['url'] = userservice.get_user_photo(
-                            user['id'])
-                        # store user session for web app consumed
-                        session['user'] =  user
-                        return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
-                    else:
-                        return BaseController.send_error_api(None, 'wrong credentials')
-                else:
-                    return BaseController.send_error_api(None, 'username not found')
-            return BaseController.send_error_api(None, 'username and password required')
+            
 
     @staticmethod
     def register(request):
