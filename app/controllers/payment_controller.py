@@ -148,13 +148,16 @@ class PaymentController(BaseController):
         
         else:
             payloads = {
-                'order_id': PaymentController.is_request_valid(request, 'order_id'),
-                'gross_amount': PaymentController.is_request_valid(request, 'gross_amount'),
-                'first_name': PaymentController.is_request_valid(request, 'first_name'),
-                'last_name': PaymentController.is_request_valid(request, 'last_name'),
-                'email': PaymentController.is_request_valid(request, 'email'),
-                'phone': PaymentController.is_request_valid(request, 'phone')
+                'order_id': PaymentController.is_field_exist(request, 'order_id'),
+                'gross_amount': PaymentController.is_field_exist(request, 'gross_amount'),
+                'first_name': PaymentController.is_field_exist(request, 'first_name'),
+                'last_name': PaymentController.is_field_exist(request, 'last_name'),
+                'email': PaymentController.is_field_exist(request, 'email'),
+                'phone': PaymentController.is_field_exist(request, 'phone')
             }
+
+            if None in payloads.values():
+                return BaseController.send_error_api(None, 'Field is not complete')
 
             if (payment_type == 'bri_epay'):
 
@@ -171,7 +174,7 @@ class PaymentController(BaseController):
 
                 payloads['payment_type'] = payment_type
 
-                payloads['description'] = PaymentController.is_request_valid(request, 'description') 
+                payloads['description'] = PaymentController.is_field_exist(request, 'description') 
 
                 result = paymentservice.internet_banking(payloads)
 
@@ -204,10 +207,10 @@ class PaymentController(BaseController):
             return BaseController.send_error_api(None, payment)
 
     @staticmethod
-    def is_request_valid(request, field_name):
+    def is_field_exist(request, field_name):
         if field_name in request.json:
             return request.json[field_name]
         else:
-            return BaseController.send_error_api(None, 'field is not complete')
+            return None 
 
 
