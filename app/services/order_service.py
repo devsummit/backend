@@ -11,7 +11,16 @@ class OrderService():
 
 	def get(self):
 		orders = db.session.query(Order).all()
-		return orders
+		results = []
+		for order in orders:
+			items = db.session.query(OrderDetails).filter_by(order_id=order.id).all()
+			order = order.as_dict()
+			amount = 0
+			for item in items:
+				amount += item.price * item.count 
+			order['amount'] = amount
+			results.append(order)
+		return results
 
 	def show(self, id):
 		order = db.session.query(Order).filter_by(id=id).first()

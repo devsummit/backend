@@ -8,7 +8,7 @@ class OrderController(BaseController):
 	@staticmethod
 	def index():
 		orders = orderservice.get()
-		return BaseController.send_response_api(BaseModel.as_list(orders), 'orders retrieved successfully')
+		return BaseController.send_response_api(orders, 'orders retrieved successfully')
 
 	@staticmethod
 	def show(id):
