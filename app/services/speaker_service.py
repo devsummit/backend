@@ -15,7 +15,8 @@ class SpeakerService():
             _speakers.append(data)
         return {
             'data': _speakers,
-            'message': 'speaker retrieved successfully'
+            'message': 'speaker retrieved successfully',
+            'error': False
         }
 
     def show(self, id):

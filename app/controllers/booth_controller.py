@@ -11,17 +11,22 @@ class BoothController(BaseController):
     def index():
         booths = boothservice.get()
         return BaseController.send_response_api(
-            BaseModel.as_list(booths['data']),
-            'booths retrieved succesfully',
-            booths['included']
+            booths['data'],
+            booths['message']
         )
 
     @staticmethod
     def show(id):
         booth = boothservice.show(id)
         if booth['error']:
-            return BaseController.send_error_api(booth['data'], booth['message'])
-        return BaseController.send_response_api(booth['data'].as_dict(), booth['message'])
+            return BaseController.send_error_api(
+                booth['data'],
+                booth['message']
+            )
+        return BaseController.send_response_api(
+            booth['data'], 
+            booth['message']
+        )
 
     @staticmethod
     def update(request, user_id):

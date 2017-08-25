@@ -281,7 +281,7 @@ def booth(*args, **kwargs):
 @token_required
 def booth_id(booth_id, *args, **kwargs):
 	if(request.method == 'GET'):
-		return BoothController.show(user_id)
+		return BoothController.show(booth_id)
 
 
 # Point endpoint

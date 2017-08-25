@@ -7,26 +7,36 @@ class BoothService():
 
     def get(self):
         booths = db.session.query(Booth).all()
+        _booths = []
         # add included
-        included = self.get_includes(booths)
+        for booth in booths:
+            data = booth.as_dict()
+            data['user'] = booth.user.include_photos().as_dict()
+            _booths.append(data)
         return {
-            'data': booths,
-            'included': included
+            'data': _booths,
+            'error': False,
+            'message': 'Booths retrieved succesfully'
         }
 
     def show(self, id):
         # get the booth id
-        booth = db.session.query(Booth).filter_by(user_id=id).first()
-        if booth is not None:
-            return {
-                error: False,
-                data: booth,
-                message: 'Booth retrieved'
+        booth = db.session.query(Booth).filter_by(id=id).first()
+        if booth is None:
+            data = {
+                'user_exist': True
             }
+            return {
+                'data': data,
+                'error': True,
+                'message': 'booth not found'
+            }
+        data = booth.as_dict()
+        data['user'] = booth.user.include_photos().as_dict()
         return {
-            error: True,
-            data: None,
-            message: 'Booth does not exist'
+            'error': False,
+            'data': data,
+            'message': 'booth retrieved'
         }
 
     def update(self, payloads, booth_id):
