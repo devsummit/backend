@@ -119,7 +119,7 @@ class UserAuthorizationController(BaseController):
         if not result['error']:
             return BaseController.send_response_api(result['data'], 'user succesfully registered')
         else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_error_api(result['data'], result['message'])
 
     @staticmethod
     def change_name(request, user):

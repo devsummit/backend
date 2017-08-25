@@ -28,6 +28,23 @@ class UserService:
                 'data': 'payload not valid'
             }
 
+        # check if social or email
+        if payloads['social_id'] is not None:
+            check_user = db.session.query(User).filter_by(social_id=payloads['social_id']).first()
+        else:
+            check_user = db.session.query(User).filter_by(email=payloads['email']).first()
+
+        # check if user already exist
+        if(check_user is not None):
+            data = {
+                'registered': True
+            }
+            return {
+                'data': data,
+                'message': 'User already registered',
+                'error': True
+            }
+
         self.model_user = User()
         self.model_user.first_name = payloads['first_name']
         self.model_user.last_name = payloads['last_name']
@@ -37,8 +54,6 @@ class UserService:
         self.model_user.social_id = payloads['social_id']
         self.model_user.hash_password(payloads['password'])
         db.session.add(self.model_user)
-
-
 
         try:
             db.session.commit()
@@ -69,7 +84,8 @@ class UserService:
             data = e.orig.args
             return {
                 'error': True,
-                'data': data
+                'data': None,
+                'message': data
             }
 
     def get_user(self, username):
