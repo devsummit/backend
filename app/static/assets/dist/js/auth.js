@@ -2,19 +2,27 @@
  * DevSummit Auth API client - dsa
  * designed to interact with auth Rest-API of Devsummit, using AJAX
  * will be used across all the web app (admin) interfaces
- * 
+ * include this in any html template, after jquery script import
  * by @erdivartanovich
  */
 
-var script = document.createElement('script');
-
-script.src = '//code.jquery.com/jquery-1.11.0.min.js';
-document.getElementsByTagName('head')[0].appendChild(script); 
-
 (function (global) {
-    'use strict';
     
     const baseStorage = 'devsummitadmin';
+
+    const ajaxObj = (url, methodType, payloads, onSuccess) => ({
+        url : 'api/v1/'+url,
+        type: methodType,
+        data: JSON.stringify(payloads),
+        contentType: "application/json; charset=utf-8",
+        dataType   : "json",
+        headers: {
+            Authorization: dsa.acess_token()
+        },
+        success: onSuccess ? function(result){
+            onSuccess(result);
+        } : null
+    });
 
     function storeCredential(data){
       Object.keys(data).map((key)=>{
@@ -28,6 +36,15 @@ document.getElementsByTagName('head')[0].appendChild(script);
     }
 
     var dsa = {}
+
+    /* Request service To Api */
+    dsa.get = function(url, onSuccess=null) {
+        $.ajax(ajaxObj(url, 'GET', null, onSuccess));
+    };
+
+    dsa.post = function(url, payloads=null, onSuccess=null) {
+        $.ajax(ajaxObj(url, 'GET', payloads, onSuccess));
+    };
 
     dsa.acess_token = function() {
         const token = !!localStorage[baseStorage+'-access_token'] ? localStorage[baseStorage+'-access_token'] : '';
@@ -55,6 +72,7 @@ document.getElementsByTagName('head')[0].appendChild(script);
                     //store user data
                     data = result['included'];
                     storeCredential(data);
+                    window.location.href = "/";
                 }
                 onSuccess(success, result);
             }
@@ -64,7 +82,7 @@ document.getElementsByTagName('head')[0].appendChild(script);
     /* logout func */
     dsa.logout = function() {
         clearCredential();
-        window.location.reload(true);
+        window.location.href = "/login";
     }
 
     /* isLogin func */
