@@ -15,19 +15,34 @@ class PaymentService():
 
     def admin_get(self):
         results = db.session.query(Payment).all()
+        _results = []
+        for result in results:
+            data = result.as_dict()
+            data['user'] = result.user.as_dict()
+            _results.append(data)
         return {
-            'data': results,
+            'data': _results,
             'message': 'payment retrieved successsfully'
         }
 
     def get(self, user_id):
         results = db.session.query(Payment).filter_by(user_id=user_id).all()
+        _results = []
         return {
             'data': results,
             'message': 'payment retrieved successsfully'
         }
 
     def admin_show(self, payment_id):
+        result = db.session.query(Payment).filter_by(id=payment_id).first()
+        data = result.as_dict()
+        data['user'] = result.user.as_dict()
+        return {
+            'data': data,
+            'message': 'payment retrieved successsfully'
+        }
+
+    def show(self, payment_id):
         result = db.session.query(Payment).filter_by(id=payment_id).first()
         return {
             'data': result.as_dict(),
