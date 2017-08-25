@@ -25,9 +25,9 @@ class StageController(BaseController):
 	@staticmethod
 	def showPicture(stage_id, id):
 		stage_picture = stageservice.showPicture(stage_id, id)
-		if stage_picture is None:
-			return BaseController.send_error_api(None, 'stage picture not found')
-		return BaseController.send_response_api(stage_picture, 'stage picture retrieved successfully')
+		if stage_picture['error']:
+			return BaseController.send_error_api(stage_picture['data'], stage_picture['message'])
+		return BaseController.send_response_api(stage_picture['data'], stage_picture['message'])
 
 	@staticmethod
 	def create(request):
@@ -62,9 +62,9 @@ class StageController(BaseController):
 		result = stageservice.createPicture(payloads)
 
 		if not result['error']:
-			return BaseController.send_response_api(result['data'], 'stage picture succesfully created')
+			return BaseController.send_response_api(result['data'], result['message'])
 		else:
-			return BaseController.send_error_api(None, result['data'])
+			return BaseController.send_error_api(result['data'], result['message'])
 
 	@staticmethod
 	def update(request, id):
@@ -99,9 +99,9 @@ class StageController(BaseController):
 		result = stageservice.updatePicture(payloads, stage_id, id)
 
 		if not result['error']:
-			return BaseController.send_response_api(result['data'], 'stage picture succesfully updated')
+			return BaseController.send_response_api(result['data'], result['message'])
 		else:
-			return BaseController.send_error_api(None, result['data'])
+			return BaseController.send_error_api(result['data'], result['message'])
 
 	@staticmethod
 	def delete(id):
