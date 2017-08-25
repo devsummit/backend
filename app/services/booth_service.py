@@ -15,14 +15,24 @@ class BoothService():
         }
 
     def show(self, id):
-        booth = db.session.query(Booth).filter_by(id=id).first()
-        return booth
+        # get the booth id
+        booth = db.session.query(Booth).filter_by(user_id=id).first()
+        if booth is not None:
+            return {
+                error: False,
+                data: booth,
+                message: 'Booth retrieved'
+            }
+        return {
+            error: True,
+            data: None,
+            message: 'Booth does not exist'
+        }
 
-    def update(self, payloads, id):
+    def update(self, payloads, booth_id):
         try:
-            self.model_booth = db.session.query(Booth).filter_by(id=id)
+            self.model_booth = db.session.query(Booth).filter_by(id=booth_id)
             self.model_booth.update({
-                'user_id': payloads['user_id'],
                 'stage_id': payloads['stage_id'],
                 'points': payloads['points'],
                 'summary': payloads['summary']
