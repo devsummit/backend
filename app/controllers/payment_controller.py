@@ -1,8 +1,23 @@
 from app.controllers.base_controller import BaseController
+from app.models.base_model import BaseModel
 from app.services import paymentservice
 
 
 class PaymentController(BaseController):
+
+    @staticmethod
+    def admin_get_payments():
+        payments = paymentservice.admin_get()
+        if(len(payments) != 0):
+            return BaseController.send_response_api(BaseModel.as_list(payments['data']), payments['message'])
+        return BaseController.send_error_api(BaseModel.as_list(payments['data']), 'payment not found')
+
+    @staticmethod
+    def admin_show_payment(payment_id):
+        payment = paymentservice.admin_show(payment_id)
+        if payment is not None:
+            return BaseController.send_response_api(payment['data'], payment['message'])
+        return BaseController.send_error_api(payment['data'], 'payment not found')
 
     @staticmethod
     def create(request):
@@ -14,7 +29,7 @@ class PaymentController(BaseController):
         if(payment_type and payment_type == 'bank_transfer'):
 
             if (bank == 'permata'):
-                if payment_type and gross_amount and bank and order_id: 
+                if payment_type and gross_amount and bank and order_id:
                     payloads = {
                         'payment_type': payment_type,
                         'gross_amount': gross_amount,
@@ -26,7 +41,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if result['status_code'] == '201':
+                if 'status_code' in result and result['status_code'] == '201':
                     return BaseController.send_response_api(result, 'Succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -172,8 +187,10 @@ class PaymentController(BaseController):
             if (payment_type == 'bca_klikbca'):
 
                 payloads['payment_type'] = payment_type
-                payloads['description'] = PaymentController.is_field_exist(request, 'description')
-                payloads['user_id'] = PaymentController.is_field_exist(request, 'user_id')
+                payloads['description'] = PaymentController.is_field_exist(
+                    request, 'description')
+                payloads['user_id'] = PaymentController.is_field_exist(
+                    request, 'user_id')
 
                 result = paymentservice.internet_banking(payloads)
 
@@ -185,10 +202,14 @@ class PaymentController(BaseController):
             if (payment_type == 'mandiri_clickpay'):
 
                 payloads['payment_type'] = payment_type
-                payloads['card_number'] = PaymentController.is_field_exist(request, 'card_number')
-                payloads['token'] = PaymentController.is_field_exist(request, 'token')
-                payloads['input1'] = PaymentController.is_field_exist(request, 'input1')
-                payloads['input3'] = PaymentController.is_field_exist(request, 'random')
+                payloads['card_number'] = PaymentController.is_field_exist(
+                    request, 'card_number')
+                payloads['token'] = PaymentController.is_field_exist(
+                    request, 'token')
+                payloads['input1'] = PaymentController.is_field_exist(
+                    request, 'input1')
+                payloads['input3'] = PaymentController.is_field_exist(
+                    request, 'random')
 
                 result = paymentservice.internet_banking(payloads)
 
@@ -212,7 +233,8 @@ class PaymentController(BaseController):
 
                 payloads['payment_type'] = payment_type
 
-                payloads['description'] = PaymentController.is_field_exist(request, 'description') 
+                payloads['description'] = PaymentController.is_field_exist(
+                    request, 'description')
 
                 result = paymentservice.internet_banking(payloads)
 
