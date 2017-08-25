@@ -12,6 +12,11 @@ class PaymentService():
 
     def __init__(self):
         self.authorization = base64.b64encode(bytes(SERVER_KEY, 'utf-8')).decode()
+        self.headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json', 
+            'Authorization': 'Basic ' + self.authorization
+        }
 
     def admin_get(self):
         results = db.session.query(Payment).all()
@@ -159,6 +164,67 @@ class PaymentService():
 
         return midtrans_api_response
 
+    def credit_payment(self, payloads):
+        if not all(
+            isinstance(string, str) for string in [
+                payloads['order_id'],
+                payloads['email'],
+                payloads['first_name'],
+                payloads['last_name'],
+                payloads['phone'],
+                payloads['card_number'],
+                payloads['card_exp_month'],
+                payloads['card_exp_year'],
+                payloads['client_key']
+            ]
+        ) and not isinstance(payloads['gross_amount'], int):
+            return {
+                'error': True,
+                'message': 'payload is no valid'
+            }
+
+        # get the token id first
+        token_id = requests.get(
+           url + 'card/register?' \
+                   + 'card_number=' + payloads['card_number'] \
+                   + '&card_exp_month=' + payloads['card_exp_month'] \
+                   + '&card_exp_year=' + payloads['card_exp_year'] \
+                   + '&client_key=' + payloads['client_key'],
+            headers = self.headers
+        )
+
+        token_id = token_id.json()
+
+        if 'status_code' in token_id and token_id['status_code'] == '200':
+            new_payment = Payment()
+            new_payment.token_id = token_id['saved_token_id']
+            new_payment.transaction_id = token_id['transaction_id']
+            new_payment.masked_card = token_id['masked_card']
+            db.session.add(new_payment)
+            db.session.commit()
+        else:
+            return token_id
+
+        print(token_id)
+        item_details = self.get_order_details(payloads['order_id'])
+
+        data = {}
+        data['payment_type'] = payloads['payment_type']
+        data['transaction_details'] = {}
+        data['transaction_details']['order_id'] = payloads['order_id']
+        data['transaction_details']['gross_amount'] = payloads['gross_amount']
+        data['credit_card'] = {}
+        data['credit_card']['token_id'] = token_id['saved_token_id']
+        data['item_details'] = item_details
+        data['customer_details'] = {}
+        data['customer_details']['first_name'] = payloads['first_name']
+        data['customer_details']['last_name'] = payloads['last_name']
+        data['customer_details']['email'] = payloads['email']
+
+        midtrans_api_response = self.send_to_midtrans_api(data)
+
+        return midtrans_api_response
+
     def internet_banking(self, payloads):
         if not all(isinstance(string, str) for string in [
             payloads['order_id'],
@@ -203,13 +269,13 @@ class PaymentService():
         if (payloads['payment_type'] == 'mandiri_clickpay'):
             data['mandiri_clickpay'] = {}
             data['mandiri_clickpay']['card_number'] = payloads['card_number']
-            data['mandiri_clickpay']['input1'] = payloads['input1']
             data['mandiri_clickpay']['input2'] = payloads['gross_amount']
             data['mandiri_clickpay']['input3'] = payloads['input3']
             data['mandiri_clickpay']['token'] = payloads['token']
 
         midtrans_api_response = self.send_to_midtrans_api(data)
 
+        print(midtrans_api_response)
         return midtrans_api_response
 
     # this will send the all payment methods payload to midtrand api
@@ -217,30 +283,25 @@ class PaymentService():
         endpoint = url + 'charge'
         result = requests.post(
                 endpoint,
-                headers={
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json', 
-                    'Authorization': 'Basic ' + self.authorization
-                }, json=payloads
+                headers = self.headers,
+                json = payloads
         )
 
         payload = result.json()
 
-        payload['bank'] = payloads['bank_transfer']['bank']
+        if 'bank' in payload:
+            payload['bank'] = payloads['bank'] or payloads['bank_transfer']['bank']
 
         if ('status_code' in payload and payload['status_code'] == '201'):
             self.save_payload(payload)
 
+        print("-----",payload)
         return payload
 
     def update(self, id):
         payment_status = requests.get(
             url + str(id) + '/status',
-            headers={
-                'Accept': 'application/json',
-                'Content-Type': 'application/json', 
-                'Authorization': 'Basic ' + self.authorization
-            }
+            headers = self.headers
         ) 
 
         status = payment_status.json()
