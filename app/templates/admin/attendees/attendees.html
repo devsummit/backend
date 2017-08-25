@@ -38,7 +38,7 @@
                     {% for attendee in attendees %}
                     <tr>
                         <td>
-                            <a href="" class="attendees-name">{{ attendee.user['last_name'] + ', ' + attendee.user['first_name']|e }}</a> 
+                            <a href="" id='atd-{{ attendee.id }}' class="attendees-name">{{ attendee.user['last_name'] + ', ' + attendee.user['first_name']|e }}</a> 
                         </td>
                         <td>
                             {{ attendee.user['email']|e }}
@@ -70,9 +70,11 @@
 
 <!-- page script -->
 <script>
-    $('.attendee-name').click(function(event){
+    $('.attendees-name').click(function(event){
         event.preventDefault();
-        // $('.btn-detail').click();
+        const atd_id = $(event.target).attr('id');
+        const id = atd_id.substring(4, atd_id.length);
+        $('#btd-'+id).click();
     });
     /* Display Attendee Detail */
     $('.btn-detail').click(function(event){
