@@ -13,6 +13,13 @@ class PaymentController(BaseController):
         return BaseController.send_error_api(BaseModel.as_list(payments['data']), 'payment not found')
 
     @staticmethod
+    def get_payments(user_id):
+        payments = paymentservice.get(user_id)
+        if(len(payments) != 0):
+            return BaseController.send_response_api(BaseModel.as_list(payments['data']), payments['message'])
+        return BaseController.send_error_api(BaseModel.as_list(payments['data']), 'payment not found')
+
+    @staticmethod
     def admin_show_payment(payment_id):
         payment = paymentservice.admin_show(payment_id)
         if payment is not None:
