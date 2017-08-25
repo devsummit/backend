@@ -155,7 +155,7 @@ def spot_id(id, *args, **kwargs):
 def orders(*args, **kwargs):
 	user_id = kwargs['user'].id
 	if(request.method == 'GET'):
-		return OrderController.index()
+		return OrderController.index(user_id)
 	elif(request.method == 'POST'):
 		return OrderController.create(request, user_id)
 

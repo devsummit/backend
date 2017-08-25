@@ -6,8 +6,8 @@ from app.services import orderservice
 class OrderController(BaseController):
 
 	@staticmethod
-	def index():
-		orders = orderservice.get()
+	def index(user_id):
+		orders = orderservice.get(user_id)
 		if(len(orders) != 0):
 			return BaseController.send_response_api(orders, 'orders retrieved successfully')
 		else:
