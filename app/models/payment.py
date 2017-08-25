@@ -32,6 +32,13 @@ class Payment(db.Model, BaseModel):
                 nullable=False
         )
         order = db.relationship('Order')
+        user_id = db.Column(
+            db.String(40),
+            db.ForeignKey('users.id'),
+            nullable=False
+        )
+        user = db.relationship('User')
+        
         saved_token_id = db.Column(db.Integer)
         transaction_id = db.Column(db.Integer)
         payment_type = db.Column(db.String)
