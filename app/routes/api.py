@@ -440,3 +440,21 @@ def bank_transfer(*args, **kwargs):
 def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
         return PaymentController.status(id)
+
+@api.route('/payments', methods=['GET'])
+@token_required
+def get_payments(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(user['role_id'] == ROLE['admin']):
+		return PaymentController.admin_get_payments()
+	else:
+		return 'not yet implemented'
+
+@api.route('/payments/<payment_id>', methods=['GET'])
+@token_required
+def show_payment(payment_id, *args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(user['role_id'] == ROLE['admin']):
+		return PaymentController.admin_show_payment(payment_id)
+	else:
+		return 'not yet implemented'
