@@ -82,7 +82,6 @@ class PaymentService():
             ]
 
         if (payloads['bank'] == 'permata'):
-
             # payload validation for permata
             if not all(
                 isinstance(string, str) for string in [
@@ -156,6 +155,10 @@ class PaymentService():
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
+        midtrans_api_response = self.send_to_midtrans_api(data)
+
+        return midtrans_api_response
+
     def internet_banking(self, payloads):
         if not all(isinstance(string, str) for string in [
             payloads['order_id'],
@@ -205,32 +208,30 @@ class PaymentService():
             data['mandiri_clickpay']['input3'] = payloads['input3']
             data['mandiri_clickpay']['token'] = payloads['token']
 
-        # this will send the all payment methods payload to midtrand api
-        try:
-            endpoint = url + 'charge'
-            result = requests.post(
-                    endpoint,
-                    headers={
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json', 
-                        'Authorization': 'Basic ' + self.authorization
-                    }, json=data
-            )
+        midtrans_api_response = self.send_to_midtrans_api(data)
 
-            payload = result.json()
-            print(payload)
+        return midtrans_api_response
 
-            if ('status_code' in payload and payload['status_code'] == '201'):
-                self.save_payload(payload)
+    # this will send the all payment methods payload to midtrand api
+    def send_to_midtrans_api(self, payloads):
+        endpoint = url + 'charge'
+        result = requests.post(
+                endpoint,
+                headers={
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json', 
+                    'Authorization': 'Basic ' + self.authorization
+                }, json=payloads
+        )
 
-            return payload
+        payload = result.json()
 
-        except requests.exceptions.HTTPError as err:
-            # Invalid payloads
-            return {
-                'status_code': err.response.status_code,
-                'message': err.response.reason
-            }
+        payload['bank'] = payloads['bank_transfer']['bank']
+
+        if ('status_code' in payload and payload['status_code'] == '201'):
+            self.save_payload(payload)
+
+        return payload
 
     def update(self, id):
         payment_status = requests.get(
@@ -282,6 +283,7 @@ class PaymentService():
         new_payment.payment_type = data['payment_type']
         new_payment.transaction_time = data['transaction_time']
         new_payment.transaction_status = data['transaction_status']
+        new_payment.bank = data['bank']
         new_payment.fraud_status = data['fraud_status'] if 'fraud_status' in data else None
 
         db.session.add(new_payment)

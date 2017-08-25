@@ -36,7 +36,7 @@ class UserAuthorizationController(BaseController):
                         user['url'] = userservice.get_user_photo(
                             user['id'])
                         # store user session for web app consumed
-                        session['user'] = user
+                        session['user'] =  user
                         return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
                         return BaseController.send_error_api(None, 'wrong credentials')
@@ -66,9 +66,31 @@ class UserAuthorizationController(BaseController):
             else:
                 return BaseController.send_error_api(None, 'token is invalid')
 
+        else:
+            username = request.json['username'] if 'username' in request.json else None
+            password = request.json['password'] if 'password' in request.json else None
+            if username and password:
+                # check if user exist
+                user = userservice.get_user(username)
+                if user is not None:
+                    if user.verify_password(password):
+                        token = userservice.save_token()
+                        user = user.as_dict()
+                        user['url'] = userservice.get_user_photo(
+                            user['id'])
+                        # store user session for web app consumed
+                        session['user'] = user
+                        return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
+                    else:
+                        return BaseController.send_error_api(None, 'wrong credentials')
+                else:
+                    return BaseController.send_error_api(None, 'username not found')
+            return BaseController.send_error_api(None, 'username and password required')
+
     @staticmethod
     def register(request):
         provider = request.json['provider'] if 'provider' in request.json else None
+
         firstname = request.json['first_name'] if 'first_name' in request.json else None
         lastname = request.json['last_name'] if 'last_name' in request.json else ''
         email = request.json['email'] if 'email' in request.json else None
