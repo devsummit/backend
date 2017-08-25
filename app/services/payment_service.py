@@ -13,6 +13,20 @@ class PaymentService():
     def __init__(self):
         self.authorization = base64.b64encode(bytes(SERVER_KEY, 'utf-8')).decode()
 
+    def admin_get(self):
+        results = db.session.query(Payment).all()
+        return {
+            'data': results,
+            'message': 'payment retrieved successsfully'
+        }
+
+    def admin_show(self, payment_id):
+        result = db.session.query(Payment).filter_by(id=payment_id).first()
+        return {
+            'data': result.as_dict(),
+            'message': 'payment retrieved successsfully'
+        }
+
     def bank_transfer(self, payloads):
 
         payloads['gross_amount'] = int(payloads['gross_amount'])

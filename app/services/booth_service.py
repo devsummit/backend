@@ -19,14 +19,14 @@ class BoothService():
         booth = db.session.query(Booth).filter_by(user_id=id).first()
         if booth is not None:
             return {
-                error: False,
-                data: booth,
-                message: 'Booth retrieved'
+                'error': False,
+                'data': booth,
+                'message': 'Booth retrieved'
             }
         return {
-            error: True,
-            data: None,
-            message: 'Booth does not exist'
+            'error': True,
+            'data': None,
+            'message': 'Booth does not exist'
         }
 
     def update(self, payloads, booth_id):
