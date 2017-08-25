@@ -1,6 +1,8 @@
 from app.models import db
+from flask import request
 # import model class
 from app.models.attendee import Attendee
+from app.models.user_photo import UserPhoto
 from app.models.user import User
 
 
@@ -10,7 +12,8 @@ class AttendeeService():
         _attendees = []
         for attendee in attendees:
             data = attendee.as_dict()
-            data['user'] = attendee.user.as_dict()
+            in_user = attendee.user
+            data['user'] = in_user.as_dict()
             _attendees.append(data)
         return _attendees
 
