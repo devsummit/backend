@@ -20,6 +20,13 @@ class PaymentService():
             'message': 'payment retrieved successsfully'
         }
 
+    def get(self, user_id):
+        results = db.session.query(Payment).filter_by(user_id=user_id).all()
+        return {
+            'data': results,
+            'message': 'payment retrieved successsfully'
+        }
+
     def admin_show(self, payment_id):
         result = db.session.query(Payment).filter_by(id=payment_id).first()
         return {
