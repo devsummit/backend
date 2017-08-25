@@ -8,19 +8,33 @@ class SpeakerService():
 
     def get(self):
         speakers = db.session.query(Speaker).all()
-        # add includes
-        included = self.get_includes(speakers)
+        _speakers = []
+        for speaker in speakers:
+            data = speaker.as_dict()
+            data['user'] = speaker.user.include_photos().as_dict()
+            _speakers.append(data)
         return {
-            'data': speakers,
-            'included': included
+            'data': _speakers,
+            'message': 'speaker retrieved successfully'
         }
 
     def show(self, id):
         speaker = db.session.query(Speaker).filter_by(id=id).first()
-        included = self.get_includes(speaker)
+        if speaker is None:
+            data = {
+                'user_exist': True
+            }
+            return {
+                'data': data,
+                'error': True,
+                'message': 'speaker not found'
+            }
+        data = speaker.as_dict()
+        data['user'] = speaker.user.include_photos().as_dict()
         return {
-            'data': speaker,
-            'included': included
+            'error': False,
+            'data': data,
+            'message': 'speaker retrieved'
         }
 
     def update(self, payloads, id):

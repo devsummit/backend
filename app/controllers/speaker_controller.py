@@ -9,18 +9,22 @@ class SpeakerController(BaseController):
     def index():
         speakers = speakerservice.get()
         return BaseController.send_response_api(
-            BaseModel.as_list(speakers['data']), 
-            'speakers retrieved succesfully', 
-            speakers['included']
+            speakers['data'],
+            speakers['message'] 
         )
 
     @staticmethod
     def show(id):
+        print(id)
         speaker = speakerservice.show(id)
+        if speaker['error']:
+            return BaseController.send_error_api(
+                speaker['data'],
+                speaker['message']
+            )
         return BaseController.send_response_api(
-            speaker['data'].as_dict(), 
-            'speaker retrieved succesfully', 
-            speaker['included']
+            speaker['data'], 
+            speaker['message']
         )
 
     @staticmethod

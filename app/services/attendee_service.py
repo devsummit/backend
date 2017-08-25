@@ -17,6 +17,7 @@ class AttendeeService():
         return _attendees
 
     def show(self, id):
-        attendee = db.session.query(Attendee).filter_by(id=id).first().as_dict()
-        attendee['user'] = db.session.query(User).filter_by(id=attendee['user_id']).first().as_dict()
-        return attendee
+        attendee = db.session.query(Attendee).filter_by(id=id).first()
+        data = attendee.as_dict()
+        data['user'] = attendee.user.include_photos().as_dict()
+        return data

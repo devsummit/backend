@@ -78,7 +78,8 @@ class UserService:
 
             return {
                 'error': False,
-                'data': data
+                'data': data,
+                'message': 'user registered successfully'
             }
         except SQLAlchemyError as e:
             data = e.orig.args
