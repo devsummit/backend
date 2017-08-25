@@ -12,8 +12,7 @@ class AttendeeService():
         _attendees = []
         for attendee in attendees:
             data = attendee.as_dict()
-            in_user = attendee.user.include_photos()
-            data['user'] = in_user.as_dict()
+            data['user'] = attendee.user.include_photos().as_dict()
             _attendees.append(data)
         return _attendees
 
