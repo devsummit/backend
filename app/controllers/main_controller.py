@@ -9,4 +9,4 @@ class MainController(BaseController):
 
     def getAttendees():
         attendees = attendeeservice.get()
-        return render_template('admin/attendees.html', attendees=attendees)
+        return render_template('admin/attendees/attendees.html', attendees=attendees)

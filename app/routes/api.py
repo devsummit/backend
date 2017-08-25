@@ -25,6 +25,8 @@ from app.controllers.booth_controller import BoothController
 from app.controllers.user_ticket_controller import UserTicketController
 from app.controllers.attendee_controller import AttendeeController
 from app.controllers.payment_controller import PaymentController
+from app.configs.constants import ROLE
+
 
 api = Blueprint('api', __name__)
 
@@ -153,7 +155,7 @@ def spot_id(id, *args, **kwargs):
 def orders(*args, **kwargs):
 	user_id = kwargs['user'].id
 	if(request.method == 'GET'):
-		return OrderController.index()
+		return OrderController.index(user_id)
 	elif(request.method == 'POST'):
 		return OrderController.create(request, user_id)
 
@@ -259,10 +261,15 @@ def speaker_id(id, *args, **kwargs):
 # Booth api
 
 
-@api.route('/booths', methods=['GET', 'POST'])
+@api.route('/booths', methods=['PUT', 'PATCH', 'GET', 'POST'])
 @token_required
 def booth(*args, **kwargs):
-	if(request.method == 'POST'):
+	user = kwargs['user'].as_dict()
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		if(user['role_id'] == ROLE['booth']):
+			return BoothController.update(request, user['id'])
+		return 'Unauthorized'
+	elif(request.method == 'POST'):
 		return BoothController.create(request)
 	elif(request.method == 'GET'):
 		return BoothController.index()
@@ -270,12 +277,10 @@ def booth(*args, **kwargs):
 # Booth route by id
 
 
-@api.route('/booths/<booth_id>', methods=['PUT', 'PATCH', 'GET'])
+@api.route('/booths/<booth_id>', methods=['GET'])
 @token_required
 def booth_id(booth_id, *args, **kwargs):
-	if(request.method == 'PUT' or request.method == 'PATCH'):
-		return BoothController.update(request, booth_id)
-	elif(request.method == 'GET'):
+	if(request.method == 'GET'):
 		return BoothController.show(booth_id)
 
 
@@ -435,3 +440,23 @@ def bank_transfer(*args, **kwargs):
 def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
         return PaymentController.status(id)
+
+
+@api.route('/payments', methods=['GET'])
+@token_required
+def get_payments(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(user['role_id'] == ROLE['admin']):
+		return PaymentController.admin_get_payments()
+	else:
+		return 'not yet implemented'
+
+
+@api.route('/payments/<payment_id>', methods=['GET'])
+@token_required
+def show_payment(payment_id, *args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(user['role_id'] == ROLE['admin']):
+		return PaymentController.admin_show_payment(payment_id)
+	else:
+		return 'not yet implemented'

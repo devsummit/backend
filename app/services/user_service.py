@@ -28,6 +28,23 @@ class UserService:
                 'data': 'payload not valid'
             }
 
+        # check if social or email
+        if payloads['social_id'] is not None:
+            check_user = db.session.query(User).filter_by(social_id=payloads['social_id']).first()
+        else:
+            check_user = db.session.query(User).filter_by(email=payloads['email']).first()
+
+        # check if user already exist
+        if(check_user is not None):
+            data = {
+                'registered': True
+            }
+            return {
+                'data': data,
+                'message': 'User already registered',
+                'error': True
+            }
+
         self.model_user = User()
         self.model_user.first_name = payloads['first_name']
         self.model_user.last_name = payloads['last_name']
@@ -41,6 +58,24 @@ class UserService:
         try:
             db.session.commit()
             data = self.model_user.as_dict()
+
+            # insert role model
+            if(role == ROLE['attendee']):
+                attendee = Attendee()
+                attendee.user_id = data['id']
+                db.session.add(attendee)
+                db.session.commit()
+            elif(role == ROLE['booth']):
+                booth = Booth()
+                booth.user_id = data['id']
+                db.session.add(booth)
+                db.session.commit()
+            elif(role == ROLE['speaker']):
+                speaker = Speaker()
+                speaker.user_id = data['id']
+                db.session.add(speaker)
+                db.session.commit()
+
             return {
                 'error': False,
                 'data': data
@@ -49,7 +84,8 @@ class UserService:
             data = e.orig.args
             return {
                 'error': True,
-                'data': data
+                'data': None,
+                'message': data
             }
 
     def get_user(self, username):

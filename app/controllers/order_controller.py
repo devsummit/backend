@@ -1,14 +1,16 @@
 from app.controllers.base_controller import BaseController
-from app.models.base_model import BaseModel
 from app.services import orderservice
 
 
 class OrderController(BaseController):
 
 	@staticmethod
-	def index():
-		orders = orderservice.get()
-		return BaseController.send_response_api(BaseModel.as_list(orders), 'orders retrieved successfully')
+	def index(user_id):
+		orders = orderservice.get(user_id)
+		if(len(orders) != 0):
+			return BaseController.send_response_api(orders, 'orders retrieved successfully')
+		else:
+			return BaseController.send_response_api([], 'orders is empty')
 
 	@staticmethod
 	def show(id):

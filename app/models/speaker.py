@@ -28,3 +28,6 @@ class Speaker(db.Model, BaseModel):
 	def __init__(self):
 		self.created_at = datetime.datetime.now()
 		self.updated_at = datetime.datetime.now()
+		self.job = ''
+		self.summary = ''
+		self.information = ''
