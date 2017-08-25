@@ -2,13 +2,14 @@ import datetime
 from app.models import db
 from app.models.base_model import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
-from flask import Flask, request, current_app
+from flask import request, current_app
 from app.services.helper import Helper 
 from werkzeug import secure_filename
 import os
 # import model class
 from app.models.stage import Stage
 from app.models.stage_photos import StagePhotos
+
 
 class StageService():
 
@@ -30,20 +31,20 @@ class StageService():
 		stage_picture = db.session.query(StagePhotos).filter_by(stage_id=stage_id).filter_by(id=id).first()
 		if(stage_picture is None):
 			data = {
-                'picture_exist': False
-            }
+				'picture_exist': False
+			}
 			return {
-                'data': data,
-                'error': True,
-                'message': 'Stage picture is not found'
-            }
+				'data': data,
+				'error': True,
+				'message': 'Stage picture is not found'
+			}
 		stage_picture = stage_picture.as_dict()
 		stage_picture['url'] = Helper().url_helper(stage_picture['url'], current_app.config['GET_DEST'])
 		return {
 			'data': stage_picture,
-            'error': False,
+			'error': False,
 			'message': 'Stage picture retrieved successfully'
-        }
+		}
 
 	def create(self, payloads):
 		self.model_stage = Stage()
@@ -81,15 +82,15 @@ class StageService():
 				data['url'] = Helper().url_helper(data['url'], current_app.config['GET_DEST'])
 				return {
 					'error': False,
-                    'data': data,
-                    'message': 'stage picture succesfully created'
+					'data': data,
+					'message': 'stage picture succesfully created'
 				}
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return {
 					'error': True,
-                    'data': None,
-                    'message': data
+					'data': None,
+					'message': data
 				}
 
 	def update(self, payloads, id):

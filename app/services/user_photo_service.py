@@ -1,7 +1,7 @@
 import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from flask import Flask, request, current_app
+from flask import request, current_app
 from app.services.helper import Helper 
 import os
 # import model class
@@ -53,7 +53,6 @@ class UserPhotoService():
             self.model_user_photo = UserPhoto()
             db.session.add(self.model_user_photo)
             try:
-                now = datetime.datetime.now()
                 filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
                 file.save(os.path.join(current_app.config['POST_USER_PHOTO_DEST'], filename))
                 self.model_user_photo.url = current_app.config['SAVE_USER_PHOTO_DEST'] + filename
@@ -87,10 +86,8 @@ class UserPhotoService():
                 'message': 'User Photo is not found'
             }      
         file = request.files['image_data']
-        ext = (file.filename.rsplit('.', 1)[1])
         if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
             try:
-                now = datetime.datetime.now()
                 filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
                 file.save(os.path.join(current_app.config['POST_USER_PHOTO_DEST'], filename))
                 newUrl = current_app.config['SAVE_USER_PHOTO_DEST'] + filename

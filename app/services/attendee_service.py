@@ -1,9 +1,6 @@
 from app.models import db
-from flask import request
 # import model class
 from app.models.attendee import Attendee
-from app.models.user_photo import UserPhoto
-from app.models.user import User
 
 
 class AttendeeService():
