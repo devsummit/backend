@@ -26,7 +26,8 @@ class PaymentController(BaseController):
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if result['status_code'] == '201':
+
+                if 'status_code' in result and result['status_code'] == '201':
                     return BaseController.send_response_api(result, 'Succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
