@@ -12,6 +12,7 @@
     <title>Devsummit Admin Login</title>
 </head>
 <body>
+    <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
     <script>
       // check if user login, redirect to dashboard 
@@ -61,9 +62,6 @@
         </div>
     </div>
     
-    
-    <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
-    
     <script>
 
       function showInfo(infoType, info) {
@@ -82,7 +80,7 @@
 
         $('.form-control').keypress((event)=>{
           $(event.target).parent().parent().removeClass('has-error');
-        })
+        });
         
         $('#btnSubmit').click((event)=>{
           event.preventDefault();
@@ -109,7 +107,7 @@
             } else {
               showInfo('label-danger', 'Login failed, invalid username or password!');
             }
-          })
+          });
           
         });
       });
