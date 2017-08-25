@@ -459,4 +459,4 @@ def show_payment(payment_id, *args, **kwargs):
 	if(user['role_id'] == ROLE['admin']):
 		return PaymentController.admin_show_payment(payment_id)
 	else:
-		return 'not yet implemented'
+		return PaymentController.show_payment(payment_id)
