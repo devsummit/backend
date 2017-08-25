@@ -20,8 +20,7 @@
             Authorization: dsa.acess_token()
         },
         success: onSuccess ? function(result){
-            const success=result['meta']['success']
-            onSuccess(success, result);
+            onSuccess(result);
         } : null
     });
 
@@ -39,8 +38,8 @@
     var dsa = {}
 
     /* Request service To Api */
-    dsa.get = function(url, payloads=null, onSuccess=null) {
-        $.ajax(ajaxObj(url, 'GET', payloads, onSuccess));
+    dsa.get = function(url, onSuccess=null) {
+        $.ajax(ajaxObj(url, 'GET', null, onSuccess));
     };
 
     dsa.post = function(url, payloads=null, onSuccess=null) {
