@@ -30,16 +30,9 @@ class UserService:
 
         # check if social or email
         if payloads['social_id'] is not None:
-            print('social check')
-            print(payloads['social_id'])
             check_user = db.session.query(User).filter_by(social_id=payloads['social_id']).first()
-            print(check_user)
-
         else:
-            print('check email')
-            print(payloads['email'])
             check_user = db.session.query(User).filter_by(email=payloads['email']).first()
-            print(check_user)
 
         # check if user already exist
         if(check_user is not None):
