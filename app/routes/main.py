@@ -9,10 +9,10 @@ main = Blueprint('main', __name__)
 def index():
     return MainController.index()
 
+
 @main.route('/attendees')
 def getAttendees():
     return MainController.getAttendees()
-
 
 
 @main.route('/login')

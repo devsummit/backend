@@ -36,7 +36,7 @@ class UserAuthorizationController(BaseController):
                         user['url'] = userservice.get_user_photo(
                             user['id'])
                         # store user session for web app consumed
-                        session['user'] =  user
+                        session['user'] = user
                         return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
                         return BaseController.send_error_api(None, 'wrong credentials')
@@ -65,12 +65,10 @@ class UserAuthorizationController(BaseController):
                     return BaseController.send_error_api(None, 'user is not registered')
             else:
                 return BaseController.send_error_api(None, 'token is invalid')
-            
 
     @staticmethod
     def register(request):
         provider = request.json['provider'] if 'provider' in request.json else None
-
         firstname = request.json['first_name'] if 'first_name' in request.json else None
         lastname = request.json['last_name'] if 'last_name' in request.json else ''
         email = request.json['email'] if 'email' in request.json else None

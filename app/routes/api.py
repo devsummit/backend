@@ -441,6 +441,7 @@ def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
         return PaymentController.status(id)
 
+
 @api.route('/payments', methods=['GET'])
 @token_required
 def get_payments(*args, **kwargs):
@@ -449,6 +450,7 @@ def get_payments(*args, **kwargs):
 		return PaymentController.admin_get_payments()
 	else:
 		return 'not yet implemented'
+
 
 @api.route('/payments/<payment_id>', methods=['GET'])
 @token_required
