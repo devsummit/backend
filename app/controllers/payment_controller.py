@@ -121,18 +121,19 @@ class PaymentController(BaseController):
         elif payment_type == 'credit_card':
             payloads = {
                 'payment_type': payment_type,
-                'gross_amount': PaymentController.is_field_exist(request, 'email'),
+                'gross_amount': PaymentController.is_field_exist(request, 'gross_amount'),
                 'order_id': PaymentController.is_field_exist(request, 'order_id'),
                 'email': PaymentController.is_field_exist(request, 'email'),
                 'first_name': PaymentController.is_field_exist(request, 'first_name'),
                 'last_name': PaymentController.is_field_exist(request, 'last_name'),
                 'phone': PaymentController.is_field_exist(request, 'phone'),
+                'bank': PaymentController.is_field_exist(request, 'bank'),
                 'card_number': PaymentController.is_field_exist(request, 'card_number'),
                 'card_exp_month': PaymentController.is_field_exist(request, 'card_exp_month'),
                 'card_exp_year': PaymentController.is_field_exist(request, 'card_exp_year'),
+                'card_cvv': PaymentController.is_field_exist(request, 'card_cvv'),
                 'client_key': PaymentController.is_field_exist(request, 'client_key'),
             }
-
             if None in payloads.values():
                 return BaseController.send_error_api(None, 'field is not complete')
 
