@@ -175,6 +175,7 @@ class PaymentService():
                 payloads['card_number'],
                 payloads['card_exp_month'],
                 payloads['card_exp_year'],
+                payloads['card_cvv'],
                 payloads['client_key']
             ]
         ) and not isinstance(payloads['gross_amount'], int):
@@ -189,6 +190,10 @@ class PaymentService():
                    + 'card_number=' + payloads['card_number'] \
                    + '&card_exp_month=' + payloads['card_exp_month'] \
                    + '&card_exp_year=' + payloads['card_exp_year'] \
+                   + '&card_cvv=' + payloads['card_cvv'] \
+                   + '&bank=' + payloads['bank'] \
+                   + '&secure=' + 'true' \
+                   + '&gross_amount=' + payloads['gross_amount'] \
                    + '&client_key=' + payloads['client_key'],
             headers = self.headers
         )
@@ -205,7 +210,6 @@ class PaymentService():
         else:
             return token_id
 
-        print(token_id)
         item_details = self.get_order_details(payloads['order_id'])
 
         data = {}
@@ -220,9 +224,7 @@ class PaymentService():
         data['customer_details']['first_name'] = payloads['first_name']
         data['customer_details']['last_name'] = payloads['last_name']
         data['customer_details']['email'] = payloads['email']
-
         midtrans_api_response = self.send_to_midtrans_api(data)
-
         return midtrans_api_response
 
     def internet_banking(self, payloads):
