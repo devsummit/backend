@@ -81,9 +81,12 @@ class UserAuthorizationController(BaseController):
 
         # if social_id = None then normal registration
 
-        payloads = None
         if (provider == 'mobile'):
             token = request.json['token'] if 'token' in request.json else None
+
+            if token is None:
+                return BaseController.send_response_api(None, 'payloads not valid')
+
             url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + token
             result = requests.get(url)
             payload = result.json()
@@ -100,8 +103,9 @@ class UserAuthorizationController(BaseController):
                     'password': '',
                     'social_id': social_id,
                     'email': email,
-
                 }
+            else:
+                
         elif firstname and email and username and role and password:
             payloads = {
                 'first_name': firstname,
