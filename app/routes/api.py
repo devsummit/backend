@@ -155,7 +155,7 @@ def spot_id(id, *args, **kwargs):
 def orders(*args, **kwargs):
 	user_id = kwargs['user'].id
 	if(request.method == 'GET'):
-		return OrderController.index()
+		return OrderController.index(user_id)
 	elif(request.method == 'POST'):
 		return OrderController.create(request, user_id)
 
@@ -431,7 +431,7 @@ def attendees_id(id, *args, **kwargs):
 
 
 @api.route('/payments', methods=['POST'])
-def bank_transfer(*args, **kwargs):
+def payment(*args, **kwargs):
     if (request.method == 'POST'):
         return PaymentController.create(request)
 
@@ -440,3 +440,23 @@ def bank_transfer(*args, **kwargs):
 def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
         return PaymentController.status(id)
+
+
+@api.route('/payments', methods=['GET'])
+@token_required
+def get_payments(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(user['role_id'] == ROLE['admin']):
+		return PaymentController.admin_get_payments()
+	else:
+		return PaymentController.get_payments(user['id'])
+
+
+@api.route('/payments/<payment_id>', methods=['GET'])
+@token_required
+def show_payment(payment_id, *args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if(user['role_id'] == ROLE['admin']):
+		return PaymentController.admin_show_payment(payment_id)
+	else:
+		return PaymentController.show_payment(payment_id)

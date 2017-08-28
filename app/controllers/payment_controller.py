@@ -1,8 +1,37 @@
 from app.controllers.base_controller import BaseController
+from app.models.base_model import BaseModel
 from app.services import paymentservice
 
 
 class PaymentController(BaseController):
+
+    @staticmethod
+    def admin_get_payments():
+        payments = paymentservice.admin_get()
+        if(len(payments) != 0):
+            return BaseController.send_response_api(payments['data'], payments['message'])
+        return BaseController.send_error_api(payments['data'], 'payment not found')
+
+    @staticmethod
+    def get_payments(user_id):
+        payments = paymentservice.get(user_id)
+        if(len(payments) != 0):
+            return BaseController.send_response_api(BaseModel.as_list(payments['data']), payments['message'])
+        return BaseController.send_error_api(BaseModel.as_list(payments['data']), 'payment not found')
+
+    @staticmethod
+    def admin_show_payment(payment_id):
+        payment = paymentservice.admin_show(payment_id)
+        if payment is not None:
+            return BaseController.send_response_api(payment['data'], payment['message'])
+        return BaseController.send_error_api(payment['data'], 'payment not found')
+
+    @staticmethod
+    def show_payment(payment_id):
+        payment = paymentservice.show(payment_id)
+        if payment is not None:
+            return BaseController.send_response_api(payment['data'], payment['message'])
+        return BaseController.send_error_api(payment['data'], 'payment not found')
 
     @staticmethod
     def create(request):
@@ -14,7 +43,7 @@ class PaymentController(BaseController):
         if(payment_type and payment_type == 'bank_transfer'):
 
             if (bank == 'permata'):
-                if payment_type and gross_amount and bank and order_id: 
+                if payment_type and gross_amount and bank and order_id:
                     payloads = {
                         'payment_type': payment_type,
                         'gross_amount': gross_amount,
@@ -26,7 +55,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if result['status_code'] == '201':
+                if 'status_code' in result and result['status_code'] == '201':
                     return BaseController.send_response_api(result, 'Succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -102,48 +131,32 @@ class PaymentController(BaseController):
                     return BaseController.send_response_api(result, 'bank transfer transaction is created')
                 else:
                     return BaseController.send_error_api(None, result)
+
         elif payment_type == 'credit_card':
-            if gross_amount and order_id:
-                email = request.json['email'] if 'email' in request.json else None
-                first_name = request.json['first_name'] if 'first_name' in request.json else None
-                last_name = request.json['last_name'] if 'last_name' in request.json else ''
-                phone = request.json['phone'] if 'phone' in request.json else None
-                gross_amount = request.json['gross_amount'] if 'gross_amount' in request.json else None
-                card_number = request.json['card_number'] if 'card_number' in request.json else None
-                card_exp_month = request.json['card_exp_month'] if 'card_exp_month' in request.json else None
-                card_exp_year = request.json['card_exp_year'] if 'card_exp_year' in request.json else None
-                card_cvv = request.json['card_cvv'] if 'card_cvv' in request.json else None
-                bank = request.json['bank'] if 'bank' in request.json else None
-                client_key = request.json['client_key'] if 'client_key' in request.json else None
-                billing_address = request.json['billing_address'] if 'billing_address' in request.json else None
-                shipping_address = request.json['shipping_address'] if 'shipping_address' in request.json else None
+            payloads = {
+                'payment_type': payment_type,
+                'gross_amount': PaymentController.is_field_exist(request, 'gross_amount'),
+                'order_id': PaymentController.is_field_exist(request, 'order_id'),
+                'email': PaymentController.is_field_exist(request, 'email'),
+                'first_name': PaymentController.is_field_exist(request, 'first_name'),
+                'last_name': PaymentController.is_field_exist(request, 'last_name'),
+                'phone': PaymentController.is_field_exist(request, 'phone'),
+                'bank': PaymentController.is_field_exist(request, 'bank'),
+                'card_number': PaymentController.is_field_exist(request, 'card_number'),
+                'card_exp_month': PaymentController.is_field_exist(request, 'card_exp_month'),
+                'card_exp_year': PaymentController.is_field_exist(request, 'card_exp_year'),
+                'card_cvv': PaymentController.is_field_exist(request, 'card_cvv'),
+                'client_key': PaymentController.is_field_exist(request, 'client_key'),
+            }
+            if None in payloads.values():
+                return BaseController.send_error_api(None, 'field is not complete')
 
-                if email and first_name and last_name and phone and billing_address and shipping_address:
-                    payloads = {
-                        'gross_amount': gross_amount,
-                        'order_id': order_id,
-                        'email': email,
-                        'first_name': first_name,
-                        'last_name': last_name,
-                        'phone': phone,
-                        'card_number': card_number,
-                        'card_exp_month': card_exp_month,
-                        'card_exp_year': card_exp_year,
-                        'card_cvv': card_cvv,
-                        'client_key': client_key,
-                        'bank': bank,
-                        'billing_address': billing_address,
-                        'shipping_address': shipping_address
-                    }
-                else:
-                    return BaseController.send_error_api(None, 'field is not complete')
+            result = paymentservice.credit_payment(payloads)
 
-                result = paymentservice.credit_payment(payloads)
-
-                if not result['status_code'] == '201':
-                    return BaseController.send_response_api(result, 'credit card transaction is created')
-                else:
-                    return BaseController.send_error_api(None, result)
+            if 'status_code' in result and (result['status_code'] == '201' or result['status_code'] == '200'):
+                return BaseController.send_response_api(result, 'credit card transaction is created')
+            else:
+                return BaseController.send_error_api(None, result)
 
         else:
             payloads = {
@@ -172,8 +185,10 @@ class PaymentController(BaseController):
             if (payment_type == 'bca_klikbca'):
 
                 payloads['payment_type'] = payment_type
-                payloads['description'] = PaymentController.is_field_exist(request, 'description')
-                payloads['user_id'] = PaymentController.is_field_exist(request, 'user_id')
+                payloads['description'] = PaymentController.is_field_exist(
+                    request, 'description')
+                payloads['user_id'] = PaymentController.is_field_exist(
+                    request, 'user_id')
 
                 result = paymentservice.internet_banking(payloads)
 
@@ -185,10 +200,14 @@ class PaymentController(BaseController):
             if (payment_type == 'mandiri_clickpay'):
 
                 payloads['payment_type'] = payment_type
-                payloads['card_number'] = PaymentController.is_field_exist(request, 'card_number')
-                payloads['token'] = PaymentController.is_field_exist(request, 'token')
-                payloads['input1'] = PaymentController.is_field_exist(request, 'input1')
-                payloads['input3'] = PaymentController.is_field_exist(request, 'random')
+                payloads['card_number'] = PaymentController.is_field_exist(
+                    request, 'card_number')
+                payloads['token'] = PaymentController.is_field_exist(
+                    request, 'token')
+                payloads['input1'] = PaymentController.is_field_exist(
+                    request, 'input1')
+                payloads['input3'] = PaymentController.is_field_exist(
+                    request, 'random')
 
                 result = paymentservice.internet_banking(payloads)
 
@@ -212,7 +231,8 @@ class PaymentController(BaseController):
 
                 payloads['payment_type'] = payment_type
 
-                payloads['description'] = PaymentController.is_field_exist(request, 'description') 
+                payloads['description'] = PaymentController.is_field_exist(
+                    request, 'description')
 
                 result = paymentservice.internet_banking(payloads)
 

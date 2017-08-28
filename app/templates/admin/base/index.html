@@ -32,18 +32,28 @@
       
   {% block header_link %}
   {% endblock %}
+
+  <!-- jQuery 3 -->
+  <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
+  <!-- Devsummit Auth Client -->
+  <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
   
 </head>
 
 <body class="hold-transition skin-yellow sidebar-mini">
 
-<script>
-  // check if user is login when enter this page
-  // use dsa client from auth.js
-  if (!dsa.isLogin()) {
-    window.location.href = '/login';
-  }  
-</script>
+    <script>
+        
+        // check if user is login when enter this page
+        // use dsa client from auth.js
+        if (!dsa.isLogin()) {
+          window.location.href = '/login';
+        }
+      
+        $('#logOutBtn').click((event)=>{
+          dsa.logout();
+        });
+    </script>
 
 <div class="wrapper">
 
@@ -417,9 +427,6 @@
 
 <!-- REQUIRED JS SCRIPTS -->
 
-<!-- jQuery 3 -->
-<script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
-
 <!-- Bootstrap 3.3.7 -->
 <script src="{{ url_for('static', filename='assets/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
@@ -438,10 +445,13 @@
 <script src="{{ url_for('static', filename='assets/dist/js/adminlte.min.js') }}"></script>
 
 
-<!-- Devsummit Auth Client -->
-<script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
 <script>
   
+  // check if user is login when enter this page
+  // use dsa client from auth.js
+  if (!dsa.isLogin()) {
+    window.location.href = '/login';
+  }
 
   $('#logOutBtn').click((event)=>{
     dsa.logout();

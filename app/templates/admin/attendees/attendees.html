@@ -24,20 +24,21 @@
         <!-- /.box-header -->
         
         <div class="box-body">
-            <table id="example1" class="table table-bordered table-striped">
+            <table id="attendee-list1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
                     <th>Attendee Name</th>
                     <th>Email</th>
                     <th>Points</th>
                     <th>Registered At</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                     {% for attendee in attendees %}
                     <tr>
                         <td>
-                            <a href="">{{ attendee.user['last_name'] + ', ' + attendee.user['first_name']|e }}</a> 
+                            <a href="" id='atd-{{ attendee.id }}' class="attendees-name">{{ attendee.user['last_name'] + ', ' + attendee.user['first_name']|e }}</a> 
                         </td>
                         <td>
                             {{ attendee.user['email']|e }}
@@ -48,11 +49,18 @@
                         <td>
                             {{ attendee.user['created_at']|e }}
                         </td>
+                        <td>
+                            <button id='btd-{{ attendee.id }}' type="button" class="btn btn-sm btn-info btn-detail" data-toggle="modal" data-target="#modal-detail">
+                                Detail
+                            </button>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        {% include "admin/attendees/attendee_detail.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -62,8 +70,30 @@
 
 <!-- page script -->
 <script>
+    $('.attendees-name').click(function(event){
+        event.preventDefault();
+        const atd_id = $(event.target).attr('id');
+        const id = atd_id.substring(4, atd_id.length);
+        $('#btd-'+id).click();
+    });
+    /* Display Attendee Detail */
+    $('.btn-detail').click(function(event){
+        const btd_id = $(event.target).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        dsa.get('attendees/' + id, function(result) {
+            // bind result value in to attendee_detail.html 
+            const data = result['data'];
+            if (data['user']['url']) {
+                $('.attendee-picture').attr('src', data['user']['url']);
+            }
+            $('.attendee-name').html(data['user']['first_name'] + ' ' + data['user']['last_name']);
+            $('.attendee-email').html(data['user']['email']);
+            $('.attendee-registered_at').html(data['user']['created_at']);
+            $('.attendee-points').html(data['points']); 
+        });
+    })
     $(function () {
-        $('#example1').DataTable()
+        $('#attendee-list1').DataTable();
     })
 </script>
 

@@ -10,8 +10,11 @@ class BoothService():
         _booths = []
         # add included
         for booth in booths:
+            print(booth)
             data = booth.as_dict()
+            print(data)
             data['user'] = booth.user.include_photos().as_dict()
+
             _booths.append(data)
         return {
             'data': _booths,
