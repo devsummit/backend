@@ -34,7 +34,7 @@ class PaymentController(BaseController):
         return BaseController.send_error_api(payment['data'], 'payment not found')
 
     @staticmethod
-    def create(request):
+    def create(request, user_id):
         payment_type = request.json['payment_type'] if 'payment_type' in request.json else None
         gross_amount = request.json['gross_amount'] if 'gross_amount' in request.json else None
         bank = request.json['bank'] if 'bank' in request.json else None
@@ -151,7 +151,7 @@ class PaymentController(BaseController):
             if None in payloads.values():
                 return BaseController.send_error_api(None, 'field is not complete')
 
-            result = paymentservice.credit_payment(payloads)
+            result = paymentservice.credit_payment(payloads, user_id)
 
             if 'status_code' in result and (result['status_code'] == '201' or result['status_code'] == '200'):
                 return BaseController.send_response_api(result, 'credit card transaction is created')
