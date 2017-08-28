@@ -15,7 +15,7 @@ class UserAuthorizationController(BaseController):
             if id:
                 new_token = userservice.get_new_token(id)
                 return BaseController.send_response_api({'access_token': new_token['data']['access_token'], 'refresh_token': new_token['data']['refresh_token']}, 'token successfully refreshed')
-            return BaseController.send_response_api(None, 'refresh token not exist')
+            return BaseController.send_response_api({'exist': False}, 'refresh token not exist')
         return BaseController.send_error_api(None, 'refresh token required')
 
     @staticmethod
