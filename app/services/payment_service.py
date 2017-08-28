@@ -32,7 +32,6 @@ class PaymentService():
 
     def get(self, user_id):
         results = db.session.query(Payment).filter_by(user_id=user_id).all()
-        _results = []
         return {
             'data': results,
             'message': 'payment retrieved successsfully'
@@ -207,19 +206,7 @@ class PaymentService():
             }
 
         # get the token id first
-        token_id = requests.get(
-           url + 'card/register?' \
-                   + 'card_number=' + payloads['card_number'] \
-                   + '&card_exp_month=' + payloads['card_exp_month'] \
-                   + '&card_exp_year=' + payloads['card_exp_year'] \
-                   + '&card_cvv=' + payloads['card_cvv'] \
-                   + '&bank=' + payloads['bank'] \
-                   + '&secure=' + 'true' \
-                   + '&gross_amount=' + payloads['gross_amount'] \
-                   + '&client_key=' + payloads['client_key'],
-            headers = self.headers
-        )
-
+        token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + payloads['gross_amount'] + '&client_key=' + payloads['client_key'], headers=self.headers)
         token_id = token_id.json()
 
         if 'status_code' in token_id and token_id['status_code'] == '200':
@@ -307,8 +294,8 @@ class PaymentService():
         endpoint = url + 'charge'
         result = requests.post(
                 endpoint,
-                headers = self.headers,
-                json = payloads
+                headers=self.headers,
+                json=payloads
         )
 
         payload = result.json()
@@ -318,14 +305,12 @@ class PaymentService():
 
         if ('status_code' in payload and payload['status_code'] == '201'):
             self.save_payload(payload)
-
-        print("-----",payload)
         return payload
 
     def update(self, id):
         payment_status = requests.get(
             url + str(id) + '/status',
-            headers = self.headers
+            headers=self.headers
         ) 
 
         status = payment_status.json()

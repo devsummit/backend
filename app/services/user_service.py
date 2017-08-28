@@ -115,7 +115,7 @@ class UserService:
                     return None
                 else:
                     return payload['sub']
-            except crypt.AppIdentityError:
+            except:
                 # Invalid token
                 return None
 
@@ -132,7 +132,7 @@ class UserService:
                 if(payload['data']['is_valid']):
                     userid = payload['data']['user_id']
                 return userid
-            except Exception as e:
+            except:
                 return None
         elif(provider == 'twitter'):
             # check token integrity
@@ -153,7 +153,7 @@ class UserService:
                 else:
                     return None
                 # check if error exist in data
-            except Exception as e:
+            except:
                 return None
             return userid
 
@@ -169,7 +169,7 @@ class UserService:
                 if 'error' not in payload:
                     accountId = payload['id'] if 'id' in payload else None
                 return accountId
-            except Exception as e:
+            except:
                 return None
 
     def check_social_account(self, provider, social_id):
