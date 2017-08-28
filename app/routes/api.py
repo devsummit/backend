@@ -415,6 +415,7 @@ def user_tickets(*args, **kwargs):
 
 
 @api.route('/attendees', methods=['GET'])
+@token_required
 def attendees(*args, **kwargs):
 	if(request.method == 'GET'):
 		return AttendeeController.index()
@@ -423,6 +424,7 @@ def attendees(*args, **kwargs):
 
 
 @api.route('/attendees/<id>', methods=['GET'])
+@token_required
 def attendees_id(id, *args, **kwargs):
 	if(request.method == 'GET'):
 		return AttendeeController.show(id)
@@ -439,6 +441,7 @@ def payment(*args, **kwargs):
 
 
 @api.route('/status/<id>', methods=['PATCH', 'PUT'])
+@token_required
 def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
         return PaymentController.status(id)
@@ -448,7 +451,6 @@ def status(id, *args, **kwargs):
 @token_required
 def get_payments(*args, **kwargs):
 	user = kwargs['user'].as_dict()
-	print(user)
 	if(user['role_id'] == ROLE['admin']):
 		return PaymentController.admin_get_payments()
 	else:
