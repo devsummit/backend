@@ -104,8 +104,6 @@ class UserAuthorizationController(BaseController):
                     'social_id': social_id,
                     'email': email,
                 }
-            else:
-                
         elif firstname and email and username and role and password:
             payloads = {
                 'first_name': firstname,
