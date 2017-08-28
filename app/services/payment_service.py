@@ -207,7 +207,6 @@ class PaymentService():
         token_id = token_id.json()
         # prepare data 
         data = {}
-        
         if 'status_code' in token_id and token_id['status_code'] == '200':
             data['saved_token_id'] = token_id['saved_token_id']
             data['masked_card'] = token_id['masked_card']
