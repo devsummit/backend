@@ -1,107 +1,124 @@
 import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from flask import Flask, request
+from flask import request, current_app
+from app.services.helper import Helper 
 import os
 # import model class
 from app.models.user_photo import UserPhoto
 from app.models.base_model import BaseModel
 
-app = Flask(__name__)
-# default saving, database saving & domain based url
-app.config['POST_USER_PHOTO_DEST'] = 'app/static/images/users/'
-app.config['SAVE_USER_PHOTO_DEST'] = 'images/users/'
-app.config['GET_USER_PHOTO_DEST'] = 'static/'
-app.config['STATIC_DEST'] = 'app/static/'
-# These are the extension that we are accepting to be uploaded
-app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg'])
-
 
 class UserPhotoService():
-
-    # Photo URL helper, turn into domain based url
-    def urlHelper(self, url):
-        return request.url_root + app.config['GET_USER_PHOTO_DEST'] + url
-
-    # For a given file, return whether it's an allowed type or not
-    def allowed_file(self, file_name):
-        return '.' in file_name and \
-            file_name.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
     def get(self):
         user_photos = BaseModel.as_list(db.session.query(UserPhoto).all())
         for user_photo in user_photos:
-            user_photo['url'] = self.urlHelper(user_photo['url'])
+            user_photo['url'] = Helper().url_helper(user_photo['url'], current_app.config['GET_DEST'])
         return user_photos
 
     def show(self, user_id):
-        user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id).first().as_dict()
-        user_photo['url'] = self.urlHelper(user_photo['url'])
-        return user_photo
+        user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
+        if(user_photo is None):
+            data = {
+                'photo_exist': False
+            }
+            return {
+                'data': data,
+                'error': True,
+                'message': 'User Photo is not found'
+            }    
+        user_photo = user_photo.as_dict()
+        user_photo['url'] = Helper().url_helper(user_photo['url'], current_app.config['GET_DEST'])
+        return {
+            'data': user_photo,
+            'error': False,
+            'message': 'photo retrieved successfully'
+        }
 
     def create(self, payloads):
         user_id = payloads['user_id']
+        is_exist = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
+        if(is_exist is not None):
+            data = {
+                'photo_exist': True
+            }
+            return {
+                'data': data,
+                'error': True,
+                'message': 'Photo already exist'
+            }
         file = request.files['image_data']
-        ext = (file.filename.rsplit('.', 1)[1])
-        if file and self.allowed_file(file.filename):
+        if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
             self.model_user_photo = UserPhoto()
             db.session.add(self.model_user_photo)
             try:
-                now = datetime.datetime.now()
-                filename = str(now.year) + str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond) + '.' + ext
-                file.save(os.path.join(app.config['POST_USER_PHOTO_DEST'], filename))
-                self.model_user_photo.url = app.config['SAVE_USER_PHOTO_DEST'] + filename
+                filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
+                file.save(os.path.join(current_app.config['POST_USER_PHOTO_DEST'], filename))
+                self.model_user_photo.url = current_app.config['SAVE_USER_PHOTO_DEST'] + filename
                 self.model_user_photo.user_id = user_id
                 db.session.commit()
                 data = self.model_user_photo.as_dict()
-                data['url'] = self.urlHelper(self.model_user_photo.url)
+                data['url'] = Helper().url_helper(self.model_user_photo.url, current_app.config['GET_DEST'])
                 return {
                     'error': False,
-                    'data': data
+                    'data': data,
+                    'message': 'photo saved'
                 }
             except SQLAlchemyError as e:
                 data = e.orig.args
                 return {
                     'error': True,
-                    'data': data
+                    'data': None,
+                    'message': data
 			}
 
     def update(self, payloads):
         user_id = payloads['user_id']
+        is_exist = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
+        if(is_exist is None):
+            data = {
+                'photo_exist': False
+            }
+            return {
+                'data': data,
+                'error': True,
+                'message': 'User Photo is not found'
+            }      
         file = request.files['image_data']
-        ext = (file.filename.rsplit('.', 1)[1])
-        if file and self.allowed_file(file.filename):
+        if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
             try:
-                now = datetime.datetime.now()
-                filename = str(now.year) + str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond) + '.' + ext
-                file.save(os.path.join(app.config['POST_USER_PHOTO_DEST'], filename))
-                newUrl = app.config['SAVE_USER_PHOTO_DEST'] + filename
+                filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
+                file.save(os.path.join(current_app.config['POST_USER_PHOTO_DEST'], filename))
+                newUrl = current_app.config['SAVE_USER_PHOTO_DEST'] + filename
                 self.model_user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id)
                 self.user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
-                os.remove(app.config['STATIC_DEST'] + self.user_photo.url)
+                os.remove(current_app.config['STATIC_DEST'] + self.user_photo.url)
                 self.model_user_photo.update({
                     'url': newUrl,
                     'updated_at': datetime.datetime.now()
                 })
                 db.session.commit()
                 data = self.model_user_photo.first().as_dict()
-                data['url'] = self.urlHelper(newUrl)
+                data['url'] = Helper().url_helper(newUrl, current_app.config['GET_DEST'])
                 return {
                     'error': False,
-                    'data': data
+                    'data': data,
+                    'message': 'photo saved'
                 }
             except SQLAlchemyError as e:
                 data = e.orig.args
                 return {
                     'error': True,
-                    'data': data
+                    'data': None,
+                    'message': data
                 }
 
     def delete(self, user_id):
         self.model_user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id)
         if self.model_user_photo.first() is not None:
             # delete file
-            os.remove(app.config['STATIC_DEST'] + self.model_user_photo.first().url)
+            os.remove(current_app.config['STATIC_DEST'] + self.model_user_photo.first().url)
             # delete row
             self.model_user_photo.delete()
             db.session.commit()

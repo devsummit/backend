@@ -1,5 +1,4 @@
 from app.controllers.base_controller import BaseController
-from app.models.base_model import BaseModel
 from app.services import boothservice
 from app.models.booth import Booth
 from app.models import db

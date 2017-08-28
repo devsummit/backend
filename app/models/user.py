@@ -61,5 +61,5 @@ class User(db.Model, BaseModel):
 		return secrets.token_hex(8)
 
 	def include_photos(self):
-		self.photos =  BaseModel.as_list(db.session.query(UserPhoto).filter_by(user_id=self.id).all())
+		self.photos = BaseModel.as_list(db.session.query(UserPhoto).filter_by(user_id=self.id).all())
 		return self
