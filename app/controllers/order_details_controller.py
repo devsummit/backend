@@ -8,14 +8,14 @@ class OrderDetailsController(BaseController):
 	@staticmethod
 	def index(order_id):
 		order_details = orderdetailservice.get(order_id)
-		return BaseController.send_response_api(BaseModel.as_list(order_details), 'order details retrieved successfully')
+		return BaseController.send_response_api(order_details, 'order details retrieved successfully')
 
 	@staticmethod
 	def show(order_id, detail_id):
 		orderdetail = orderdetailservice.show(order_id, detail_id)
 		if orderdetail is None:
 			return BaseController.send_error_api(None, 'order item not found')
-		return BaseController.send_response_api(orderdetail.as_dict(), 'order item retrieved successfully')
+		return BaseController.send_response_api(orderdetail, 'order item retrieved successfully')
 
 	@staticmethod
 	def update(detail_id, request):
