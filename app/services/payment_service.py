@@ -53,7 +53,7 @@ class PaymentService():
             'message': 'payment retrieved successsfully'
         }
 
-    def bank_transfer(self, payloads):
+    def bank_transfer(self, payloads, user_id):
 
         payloads['gross_amount'] = int(payloads['gross_amount'])
 
@@ -181,7 +181,7 @@ class PaymentService():
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
-        midtrans_api_response = self.send_to_midtrans_api(data)
+        midtrans_api_response = self.send_to_midtrans_api(data, user_id)
 
         return midtrans_api_response
 
@@ -229,7 +229,7 @@ class PaymentService():
         midtrans_api_response = self.send_to_midtrans_api(data, user_id)
         return midtrans_api_response
 
-    def internet_banking(self, payloads):
+    def internet_banking(self, payloads, user_id):
         if not all(isinstance(string, str) for string in [
             payloads['order_id'],
             payloads['first_name'],
@@ -277,9 +277,8 @@ class PaymentService():
             data['mandiri_clickpay']['input3'] = payloads['input3']
             data['mandiri_clickpay']['token'] = payloads['token']
 
-        midtrans_api_response = self.send_to_midtrans_api(data)
+        midtrans_api_response = self.send_to_midtrans_api(data, user_id)
 
-        print(midtrans_api_response)
         return midtrans_api_response
 
     # this will send the all payment methods payload to midtrand api
