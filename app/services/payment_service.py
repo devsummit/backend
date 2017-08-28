@@ -185,7 +185,7 @@ class PaymentService():
 
         return midtrans_api_response
 
-    def credit_payment(self, payloads):
+    def credit_payment(self, payloads, user_id):
         if not all(
             isinstance(string, str) for string in [
                 payloads['order_id'],
@@ -200,28 +200,22 @@ class PaymentService():
                 payloads['client_key']
             ]
         ) and not isinstance(payloads['gross_amount'], int):
-            return {
-                'error': True,
-                'message': 'payload is no valid'
-            }
+            return 'Payload is not valid'
 
         # get the token id first
         token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + payloads['gross_amount'] + '&client_key=' + payloads['client_key'], headers=self.headers)
         token_id = token_id.json()
-
+        # prepare data 
+        data = {}
+        
         if 'status_code' in token_id and token_id['status_code'] == '200':
-            new_payment = Payment()
-            new_payment.token_id = token_id['saved_token_id']
-            new_payment.transaction_id = token_id['transaction_id']
-            new_payment.masked_card = token_id['masked_card']
-            db.session.add(new_payment)
-            db.session.commit()
+            data['saved_token_id'] = token_id['saved_token_id']
+            data['masked_card'] = token_id['masked_card']
         else:
-            return token_id
+            return 'Failed to get token'
 
         item_details = self.get_order_details(payloads['order_id'])
 
-        data = {}
         data['payment_type'] = payloads['payment_type']
         data['transaction_details'] = {}
         data['transaction_details']['order_id'] = payloads['order_id']
@@ -233,7 +227,7 @@ class PaymentService():
         data['customer_details']['first_name'] = payloads['first_name']
         data['customer_details']['last_name'] = payloads['last_name']
         data['customer_details']['email'] = payloads['email']
-        midtrans_api_response = self.send_to_midtrans_api(data)
+        midtrans_api_response = self.send_to_midtrans_api(data, user_id)
         return midtrans_api_response
 
     def internet_banking(self, payloads):
@@ -290,7 +284,7 @@ class PaymentService():
         return midtrans_api_response
 
     # this will send the all payment methods payload to midtrand api
-    def send_to_midtrans_api(self, payloads):
+    def send_to_midtrans_api(self, payloads, user_id):
         endpoint = url + 'charge'
         result = requests.post(
                 endpoint,
@@ -299,12 +293,12 @@ class PaymentService():
         )
 
         payload = result.json()
+        if 'bank' in payload and payloads['payment_type'] != 'credit_card':
+            payload['bank'] = payloads['bank_transfer']['bank']
 
-        if 'bank' in payload:
-            payload['bank'] = payloads['bank'] or payloads['bank_transfer']['bank']
+        if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
+            self.save_payload(payload, payloads, user_id)
 
-        if ('status_code' in payload and payload['status_code'] == '201'):
-            self.save_payload(payload)
         return payload
 
     def update(self, id):
@@ -344,8 +338,7 @@ class PaymentService():
             result.append(temp)
         return result
 
-    def save_payload(self, data):
-
+    def save_payload(self, data, payloads, user_id):
         new_payment = Payment()
         new_payment.transaction_id = data['transaction_id']
         new_payment.order_id = data['order_id']
@@ -355,6 +348,9 @@ class PaymentService():
         new_payment.transaction_status = data['transaction_status']
         new_payment.bank = data['bank']
         new_payment.fraud_status = data['fraud_status'] if 'fraud_status' in data else None
+        new_payment.masked_card = payloads['masked_card']
+        new_payment.saved_token_id = payloads['saved_token_id']
+        new_payment.user_id = user_id
 
         db.session.add(new_payment)
         db.session.commit()
