@@ -20,7 +20,9 @@ class OrderDetailsService():
 
 	def show(self, order_id, detail_id):
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).filter_by(id=detail_id).first()
-		return order_details
+		data = order_details.as_dict()
+		data['ticket_type'] = order_details.ticket.ticket_type
+		return data
 
 	def create(self, payloads, order_id):
 		self.model_order_details = OrderDetails()

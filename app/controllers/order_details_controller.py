@@ -15,7 +15,7 @@ class OrderDetailsController(BaseController):
 		orderdetail = orderdetailservice.show(order_id, detail_id)
 		if orderdetail is None:
 			return BaseController.send_error_api(None, 'order item not found')
-		return BaseController.send_response_api(orderdetail.as_dict(), 'order item retrieved successfully')
+		return BaseController.send_response_api(orderdetail, 'order item retrieved successfully')
 
 	@staticmethod
 	def update(detail_id, request):
