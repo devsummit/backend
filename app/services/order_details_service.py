@@ -13,7 +13,7 @@ class OrderDetailsService():
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
 		for detail in order_details:
 			data = detail.as_dict()
-			data['ticket_type'] = detail.ticket.ticket_type
+			data['ticket'] = detail.ticket.as_dict()
 			_results.append(data)
 		return _results
 		# return order_details
@@ -21,7 +21,7 @@ class OrderDetailsService():
 	def show(self, order_id, detail_id):
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).filter_by(id=detail_id).first()
 		data = order_details.as_dict()
-		data['ticket_type'] = order_details.ticket.ticket_type
+		data['ticket_type'] = order_details.ticket.as_dict()
 		return data
 
 	def create(self, payloads, order_id):
