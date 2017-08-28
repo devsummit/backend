@@ -14,9 +14,9 @@ class UserPhotoController(BaseController):
     @staticmethod
     def show(user_id):
         user_photo = userphotoservice.show(user_id)
-        if user_photo is None:
-            return BaseController.send_error_api(None, 'photo not found')
-        return BaseController.send_response_api(user_photo, 'photo retrieved successfully')
+        if user_photo['error']:
+            return BaseController.send_error_api(user_photo['data'], user_photo['message'])
+        return BaseController.send_response_api(user_photo['data'], user_photo['message'])
 
     @staticmethod 
     def create(request, user_id):
@@ -32,9 +32,9 @@ class UserPhotoController(BaseController):
         result = userphotoservice.create(payloads)
 
         if not result['error']:
-            return BaseController.send_response_api(result['data'], 'user photo succesfully created')
+            return BaseController.send_response_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_error_api(result['data'], result['message'])
 
     @staticmethod
     def update(request, user_id):
@@ -50,9 +50,9 @@ class UserPhotoController(BaseController):
         result = userphotoservice.update(payloads)
 
         if not result['error']:
-            return BaseController.send_response_api(result['data'], 'user photo succesfully updated')
+            return BaseController.send_response_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_error_api(result['data'], result['message'])
 
     @staticmethod
     def delete(user_id):

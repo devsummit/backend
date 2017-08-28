@@ -431,9 +431,11 @@ def attendees_id(id, *args, **kwargs):
 
 
 @api.route('/payments', methods=['POST'])
+@token_required
 def payment(*args, **kwargs):
-    if (request.method == 'POST'):
-        return PaymentController.create(request)
+	user = kwargs['user'].as_dict()
+	if (request.method == 'POST'):
+		return PaymentController.create(request, user['id'])
 
 
 @api.route('/status/<id>', methods=['PATCH', 'PUT'])
@@ -446,6 +448,7 @@ def status(id, *args, **kwargs):
 @token_required
 def get_payments(*args, **kwargs):
 	user = kwargs['user'].as_dict()
+	print(user)
 	if(user['role_id'] == ROLE['admin']):
 		return PaymentController.admin_get_payments()
 	else:
