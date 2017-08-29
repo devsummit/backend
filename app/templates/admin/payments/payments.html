@@ -27,10 +27,15 @@
             <table id="payment-list1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
+                    <th>OrderID</th>
                     <th>Attendee Name</th>
                     <th>Email</th>
-                    <th>Points</th>
-                    <th>Registered At</th>
+                    <th>Gross Amount</th>
+                    <th>Bank</th>
+                    <th>PaymentType</th>
+                    <th>TransactionID</th>
+                    <th>Transaction Status</th>
+                    <th>Transaction Time</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -38,16 +43,31 @@
                     {% for payment in payments %}
                     <tr>
                         <td>
+                            {{ payment.order_id|e }}
+                        </td>
+                        <td>
                             <a href="" id='atd-{{ payment.id }}' class="payments-name">{{ payment.user['last_name'] + ', ' + payment.user['first_name']|e }}</a> 
                         </td>
                         <td>
                             {{ payment.user['email']|e }}
                         </td>
                         <td>
-                            {{ payment['points']|e }}
+                            {{ payment.gross_amount|e }}
                         </td>
                         <td>
-                            {{ payment.user['created_at']|e }}
+                            {{ payment.bank|e }}
+                        </td>
+                        <td>
+                            {{ payment.payment_type|e }}
+                        </td>
+                        <td>
+                            {{ payment.transaction_id|e }}
+                        </td>
+                        <td>
+                            {{ payment.transaction_status|e }}
+                        </td>
+                        <td>
+                            {{ payment.transaction_time|e }}
                         </td>
                         <td>
                             <button id='btd-{{ payment.id }}' type="button" class="btn btn-sm btn-info btn-detail" data-toggle="modal" data-target="#modal-detail">
@@ -60,7 +80,7 @@
             </table>
         </div>
 
-        {% include "admin/payments/payment_detail.html" %}
+        {% include "admin/payments/payment_detail.html" ignore missing %}
 {% endblock %}
 
 {% block footer_link %}
