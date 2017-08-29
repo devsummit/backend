@@ -8,6 +8,7 @@ from app.models.order_details import OrderDetails
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 
 
+
 class PaymentService():
 
     def __init__(self):
@@ -23,12 +24,9 @@ class PaymentService():
         _results = []
         for result in results:
             data = result.as_dict()
-            data['user'] = result.user.as_dict()
+            data['user'] = result.order.user.as_dict()
             _results.append(data)
-        return {
-            'data': _results,
-            'message': 'payment retrieved successsfully'
-        }
+        return _results
 
     def get(self, user_id):
         results = db.session.query(Payment).filter_by(user_id=user_id).all()
