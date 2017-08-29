@@ -20,6 +20,7 @@ def upgrade():
     op.create_table(
             'payments',
             sa.Column('id', sa.Integer, primary_key=True),
+            sa.Column('user_id', sa.Integer),
             sa.Column('order_id', sa.Integer, sa.ForeignKey('order.id')),
             sa.Column('saved_token_id', sa.Integer),
             sa.Column('transaction_id', sa.Integer),

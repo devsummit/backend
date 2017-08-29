@@ -9,12 +9,20 @@ from app.models.ticket import Ticket
 class OrderDetailsService():
 
 	def get(self, order_id):
+		_results = []
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
-		return order_details
+		for detail in order_details:
+			data = detail.as_dict()
+			data['ticket'] = detail.ticket.as_dict()
+			_results.append(data)
+		return _results
+		# return order_details
 
 	def show(self, order_id, detail_id):
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).filter_by(id=detail_id).first()
-		return order_details
+		data = order_details.as_dict()
+		data['ticket_type'] = order_details.ticket.as_dict()
+		return data
 
 	def create(self, payloads, order_id):
 		self.model_order_details = OrderDetails()

@@ -8,6 +8,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 
 # import classes
 from app.models.base_model import BaseModel
+from app.models.user_photo import UserPhoto
 from app.models import db
 
 
@@ -15,7 +16,7 @@ class User(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'users'
 	# displayed fields
-	visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id', 'username', 'email', 'created_at', 'updated_at']
+	visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id', 'username', 'email', 'photos', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -28,6 +29,7 @@ class User(db.Model, BaseModel):
 	social_id = db.Column(db.String)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
+	photos = []
 
 	def __init__(self):
 		self.created_at = datetime.datetime.now()
@@ -57,3 +59,7 @@ class User(db.Model, BaseModel):
 
 	def generate_refresh_token(self):
 		return secrets.token_hex(8)
+
+	def include_photos(self):
+		self.photos = BaseModel.as_list(db.session.query(UserPhoto).filter_by(user_id=self.id).all())
+		return self

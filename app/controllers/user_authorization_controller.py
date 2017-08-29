@@ -15,7 +15,7 @@ class UserAuthorizationController(BaseController):
             if id:
                 new_token = userservice.get_new_token(id)
                 return BaseController.send_response_api({'access_token': new_token['data']['access_token'], 'refresh_token': new_token['data']['refresh_token']}, 'token successfully refreshed')
-            return BaseController.send_response_api(None, 'refresh token not exist')
+            return BaseController.send_response_api({'exist': False}, 'refresh token not exist')
         return BaseController.send_error_api(None, 'refresh token required')
 
     @staticmethod
@@ -33,10 +33,9 @@ class UserAuthorizationController(BaseController):
                     if user.verify_password(password):
                         token = userservice.save_token()
                         user = user.as_dict()
-                        user['url'] = userservice.get_user_photo(
-                            user['id'])
+                        user['url'] = userservice.get_user_photo(user['id'])
                         # store user session for web app consumed
-                        session['user'] =  user
+                        session['user'] = user
                         return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
                         return BaseController.send_error_api(None, 'wrong credentials')
@@ -66,7 +65,6 @@ class UserAuthorizationController(BaseController):
             else:
                 return BaseController.send_error_api(None, 'token is invalid')
 
-
     @staticmethod
     def register(request):
         provider = request.json['provider'] if 'provider' in request.json else None
@@ -82,9 +80,12 @@ class UserAuthorizationController(BaseController):
 
         # if social_id = None then normal registration
 
-        payloads = None
         if (provider == 'mobile'):
             token = request.json['token'] if 'token' in request.json else None
+
+            if token is None:
+                return BaseController.send_response_api(None, 'payloads not valid')
+
             url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + token
             result = requests.get(url)
             payload = result.json()
@@ -101,7 +102,6 @@ class UserAuthorizationController(BaseController):
                     'password': '',
                     'social_id': social_id,
                     'email': email,
-
                 }
         elif firstname and email and username and role and password:
             payloads = {
@@ -115,6 +115,7 @@ class UserAuthorizationController(BaseController):
             }
         else:
             return BaseController.send_response_api(None, 'payloads not valid')
+
         result = userservice.register(payloads)
         if not result['error']:
             return BaseController.send_response_api(result['data'], 'user succesfully registered')

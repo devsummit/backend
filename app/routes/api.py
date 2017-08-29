@@ -415,6 +415,7 @@ def user_tickets(*args, **kwargs):
 
 
 @api.route('/attendees', methods=['GET'])
+@token_required
 def attendees(*args, **kwargs):
 	if(request.method == 'GET'):
 		return AttendeeController.index()
@@ -423,6 +424,7 @@ def attendees(*args, **kwargs):
 
 
 @api.route('/attendees/<id>', methods=['GET'])
+@token_required
 def attendees_id(id, *args, **kwargs):
 	if(request.method == 'GET'):
 		return AttendeeController.show(id)
@@ -431,12 +433,15 @@ def attendees_id(id, *args, **kwargs):
 
 
 @api.route('/payments', methods=['POST'])
-def bank_transfer(*args, **kwargs):
-    if (request.method == 'POST'):
-        return PaymentController.create(request)
+@token_required
+def payment(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	if (request.method == 'POST'):
+		return PaymentController.create(request, user['id'])
 
 
 @api.route('/status/<id>', methods=['PATCH', 'PUT'])
+@token_required
 def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
         return PaymentController.status(id)
@@ -449,7 +454,7 @@ def get_payments(*args, **kwargs):
 	if(user['role_id'] == ROLE['admin']):
 		return PaymentController.admin_get_payments()
 	else:
-		return 'not yet implemented'
+		return PaymentController.get_payments(user['id'])
 
 
 @api.route('/payments/<payment_id>', methods=['GET'])
@@ -459,4 +464,4 @@ def show_payment(payment_id, *args, **kwargs):
 	if(user['role_id'] == ROLE['admin']):
 		return PaymentController.admin_show_payment(payment_id)
 	else:
-		return 'not yet implemented'
+		return PaymentController.show_payment(payment_id)

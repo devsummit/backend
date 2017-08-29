@@ -18,9 +18,15 @@ def token_required(f):
 		try:
 			s.loads(token)
 		except SignatureExpired:
-			return jsonify({'message': 'token is expired'})
+			return jsonify({
+				'message': 'token is expired',
+				'expired': True
+				})
 		except BadSignature:
-			return jsonify({'message': 'token is invalid'})
+			return jsonify({
+				'message': 'token is invalid',
+				'invalid': True
+				})
 		kwargs['user'] = User.verify_auth_token(token)
 		return f(*args, **kwargs)
 	return decorated
