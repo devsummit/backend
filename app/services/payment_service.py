@@ -5,6 +5,7 @@ from app.models import db
 # import model class
 from app.models.payment import Payment
 from app.models.order_details import OrderDetails
+from app.models.order import Order
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 
 
@@ -23,7 +24,7 @@ class PaymentService():
         _results = []
         for result in results:
             data = result.as_dict()
-            data['user'] = result.user.as_dict()
+            data['user'] = result.order.user.as_dict()
             _results.append(data)
         return {
             'data': _results,
@@ -31,16 +32,21 @@ class PaymentService():
         }
 
     def get(self, user_id):
-        results = db.session.query(Payment).filter_by(user_id=user_id).all()
+        # get the orders
+        orders = db.session.query(Order).filter_by(user_id=user_id).all()
+        _results = []
+        for order in orders:
+            data = db.session.query(Payment).filter_by(order_id=order.id).first().as_dict()
+            _results.append(data)
         return {
-            'data': results,
+            'data': _results,
             'message': 'payment retrieved successsfully'
         }
 
     def admin_show(self, payment_id):
         result = db.session.query(Payment).filter_by(id=payment_id).first()
         data = result.as_dict()
-        data['user'] = result.user.as_dict()
+        data['user'] = result.order.user.as_dict()
         return {
             'data': data,
             'message': 'payment retrieved successsfully'
@@ -53,7 +59,7 @@ class PaymentService():
             'message': 'payment retrieved successsfully'
         }
 
-    def bank_transfer(self, payloads, user_id):
+    def bank_transfer(self, payloads):
 
         payloads['gross_amount'] = int(payloads['gross_amount'])
 
@@ -181,11 +187,11 @@ class PaymentService():
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
-        midtrans_api_response = self.send_to_midtrans_api(data, user_id)
+        midtrans_api_response = self.send_to_midtrans_api(data)
 
         return midtrans_api_response
 
-    def credit_payment(self, payloads, user_id):
+    def credit_payment(self, payloads):
         if not all(
             isinstance(string, str) for string in [
                 payloads['order_id'],
@@ -226,10 +232,10 @@ class PaymentService():
         data['customer_details']['first_name'] = payloads['first_name']
         data['customer_details']['last_name'] = payloads['last_name']
         data['customer_details']['email'] = payloads['email']
-        midtrans_api_response = self.send_to_midtrans_api(data, user_id)
+        midtrans_api_response = self.send_to_midtrans_api(data)
         return midtrans_api_response
 
-    def internet_banking(self, payloads, user_id):
+    def internet_banking(self, payloads):
         if not all(isinstance(string, str) for string in [
             payloads['order_id'],
             payloads['first_name'],
@@ -277,12 +283,12 @@ class PaymentService():
             data['mandiri_clickpay']['input3'] = payloads['input3']
             data['mandiri_clickpay']['token'] = payloads['token']
 
-        midtrans_api_response = self.send_to_midtrans_api(data, user_id)
+        midtrans_api_response = self.send_to_midtrans_api(data)
 
         return midtrans_api_response
 
     # this will send the all payment methods payload to midtrand api
-    def send_to_midtrans_api(self, payloads, user_id):
+    def send_to_midtrans_api(self, payloads):
         endpoint = url + 'charge'
         result = requests.post(
                 endpoint,
@@ -295,7 +301,7 @@ class PaymentService():
             payload['bank'] = payloads['bank_transfer']['bank']
 
         if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
-            self.save_payload(payload, payloads, user_id)
+            self.save_payload(payload, payloads)
 
         return payload
 
@@ -336,7 +342,7 @@ class PaymentService():
             result.append(temp)
         return result
 
-    def save_payload(self, data, payloads, user_id):
+    def save_payload(self, data, payloads):
         new_payment = Payment()
         new_payment.transaction_id = data['transaction_id']
         new_payment.order_id = data['order_id']
@@ -348,7 +354,6 @@ class PaymentService():
         new_payment.fraud_status = data['fraud_status'] if 'fraud_status' in data else None
         new_payment.masked_card = payloads['masked_card']
         new_payment.saved_token_id = payloads['saved_token_id']
-        new_payment.user_id = user_id
 
         db.session.add(new_payment)
         db.session.commit()

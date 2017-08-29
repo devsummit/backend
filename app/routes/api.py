@@ -435,9 +435,8 @@ def attendees_id(id, *args, **kwargs):
 @api.route('/payments', methods=['POST'])
 @token_required
 def payment(*args, **kwargs):
-	user = kwargs['user'].as_dict()
 	if (request.method == 'POST'):
-		return PaymentController.create(request, user['id'])
+		return PaymentController.create(request)
 
 
 @api.route('/status/<id>', methods=['PATCH', 'PUT'])
