@@ -33,8 +33,6 @@ class UserAuthorizationController(BaseController):
                     if user.verify_password(password):
                         token = userservice.save_token()
                         user = user.include_photos().as_dict()
-                        # store user session for web app consumed
-                        session['user'] = user
                         return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
                         return BaseController.send_error_api(None, 'wrong credentials')
@@ -56,8 +54,7 @@ class UserAuthorizationController(BaseController):
                     provider, user_social_id)
                 if user is not None:
                     token = userservice.save_token(provider)
-                    user = user.as_dict()
-                    user['url'] = userservice.get_user_photo(user['id'])
+                    user = user.include_photos.as_dict()
                     return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                 else:
                     return BaseController.send_error_api(None, 'user is not registered')
