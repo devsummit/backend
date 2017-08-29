@@ -1,4 +1,3 @@
-from faker import Faker
 from app.models.base_model import BaseModel
 from app.models import db
 from app.models.order import Order
@@ -18,7 +17,6 @@ class OrdersDetailsSeeder():
         """
         Create 10 orders seeds
         """
-        fake = Faker()
         orders = BaseModel.as_list(db.session.query(Order).all())
         # print(orders)
         tickets = BaseModel.as_list(db.session.query(Ticket).all())
