@@ -46,10 +46,10 @@ class OrderService():
 				# get ticket data
 				ticket = self.get_ticket(item['ticket_id'])
 				order_item.price = ticket.price
-				order_items.append(order_item.as_dict())
 				db.session.add(order_item)
+				db.session.commit()
+				order_items.append(order_item.as_dict())
 			# save all items
-			db.session.commit()
 			return {
 				'error': False,
 				'data': data,
