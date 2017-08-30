@@ -300,15 +300,21 @@ class PaymentService():
                 headers=self.headers,
                 json=payloads
         )
-
         payload = result.json()
-        if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
-            payload['bank'] = payloads['bank']
-        else:
-            payload['bank'] = payload['bank'] if 'bank' in payload else payloads['bank_transfer']['bank']
 
-        if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
-            self.save_payload(payload, payloads)
+        if(payload['status_code'] != '400'):
+            if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
+                payload['bank'] = payloads['bank']
+            else:
+                payload['bank'] = payload['bank'] if 'bank' in payload else payloads['bank_transfer']['bank']
+
+            if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
+                self.save_payload(payload, payloads)
+
+            # if  not fraud and captured save ticket to user_ticket table
+            if(payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
+                order = db.session.query(Order).filter_by(id=payload['order_id']).first()
+                self.save_paid_ticket(order.as_dict())
 
         return payload
 
