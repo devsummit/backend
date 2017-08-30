@@ -18,7 +18,7 @@ class OrdersSeeder():
         Create 10 orders seeds
         """
         fake = Faker()
-        users = BaseModel.as_list(db.session.query(User).all())
+        users = BaseModel.as_list(db.session.query(Order).all())
         for i in range(0, 10):
             user_id = random.choice(users)['id']
             status = fake.sentence(
