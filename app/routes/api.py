@@ -439,7 +439,7 @@ def payment(*args, **kwargs):
 		return PaymentController.create(request)
 
 
-@api.route('/status/<id>', methods=['PATCH', 'PUT'])
+@api.route('/payments/status/<id>', methods=['PATCH', 'PUT'])
 @token_required
 def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
