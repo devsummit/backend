@@ -1,5 +1,4 @@
 # parent class imports
-from flask import session
 from app.controllers.base_controller import BaseController
 from app.services import userservice
 import requests
