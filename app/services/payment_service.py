@@ -333,6 +333,22 @@ class PaymentService():
 
         status = payment_status.json()
 
+        if (status['status_code'] == '407' or status['status_code'] == '412'):
+
+            if (payment['transaction_status'] != status['transaction_status']):
+                payment = db.session.query(Payment).filter_by(id=id)
+                payment.update({
+                    'updated_at': datetime.datetime.now(),
+                    'transaction_status': status['transaction_status']
+                })
+                
+                db.session.commit()
+                if (payment.first().as_dict()['transaction_status'] == 'expire'):
+                    # on payment success
+                    self.save_paid_ticket(order)
+
+        return "has expired"
+
         if (status['status_code'] == '200' or status['status_code'] == '201'):
 
             if (payment['transaction_status'] != status['transaction_status']):
