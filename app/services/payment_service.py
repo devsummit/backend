@@ -6,6 +6,7 @@ from app.models import db
 from app.models.payment import Payment
 from app.models.order_details import OrderDetails
 from app.models.order import Order
+from app.models.user_ticket import UserTicket
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 
 
@@ -315,6 +316,7 @@ class PaymentService():
         # get the transaction id from payment table
         payment = db.session.query(Payment).filter_by(id=id).first()
         if payment is not None:
+            order = payment.order.as_dict()
             payment = payment.as_dict()
         else:
             return 'payment not found'
@@ -325,18 +327,33 @@ class PaymentService():
 
         status = payment_status.json()
 
-        if (status['status_code'] == '201'):
-            
-            if (payment['transaction_status'] != status['transaction_status']):
+        if (status['status_code'] == '200' or status['status_code'] == '201'):
 
+            if (payment['transaction_status'] != status['transaction_status']):
+                payment = db.session.query(Payment).filter_by(id=id)
                 payment.update({
                     'updated_at': datetime.datetime.now(),
                     'transaction_status': status['transaction_status']
                 })
-                # on payment success
+                
                 db.session.commit()
+                if (payment.first().as_dict()['transaction_status'] == 'capture'):
+                    # on payment success
+                    self.save_paid_ticket(order)
 
         return status
+
+    def save_paid_ticket(self, order):
+        item_details = db.session.query(OrderDetails).filter_by(order_id=order['id']).all()
+        for item in item_details:
+            data = item.as_dict()
+            user_ticket = UserTicket()
+            user_ticket.user_id = order['user_id']
+            user_ticket.used = False
+            user_ticket.ticket_id = data['ticket_id']
+            db.session.add(user_ticket)
+            db.session.commit()
+
 
     def get_order_details(self, order_id):
         # using order_id to get ticket_id, price, quantity, ticket_type(name) in payment service
