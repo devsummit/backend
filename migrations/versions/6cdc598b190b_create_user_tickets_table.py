@@ -16,13 +16,14 @@ depends_on = None
 
 def upgrade():
 	op.create_table('user_tickets',
-                 sa.Column('id', sa.Integer, primary_key=True),
-                 sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
-                 sa.Column('ticket_id', sa.Integer,
-                           sa.ForeignKey('tickets.id')),
-                 sa.Column('created_at', sa.DateTime),
-                 sa.Column('updated_at', sa.DateTime),
-                 )
+				sa.Column('id', sa.Integer, primary_key=True),
+				sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
+				sa.Column('ticket_id', sa.Integer,
+					sa.ForeignKey('tickets.id')),
+				sa.Column('used', sa.Boolean),
+				sa.Column('created_at', sa.DateTime),
+				sa.Column('updated_at', sa.DateTime),
+				)
 
 
 def downgrade():
