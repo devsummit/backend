@@ -21,6 +21,7 @@ You can run the server on docker simply by running:
 - `docker-compose build`
 - `docker-compose up` 
 
+additional setup including `migrations` and `seeding` will be the same as setup instruction above
 and server should be up on `localhost:5000`
 
 ## Linting
