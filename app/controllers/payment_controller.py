@@ -257,7 +257,7 @@ class PaymentController(BaseController):
         payment = paymentservice.update(id)
 
         if not payment['status_code'] == '404':
-            return BaseController.send_response_api('Your payment status is ' + payment['transaction_status'], payment['status_message'])
+            return BaseController.send_response_api(payment, payment['status_message'])
         else:
             return BaseController.send_error_api(None, payment)
 
