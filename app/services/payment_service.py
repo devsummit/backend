@@ -242,7 +242,7 @@ class PaymentService():
             payloads['last_name'],
             payloads['email'],
             payloads['phone']
-        ]) and not isinstance(payloads['gross_amount', int]):
+        ]) and not isinstance(payloads['gross_amount'], int):
             return {
                 'error': True,
                 'message': 'payloads is not valid'
@@ -265,16 +265,19 @@ class PaymentService():
         if (payloads['payment_type'] == 'cimb_clicks'):
             data['cimb_clicks'] = {}
             data['cimb_clicks']['description'] = payloads['description']
+            data['bank'] = 'cimb'
 
         if (payloads['payment_type'] == 'bca_klikpay'):
             data['bca_klikpay'] = {}
             data['bca_klikpay']['type'] = 1
             data['bca_klikpay']['description'] = 'Devsummit tickets purchase'
+            data['bank'] = 'bca'
 
         if (payloads['payment_type'] == 'bca_klikbca'):
             data['bca_klikbca'] = {}
             data['bca_klikbca']['user_id'] = payloads['user_id']
             data['bca_klikbca']['description'] = payloads['description']
+            data['bank'] = 'bca'
 
         if (payloads['payment_type'] == 'mandiri_clickpay'):
             data['mandiri_clickpay'] = {}
@@ -282,6 +285,7 @@ class PaymentService():
             data['mandiri_clickpay']['input2'] = payloads['gross_amount']
             data['mandiri_clickpay']['input3'] = payloads['input3']
             data['mandiri_clickpay']['token'] = payloads['token']
+            data['bank'] = 'mandiri'
 
         midtrans_api_response = self.send_to_midtrans_api(data)
 
@@ -297,8 +301,10 @@ class PaymentService():
         )
 
         payload = result.json()
-        if 'bank' in payload and payloads['payment_type'] != 'credit_card':
-            payload['bank'] = payloads['bank_transfer']['bank']
+        if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
+            payload['bank'] = payloads['bank']
+        else:
+            payload['bank'] = payload['bank'] if 'bank' in payload else payloads['bank_transfer']['bank']
 
         if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
             self.save_payload(payload, payloads)
@@ -322,7 +328,7 @@ class PaymentService():
                     'updated_at': datetime.datetime.now(),
                     'transaction_status': status['transaction_status']
                 })
-
+                # on payment success
                 db.session.commit()
 
         return status
@@ -352,8 +358,8 @@ class PaymentService():
         new_payment.transaction_status = data['transaction_status']
         new_payment.bank = data['bank']
         new_payment.fraud_status = data['fraud_status'] if 'fraud_status' in data else None
-        new_payment.masked_card = payloads['masked_card']
-        new_payment.saved_token_id = payloads['saved_token_id']
+        new_payment.masked_card = payloads['masked_card'] if 'masked_card' in data else None
+        new_payment.saved_token_id = payloads['saved_token_id'] if 'saved_token_id' in data else None
 
         db.session.add(new_payment)
         db.session.commit()
