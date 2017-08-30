@@ -53,7 +53,6 @@
             "price": $('.add-ticket-price').val(),
             "information": $('.add-ticket-information').val()
         };
-        console.log(payload, 'kmkml')
         dsa.post('tickets', payload, function(result) {
             if(result.meta.success) {
                 window.location = "http://localhost:5000/tickets";
