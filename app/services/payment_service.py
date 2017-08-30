@@ -312,10 +312,16 @@ class PaymentService():
         return payload
 
     def update(self, id):
+        # get the transaction id from payment table
+        payment = db.session.query(Payment).filter_by(id=id).first()
+        if payment is not None:
+            payment = payment.as_dict()
+        else:
+            return 'payment not found'
         payment_status = requests.get(
-            url + str(id) + '/status',
+            url + str(payment['order_id']) + '/status',
             headers=self.headers
-        ) 
+        )
 
         status = payment_status.json()
 
