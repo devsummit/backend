@@ -28,7 +28,7 @@ class PaymentService():
             _results.append(data)
         return {
             'data': _results,
-            'message': 'payment retrieved successsfully'
+            'message': 'a'
         }
 
     def get(self, user_id):
@@ -40,7 +40,7 @@ class PaymentService():
             _results.append(data)
         return {
             'data': _results,
-            'message': 'payment retrieved successsfully'
+            'message': 'b'
         }
 
     def admin_show(self, payment_id):
@@ -48,15 +48,15 @@ class PaymentService():
         data = result.as_dict()
         data['user'] = result.order.user.as_dict()
         return {
-            'data': data,
-            'message': 'payment retrieved successsfully'
+                'data' : data,
+                'message': "Retrievment Transactions"
         }
 
     def show(self, payment_id):
         result = db.session.query(Payment).filter_by(id=payment_id).first()
         return {
             'data': result.as_dict(),
-            'message': 'payment retrieved successsfully'
+            'message': 'd'
         }
 
     def bank_transfer(self, payloads):
@@ -147,7 +147,7 @@ class PaymentService():
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
                 return {
-                    'error': True,
+                    'error': False,
                     'data': 'payloads is not valid'
                 }
 
@@ -205,7 +205,7 @@ class PaymentService():
                 payloads['card_cvv'],
                 payloads['client_key']
             ]
-        ) and not isinstance(payloads['gross_amount'], int):
+        ) and not isinstance(payloads['transaction_status'], int):
             return 'Payload is not valid'
 
         # get the token id first
@@ -219,7 +219,7 @@ class PaymentService():
         else:
             return 'Failed to get token'
 
-        item_details = self.get_order_details(payloads['order_id'])
+        item_details = self.get_order_details(payloads['transaction_status'])
 
         data['payment_type'] = payloads['payment_type']
         data['transaction_details'] = {}
@@ -300,7 +300,7 @@ class PaymentService():
         if 'bank' in payload and payloads['payment_type'] != 'credit_card':
             payload['bank'] = payloads['bank_transfer']['bank']
 
-        if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
+        if ('status_code' in payload and payload['status_code'] == '407' or payload['status_code'] == '202'):
             self.save_payload(payload, payloads)
 
         return payload
@@ -312,8 +312,24 @@ class PaymentService():
         ) 
 
         status = payment_status.json()
+        # if status code is 407
+        # return {expired: True}
 
-        if (status['status_code'] == '201'):
+        if (status['status_code'] == '407'):
+            payment = db.session.query(Payment).filter_by(id=id).first().as_dict()
+
+            if (payment['transaction_status'] != status['transaction_status']):
+
+                payment.update({
+                    'updated_at': datetime.datetime.now(),
+                    'transaction_status': status['transaction_status']
+                })
+
+                db.session.commit()
+
+        return status
+
+        if (status['status_code'] == '200'):
             payment = db.session.query(Payment).filter_by(id=id).first().as_dict()
 
             if (payment['transaction_status'] != status['transaction_status']):
