@@ -1,4 +1,4 @@
-from app.models.base_controller import BaseController
+from app.controllers.base_controller import BaseController
 from app.services import orderdetailservice
 
 
