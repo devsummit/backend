@@ -15,6 +15,7 @@ from seeders.payments_seeder import PaymentsSeeder
 from seeders.orders_seeder import OrdersSeeder
 from seeders.order_details_seeder import OrdersDetailsSeeder
 
+
 class Seed():
 
 	@staticmethod

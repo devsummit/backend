@@ -28,7 +28,7 @@ class OrdersDetailsSeeder():
             new_orderdetails = OrderDetails()
             new_orderdetails.ticket_id = ticket_id
             new_orderdetails.order_id = order_id
-            new_orderdetails.count = random.randint(1,6)
+            new_orderdetails.count = random.randint(1, 6)
             new_orderdetails.price = ticket_price
             db.session.add(new_orderdetails)
             db.session.commit()
