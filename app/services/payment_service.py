@@ -283,6 +283,9 @@ class PaymentService():
         if (payloads['payment_type'] == 'mandiri_clickpay'):
             data['mandiri_clickpay'] = {}
             data['mandiri_clickpay']['card_number'] = payloads['card_number']
+            data['mandiri_clickpay']['input1'] = payloads['card_number'][6:]
+            print(payloads['card_number'])
+            print(payloads['card_number'][6:])
             data['mandiri_clickpay']['input2'] = payloads['gross_amount']
             data['mandiri_clickpay']['input3'] = payloads['input3']
             data['mandiri_clickpay']['token'] = payloads['token']
@@ -301,6 +304,10 @@ class PaymentService():
                 json=payloads
         )
         payload = result.json()
+        print('payloads')
+        print(payloads)
+        print('payload')
+        print(payload)
 
         if(payload['status_code'] != '400'):
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
@@ -312,7 +319,7 @@ class PaymentService():
                 self.save_payload(payload, payloads)
 
             # if  not fraud and captured save ticket to user_ticket table
-            if(payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
+            if('fraud_status' in payload and payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
                 order = db.session.query(Order).filter_by(id=payload['order_id']).first()
                 self.save_paid_ticket(order.as_dict())
 
@@ -386,8 +393,8 @@ class PaymentService():
         new_payment.transaction_status = data['transaction_status']
         new_payment.bank = data['bank']
         new_payment.fraud_status = data['fraud_status'] if 'fraud_status' in data else None
-        new_payment.masked_card = payloads['masked_card'] if 'masked_card' in data else None
-        new_payment.saved_token_id = payloads['saved_token_id'] if 'saved_token_id' in data else None
+        new_payment.masked_card = payloads['masked_card'] if 'masked_card' in payloads else None
+        new_payment.saved_token_id = payloads['saved_token_id'] if 'saved_token_id' in payloads else None
 
         db.session.add(new_payment)
         db.session.commit()
