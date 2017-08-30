@@ -14,6 +14,10 @@ def index():
 def getAttendees():
     return MainController.getAttendees()
 
+@main.route('/tickets')
+def getTickets():
+    return MainController.getTickets()
+
 
 @main.route('/login')
 def login():
