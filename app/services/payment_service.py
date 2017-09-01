@@ -210,7 +210,7 @@ class PaymentService():
             return 'Payload is not valid'
 
         # get the token id first
-        token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + payloads['gross_amount'] + '&client_key=' + payloads['client_key'], headers=self.headers)
+        token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + str(payloads['gross_amount']) + '&client_key=' + payloads['client_key'], headers=self.headers)
         token_id = token_id.json()
         # prepare data 
         data = {}
@@ -284,8 +284,6 @@ class PaymentService():
             data['mandiri_clickpay'] = {}
             data['mandiri_clickpay']['card_number'] = payloads['card_number']
             data['mandiri_clickpay']['input1'] = payloads['card_number'][6:]
-            print(payloads['card_number'])
-            print(payloads['card_number'][6:])
             data['mandiri_clickpay']['input2'] = payloads['gross_amount']
             data['mandiri_clickpay']['input3'] = payloads['input3']
             data['mandiri_clickpay']['token'] = payloads['token']
@@ -304,10 +302,6 @@ class PaymentService():
                 json=payloads
         )
         payload = result.json()
-        print('payloads')
-        print(payloads)
-        print('payload')
-        print(payload)
 
         if(payload['status_code'] != '400'):
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
