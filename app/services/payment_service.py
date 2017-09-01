@@ -334,7 +334,7 @@ class PaymentService():
 
         status = payment_status.json()
 
-        if (status['status_code'] == '200' or status['status_code'] == '201'):
+        if (status['status_code'] in ['200', '201', '407']):
 
             if (payment['transaction_status'] != status['transaction_status']):
                 payment = db.session.query(Payment).filter_by(id=id)
