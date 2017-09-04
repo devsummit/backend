@@ -1,0 +1,105 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Referal code list </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Referals
+        <small>List of referals</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Referals</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <table id="referal-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Owner</th>
+                    <th>Discount percentage %</th>
+                    <th>Referal code</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for referal in referals %}
+                    <tr>
+                        <td>
+                            {{ referal.owner }}
+                        </td>
+                        <td>
+                            {{ referal.discount_amount }}
+                        </td>
+                        <td>
+                            {{ referal.referal_code }}
+                        </td>
+                         <td>
+                            <button id='btd-{{ referal.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                            <button id='btd-{{ referal.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <tr>
+                <a href="#" class="btn btn-primary btn-block btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+            </tr>
+        </div>
+
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    /* Display Attendee Detail */
+    $('.btn-edit').click(function(event){
+        $('.modal-title').html('Edit');
+
+        const btd_id = $(event.target).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        dsa.get('referals/' + id, function(result) {
+            // bind result value in to attendee_detail.html 
+            const data = result['data'];
+            $('.referal-owner').val(data['owner']);
+            $('.referal-discountamount').val(data['discount_amount']);
+            $('.referal-code').val(data['referal_code']);
+            $('.btn-save').attr("id", data['id']);
+        });
+    })
+
+    $('.btn-add').click(function(event){
+        $('.modal-title').html('Add New Referal');
+    });
+
+    $('.btn-delete').click(function(event){
+        $('.modal-title').html('Delete');
+
+        const btd_id = $(event.target).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        $('.btn-yes').attr("id", data['id']);
+    })
+    $(function () {
+        $('#referal-list1').DataTable();
+    })
+</script>
+
+{% endblock %}
