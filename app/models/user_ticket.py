@@ -9,13 +9,21 @@ class UserTicket(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'user_tickets'
 	# displayed fields
-	visible = ['id', 'user_id', 'ticket_id', 'used']
+	visible = ['id', 'user_id', 'ticket_id']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
-	user_id = db.Column(db.Integer)
-	ticket_id = db.Column(db.Integer)
-	used = db.Column(db.Boolean)
+	user_id = db.Column(
+		db.Integer,
+		db.ForeignKey('users.id'),
+		nullable=False
+	)
+	user = db.relationship('User')
+	ticket_id = db.Column(
+		db.Integer,
+		db.ForeignKey('tickets.id'),
+		nullable=False)
+	ticket = db.relationship('Ticket')
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
