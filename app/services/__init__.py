@@ -18,6 +18,7 @@ from app.services.booth_service import BoothService
 from app.services.user_ticket_service import UserTicketService
 from app.services.attendee_service import AttendeeService
 from app.services.payment_service import PaymentService 
+from app.services.referal_service import ReferalService 
 
 # instantiate service
 userservice = UserService()
@@ -39,3 +40,4 @@ boothservice = BoothService()
 userticketservice = UserTicketService()
 attendeeservice = AttendeeService()
 paymentservice = PaymentService()
+referalservice = ReferalService()

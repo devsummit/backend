@@ -25,6 +25,7 @@ from app.controllers.booth_controller import BoothController
 from app.controllers.user_ticket_controller import UserTicketController
 from app.controllers.attendee_controller import AttendeeController
 from app.controllers.payment_controller import PaymentController
+from app.controllers.referal_controller import ReferalController
 from app.configs.constants import ROLE
 
 
@@ -411,6 +412,13 @@ def user_tickets(*args, **kwargs):
 	elif(request.method == 'PATCH' or request.method == 'PUT'):
 		return UserTicketController.update(user_id, request)
 
+
+@api.route('/user/tickets/checkin', methods=['POST'])
+@token_required
+def check_in(*args, **kwargs):
+	return UserTicketController.check_in(request)
+
+
 # Attendee api
 
 
@@ -464,3 +472,27 @@ def show_payment(payment_id, *args, **kwargs):
 		return PaymentController.admin_show_payment(payment_id)
 	else:
 		return PaymentController.show_payment(payment_id)
+
+# Referal api
+
+
+@api.route('/referals', methods=['GET', 'POST'])
+@token_required
+def referal(*args, **kwargs):
+	if(request.method == 'POST'):
+		return ReferalController.create(request)
+	elif(request.method == 'GET'):
+		return ReferalController.index()
+
+# Referal route by id
+
+
+@api.route('/referals/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def referal_id(id, *args, **kwargs):
+	if(request.method == 'PUT' or request.method == 'PATCH'):
+		return ReferalController.update(request, id)
+	elif(request.method == 'DELETE'):
+		return ReferalController.delete(id)
+	elif(request.method == 'GET'):
+		return ReferalController.show(id)
