@@ -356,7 +356,6 @@ class PaymentService():
             data = item.as_dict()
             user_ticket = UserTicket()
             user_ticket.user_id = order['user_id']
-            user_ticket.used = False
             user_ticket.ticket_id = data['ticket_id']
             db.session.add(user_ticket)
             db.session.commit()
