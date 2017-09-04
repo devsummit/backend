@@ -3,6 +3,7 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order_details import OrderDetails
+from app.models.payment import Payment
 from app.models.ticket import Ticket
 
 
@@ -12,8 +13,12 @@ class OrderDetailsService():
 		_results = []
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
 		for detail in order_details:
+			order = detail.order.as_dict()
+			payment = db.session.query(Payment).filter_by(order_id=order['id']).first()
+			payment = payment.as_dict() if payment is not None else None
 			data = detail.as_dict()
 			data['ticket'] = detail.ticket.as_dict()
+			data['payment'] = payment
 			_results.append(data)
 		return _results
 		# return order_details

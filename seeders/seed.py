@@ -13,6 +13,7 @@ from seeders.booths_seeder import BoothsSeeder
 from seeders.clients_seeder import ClientsSeeder
 from seeders.payments_seeder import PaymentsSeeder
 from seeders.orders_seeder import OrdersSeeder
+from seeders.order_details_seeder import OrdersDetailsSeeder
 
 
 class Seed():
@@ -78,3 +79,7 @@ class Seed():
 		print('seeding payments...')
 		PaymentsSeeder.run()
 		print('finish seeding payment')
+
+		print('seeding orderdetailsseeder')
+		OrdersDetailsSeeder.run()
+		print('finish Order Details Seeder')

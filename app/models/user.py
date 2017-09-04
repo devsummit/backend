@@ -10,6 +10,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 from app.models.base_model import BaseModel
 from app.models.user_photo import UserPhoto
 from app.models import db
+from app.services.helper import Helper
 
 
 class User(db.Model, BaseModel):
@@ -41,7 +42,7 @@ class User(db.Model, BaseModel):
 	def verify_password(self, password):
 		return check_password_hash(self.password, password)
 
-	def generate_auth_token(self, expiration=6000):
+	def generate_auth_token(self, expiration=3600*24):
 		s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
 		return s.dumps({'id': self.id})
 
@@ -61,5 +62,10 @@ class User(db.Model, BaseModel):
 		return secrets.token_hex(8)
 
 	def include_photos(self):
-		self.photos = BaseModel.as_list(db.session.query(UserPhoto).filter_by(user_id=self.id).all())
+		results = db.session.query(UserPhoto).filter_by(user_id=self.id).all()
+		self.photos = []
+		for result in results:
+			data = result.as_dict()
+			data['url'] = Helper().url_helper(data['url'], current_app.config['GET_DEST'])
+			self.photos.append(data)
 		return self

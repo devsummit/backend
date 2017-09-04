@@ -18,6 +18,10 @@ def getAttendees():
 def getPayments():
     return MainController.getPayments()
 
+@main.route('/tickets')
+def getTickets():
+    return MainController.getTickets()
+
 @main.route('/login')
 def login():
     return render_template('admin/auth/login.html')

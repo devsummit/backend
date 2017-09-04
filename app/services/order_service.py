@@ -3,6 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
 from app.models.ticket import Ticket
+from app.models.payment import Payment
 
 from app.models.order_details import OrderDetails
 
@@ -14,7 +15,14 @@ class OrderService():
 		results = []
 		for order in orders:
 			items = db.session.query(OrderDetails).filter_by(order_id=order.id).all()
+			payment = db.session.query(Payment).filter_by(order_id=order.id).first()
 			order = order.as_dict()
+			if payment is not None:
+				payment = payment.as_dict()
+				order['payment'] = payment
+			else: 
+				order['payment'] = None
+
 			amount = 0
 			for item in items:
 				amount += item.price * item.count 
@@ -46,10 +54,10 @@ class OrderService():
 				# get ticket data
 				ticket = self.get_ticket(item['ticket_id'])
 				order_item.price = ticket.price
-				order_items.append(order_item.as_dict())
 				db.session.add(order_item)
+				db.session.commit()
+				order_items.append(order_item.as_dict())
 			# save all items
-			db.session.commit()
 			return {
 				'error': False,
 				'data': data,
