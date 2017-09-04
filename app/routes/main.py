@@ -19,6 +19,7 @@ def get_attendees():
 def get_tickets():
     return MainController.getTickets()
 
+
 @main.route('/referals')
 def get_referals():
 	return MainController.getReferals()
