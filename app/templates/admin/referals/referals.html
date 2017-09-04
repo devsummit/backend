@@ -60,6 +60,9 @@
                 <a href="#" class="btn btn-primary btn-block btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
             </tr>
         </div>
+        {% include "admin/referals/referal_edit.html" %}
+        {% include "admin/referals/referal_add.html" %}
+        {% include "admin/referals/referal_delete.html" %}
 
 {% endblock %}
 
@@ -95,7 +98,7 @@
 
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
-        $('.btn-yes').attr("id", data['id']);
+        $('.btn-yes').attr("id", id);
     })
     $(function () {
         $('#referal-list1').DataTable();
