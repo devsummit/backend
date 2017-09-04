@@ -342,7 +342,7 @@ class PaymentService():
                     'updated_at': datetime.datetime.now(),
                     'transaction_status': status['transaction_status']
                 })
-                
+
                 db.session.commit()
                 if (payment.first().as_dict()['transaction_status'] == 'capture'):
                     # on payment success
@@ -360,7 +360,6 @@ class PaymentService():
             user_ticket.ticket_id = data['ticket_id']
             db.session.add(user_ticket)
             db.session.commit()
-
 
     def get_order_details(self, order_id):
         # using order_id to get ticket_id, price, quantity, ticket_type(name) in payment service
