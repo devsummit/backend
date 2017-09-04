@@ -60,12 +60,18 @@ class PaymentService():
             'message': 'payment retrieved successsfully'
         }
 
+    def get_order_referal(self, order_id):
+        order = db.session.query(Order).filter_by(id=order_id).first()
+        ref = order.referal.as_dict() if order.referal else None
+        return ref
+
     def bank_transfer(self, payloads):
 
         payloads['gross_amount'] = int(payloads['gross_amount'])
-
+        # check for referal discount
+        ref = self.get_order_referal(payloads['order_id'])
         # generate order details payload
-        details = self.get_order_details(payloads['order_id'])
+        details = self.get_order_details(payloads['order_id'], ref)
 
         if (payloads['bank'] == 'bca'):
 
@@ -220,7 +226,10 @@ class PaymentService():
         else:
             return 'Failed to get token'
 
-        item_details = self.get_order_details(payloads['order_id'])
+        # check for referal discount
+        ref = self.get_order_referal(payloads['order_id'])
+        # generate order details payload
+        item_details = self.get_order_details(payloads['order_id'], ref)
 
         data['payment_type'] = payloads['payment_type']
         data['transaction_details'] = {}
@@ -249,7 +258,9 @@ class PaymentService():
                 'message': 'payloads is not valid'
             }
 
-        details = self.get_order_details(payloads['order_id'])
+        # check for referal discount
+        ref = self.get_order_referal(payloads['order_id'])
+        details = self.get_order_details(payloads['order_id'], ref)
 
         data = {}
         data['payment_type'] = payloads['payment_type']
@@ -360,10 +371,12 @@ class PaymentService():
             db.session.add(user_ticket)
             db.session.commit()
 
-    def get_order_details(self, order_id):
+    def get_order_details(self, order_id, referal=None):
         # using order_id to get ticket_id, price, quantity, ticket_type(name) in payment service
         item_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
         result = []
+        total = 0
+        last_id = 0
         for item in item_details:
             ticket = item.ticket.as_dict()
             item = item.as_dict()
@@ -372,6 +385,15 @@ class PaymentService():
             temp['price'] = item['price']
             temp['quantity'] = item['count']
             temp['id'] = item['id']
+            total = total + (item['price'] * item['count'])
+            last_id = temp['id']
+            result.append(temp)
+        if referal is not None:
+            temp = {}
+            temp['name'] = referal['owner']
+            temp['price'] = -(total * referal['discount_amount'])
+            temp['quantity'] = 1
+            temp['id'] = last_id + 1
             result.append(temp)
         return result
 
