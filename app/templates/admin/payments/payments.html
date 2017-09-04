@@ -46,7 +46,7 @@
                             {{ payment.order_id|e }}
                         </td>
                         <td>
-                            <a href="" id='atd-{{ payment.id }}' class="payments-name">{{ payment.user['last_name'] + ', ' + payment.user['first_name']|e }}</a> 
+                            <a href="" id='atd-{{ payment.user["id"] }}' class="payments-name">{{ payment.user['last_name'] + ', ' + payment.user['first_name']|e }}</a> 
                         </td>
                         <td>
                             {{ payment.user['email']|e }}
@@ -70,7 +70,7 @@
                             {{ payment.transaction_time|e }}
                         </td>
                         <td>
-                            <button id='btd-{{ payment.id }}' type="button" class="btn btn-sm btn-info btn-detail" data-toggle="modal" data-target="#modal-detail">
+                            <button id='btd-{{ payment.user["id"]}}' type="button" class="btn btn-sm btn-info btn-detail" data-toggle="modal" data-target="#modal-detail">
                                 Detail
                             </button>
                         </td>
@@ -80,7 +80,7 @@
             </table>
         </div>
 
-        {% include "admin/payments/payment_detail.html" ignore missing %}
+        {% include "admin/attendees/attendee_detail.html" ignore missing %}
 {% endblock %}
 
 {% block footer_link %}
@@ -96,20 +96,20 @@
         const id = atd_id.substring(4, atd_id.length);
         $('#btd-'+id).click();
     });
-    /* Display payment Detail */
+    /* Display attendee Detail */
     $('.btn-detail').click(function(event){
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
-        dsa.get('payments/' + id, function(result) {
-            // bind result value in to payment_detail.html 
+        dsa.get('attendees/' + id, function(result) {
+            // bind result value in to attendee_detail.html 
             const data = result['data'];
             if (data['user']['url']) {
-                $('.payment-picture').attr('src', data['user']['url']);
+                $('.attendee-picture').attr('src', data['user']['url']);
             }
-            $('.payment-name').html(data['user']['first_name'] + ' ' + data['user']['last_name']);
-            $('.payment-email').html(data['user']['email']);
-            $('.payment-registered_at').html(data['user']['created_at']);
-            $('.payment-points').html(data['points']); 
+            $('.attendee-name').html(data['user']['first_name'] + ' ' + data['user']['last_name']);
+            $('.attendee-email').html(data['user']['email']);
+            $('.attendee-registered_at').html(data['user']['created_at']);
+            $('.attendee-points').html(data['points']); 
         });
     })
     $(function () {
