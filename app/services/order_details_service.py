@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.order_details import OrderDetails
 from app.models.payment import Payment
 from app.models.ticket import Ticket
+from app.models.order import Order
 
 
 class OrderDetailsService():
@@ -12,6 +13,8 @@ class OrderDetailsService():
 	def get(self, order_id):
 		_results = []
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
+		order = db.session.query(Order).filter_by(id=order_id).first()
+		included = order.referal.as_dict() if order.referal else None
 		for detail in order_details:
 			order = detail.order.as_dict()
 			payment = db.session.query(Payment).filter_by(order_id=order['id']).first()
@@ -20,7 +23,11 @@ class OrderDetailsService():
 			data['ticket'] = detail.ticket.as_dict()
 			data['payment'] = payment
 			_results.append(data)
-		return _results
+		return {
+			'error': False,
+			'data': _results,
+			'included': included
+		}
 		# return order_details
 
 	def show(self, order_id, detail_id):
