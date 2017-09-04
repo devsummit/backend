@@ -20,7 +20,12 @@
             Authorization: dsa.acess_token()
         },
         success: onSuccess ? function(result){
-            onSuccess(result);
+            if(result['expired']) {
+                clearCredential();
+                window.location.href = '/login';
+            } else {
+                onSuccess(result);
+            }
         } : null
     });
 
