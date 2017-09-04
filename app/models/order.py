@@ -1,7 +1,7 @@
 import datetime
 # import classes
 from app.models.base_model import BaseModel
-from app.models.referal import Referal
+from app.models.referal import Referal  # noqa
 from app.models import db
 
 

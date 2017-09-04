@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-	op.create_table(
+    op.create_table(
         'referals',
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('owner', sa.String),
@@ -26,6 +26,7 @@ def upgrade():
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
         )
+
 
 def downgrade():
     op.drop_table('referals')
