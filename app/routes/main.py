@@ -11,13 +11,18 @@ def index():
 
 
 @main.route('/attendees')
-def getAttendees():
+def get_attendees():
     return MainController.getAttendees()
 
 
 @main.route('/tickets')
-def getTickets():
+def get_tickets():
     return MainController.getTickets()
+
+
+@main.route('/referals')
+def get_referals():
+	return MainController.getReferals()
 
 
 @main.route('/login')
