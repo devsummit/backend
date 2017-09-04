@@ -1,4 +1,3 @@
-from faker import Faker
 from app.models.ticket import Ticket
 from app.models import db
 
@@ -14,19 +13,24 @@ class TicketsSeeder():
         """
         Create 4 Ticket seeds
         """
-        TICKET = dict([('gold', 150000), ('ruby', 100000),
-                       ('siver', 50000), ('bacan', 25000)])
 
-        fake = Faker()
+        full_ticket = Ticket()
+        daily_ticket = Ticket()
+        community_ticket = Ticket()
 
-        for key, value in TICKET.items():
-            new_ticket = Ticket()
+        full_ticket.ticket_type = 'full'
+        daily_ticket.ticket_type = 'daily'
+        community_ticket.ticket_type = 'community'
 
-            new_ticket.ticket_type = key
+        full_ticket.price = 400000
+        daily_ticket.price = 200000
+        community_ticket.price = 0
 
-            new_ticket.price = value
+        full_ticket.information = 'Ticket for full 3 days devsummit event.'
+        daily_ticket.information = 'Ticket for 1 day at devsummit event.'
+        community_ticket.information = 'Ticket for community, only given by admin.'
+        db.session.add(full_ticket)
+        db.session.add(daily_ticket)
+        db.session.add(community_ticket)
 
-            new_ticket.information = fake.sentence(
-                nb_words=6, variable_nb_words=True, ext_word_list=None)
-            db.session.add(new_ticket)
-            db.session.commit()
+        db.session.commit()
