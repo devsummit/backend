@@ -34,20 +34,25 @@ class UserAuthorizationController(BaseController):
                         user = user.include_photos().as_dict()
                         return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
-                        return BaseController.send_error_api(None, 'wrong credentials')
+                        return BaseController.send_error_api({'wrong_credential': True}, 'wrong credentials')
                 else:
-                    return BaseController.send_error_api(None, 'username not found')
-            return BaseController.send_error_api(None, 'username and password required')
+                    return BaseController.send_error_api({'not_registered': True}, 'username not found')
+            return BaseController.send_error_api({'payload_invalid': True}, 'username and password required')
         else:
             # social sign in
             social_token = request.json['token'] if 'token' in request.json else None
+
+            if (social_token is None):
+                return BaseController.send_error_api({'payload_invalid': True}, 'social token is missing.')
+
             if(provider == 'twitter'):
                 token_secret = request.json['token_secret'] if 'token_secret' in request.json else None
-                user_social_id = userservice.social_sign_in(
-                    provider, social_token, token_secret)
+                if (token_secret is None):
+                    return BaseController.send_error_api({'payload_invalid': True}, 'token secret is missing.')
+                user_social_id = userservice.social_sign_in(provider, social_token, token_secret)
             else:
-                user_social_id = userservice.social_sign_in(
-                    provider, social_token)
+                user_social_id = userservice.social_sign_in(provider, social_token)
+
             if (user_social_id is not None):
                 user = userservice.check_social_account(
                     provider, user_social_id)
@@ -56,9 +61,9 @@ class UserAuthorizationController(BaseController):
                     user = user.include_photos().as_dict()
                     return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                 else:
-                    return BaseController.send_error_api(None, 'user is not registered')
+                    return BaseController.send_error_api({'not_registered': True}, 'user is not registered')
             else:
-                return BaseController.send_error_api(None, 'token is invalid')
+                return BaseController.send_error_api({'wrong_credential': True}, 'token is invalid')
 
     @staticmethod
     def register(request):
@@ -79,7 +84,7 @@ class UserAuthorizationController(BaseController):
             token = request.json['token'] if 'token' in request.json else None
 
             if token is None:
-                return BaseController.send_response_api(None, 'payloads not valid')
+                return BaseController.send_error_api({'payload_invalid': True}, 'payload not valid')
 
             url = 'https://graph.accountkit.com/v1.2/me/?access_token=' + token
             result = requests.get(url)
@@ -87,6 +92,8 @@ class UserAuthorizationController(BaseController):
             accountId = None
             if 'error' not in payload:
                 accountId = payload['id'] if 'id' in payload else None
+            else:
+                return BaseController.send_error_api(None, 'error while validating token.')
             verified = (social_id == accountId)
             if verified:
                 payloads = {
@@ -109,7 +116,7 @@ class UserAuthorizationController(BaseController):
                 'social_id': social_id
             }
         else:
-            return BaseController.send_response_api(None, 'payloads not valid')
+            return BaseController.send_response_api({'payload_invalid': True}, 'payloads not valid')
 
         result = userservice.register(payloads)
         if not result['error']:
