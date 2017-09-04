@@ -411,6 +411,13 @@ def user_tickets(*args, **kwargs):
 	elif(request.method == 'PATCH' or request.method == 'PUT'):
 		return UserTicketController.update(user_id, request)
 
+
+@api.route('/user/tickets/checkin', methods=['POST'])
+@token_required
+def check_in(*args, **kwargs):
+	return UserTicketController.check_in(request)
+
+
 # Attendee api
 
 
