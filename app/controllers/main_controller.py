@@ -2,6 +2,7 @@ from flask import render_template
 from app.controllers.base_controller import BaseController
 from app.services import attendeeservice
 from app.services import ticketservice
+from app.services import referalservice
 
 
 class MainController(BaseController):
@@ -15,3 +16,7 @@ class MainController(BaseController):
     def getTickets():
         tickets = ticketservice.get()
         return render_template('admin/tickets/tickets.html', tickets=tickets)
+
+    def getReferals():
+    	referals = referalservice.get()
+    	return render_template('admin/referals/referals.html', referals=referals)
