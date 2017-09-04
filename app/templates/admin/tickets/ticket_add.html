@@ -1,0 +1,65 @@
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="ticket-type">Ticket type:</label>
+                                        <input type="text" class="form-control add-ticket-type" id="ticket-type">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="ticket-price">Ticket price:</label>
+                                        <input type="text" class="form-control add-ticket-price" id="ticket-price">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="ticket-information">Ticket information:</label>
+                                        <input type="text" class="form-control add-ticket-information" id="ticket-information">
+                                    </div>
+                                </li>
+                            </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-add" id="-"><b>Save</b></a>
+        
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Display Attendee Detail */
+    $('.btn-add').click(function(event){
+        payload = {
+            "ticket_type": $('.add-ticket-type').val(),
+            "price": $('.add-ticket-price').val(),
+            "information": $('.add-ticket-information').val()
+        };
+        dsa.post('tickets', payload, function(result) {
+            if(result.meta.success) {
+                window.location = "http://localhost:5000/tickets";
+            }
+        });
+    })
+    $(function () {
+        $('#attendee-list1').DataTable();
+    })
+</script>

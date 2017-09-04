@@ -210,7 +210,7 @@ class PaymentService():
             return 'Payload is not valid'
 
         # get the token id first
-        token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + payloads['gross_amount'] + '&client_key=' + payloads['client_key'], headers=self.headers)
+        token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + str(payloads['gross_amount']) + '&client_key=' + payloads['client_key'], headers=self.headers)
         token_id = token_id.json()
         # prepare data 
         data = {}
@@ -283,6 +283,7 @@ class PaymentService():
         if (payloads['payment_type'] == 'mandiri_clickpay'):
             data['mandiri_clickpay'] = {}
             data['mandiri_clickpay']['card_number'] = payloads['card_number']
+            data['mandiri_clickpay']['input1'] = payloads['card_number'][6:]
             data['mandiri_clickpay']['input2'] = payloads['gross_amount']
             data['mandiri_clickpay']['input3'] = payloads['input3']
             data['mandiri_clickpay']['token'] = payloads['token']
@@ -312,7 +313,7 @@ class PaymentService():
                 self.save_payload(payload, payloads)
 
             # if  not fraud and captured save ticket to user_ticket table
-            if(payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
+            if('fraud_status' in payload and payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
                 order = db.session.query(Order).filter_by(id=payload['order_id']).first()
                 self.save_paid_ticket(order.as_dict())
 
@@ -333,6 +334,7 @@ class PaymentService():
 
         status = payment_status.json()
 
+<<<<<<< HEAD
         if (status['status_code'] == '407' or status['status_code'] == '412'):
 
             if (payment['transaction_status'] != status['transaction_status']):
@@ -350,6 +352,9 @@ class PaymentService():
         return "has expired"
 
         if (status['status_code'] == '200' or status['status_code'] == '201'):
+=======
+        if (status['status_code'] in ['200', '201', '407']):
+>>>>>>> 2002832ee52f4f38035c4af9cf147ebe0c54b9b0
 
             if (payment['transaction_status'] != status['transaction_status']):
                 payment = db.session.query(Payment).filter_by(id=id)
@@ -402,8 +407,8 @@ class PaymentService():
         new_payment.transaction_status = data['transaction_status']
         new_payment.bank = data['bank']
         new_payment.fraud_status = data['fraud_status'] if 'fraud_status' in data else None
-        new_payment.masked_card = payloads['masked_card'] if 'masked_card' in data else None
-        new_payment.saved_token_id = payloads['saved_token_id'] if 'saved_token_id' in data else None
+        new_payment.masked_card = payloads['masked_card'] if 'masked_card' in payloads else None
+        new_payment.saved_token_id = payloads['saved_token_id'] if 'saved_token_id' in payloads else None
 
         db.session.add(new_payment)
         db.session.commit()

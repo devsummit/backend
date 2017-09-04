@@ -85,7 +85,7 @@ class UserService:
             data = e.orig.args
             return {
                 'error': True,
-                'data': None,
+                'data': {'sql_error': True},
                 'message': data
             }
 

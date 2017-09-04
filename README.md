@@ -13,6 +13,17 @@
 	`python manage.py seed`
 - run the server by `python manage.py server`.
 
+## Run On Docker
+
+You can run the server on docker simply by running:
+*not in virtual environment
+
+- `docker-compose build`
+- `docker-compose up` 
+
+additional setup including `migrations` and `seeding` will be the same as setup instruction above by `docker-compose exec bash web sh` to get into the container environment.
+and server should be up on `localhost:5000`
+
 ## Linting
 
 Make sure flake-8 is installed on your env, by running `make deps` inside your `env`

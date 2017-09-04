@@ -43,7 +43,15 @@
     };
 
     dsa.post = function(url, payloads=null, onSuccess=null) {
-        $.ajax(ajaxObj(url, 'GET', payloads, onSuccess));
+        $.ajax(ajaxObj(url, 'POST', payloads, onSuccess));
+    };
+
+    dsa.patch = function(url, payloads=null, onSuccess=null) {
+        $.ajax(ajaxObj(url, 'PUT', payloads, onSuccess));
+    };
+
+    dsa.delete = function(url, onSuccess=null) {
+        $.ajax(ajaxObj(url, 'DELETE', {}, onSuccess));
     };
 
     dsa.acess_token = function() {
