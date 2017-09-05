@@ -1,0 +1,67 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="referal-owner">Owner:</label>
+                                        <input type="text" class="form-control referal-owner" id="referal-owner">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="referal-discountamount">Discount Percentage %:</label>
+                                        <input type="text" class="form-control referal-discountamount" id="referal-discountamount">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="referal-code">Referal code:</label>
+                                        <input type="text" class="form-control referal-code" id="referal-code">
+                                    </div>
+                                </li>
+                            </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
+        
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Display Attendee Detail */
+    $('.btn-save').click(function(event){
+        const id = $(event.target).attr('id');
+        payload = {
+            "owner": $('.referal-owner').val(),
+            "discount_amount": $('.referal-discountamount').val(),
+            "referal_code": $('.referal-code').val()
+        };
+        dsa.patch('referals/' + id, payload, function(result) {
+            console.log(result, 'saved');
+            if(result.meta.success) {
+                window.location = "http://localhost:5000/referals";
+            }
+        });
+    })
+    $(function () {
+        $('#referal-list1').DataTable();
+    })
+</script>

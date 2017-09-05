@@ -4,26 +4,21 @@ from app.models import db
 from app.models.base_model import BaseModel
 
 
-class UserTicket(db.Model, BaseModel):
-
+class CheckIn(db.Model, BaseModel):
 	# table name
-	__tablename__ = 'user_tickets'
-	# displayed fields
-	visible = ['id', 'user_id', 'ticket_id']
+	__tablename__ = 'check_ins'
+
+	# visible fields
+	visible = ['id', 'user_ticket_id', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
-	user_id = db.Column(
+	user_ticket_id = db.Column(
 		db.Integer,
-		db.ForeignKey('users.id'),
+		db.ForeignKey('user_tickets.id'),
 		nullable=False
 	)
-	user = db.relationship('User')
-	ticket_id = db.Column(
-		db.Integer,
-		db.ForeignKey('tickets.id'),
-		nullable=False)
-	ticket = db.relationship('Ticket')
+	user_ticket = db.relationship('UserTicket')
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 

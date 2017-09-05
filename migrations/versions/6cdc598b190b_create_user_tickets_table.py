@@ -20,7 +20,6 @@ def upgrade():
 				sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
 				sa.Column('ticket_id', sa.Integer,
 					sa.ForeignKey('tickets.id')),
-				sa.Column('used', sa.Boolean),
 				sa.Column('created_at', sa.DateTime),
 				sa.Column('updated_at', sa.DateTime),
 				)
