@@ -26,6 +26,7 @@ from app.controllers.user_ticket_controller import UserTicketController
 from app.controllers.attendee_controller import AttendeeController
 from app.controllers.payment_controller import PaymentController
 from app.controllers.referal_controller import ReferalController
+from app.controllers.user_controller import UserController
 from app.configs.constants import ROLE
 
 
@@ -436,6 +437,24 @@ def attendees(*args, **kwargs):
 def attendees_id(id, *args, **kwargs):
 	if(request.method == 'GET'):
 		return AttendeeController.show(id)
+
+
+# User list
+
+@api.route('/users', methods=['GET'])
+@token_required
+def users(*args, **kwargs):
+	if(request.method == 'GET'):
+		return UserController.index()
+
+# User detail/ route by id
+
+@api.route('/users/<id>', methods=['GET'])
+@token_required
+def user_id(id, *args, **kwargs):
+	if(request.method == 'GET'):
+		return UserController.show(id)
+
 
 # Payment api
 
