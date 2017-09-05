@@ -10,6 +10,7 @@ from app.models.user_ticket import UserTicket
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 
 
+
 class PaymentService():
 
     def __init__(self):
@@ -27,10 +28,7 @@ class PaymentService():
             data = result.as_dict()
             data['user'] = result.order.user.as_dict()
             _results.append(data)
-        return {
-            'data': _results,
-            'message': 'payment retrieved successsfully'
-        }
+        return _results
 
     def get(self, user_id):
         # get the orders

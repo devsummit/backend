@@ -14,6 +14,9 @@ def index():
 def get_attendees():
     return MainController.getAttendees()
 
+@main.route('/payments')
+def getPayments():
+    return MainController.getPayments()
 
 @main.route('/tickets')
 def get_tickets():
