@@ -28,7 +28,7 @@
                 <thead>
                 <tr>
                     <th>OrderID</th>
-                    <th>Attendee Name</th>
+                    <th>user Name</th>
                     <th>Email</th>
                     <th>Gross Amount</th>
                     <th>Bank</th>
@@ -80,7 +80,7 @@
             </table>
         </div>
 
-        {% include "admin/attendees/attendee_detail.html" ignore missing %}
+        {% include "admin/users/user_detail.html" ignore missing %}
 {% endblock %}
 
 {% block footer_link %}
@@ -96,20 +96,22 @@
         const id = atd_id.substring(4, atd_id.length);
         $('#btd-'+id).click();
     });
-    /* Display attendee Detail */
+    /* Display user Detail using user detail template*/
     $('.btn-detail').click(function(event){
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
-        dsa.get('attendees/' + id, function(result) {
-            // bind result value in to attendee_detail.html 
+        dsa.get('users/' + id, function(result) {
+            // bind result value in to user_detail.html 
             const data = result['data'];
-            if (data['user']['url']) {
-                $('.attendee-picture').attr('src', data['user']['url']);
+            console.log(data);
+            if (data['photos'].length>0) {
+                $('.user-picture').attr('src', data['photos'][0]['url']);
             }
-            $('.attendee-name').html(data['user']['first_name'] + ' ' + data['user']['last_name']);
-            $('.attendee-email').html(data['user']['email']);
-            $('.attendee-registered_at').html(data['user']['created_at']);
-            $('.attendee-points').html(data['points']); 
+            $('.user-name').html(data['first_name'] + ' ' + data['last_name']);
+            $('.user-email').html(data['email']);
+            $('.user-registered_at').html(data['created_at']);
+            $('.user-social-id').html(data['social_id']); 
+            $('.user-username').html(data['username']); 
         });
     })
     $(function () {
