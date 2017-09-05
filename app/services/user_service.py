@@ -89,6 +89,20 @@ class UserService:
                 'message': data
             }
 
+    def list_user(self):
+        users = db.session.query(
+            User).all()
+        _users = []
+        for user in users:
+            data = user.include_photos().as_dict()
+            _users.append(data)
+        return _users
+
+    def get_user_by_id(self, id):
+        user = db.session.query(
+            User).filter_by(id=id).first()
+        return user.include_photos().as_dict()
+
     def get_user(self, username):
         self.model_user = db.session.query(
             User).filter_by(username=username).first()
@@ -188,8 +202,7 @@ class UserService:
             user_id=self.model_user.id).first()
         if not token_exist:
             self.model_access_token = AccessToken()
-            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(
-            ), self.model_user.generate_refresh_token(), self.model_user.id)
+            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(), self.model_user.generate_refresh_token(), self.model_user.id)
             db.session.add(payload)
             db.session.commit()
             return {
@@ -269,11 +282,11 @@ class UserService:
         try:
             self.model_access_token = db.session.query(
                 AccessToken).filter_by(id=id)
-            self.model_user = db.session.query(User).filter_by(
+            users = db.session.query(User).filter_by(
                 id=self.model_access_token.first().as_dict()['user_id']).first()
             self.model_access_token.update({
-                'access_token': self.model_user.generate_auth_token().decode(),
-                'refresh_token': self.model_user.generate_refresh_token(),
+                'access_token': users.generate_auth_token().decode(),
+                'refresh_token': users.generate_refresh_token(),
                 'updated_at': datetime.datetime.now()
             })
             db.session.commit()

@@ -27,10 +27,7 @@ class PaymentService():
             data = result.as_dict()
             data['user'] = result.order.user.as_dict()
             _results.append(data)
-        return {
-            'data': _results,
-            'message': 'payment retrieved successsfully'
-        }
+        return _results
 
     def get(self, user_id):
         # get the orders

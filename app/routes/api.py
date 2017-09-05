@@ -26,6 +26,7 @@ from app.controllers.user_ticket_controller import UserTicketController
 from app.controllers.attendee_controller import AttendeeController
 from app.controllers.payment_controller import PaymentController
 from app.controllers.referal_controller import ReferalController
+from app.controllers.user_controller import UserController
 from app.configs.constants import ROLE
 
 
@@ -278,11 +279,12 @@ def booth(*args, **kwargs):
 # Booth route by id
 
 
-@api.route('/booths/<booth_id>', methods=['GET'])
+@api.route('/booths/<booth_id>', methods=['GET', 'PUT', 'PATCH'])
 @token_required
 def booth_id(booth_id, *args, **kwargs):
 	if(request.method == 'GET'):
 		return BoothController.show(booth_id)
+	return BoothController.update(request, None, booth_id)
 
 
 # Point endpoint
@@ -437,6 +439,25 @@ def attendees_id(id, *args, **kwargs):
 	if(request.method == 'GET'):
 		return AttendeeController.show(id)
 
+
+# User list
+
+@api.route('/users', methods=['GET'])
+@token_required
+def users(*args, **kwargs):
+	if(request.method == 'GET'):
+		return UserController.index()
+
+# User detail/ route by id
+
+
+@api.route('/users/<id>', methods=['GET'])
+@token_required
+def user_id(id, *args, **kwargs):
+	if(request.method == 'GET'):
+		return UserController.show(id)
+
+
 # Payment api
 
 
@@ -496,3 +517,11 @@ def referal_id(id, *args, **kwargs):
 		return ReferalController.delete(id)
 	elif(request.method == 'GET'):
 		return ReferalController.show(id)
+
+
+# get referal id
+
+@api.route('/referals/check', methods=['POST'])
+@token_required
+def check_referal(*args, **kwargs):
+	return ReferalController.check(request)

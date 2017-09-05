@@ -15,6 +15,11 @@ def get_attendees():
     return MainController.getAttendees()
 
 
+@main.route('/payments')
+def getPayments():
+    return MainController.getPayments()
+
+
 @main.route('/tickets')
 def get_tickets():
     return MainController.getTickets()
@@ -23,6 +28,11 @@ def get_tickets():
 @main.route('/referals')
 def get_referals():
 	return MainController.getReferals()
+
+
+@main.route('/booths')
+def get_booths():
+	return MainController.getBooths()
 
 
 @main.route('/login')

@@ -1,0 +1,121 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> payments list </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Payments
+        <small>List of payments</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Payments</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <table id="payment-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>OrderID</th>
+                    <th>user Name</th>
+                    <th>Email</th>
+                    <th>Gross Amount</th>
+                    <th>Bank</th>
+                    <th>PaymentType</th>
+                    <th>TransactionID</th>
+                    <th>Transaction Status</th>
+                    <th>Transaction Time</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>
+                            {{ payment.order_id|e }}
+                        </td>
+                        <td>
+                            <a href="" id='atd-{{ payment.user["id"] }}' class="payments-name">{{ payment.user['last_name'] + ', ' + payment.user['first_name']|e }}</a> 
+                        </td>
+                        <td>
+                            {{ payment.user['email']|e }}
+                        </td>
+                        <td>
+                            {{ payment.gross_amount|e }}
+                        </td>
+                        <td>
+                            {{ payment.bank|e }}
+                        </td>
+                        <td>
+                            {{ payment.payment_type|e }}
+                        </td>
+                        <td>
+                            {{ payment.transaction_id|e }}
+                        </td>
+                        <td>
+                            {{ payment.transaction_status|e }}
+                        </td>
+                        <td>
+                            {{ payment.transaction_time|e }}
+                        </td>
+                        <td>
+                            <button id='btd-{{ payment.user["id"]}}' type="button" class="btn btn-sm btn-info btn-detail" data-toggle="modal" data-target="#modal-detail">
+                                Detail
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include "admin/users/user_detail.html" ignore missing %}
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    $('.payments-name').click(function(event){
+        event.preventDefault();
+        const atd_id = $(event.target).attr('id');
+        const id = atd_id.substring(4, atd_id.length);
+        $('#btd-'+id).click();
+    });
+    /* Display user Detail using user detail template*/
+    $('.btn-detail').click(function(event){
+        const btd_id = $(event.target).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        dsa.get('users/' + id, function(result) {
+            // bind result value in to user_detail.html 
+            const data = result['data'];
+            console.log(data);
+            if (data['photos'].length>0) {
+                $('.user-picture').attr('src', data['photos'][0]['url']);
+            }
+            $('.user-name').html(data['first_name'] + ' ' + data['last_name']);
+            $('.user-email').html(data['email']);
+            $('.user-registered_at').html(data['created_at']);
+            $('.user-social-id').html(data['social_id']); 
+            $('.user-username').html(data['username']); 
+        });
+    })
+    $(function () {
+        $('#payment-list1').DataTable();
+    })
+</script>
+{% endblock %}
