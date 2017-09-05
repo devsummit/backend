@@ -28,6 +28,11 @@ def get_referals():
 	return MainController.getReferals()
 
 
+@main.route('/booths')
+def get_booths():
+	return MainController.getBooths()
+
+
 @main.route('/login')
 def login():
     return render_template('admin/auth/login.html')
