@@ -30,7 +30,7 @@ class UserAuthorizationController(BaseController):
                 user = userservice.get_user(username)                
 
                 if user is not None:
-                    if admin is not None and admin == True:
+                    if admin is not None and admin:
                         if user.as_dict()['role_id'] != 1:
                             return BaseController.send_error_api({'unauthorized': True}, 'unauthorized, must be admin to access this page.')
                     if user.verify_password(password):
