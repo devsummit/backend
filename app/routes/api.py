@@ -496,3 +496,11 @@ def referal_id(id, *args, **kwargs):
 		return ReferalController.delete(id)
 	elif(request.method == 'GET'):
 		return ReferalController.show(id)
+
+
+# get referal id
+
+@api.route('/referals/check', methods=['POST'])
+@token_required
+def check_referal(*args, **kwargs):
+	return ReferalController.check(request)
