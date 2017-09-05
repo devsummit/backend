@@ -251,6 +251,17 @@ class PaymentController(BaseController):
                 else:
                     return BaseController.send_error_api(None, result)
 
+            if (payment_type == 'cstore'):
+
+                payloads['payment_type'] = payment_type
+
+                result = paymentservice.cstore(payloads)
+
+                if result['status_code'] == '201' or result['status_code'] == '200':
+                    return BaseController.send_response_api(result, 'Indomater payment transaction created succesfully')
+                else:
+                    return BaseController.send_error_api(None, result)
+
     @staticmethod
     def status(id):
 
