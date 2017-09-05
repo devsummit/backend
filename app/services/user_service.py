@@ -94,7 +94,7 @@ class UserService:
             User).all()
         _users = []
         for user in users:
-            data =  user.include_photos().as_dict()
+            data = user.include_photos().as_dict()
             _users.append(data)
         return _users
 
@@ -202,7 +202,7 @@ class UserService:
             user_id=self.model_user.id).first()
         if not token_exist:
             self.model_access_token = AccessToken()
-            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(), users.generate_refresh_token(), self.model_user.id)
+            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(), self.model_user.generate_refresh_token(), self.model_user.id)
             db.session.add(payload)
             db.session.commit()
             return {

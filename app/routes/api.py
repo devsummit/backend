@@ -450,6 +450,7 @@ def users(*args, **kwargs):
 
 # User detail/ route by id
 
+
 @api.route('/users/<id>', methods=['GET'])
 @token_required
 def user_id(id, *args, **kwargs):
