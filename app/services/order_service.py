@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.order import Order
 from app.models.ticket import Ticket
 from app.models.payment import Payment
+from app.models.referal import Referal
 
 from app.models.order_details import OrderDetails
 
@@ -39,6 +40,9 @@ class OrderService():
 		order_details = payloads['order_details']
 		self.model_order.user_id = payloads['user_id']
 		self.model_order.status = 'pending'
+		referal = db.session.query(Referal).filter_by(referal_code=payloads['referal_code'])
+		if(referal.first() is not None):
+			self.model_order.referal_id = referal.first().as_dict()['id']
 		db.session.add(self.model_order)
 		try:
 			db.session.commit()

@@ -1,11 +1,79 @@
+import datetime
 from app.models import db
 from app.models.user_ticket import UserTicket
+from app.models.check_in import CheckIn
 from app.models.base_model import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
-import datetime
 
 
 class UserTicketService:
+
+    def check_in(self, user_ticket_id):
+        exist = db.session.query(UserTicket).filter_by(id=user_ticket_id).first()
+        if exist is None:
+            return {
+                'data': {'exist': False},
+                'message': 'user ticket does not exist'
+            }
+
+        ticket = exist.ticket
+        if ticket.ticket_type == 'full':
+            checked_in = db.session.query(CheckIn).filter_by(user_ticket_id=user_ticket_id)
+            if checked_in.first() is not None:
+                # update updated at
+                checked_in.update({
+                    'updated_at': datetime.datetime.now()
+                    })
+                try:
+                    db.session.commit()
+                    return {
+                        'error': False,
+                        'data': {'checked_in': True},
+                        'message': 'user checked in successfully'
+                    }
+                except SQLAlchemyError as e:
+                    data = e.orig.args
+                    return {
+                        'error': True,
+                        'data': {'sql_error': True},
+                        'message': data
+                    }
+            # else check in
+            return self.create_checkin(user_ticket_id)
+
+        # else if ticket type is daily
+        checked_in = db.session.query(CheckIn).filter_by(user_ticket_id=user_ticket_id).first()
+        # check if ticket id already in checkin
+        if checked_in is None:
+            # checkin user
+            return self.create_checkin(user_ticket_id)
+
+        # else return user already checked in, ticket is expired
+        return {
+            'error': True,
+            'data': {'expired': True},
+            'message': 'Ticket has been checked in, cannot be used anymore'
+        }
+
+    def create_checkin(self, user_ticket_id):
+        check_in = CheckIn()
+        check_in.user_ticket_id = user_ticket_id
+        db.session.add(check_in)
+        try:
+            db.session.commit()
+            # return checkin success
+            return {
+                'error': False,
+                'data': {'checked_in': True},
+                'message': 'user checked in successfully'
+            }
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return {
+                'error': True,
+                'data': {'sql_error': True},
+                'message': data
+            }
 
     def show(self, user_id):
         user_tickets = BaseModel.as_list(db.session.query(UserTicket).filter_by(user_id=user_id).all())

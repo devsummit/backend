@@ -21,14 +21,18 @@ class UserAuthorizationController(BaseController):
     def login(request):
 
         provider = request.json['provider'] if 'provider' in request.json else None
-
+        admin = request.json['admin'] if 'admin' in request.json else None
         if provider is None:
             username = request.json['username'] if 'username' in request.json else None
             password = request.json['password'] if 'password' in request.json else None
             if username and password:
                 # check if user exist
-                user = userservice.get_user(username)
+                user = userservice.get_user(username)                
+
                 if user is not None:
+                    if admin is not None and admin:
+                        if user.as_dict()['role_id'] != 1:
+                            return BaseController.send_error_api({'unauthorized': True}, 'unauthorized, must be admin to access this page.')
                     if user.verify_password(password):
                         token = userservice.save_token()
                         user = user.include_photos().as_dict()

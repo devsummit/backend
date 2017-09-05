@@ -1,6 +1,6 @@
 {% extends "admin/base/index.html" %}
 
-{% block title %} <title> Attendees list </title>  {% endblock %}
+{% block title %} <title> Referal code list </title>  {% endblock %}
 
 {% block header_link %}
     <!-- DataTables -->
@@ -10,13 +10,13 @@
 {% block page_header %}
     {{ super() }}
     <h1>
-        Attendees
-        <small>List of registered attendees</small>
+        Referals
+        <small>List of referals</small>
     </h1>
 {% endblock %}
 
 {% block breadcrumb %}
-    <li class="active">Attendees</li>
+    <li class="active">Referals</li>
 {% endblock %}
 
 {% block content %}
@@ -24,31 +24,31 @@
         <!-- /.box-header -->
         
         <div class="box-body">
-            <table id="attendee-list1" class="table table-bordered table-striped">
+            <table id="referal-list1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                    <th>Ticket type</th>
-                    <th>Price</th>
-                    <th>Information</th>
+                    <th>Owner</th>
+                    <th>Discount percentage %</th>
+                    <th>Referal code</th>
                 </tr>
                 </thead>
                 <tbody>
-                    {% for ticket in tickets %}
+                    {% for referal in referals %}
                     <tr>
                         <td>
-                            {{ ticket.ticket_type }}
+                            {{ referal.owner }}
                         </td>
                         <td>
-                            {{ ticket.price }}
+                            {{ referal.discount_amount }}
                         </td>
                         <td>
-                            {{ ticket.information }}
+                            {{ referal.referal_code }}
                         </td>
                          <td>
-                            <button id='btd-{{ ticket.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                            <button id='btd-{{ referal.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
-                            <button id='btd-{{ ticket.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                            <button id='btd-{{ referal.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
                         </td>
@@ -60,10 +60,10 @@
                 <a href="#" class="btn btn-primary btn-block btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
             </tr>
         </div>
+        {% include "admin/referals/referal_edit.html" %}
+        {% include "admin/referals/referal_add.html" %}
+        {% include "admin/referals/referal_delete.html" %}
 
-         {% include "admin/tickets/ticket_edit.html" %}
-         {% include "admin/tickets/ticket_delete.html" %}
-         {% include "admin/tickets/ticket_add.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -79,18 +79,18 @@
 
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
-        dsa.get('tickets/' + id, function(result) {
+        dsa.get('referals/' + id, function(result) {
             // bind result value in to attendee_detail.html 
             const data = result['data'];
-            $('.ticket-type').val(data['ticket_type']);
-            $('.ticket-price').val(data['price']);
-            $('.ticket-information').val(data['information']);
+            $('.referal-owner').val(data['owner']);
+            $('.referal-discountamount').val(data['discount_amount']);
+            $('.referal-code').val(data['referal_code']);
             $('.btn-save').attr("id", data['id']);
         });
     })
 
     $('.btn-add').click(function(event){
-        $('.modal-title').html('Add New Ticket');
+        $('.modal-title').html('Add New Referal');
     });
 
     $('.btn-delete').click(function(event){
@@ -101,7 +101,7 @@
         $('.btn-yes').attr("id", id);
     })
     $(function () {
-        $('#attendee-list1').DataTable();
+        $('#referal-list1').DataTable();
     })
 </script>
 

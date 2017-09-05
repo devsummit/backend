@@ -97,15 +97,17 @@
           
           payloads = {
             username: $('input[name=username]').val(),
-            password: $('input[name=password]').val()
+            password: $('input[name=password]').val(),
+            admin: true
           }
 
-          dsa.login(payloads, function(success){
+          dsa.login(payloads, function(success, result){
+            console.log(result, 'log');
             if(success) {
               showInfo('label-success', 'Login success');
               window.location.href = '/';
             } else {
-              showInfo('label-danger', 'Login failed, invalid username or password!');
+              showInfo('label-danger', result.meta.message);
             }
           });
           

@@ -18,7 +18,6 @@ class UserTicketsSeeder():
         for i in range(0, 10):
             new_user_ticket = UserTicket()
             new_user_ticket.user_id = i + 1
-            new_user_ticket.ticket_id = randint(1, 4)
-            new_user_ticket.used = False
+            new_user_ticket.ticket_id = randint(1, 3)
             db.session.add(new_user_ticket)
             db.session.commit()

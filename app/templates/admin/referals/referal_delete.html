@@ -26,17 +26,18 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
-    /* Display Attendee Detail */
+    /* Display  Detail */
     $('.btn-yes').click(function(event){
         const id = $(event.target).attr('id');
-        dsa.delete('tickets/' + id, function(result) {
+        console.log(id, 'ssss');
+        dsa.delete('referals/' + id, function(result) {
             if(result.meta.success) {
-                window.location = "http://localhost:5000/tickets";
+                window.location = "http://localhost:5000/referals";
             }
         });
     })
 
     $(function () {
-        $('#attendee-list1').DataTable();
+        $('#referal-list1').DataTable();
     })
 </script>

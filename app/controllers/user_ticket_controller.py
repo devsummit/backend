@@ -27,3 +27,15 @@ class UserTicketController(BaseController):
                 return BaseController.send_error_api(None, result['data'])
         else:
             return BaseController.send_error_api(None, "fields are not complete")
+
+    @staticmethod
+    def check_in(request):
+        user_ticket_id = request.json['user_ticket_id'] if 'user_ticket_id' in request.json else None
+        if (user_ticket_id is None):
+            BaseController.send_error_api({'payload_invalid': True}, 'payload is not valid')
+        result = userticketservice.check_in(user_ticket_id)
+
+        if 'error' in result and result['error']:
+            return BaseController.send_error_api(result['data'], result['message'])
+
+        return BaseController.send_response_api(result['data'], result['message'])

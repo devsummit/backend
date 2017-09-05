@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '05cb70b1d87c'
-down_revision = 'f8e18fbe2d41'
+down_revision = 'f40fd4fc554d'
 branch_labels = None
 depends_on = None
 
@@ -22,6 +22,8 @@ def upgrade():
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('user_id', sa.Integer,
             sa.ForeignKey('users.id', ondelete='CASCADE')),
+        sa.Column('referal_id', sa.Integer,
+            sa.ForeignKey('referals.id')),
         sa.Column('status', sa.String),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
