@@ -17,17 +17,18 @@ class OrderService():
 		for order in orders:
 			items = db.session.query(OrderDetails).filter_by(order_id=order.id).all()
 			payment = db.session.query(Payment).filter_by(order_id=order.id).first()
+			referal = order.referal.as_dict() if order.referal else None
 			order = order.as_dict()
 			if payment is not None:
 				payment = payment.as_dict()
 				order['payment'] = payment
 			else: 
 				order['payment'] = None
-
 			amount = 0
 			for item in items:
 				amount += item.price * item.count 
 			order['amount'] = amount
+			order['referal'] = referal
 			results.append(order)
 		return results
 
