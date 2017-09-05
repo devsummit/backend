@@ -79,3 +79,18 @@ class ReferalService():
 				'data': None,
 				'message': data
 			}
+
+	def check_referal_code(self, referal_code):
+		referal = db.session.query(Referal).filter_by(referal_code=referal_code).first()
+		if referal:
+			# return referal data
+			return {
+				'error': False,
+				'data': referal.as_dict(),
+				'message': 'referal code successfully retrieved'
+			}
+		return {
+			'error': True,
+			'data': {'code_invalid': True},
+			'message': 'referal code is not valid'
+		}
