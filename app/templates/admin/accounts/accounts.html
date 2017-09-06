@@ -1,6 +1,8 @@
 {% extends "admin/base/index.html" %}
 
-{% block title %} <title> Accounts </title>  {% endblock %}
+{% block title %} <title> Accounts list </title>  {% endblock %}
+
+{% set globals={'base_route': 'accounts', 'api_route': 'users'} %}
 
 {% block header_link %}
     <!-- DataTables -->
@@ -11,7 +13,8 @@
     {{ super() }}
     <h1>
         Accounts
-        <small>List of Accounts</small>
+        <small>List of accounts</small>
+        
     </h1>
 {% endblock %}
 
@@ -22,32 +25,36 @@
 {% block content %}
     <div class="box">
         <!-- /.box-header -->
+        <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
         
         <div class="box-body">
-            <table id="Account-list1" class="table table-bordered table-striped">
+            <table id="account-list1" class="table table-bordered table-striped">
                 <thead>
-                <tr>
-                    <a href="#" class="btn btn-primary btn-block btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
-                </tr>
-                <tr>
-                    <th>Name</th>
-                    <th>Email %</th>
-                    <th>Username</th>
-                </tr>
+        
+                    <tr>
+                        <th>Attendee Name</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
                 <tbody>
                     {% for account in accounts %}
                     <tr>
                         <td>
-                            {{ account.last_name + ", " + account.first_name }}
+                            <a href="" id='atd-{{ account.id }}' class="accounts-name">{{ account['last_name'] + ', ' + account['first_name']|e }}</a> 
                         </td>
                         <td>
-                            {{ account.email }}
+                            {{ account.email|e }}
                         </td>
                         <td>
-                            {{ account.username }}
+                            {{ account.username|e }}
                         </td>
-                         <td>
+                        <td>
+                            {{ account.role|e }}
+                        </td>
+                        <td>
                             <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
@@ -59,12 +66,11 @@
                     {% endfor %}
                 </tbody>
             </table>
-            
         </div>
-        {% include "admin/accounts/account_edit.html" ignore missing %}
-        {% include "admin/accounts/account_add.html" ignore missing %}
-        {% include "admin/accounts/account_delete.html" ignore missing %}
 
+        {% include "admin/base/modal_delete.html" %}
+        {% include "admin/accounts/account_edit.html" %}
+        {% include "admin/accounts/account_add.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -74,36 +80,39 @@
 
 <!-- page script -->
 <script>
-    /* Display Account Detail */
     $('.btn-edit').click(function(event){
         $('.modal-title').html('Edit');
 
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
-        dsa.get('accounts/' + id, function(result) {
-            // bind result value in to attendee_detail.html 
+        dsa.get('users/' + id, function(result) {
+            // bind result value in to account_detail.html 
             const data = result['data'];
-            $('.account-owner').val(data['owner']);
-            $('.account-discountamount').val(data['discount_amount']);
-            $('.account-code').val(data['account_code']);
+            $('.account-firstname').val(data['first_name']);
+            $('.account-lastname').val(data['last_name']);
+            $('.account-email').val(data['email']);
+            $('.account-username').val(data['username']);
+            $('.account-role_id').val(data['role_id']);
+           
             $('.btn-save').attr("id", data['id']);
         });
-    })
+    });
 
     $('.btn-add').click(function(event){
-        $('.modal-title').html('Add New account');
+        $('.modal-title').html('Add New Account');
     });
 
     $('.btn-delete').click(function(event){
-        $('.modal-title').html('Delete');
+        $('.modal-title').html('Are you sure want to delete this account?');
 
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
         $('.btn-yes').attr("id", id);
-    })
+    });
+    
     $(function () {
         $('#account-list1').DataTable();
-    })
+    });
 </script>
 
 {% endblock %}
