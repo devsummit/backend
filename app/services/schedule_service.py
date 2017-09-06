@@ -3,17 +3,49 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.schedule import Schedule
+from app.models.user import User
+from app.models.event import Event
+from app.models.booth import Booth
+from app.models.speaker import Speaker
 
 
 class ScheduleService():
 
 	def get(self):
 		schedules = db.session.query(Schedule).all()
-		# add includes
-		included = self.get_includes(schedules)
+		results = []
+		for schedule in schedules:
+			user = db.session.query(User).filter_by(id=schedule.user_id).first()
+			event = db.session.query(Event).filter_by(id=schedule.event_id).first()
+			schedule = schedule.as_dict()
+			schedule['user'] = user.as_dict() if user else None
+			schedule['event'] = event.as_dict() if event else None
+
+			if schedule['user']['role_id'] == 3:
+				booth = db.session.query(Booth).filter_by(user_id=schedule['user_id']).first()
+				schedule['booth'] = booth.as_dict() if booth else None
+			elif schedule['user']['role_id'] == 4:
+				speaker = db.session.query(Speaker).filter_by(user_id=schedule['user_id']).first()
+				schedule['speaker'] = speaker.as_dict() if speaker else None
+
+			results.append(schedule)
+			
+		# # add includes
+		# included = self.get_includes(results)
 		return {
-			'data': schedules,
-			'included': included
+			'data': results,
+			'included': {}
+		}
+
+	def filter(self, param):
+		schedules = self.get()['data'];
+		results = []
+		for schedule in schedules:
+			if schedule['event'] is not None and schedule['event']['type'] == param:
+				results.append(schedule)
+		return {
+			'data': results,
+			'included': {}
 		}
 
 	def show(self, id):
