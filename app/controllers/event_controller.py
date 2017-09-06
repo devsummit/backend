@@ -4,7 +4,7 @@ from app.services import eventservice
 
 
 class EventController(BaseController):
-        
+
         @staticmethod
         def index():
                 result = eventservice.index()

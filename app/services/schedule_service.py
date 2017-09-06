@@ -3,8 +3,6 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.schedule import Schedule
-from app.models.user import User
-from app.models.event import Event
 from app.models.booth import Booth
 from app.models.speaker import Speaker
 

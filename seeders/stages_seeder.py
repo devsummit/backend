@@ -18,7 +18,7 @@ class StagesSeeder():
         main_stage.stage_type = 'mainstage'
         main_stage.information = 'Main Stage on left of corner of hall, will be prepared for main speakers'
         db.session.add(main_stage)
-        
+
         podium_stage = Stage()
         podium_stage.name = 'podium stage A'
         podium_stage.stage_type = 'podium'
