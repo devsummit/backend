@@ -1,0 +1,109 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Accounts </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Accounts
+        <small>List of Accounts</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Accounts</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <table id="Account-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <a href="#" class="btn btn-primary btn-block btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Email %</th>
+                    <th>Username</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td>
+                            {{ account.last_name + ", " + account.first_name }}
+                        </td>
+                        <td>
+                            {{ account.email }}
+                        </td>
+                        <td>
+                            {{ account.username }}
+                        </td>
+                         <td>
+                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
+        {% include "admin/accounts/account_edit.html" ignore missing %}
+        {% include "admin/accounts/account_add.html" ignore missing %}
+        {% include "admin/accounts/account_delete.html" ignore missing %}
+
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    /* Display Account Detail */
+    $('.btn-edit').click(function(event){
+        $('.modal-title').html('Edit');
+
+        const btd_id = $(event.target).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        dsa.get('accounts/' + id, function(result) {
+            // bind result value in to attendee_detail.html 
+            const data = result['data'];
+            $('.account-owner').val(data['owner']);
+            $('.account-discountamount').val(data['discount_amount']);
+            $('.account-code').val(data['account_code']);
+            $('.btn-save').attr("id", data['id']);
+        });
+    })
+
+    $('.btn-add').click(function(event){
+        $('.modal-title').html('Add New account');
+    });
+
+    $('.btn-delete').click(function(event){
+        $('.modal-title').html('Delete');
+
+        const btd_id = $(event.target).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        $('.btn-yes').attr("id", id);
+    })
+    $(function () {
+        $('#account-list1').DataTable();
+    })
+</script>
+
+{% endblock %}
