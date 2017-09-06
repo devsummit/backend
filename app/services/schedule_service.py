@@ -29,7 +29,7 @@ class ScheduleService():
 				schedule['speaker'] = speaker.as_dict() if speaker else None
 
 			results.append(schedule)
-			
+
 		# # add includes
 		# included = self.get_includes(results)
 		return {
@@ -38,7 +38,7 @@ class ScheduleService():
 		}
 
 	def filter(self, param):
-		schedules = self.get()['data'];
+		schedules = self.get()['data']
 		results = []
 		for schedule in schedules:
 			if schedule['event'] is not None and schedule['event']['type'] == param:

@@ -8,6 +8,7 @@ from app.models import db
 Seeder class for
 '''
 
+
 class UsersSeeder():
 
     @staticmethod
@@ -54,7 +55,7 @@ class UsersSeeder():
         guffy.hash_password('supersecret')
         guffy.role_id = 4
         db.session.add(guffy)
-        
+
         db.session.commit()
 
         # create attendee for ganesh
