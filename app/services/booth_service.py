@@ -12,7 +12,7 @@ class BoothService():
         for booth in booths:
             data = booth.as_dict()
             data['user'] = booth.user.include_photos().as_dict()
-            data['stage'] = booth.stage.as_dict()
+            data['stage'] = booth.stage.as_dict() if booth.stage else None
             _booths.append(data)
         return {
             'data': _booths,
