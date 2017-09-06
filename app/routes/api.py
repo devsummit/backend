@@ -308,14 +308,12 @@ def transfer_points_log(*args, **kwargs):
 # User Photo api
 
 
-@api.route('/user/photo', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@api.route('/user/photo', methods=['GET', 'POST', 'DELETE'])
 @token_required
 def user_photo(*args, **kwargs):
 	user_id = kwargs['user'].id
 	if(request.method == 'POST'):
 		return UserPhotoController.create(request, user_id)
-	elif(request.method == 'PATCH'):
-		return UserPhotoController.update(request, user_id)
 	elif(request.method == 'DELETE'):
 		return UserPhotoController.delete(user_id)
 	elif(request.method == 'GET'):
