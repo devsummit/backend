@@ -1,7 +1,5 @@
-from faker import Faker
 from app.models.event import Event
 from app.models import db
-import random
 
 '''
 Seeder class for
@@ -13,22 +11,31 @@ class EventsSeeder():
     @staticmethod
     def run():
         """
-        Create 20 Event seeds
+        Create 4 Event seeds
         """
-        fake = Faker()
-        types = ['speaker', 'booth', 'hackaton']
-        for i in range(0, 20):
-            title = fake.sentence(
-                nb_words=3, variable_nb_words=True, ext_word_list=None)
-            information = fake.sentence(
-                nb_words=6, variable_nb_words=True, ext_word_list=None)
-            event = {
-                'information': information,
-                'title': title
-            }
-            new_event = Event()
-            new_event.information = event['information']
-            new_event.title = event['title']
-            new_event.type = random.choice(types)
-            db.session.add(new_event)
-            db.session.commit()
+        speak_event = Event()
+        speak_event.information = 'Speaking about javascript frameworks: Vue, React, and Angular'
+        speak_event.user_id = 4
+        speak_event.title = 'Javascript Frameworks'
+        speak_event.type = 'speaker'
+        db.session.add(speak_event)
+
+        speak_b_event = Event()
+        speak_b_event.information = 'Speaking about Native Java / Kotlin vs React-native'
+        speak_b_event.user_id = 4
+        speak_b_event.title = 'Mobile Software development'
+        speak_b_event.type = 'speaker'
+        db.session.add(speak_b_event)
+
+        hackaton_a_event = Event()
+        hackaton_a_event.information = 'PHP Indonesia Group, Contributing library to the world'
+        hackaton_a_event.title = 'PHP Library Hackaton'
+        hackaton_a_event.type = 'hackaton'
+        db.session.add(hackaton_a_event)
+
+        booth_event = Event()
+        booth_event.information = 'Github'
+        booth_event.title = 'Github Booth'
+        booth_event.type = 'booth'
+        db.session.add(booth_event)
+        db.session.commit()
