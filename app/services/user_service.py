@@ -30,9 +30,11 @@ class UserService:
 
         # check if social or email
         if payloads['social_id'] is not None:
-            check_user = db.session.query(User).filter_by(social_id=payloads['social_id']).first()
+            check_user = db.session.query(User).filter_by(
+                social_id=payloads['social_id']).first()
         else:
-            check_user = db.session.query(User).filter_by(email=payloads['email']).first()
+            check_user = db.session.query(User).filter_by(
+                email=payloads['email']).first()
 
         # check if user already exist
         if(check_user is not None):
@@ -95,6 +97,7 @@ class UserService:
         _users = []
         for user in users:
             data = user.include_photos().as_dict()
+            data = user.include_role().as_dict()
             _users.append(data)
         return _users
 
@@ -202,7 +205,8 @@ class UserService:
             user_id=self.model_user.id).first()
         if not token_exist:
             self.model_access_token = AccessToken()
-            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(), self.model_user.generate_refresh_token(), self.model_user.id)
+            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(
+            ), self.model_user.generate_refresh_token(), self.model_user.id)
             db.session.add(payload)
             db.session.commit()
             return {
@@ -291,6 +295,53 @@ class UserService:
             })
             db.session.commit()
             data = self.model_access_token.first().as_dict()
+            return {
+                'error': False,
+                'data': data
+            }
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return {
+                'error': True,
+                'data': data
+            }
+
+    def delete(self, id):
+        self.model_user = db.session.query(User).filter_by(id=id)
+        temp_model = self.model_user.first().as_dict() if self.model_user.first() else None
+
+        error = True
+        data = ''
+
+        if temp_model is not None:
+            if temp_model['role_id'] in [ROLE['admin'], ROLE['speaker'], ROLE['booth']]:
+                self.model_user.delete()
+                db.session.commit()
+                error = False
+                data = 'The account has been deleted!'
+            else:
+                data = 'Attendee account, cannot be deleted!'
+        else:
+            data = 'User account not found'
+
+        return {
+            'error': error,
+            'data': data
+        }
+
+    def update(self, payloads, id):
+        try:
+            self.model_user = db.session.query(
+                User).filter_by(id=id)
+            self.model_user.update({
+                'first_name': payloads['first_name'],
+                'last_name': payloads['last_name'],
+                'email': payloads['email'],
+                'username': payloads['username'],
+                'role_id': payloads['role_id']
+            })
+            db.session.commit()
+            data = self.model_user.first().as_dict()
             return {
                 'error': False,
                 'data': data
