@@ -19,7 +19,6 @@ depends_on = None
 def upgrade():
 	op.create_table('schedules',
 		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
 		sa.Column('event_id', sa.Integer, sa.ForeignKey('events.id')),
 		sa.Column('stage_id', sa.Integer, sa.ForeignKey('stages.id')),
 		sa.Column('time_start', sa.DateTime),
