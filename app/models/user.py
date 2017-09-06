@@ -9,6 +9,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 # import classes
 from app.models.base_model import BaseModel
 from app.models.user_photo import UserPhoto
+from app.models.role import Role
 from app.models import db
 from app.services.helper import Helper
 
@@ -17,7 +18,7 @@ class User(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'users'
 	# displayed fields
-	visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id', 'username', 'email', 'photos', 'created_at', 'updated_at']
+	visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id', 'username', 'email', 'photos', 'role', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +32,7 @@ class User(db.Model, BaseModel):
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 	photos = []
+	role = ''
 
 	def __init__(self):
 		self.created_at = datetime.datetime.now()
@@ -68,4 +70,9 @@ class User(db.Model, BaseModel):
 			data = result.as_dict()
 			data['url'] = Helper().url_helper(data['url'], current_app.config['GET_DEST'])
 			self.photos.append(data)
+		return self
+
+	def include_role(self):
+		result = db.session.query(Role).filter_by(id=self.role_id).first()
+		self.role = result.as_dict()['name']
 		return self
