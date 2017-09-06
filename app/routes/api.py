@@ -525,3 +525,10 @@ def referal_id(id, *args, **kwargs):
 @token_required
 def check_referal(*args, **kwargs):
 	return ReferalController.check(request)
+
+
+@api.route('/me', methods=['GET'])
+@token_required
+def me(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return UserController.show(user['id'])
