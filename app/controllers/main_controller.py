@@ -5,6 +5,7 @@ from app.services import paymentservice
 from app.services import ticketservice
 from app.services import referalservice
 from app.services import boothservice
+from app.services import speakerservice
 
 
 class MainController(BaseController):
@@ -30,3 +31,7 @@ class MainController(BaseController):
     def getBooths():
         booths = boothservice.get()
         return render_template('admin/booths/booths.html', booths=booths['data'])
+
+    def getSpeakers():
+        speakers = speakerservice.get()
+        return render_template('admin/speakers/speakers.html', speakers=speakers['data'])
