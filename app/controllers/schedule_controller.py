@@ -1,5 +1,4 @@
 from app.controllers.base_controller import BaseController
-from app.models.base_model import BaseModel
 from app.services import scheduleservice
 
 
@@ -8,7 +7,15 @@ class ScheduleController(BaseController):
 	@staticmethod
 	def index():
 		schedules = scheduleservice.get()
-		return BaseController.send_response_api(BaseModel.as_list(schedules['data']), 'schedules retrieved successfully', schedules['included'])
+		return BaseController.send_response_api(schedules['data'], 'schedules retrieved successfully', schedules['included'])
+
+	@staticmethod
+	def filter(param):
+		schedules = scheduleservice.filter(param)
+		if schedules:
+			return BaseController.send_response_api(schedules['data'], 'schedules retrieved successfully', schedules['included'])
+		else:
+			return BaseController.send_error_api(None, 'data not found')
 
 	@staticmethod
 	def show(id):
