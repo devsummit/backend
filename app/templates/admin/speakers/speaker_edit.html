@@ -1,0 +1,63 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="speaker-job">Speaker job:</label>
+                                <input type="text" class="form-control speaker-job" id="speaker-job">
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="speaker-summary">Speaker summary:</label>
+                                <input type="text" class="form-control speaker-summary" id="speaker-summary">
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="speaker-information">Speaker information:</label>
+                                <input type="text" class="form-control speaker-information" id="speaker-information">
+                            </div>
+                        </li>
+                    </ul>
+                    <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Save edited data */
+    $('.btn-save').click(function(event){
+        const data = $(event.target).attr('id').split(' ');
+        payload = {
+            "user_id": data[1],
+            "job": $('.speaker-job').val(),
+            "summary": $('.speaker-summary').val(),
+            "information": $('.speaker-information').val() 
+        };
+        dsa.patch('speakers/' + data[0], payload, function(result) {
+            if(result.meta.success) {
+                window.location = "http://localhost:5000/speakers";
+            }
+        });
+    })
+</script>
