@@ -15,25 +15,24 @@ class ScheduleService():
 		schedules = db.session.query(Schedule).all()
 		results = []
 		for schedule in schedules:
-			user = db.session.query(User).filter_by(id=schedule.user_id).first()
-			event = db.session.query(Event).filter_by(id=schedule.event_id).first()
-			schedule = schedule.as_dict()
-			schedule['user'] = user.as_dict() if user else None
-			schedule['event'] = event.as_dict() if event else None
+			data = schedule.as_dict()
+			event = schedule.event
+			user = event.user
+			data['user'] = user.as_dict() if user else None
+			data['event'] = event.as_dict() if event else None
 
-			if schedule['user']['role_id'] == 3:
-				booth = db.session.query(Booth).filter_by(user_id=schedule['user_id']).first()
-				schedule['booth'] = booth.as_dict() if booth else None
-			elif schedule['user']['role_id'] == 4:
-				speaker = db.session.query(Speaker).filter_by(user_id=schedule['user_id']).first()
-				schedule['speaker'] = speaker.as_dict() if speaker else None
+			if data['user'] and data['user']['role_id'] == 3:
+				booth = db.session.query(Booth).filter_by(user_id=data['user']['id']).first()
+				data['booth'] = booth.as_dict() if booth else None
+			elif data['user'] and data['user']['role_id'] == 4:
+				speaker = db.session.query(Speaker).filter_by(user_id=data['user']['id']).first()
+				data['speaker'] = speaker.as_dict() if speaker else None
 
-			results.append(schedule)
-
-		# # add includes
-		# included = self.get_includes(results)
+			results.append(data)
 		return {
+			'error': False,
 			'data': results,
+			'message': 'Schedules retrieved succesfully',
 			'included': {}
 		}
 
@@ -44,17 +43,26 @@ class ScheduleService():
 			if schedule['event'] is not None and schedule['event']['type'] == param:
 				results.append(schedule)
 		return {
+			'error': False,
 			'data': results,
+			'message': 'schedule retrieved successfully',
 			'included': {}
 		}
 
 	def show(self, id):
 		schedule = db.session.query(Schedule).filter_by(id=id).first()
 		#  add includes
+		if schedule is None:
+			return {
+				'error': True,
+				'data': None,
+				'message': 'Schedule not found'
+			}
 		included = self.get_includes(schedule)
-		print(schedule.as_dict())
 		return {
-			'data': schedule,
+			'error': False,
+			'data': schedule.as_dict(),
+			'message': 'Schedule retrieved successfully',
 			'included': included
 		}
 
@@ -132,12 +140,12 @@ class ScheduleService():
 				temp = {}
 				temp['event'] = schedule.event.as_dict()
 				temp['stage'] = schedule.stage.as_dict()
-				temp['user'] = schedule.user.as_dict()
+				temp['user'] = schedule.event.user.as_dict() if schedule.event.user else None
 				included.append(temp)
 		else:
 			temp = {}
 			temp['event'] = schedules.event.as_dict()
 			temp['stage'] = schedules.stage.as_dict()
-			temp['user'] = schedules.user.as_dict()
+			temp['user'] = schedules.event.user.as_dict() if schedules.event.user else None
 			included.append(temp)
 		return included
