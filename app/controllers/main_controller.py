@@ -4,6 +4,7 @@ from app.services import attendeeservice
 from app.services import paymentservice
 from app.services import ticketservice
 from app.services import referalservice
+from app.services import userservice
 
 
 
@@ -28,3 +29,7 @@ class MainController(BaseController):
     def getReferals():
     	referals = referalservice.get()
     	return render_template('admin/referals/referals.html', referals=referals)
+    
+    def getAccounts():
+    	accounts = userservice.list_user()
+    	return render_template('admin/accounts/accounts.html', accounts=accounts)

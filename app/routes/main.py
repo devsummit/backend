@@ -31,3 +31,7 @@ def get_referals():
 @main.route('/login')
 def login():
     return render_template('admin/auth/login.html')
+
+@main.route('/accounts')
+def get_accounts():
+	return MainController.getAccounts()
