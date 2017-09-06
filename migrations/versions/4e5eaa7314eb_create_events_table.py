@@ -21,6 +21,7 @@ def upgrade():
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('title', sa.String),
 		sa.Column('information', sa.String),
+		sa.Column('type', sa.String),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)
