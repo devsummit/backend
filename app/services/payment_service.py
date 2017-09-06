@@ -10,7 +10,6 @@ from app.models.user_ticket import UserTicket
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 
 
-
 class PaymentService():
 
     def __init__(self):

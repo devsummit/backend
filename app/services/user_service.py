@@ -45,25 +45,25 @@ class UserService:
                 'error': True
             }
 
-        users = User()
-        users.first_name = payloads['first_name']
-        users.last_name = payloads['last_name']
-        users.email = payloads['email']
-        users.username = payloads['username']
-        users.role_id = role
-        users.social_id = payloads['social_id']
-        users.hash_password(payloads['password'])
-        db.session.add(users)
+        self.model_user = User()
+        self.model_user.first_name = payloads['first_name']
+        self.model_user.last_name = payloads['last_name']
+        self.model_user.email = payloads['email']
+        self.model_user.username = payloads['username']
+        self.model_user.role_id = role
+        self.model_user.social_id = payloads['social_id']
+        self.model_user.hash_password(payloads['password'])
+        db.session.add(self.model_user)
 
         try:
             db.session.commit()
-            data = users.as_dict()
+            data = self.model_user.as_dict()
 
             # insert role model
-            if(role == ROLE['user']):
-                user = user()
-                user.user_id = data['id']
-                db.session.add(user)
+            if(role == ROLE['attendee']):
+                attendee = Attendee()
+                attendee.user_id = data['id']
+                db.session.add(attendee)
                 db.session.commit()
             elif(role == ROLE['booth']):
                 booth = Booth()
@@ -94,7 +94,7 @@ class UserService:
             User).all()
         _users = []
         for user in users:
-            data =  user.include_photos().as_dict()
+            data = user.include_photos().as_dict()
             _users.append(data)
         return _users
 
@@ -104,17 +104,17 @@ class UserService:
         return user.include_photos().as_dict()
 
     def get_user(self, username):
-        users = db.session.query(
+        self.model_user = db.session.query(
             User).filter_by(username=username).first()
-        return users
+        return self.model_user
 
     def get_user_photo(self, id):
-        users_photo = db.session.query(
+        self.model_user_photo = db.session.query(
             UserPhoto).filter_by(user_id=id).first()
         url = ''
-        if users_photo:
+        if self.model_user_photo:
             url = request.url_root + 'static/' + \
-                users_photo.as_dict()['url']
+                self.model_user_photo.as_dict()['url']
         return url
 
     def social_sign_in(self, provider, social_token, token_secret=''):
@@ -188,30 +188,29 @@ class UserService:
 
     def check_social_account(self, provider, social_id):
         # check if social id exist in user table
-        users = db.session.query(
+        self.model_user = db.session.query(
             User).filter_by(social_id=social_id).first()
-        if users is not None:
+        if self.model_user is not None:
             # user with social_id exist
             # return the user
-            return users
+            return self.model_user
         else:
             return None
 
     def save_token(self, provider='password_grant'):
         token_exist = db.session.query(AccessToken).filter_by(
-            user_id=users.id).first()
+            user_id=self.model_user.id).first()
         if not token_exist:
             self.model_access_token = AccessToken()
-            payload = self.model_access_token.init_token(users.generate_auth_token(
-            ), users.generate_refresh_token(), users.id)
+            payload = self.model_access_token.init_token(self.model_user.generate_auth_token(), self.model_user.generate_refresh_token(), self.model_user.id)
             db.session.add(payload)
             db.session.commit()
             return {
                 'error': False,
                 'data': payload
             }
-        token_exist.access_token = users.generate_auth_token()
-        token_exist.refresh_token = users.generate_refresh_token()
+        token_exist.access_token = self.model_user.generate_auth_token()
+        token_exist.refresh_token = self.model_user.generate_refresh_token()
         # get id of client app
         client = db.session.query(Client).filter_by(app_name=provider).first()
         token_exist.client_id = client.id
@@ -224,15 +223,15 @@ class UserService:
 
     def change_name(self, payloads):
         try:
-            users = db.session.query(
+            self.model_user = db.session.query(
                 User).filter_by(id=payloads['user']['id'])
-            users.update({
+            self.model_user.update({
                 'first_name': payloads['first_name'],
                 'last_name': payloads['last_name'],
                 'updated_at': datetime.datetime.now()
             })
             db.session.commit()
-            data = users.first().as_dict()
+            data = self.model_user.first().as_dict()
             return {
                 'error': False,
                 'data': data
@@ -248,14 +247,14 @@ class UserService:
         user = self.get_user(payloads['user']['username'])
         try:
             if user.verify_password(payloads['old_password']):
-                users = db.session.query(
+                self.model_user = db.session.query(
                     User).filter_by(id=payloads['user']['id'])
-                users.update({
+                self.model_user.update({
                     'password': generate_password_hash(payloads['new_password']),
                     'updated_at': datetime.datetime.now()
                 })
                 db.session.commit()
-                data = users.first().as_dict()
+                data = self.model_user.first().as_dict()
                 return {
                     'error': False,
                     'data': data

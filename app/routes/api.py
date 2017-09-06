@@ -279,11 +279,12 @@ def booth(*args, **kwargs):
 # Booth route by id
 
 
-@api.route('/booths/<booth_id>', methods=['GET'])
+@api.route('/booths/<booth_id>', methods=['GET', 'PUT', 'PATCH'])
 @token_required
 def booth_id(booth_id, *args, **kwargs):
 	if(request.method == 'GET'):
 		return BoothController.show(booth_id)
+	return BoothController.update(request, None, booth_id)
 
 
 # Point endpoint
@@ -448,6 +449,7 @@ def users(*args, **kwargs):
 		return UserController.index()
 
 # User detail/ route by id
+
 
 @api.route('/users/<id>', methods=['GET'])
 @token_required

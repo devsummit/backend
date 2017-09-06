@@ -14,14 +14,15 @@ class OrderDetailsService():
 		_results = []
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
 		order = db.session.query(Order).filter_by(id=order_id).first()
-		included = order.referal.as_dict() if order.referal else None
+		payment = db.session.query(Payment).filter_by(order_id=order_id).first()
+		payment = payment.as_dict() if payment is not None else None
+		included = {}
+		included['referal'] = order.referal.as_dict() if order.referal else None
+		included['payment'] = payment
 		for detail in order_details:
 			order = detail.order.as_dict()
-			payment = db.session.query(Payment).filter_by(order_id=order['id']).first()
-			payment = payment.as_dict() if payment is not None else None
 			data = detail.as_dict()
 			data['ticket'] = detail.ticket.as_dict()
-			data['payment'] = payment
 			_results.append(data)
 		return {
 			'error': False,
