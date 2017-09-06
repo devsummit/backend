@@ -64,12 +64,13 @@ class EventService:
             self.events_model = db.session.query(Event).filter_by(id=id)
             information = payloads['information'] if 'information' in payloads else None
             title = payloads['title'] if 'title' in payloads else None
+            type = payloads['type'] if 'type' in payloads else None
 
             new_event = {}
-            if information:
+            if information and title and type:
                 new_event['information'] = information
-            if title:
                 new_event['title'] = title
+                new_event['type'] = type
 
             self.events_model.update(new_event)
 
