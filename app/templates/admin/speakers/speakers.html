@@ -1,0 +1,101 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %}
+    <title> Speakers list </title>
+{% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Speakers
+        <small>List of speakers</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>Events</li>
+    <li class="active">Speakers</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <div class="box-body">
+            <table id="speaker-list" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Speaker</th>
+                    <th>Job</th>
+                    <th>Summary</th>
+                    <th>Information</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for speaker in speakers %}
+                    <tr>
+                        <td>
+                            {{ speaker.user.first_name }} {{ speaker.user.last_name }}
+                        </td>
+                        <td>
+                            {{ speaker.job }}
+                        </td>
+                        <td>
+                            {{ speaker.summary }}
+                        </td>
+                        <td>
+                            {{ speaker.information }}
+                        </td>
+                        <td class="text-center">
+                            <button id='btd-{{ speaker.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include "admin/users/user_detail.html" %}
+        {% include "admin/speakers/speaker_edit.html" %}
+{% endblock %}
+
+{% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+    <!-- page script -->
+    <script>
+        /* Edit speaker detail */
+        $('.btn-edit').click(function(event){
+            $('.modal-title').html('Edit Speaker');
+            const btd_id = $(event.target).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+
+            dsa.get('speakers/' + id, function(result) {
+                // bind result value in to speaker_detail.html 
+                const data = result['data'];
+
+                $('.speaker-job').val(data['job']);
+                $('.speaker-summary').val(data['summary']);
+                $('.speaker-information').val(data['information']);
+                $('.btn-save').attr("id", `${data['id']} ${data['user_id']}`);
+            });
+        })
+
+        $(function () {
+            $('#speaker-list').DataTable({
+                columnDefs: [{
+                    targets: [ -1 ],
+                    orderable: false,
+                }]
+            });
+        })
+    </script>
+{% endblock %}

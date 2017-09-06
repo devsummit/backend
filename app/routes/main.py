@@ -38,3 +38,8 @@ def get_booths():
 @main.route('/login')
 def login():
     return render_template('admin/auth/login.html')
+
+
+@main.route('/speakers')
+def get_speakers():
+	return MainController.getSpeakers()
