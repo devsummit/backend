@@ -4,7 +4,9 @@ from app.services import attendeeservice
 from app.services import paymentservice
 from app.services import ticketservice
 from app.services import referalservice
+from app.services import userservice
 from app.services import boothservice
+from app.services import speakerservice
 from app.services import stageservice
 
 
@@ -28,9 +30,17 @@ class MainController(BaseController):
         referals = referalservice.get()
         return render_template('admin/referals/referals.html', referals=referals)
 
+    def getAccounts():
+        accounts = userservice.list_user()
+        return render_template('admin/accounts/accounts.html', accounts=accounts)
+
     def getBooths():
         booths = boothservice.get()
         return render_template('admin/booths/booths.html', booths=booths['data'])
+
+    def getSpeakers():
+        speakers = speakerservice.get()
+        return render_template('admin/speakers/speakers.html', speakers=speakers['data'])
 
     def getStages():
         stages = stageservice.get()

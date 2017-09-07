@@ -40,14 +40,7 @@ class UserPhotoService():
         user_id = payloads['user_id']
         is_exist = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
         if(is_exist is not None):
-            data = {
-                'photo_exist': True
-            }
-            return {
-                'data': data,
-                'error': True,
-                'message': 'Photo already exist'
-            }
+            return self.update(payloads)
         file = request.files['image_data']
         if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
             self.model_user_photo = UserPhoto()
@@ -75,16 +68,6 @@ class UserPhotoService():
 
     def update(self, payloads):
         user_id = payloads['user_id']
-        is_exist = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
-        if(is_exist is None):
-            data = {
-                'photo_exist': False
-            }
-            return {
-                'data': data,
-                'error': True,
-                'message': 'User Photo is not found'
-            }      
         file = request.files['image_data']
         if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
             try:

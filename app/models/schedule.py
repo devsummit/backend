@@ -10,16 +10,10 @@ class Schedule(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'schedules'
 	# displayed fields
-	visible = ['id', 'user_id', 'event_id', 'time_start', 'time_end', 'created_at', 'updated_at']
+	visible = ['id', 'event_id', 'time_start', 'time_end', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
-	user_id = db.Column(
-		db.String(40),
-		db.ForeignKey('users.id'),
-		nullable=False
-	)
-	user = db.relationship('User')
 	event_id = db.Column(
 		db.String(40),
 		db.ForeignKey('events.id'),

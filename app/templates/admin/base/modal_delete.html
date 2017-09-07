@@ -1,0 +1,41 @@
+<div class="modal fade" id="modal-delete">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <a href="#" class="btn btn-warning btn-block btn-yes" id="-"><b>Confirm</b></a>
+                        <button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cancel</button>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+    <!-- /.modal -->
+    <!-- page script -->
+    <script>
+        /* Display  Detail */
+        $('.btn-yes').click(function(event){
+            // event.preventDefault();
+            const id = $(event.target).attr('id');
+            dsa.delete('{{ globals["api_route"] }}' + '/' + id, function(result) {
+                $('.modal-title').html(result['meta']['message']);
+                if(result.meta.success) {
+                    window.location = '{{ globals["base_route"] }}';
+                }
+            });
+        })
+    
+        $(function () {
+            $('#referal-list1').DataTable();
+        })
+    </script>

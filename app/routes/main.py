@@ -27,14 +27,24 @@ def get_tickets():
 
 @main.route('/referals')
 def get_referals():
-	return MainController.getReferals()
+    return MainController.getReferals()
 
 
 @main.route('/booths')
 def get_booths():
-	return MainController.getBooths()
+    return MainController.getBooths()
 
 
 @main.route('/login')
 def login():
     return render_template('admin/auth/login.html')
+
+
+@main.route('/accounts')
+def get_accounts():
+    return MainController.getAccounts()
+
+@main.route('/speakers')
+def get_speakers():
+	return MainController.getSpeakers()
+

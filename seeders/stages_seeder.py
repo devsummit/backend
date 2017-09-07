@@ -1,7 +1,5 @@
-from faker import Faker
 from app.models.stage import Stage
 from app.models import db
-import random
 
 '''
 Seeder class for
@@ -13,15 +11,24 @@ class StagesSeeder():
     @staticmethod
     def run():
         """
-        Create 20 Users seeds
+        Create 3 stages seed
         """
-        fake = Faker()
-        stage_types = ['podium', 'booth', 'mainstage']
-        for i in range(0, 10):
-            new_stage = Stage()
-            new_stage.name = fake.name()
-            new_stage.stage_type = random.choice(stage_types)
-            new_stage.information = fake.sentence(
-                nb_words=6, variable_nb_words=True, ext_word_list=None)
-            db.session.add(new_stage)
-            db.session.commit()
+        main_stage = Stage()
+        main_stage.name = 'Main speaker stage A'
+        main_stage.stage_type = 'mainstage'
+        main_stage.information = 'Main Stage on left of corner of hall, will be prepared for main speakers'
+        db.session.add(main_stage)
+
+        podium_stage = Stage()
+        podium_stage.name = 'podium stage A'
+        podium_stage.stage_type = 'podium'
+        podium_stage.information = 'podium stage for speakers'
+        db.session.add(podium_stage)
+
+        booth_stage = Stage()
+        booth_stage.name = 'booth stage A'
+        booth_stage.stage_type = 'booth'
+        booth_stage.information = 'booth stage for booths'
+        db.session.add(booth_stage)
+
+        db.session.commit()

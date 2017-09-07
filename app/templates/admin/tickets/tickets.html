@@ -30,10 +30,11 @@
                     <th>Ticket type</th>
                     <th>Price</th>
                     <th>Information</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
-                    {% for ticket in tickets %}
+                    {% for ticket in tickets.data %}
                     <tr>
                         <td>
                             {{ ticket.ticket_type }}
