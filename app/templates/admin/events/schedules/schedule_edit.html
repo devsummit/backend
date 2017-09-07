@@ -1,0 +1,96 @@
+<div class="modal fade" id="modal-edit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Default title</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box box-primary">
+                        <div class="box-body box-profile">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="event-title">Select Event:</label>
+                                        <select class="edit-schedule-events form-control">
+                                        </select>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="event-title">Stage Name:</label>
+                                        <select class="edit-schedule-stages form-control">
+                                        </select>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <p id="edit-event-time">
+                                            <input type="text" class="edit-date date start" />
+                                            <input type="text" class="edit-time-start time start" /> to
+                                            <input type="text" class="edit-time-end time end" />
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                            <a href="#" class="btn btn-primary btn-block btn-save-edit" id="-"><b>Save</b></a>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- page script -->
+    <!-- <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script> -->
+    
+    <link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/jquery.timepicker.css" />
+    <link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/bootstrap-datepicker.css" />
+    <script type="text/javascript" src="static/assets/datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="static/assets/datepicker/js/jquery.timepicker.js"></script>
+    
+    <script type="text/javascript" src="static/assets/datepicker/js/datepair.js"></script>
+    
+    <script>
+        /* Display Attendee Detail */
+        $('.btn-save-edit').click(function (event) {
+            const id = $(event.target).attr('id');
+            console.log(id)
+            payload = {
+                'stage_id': $('.edit-schedule-stages').val(),
+                'event_id': $('.edit-schedule-events').val(),
+                'time_start': $('.edit-date').val() + ' ' + $('.edit-time-start').val()+'.000000',
+                'time_end': $('.edit-date').val() + ' ' + $('.edit-time-end').val()+'.000000'
+            };
+     
+            dsa.patch('schedules/' + id, payload, function (result) {
+                if (result.meta.success) {
+                    window.location = "/schedules";
+                }
+            });
+        })
+
+        // initialize input widgets first
+        $('#edit-event-time .time').timepicker({
+            'showDuration': true,
+            'timeFormat': 'H:i:s'
+        });
+    
+        $('#edit-event-time .date').datepicker({
+            'format': 'yyyy-mm-dd',
+            'autoclose': true
+        });
+    
+        // initialize datepair
+        var eventTimeElement = document.getElementById('edit-event-time');
+        var datepair = new Datepair(eventTimeElement);
+    
+    </script>
