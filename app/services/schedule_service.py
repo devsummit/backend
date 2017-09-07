@@ -66,11 +66,10 @@ class ScheduleService():
 
 	def create(self, payloads):
 		self.model_schedule = Schedule()
-		self.model_schedule.user_id = payloads['user_id']
 		self.model_schedule.stage_id = payloads['stage_id']
 		self.model_schedule.event_id = payloads['event_id']
-		self.model_schedule.time_start = datetime.datetime.strptime(payloads['time_start'], '%b %d %Y %I:%M%p')
-		self.model_schedule.time_end = datetime.datetime.strptime(payloads['time_end'], '%b %d %Y %I:%M%p')
+		self.model_schedule.time_start = datetime.datetime.strptime(payloads['time_start'], "%Y-%m-%d %H:%M:%S.%f") 
+		self.model_schedule.time_end = datetime.datetime.strptime(payloads['time_end'], "%Y-%m-%d %H:%M:%S.%f") 
 		db.session.add(self.model_schedule)
 		try:
 			db.session.commit()
@@ -85,18 +84,17 @@ class ScheduleService():
 			data = e.orig.args
 			return {
 				'error': True,
-				'data': None
+				'data': data
 			}
 
 	def update(self, payloads, id):
 		try:
 			self.model_schedule = db.session.query(Schedule).filter_by(id=id)
 			self.model_schedule.update({
-				'user_id': payloads['user_id'],
 				'event_id': payloads['event_id'],
 				'stage_id': payloads['stage_id'],
-				'time_start': datetime.datetime.strptime(payloads['time_start'], '%b %d %Y %I:%M%p'),
-				'time_end': datetime.datetime.strptime(payloads['time_end'], '%b %d %Y %I:%M%p'),
+				'time_start': datetime.datetime.strptime(payloads['time_start'], "%Y-%m-%d %H:%M:%S.%f"),
+				'time_end': datetime.datetime.strptime(payloads['time_end'], "%Y-%m-%d %H:%M:%S.%f"),
 				'updated_at': datetime.datetime.now()
 			})
 			db.session.commit()

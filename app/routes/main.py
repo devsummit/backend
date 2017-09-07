@@ -48,3 +48,7 @@ def get_accounts():
 def get_speakers():
 	return MainController.getSpeakers()
 
+
+@main.route('/schedules')
+def schedules():
+    return MainController.getSchedules()
