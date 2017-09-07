@@ -6,6 +6,8 @@ from app.services import ticketservice
 from app.services import referalservice
 from app.services import boothservice
 from app.services import speakerservice
+from app.services import eventservice
+from app.configs.constants import EVENTS_TYPE
 
 
 class MainController(BaseController):
@@ -35,3 +37,7 @@ class MainController(BaseController):
     def getSpeakers():
         speakers = speakerservice.get()
         return render_template('admin/speakers/speakers.html', speakers=speakers['data'])
+
+    def getEvents():
+        events = eventservice.index()
+        return render_template('admin/events/events.html', events=events['data'], event_type=EVENTS_TYPE)
