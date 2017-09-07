@@ -8,11 +8,18 @@ class Event(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'events'
 	# displayed fields
-	visible = ['id', 'information', 'title', 'created_at', 'updated_at']
+	visible = ['id', 'information', 'user_id', 'type', 'title', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(
+		db.String(40),
+		db.ForeignKey('users.id'),
+		nullable=True
+	)
+	user = db.relationship('User')
 	information = db.Column(db.String)
+	type = db.Column(db.String)
 	title = db.Column(db.String)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)

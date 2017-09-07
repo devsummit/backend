@@ -1,5 +1,4 @@
 from app.controllers.base_controller import BaseController
-from app.models.base_model import BaseModel
 from app.services import ticketservice
 
 
@@ -8,7 +7,7 @@ class TicketController(BaseController):
 	@staticmethod
 	def index():
 		tickets = ticketservice.get()
-		return BaseController.send_response_api(BaseModel.as_list(tickets), 'tickets retrieved successfully')
+		return BaseController.send_response_api(tickets['data'], tickets['message'])
 
 	@staticmethod
 	def show(id):

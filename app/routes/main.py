@@ -43,3 +43,8 @@ def login():
 @main.route('/accounts')
 def get_accounts():
     return MainController.getAccounts()
+
+@main.route('/speakers')
+def get_speakers():
+	return MainController.getSpeakers()
+

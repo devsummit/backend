@@ -5,6 +5,11 @@ ROLE = {
     'speaker': 4 
 }
 
+SLOT = {
+	'community': 400,
+	'commercial': 3600
+}
+
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
 # Change these consts to devsummit later
 MERCHANT_ID = 'M1066775'

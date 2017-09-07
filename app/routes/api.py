@@ -224,10 +224,14 @@ def delete(event_id):
 @api.route('/schedules', methods=['GET', 'POST'])
 @token_required
 def schedule(*args, **kwargs):
-    if(request.method == 'POST'):
-        return ScheduleController.create(request)
-    elif(request.method == 'GET'):
-        return ScheduleController.index()
+	filter = request.args.get('filter')
+	if(request.method == 'POST'):
+		return ScheduleController.create(request)
+	elif(request.method == 'GET' and filter is None):
+		return ScheduleController.index()
+	elif(request.method == 'GET' and filter is not None):
+		return ScheduleController.filter(filter)
+
 
 # Beacon route by id
 
@@ -308,18 +312,16 @@ def transfer_points_log(*args, **kwargs):
 # User Photo api
 
 
-@api.route('/user/photo', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@api.route('/user/photo', methods=['GET', 'POST', 'DELETE'])
 @token_required
 def user_photo(*args, **kwargs):
-    user_id = kwargs['user'].id
-    if(request.method == 'POST'):
-        return UserPhotoController.create(request, user_id)
-    elif(request.method == 'PATCH'):
-        return UserPhotoController.update(request, user_id)
-    elif(request.method == 'DELETE'):
-        return UserPhotoController.delete(user_id)
-    elif(request.method == 'GET'):
-        return UserPhotoController.show(user_id)
+	user_id = kwargs['user'].id
+	if(request.method == 'POST'):
+		return UserPhotoController.create(request, user_id)
+	elif(request.method == 'DELETE'):
+		return UserPhotoController.delete(user_id)
+	elif(request.method == 'GET'):
+		return UserPhotoController.show(user_id)
 
 
 @api.route('/user/photos', methods=['GET'])
@@ -552,3 +554,11 @@ def referal_id(id, *args, **kwargs):
 @token_required
 def check_referal(*args, **kwargs):
     return ReferalController.check(request)
+
+
+@api.route('/me', methods=['GET'])
+@token_required
+def me(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return UserController.show(user['id'])
+
