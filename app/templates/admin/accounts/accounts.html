@@ -94,7 +94,7 @@
             $('.account-username').val(data['username']);
             $('.account-role_id').val(data['role_id']);
            
-            $('.btn-save').attr("id", data['id']);
+            $('.btn-edit-save').attr("id", 'e-' + data['id']);
         });
     });
 
@@ -107,7 +107,7 @@
 
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
-        $('.btn-yes').attr("id", id);
+        $('.btn-yes').attr("id", 'd-'+ id);
     });
     
     $(function () {

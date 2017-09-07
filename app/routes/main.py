@@ -48,3 +48,8 @@ def get_accounts():
 def get_speakers():
 	return MainController.getSpeakers()
 
+@main.route('/stages')
+def get_stages():
+	return MainController.getStages()
+
+
