@@ -251,6 +251,16 @@ class PaymentController(BaseController):
                 else:
                     return BaseController.send_error_api(None, result)
 
+            if (payment_type == 'cstore'):
+
+                payloads['payment_type'] = payment_type
+
+                result = paymentservice.cstore(payloads)
+
+                if 'error' in result:
+                    return BaseController.send_error_api(result['data'], result['message'])
+                return BaseController.send_response_api(result, 'Indomaret payment transaction created succesfully') 
+
     @staticmethod
     def status(id):
 
