@@ -497,6 +497,12 @@ def payment(*args, **kwargs):
         return PaymentController.create(request)
 
 
+@api.route('/payments/authorize', methods=['POST'])
+@token_required
+def authorize_credit_card(*args, **kwargs):
+	return PaymentController.authorize(request)
+
+
 @api.route('/payments/status/<id>', methods=['PATCH', 'PUT'])
 @token_required
 def status(id, *args, **kwargs):
@@ -561,4 +567,3 @@ def check_referal(*args, **kwargs):
 def me(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return UserController.show(user['id'])
-
