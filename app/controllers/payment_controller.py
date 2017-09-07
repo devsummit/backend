@@ -257,10 +257,9 @@ class PaymentController(BaseController):
 
                 result = paymentservice.cstore(payloads)
 
-                if result['status_code'] == '201' or result['status_code'] == '200':
-                    return BaseController.send_response_api(result, 'Indomater payment transaction created succesfully')
-                else:
-                    return BaseController.send_error_api(None, result)
+                if 'error' in result:
+                    return BaseController.send_error_api(result['data'], result['message'])
+                return BaseController.send_response_api(result, 'Indomaret payment transaction created succesfully') 
 
     @staticmethod
     def status(id):
