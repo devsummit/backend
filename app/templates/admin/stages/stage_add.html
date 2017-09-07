@@ -12,36 +12,24 @@
                             <ul class="list-group list-group-unbordered">
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="i-firstname">First Name:</label>
-                                        <input type="text" class="form-control i-firstname" id="i-firstname">
+                                        <label for="i-name">Stage Name:</label>
+                                        <input type="text" class="form-control i-name" id="i-name">
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                         <div class="form-group">
-                                            <label for="i-lastname">Last Name:</label>
-                                            <input type="text" class="form-control i-lastname" id="i-lastname">
+                                            <label for="i-stage-type">Stage Type:</label>
+                                            <input type="text" class="form-control i-stage-type" id="i-stage-type">
                                         </div>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="i-email">Email:</label>
-                                        <input type="text" class="form-control i-email" id="i-email">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="i-username">Username:</label>
-                                        <input type="text" class="form-control i-username" id="i-username">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="i-role_id">Role:</label>
-                                        <input type="text" class="form-control i-role_id" id="i-role_id">
+                                        <label for="i-information">Information:</label>
+                                        <input type="text" class="form-control i-information" id="i-information">
                                     </div>
                                 </li>
                             </ul>
-                        <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
+                        <a href="#" class="btn btn-primary btn-block btn-add-save" id="-"><b>Save</b></a>
         
                     </div>
                     <!-- /.box-body -->
@@ -58,17 +46,15 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
-    $('.btn-save').click(function(event){
+    $('.btn-add-save').click(function(event){
         const payload = {
-            "first_name": $('.i-firstname').val(),
-            "last_name": $('.i-lastname').val(),
-            "email": $('.i-email').val(),
-            "username": $('.i-username').val(),
-            "role_id": $('.i-role_id').val()
+            "name": $('.i-name').val(),
+            "stage_type": $('.i-stage-type').val(),
+            "information": $('.i-information').val()
         };
-        dsa.post('users', payload, function(result) {
+        dsa.post('{{ globals["api_route"] }}', payload, function(result) {
             if(result.meta.success) {
-                window.location = "http://localhost:5000/accounts";
+                window.location = 'http://localhost:5000/{{ globals["base_route"] }}';
             }
         });
     });

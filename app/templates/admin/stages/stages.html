@@ -57,8 +57,8 @@
         </div>
 
         {% include "admin/base/modal_delete.html" %}
-        <!-- {% include "admin/accounts/account_edit.html" %}
-        {% include "admin/accounts/account_add.html" %} -->
+        {% include "admin/stages/stage_edit.html" %}
+        {% include "admin/stages/stage_add.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -77,6 +77,8 @@
             // bind result value in to modal-detail page 
             const data = result['data'];
             $('.stage-name').val(data['name']);
+            $('.stage-type').val(data['stage_type']);
+            $('.stage-information').val(data['information']);
            
             $('.btn-edit-save').attr("id", 'e-' + data['id']);
         });

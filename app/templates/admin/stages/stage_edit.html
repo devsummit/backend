@@ -49,14 +49,17 @@
     /* Display Attendee Detail */
     $('.btn-edit-save').click(function(event){
         var id = $(event.target).attr('id');
-        id = id.substring(3, id.length);
+        console.log(id);
+        id = id.substring(2, id.length);
         payload = {
-            "first_name": $('.stage-name').val(),
+            "name": $('.stage-name').val(),
+            "stage_type": $('.stage-type').val(),
+            "information": $('.stage-information').val(),
         };
         dsa.patch('{{ globals["api_route"] }}/' + id, payload, function(result) {
             console.log(result, 'saved');
             if(result.meta.success) {
-                window.location = 'http://localhost:5000/{{ globals["''"] }}';
+                window.location = 'http://localhost:5000/{{ globals["base_route"] }}';
             }
         });
     })
