@@ -16,8 +16,10 @@ class ScheduleService():
 			data = schedule.as_dict()
 			event = schedule.event
 			user = event.user
+			stage = schedule.stage
 			data['user'] = user.as_dict() if user else None
 			data['event'] = event.as_dict() if event else None
+			data['stage'] = stage.as_dict() if stage else None
 
 			if data['user'] and data['user']['role_id'] == 3:
 				booth = db.session.query(Booth).filter_by(user_id=data['user']['id']).first()
