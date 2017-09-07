@@ -19,7 +19,7 @@ depends_on = None
 def upgrade():
     op.create_table('newsletters',
 		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('email', sa.String, unique=True),
+		sa.Column('email', sa.String(160), unique=True),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)

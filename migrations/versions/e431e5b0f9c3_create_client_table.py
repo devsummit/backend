@@ -19,9 +19,9 @@ depends_on = None
 def upgrade():
     op.create_table('clients',
                     sa.Column('id', sa.Integer, primary_key=True),
-                    sa.Column('app_name', sa.String, unique=True),
-                    sa.Column('client_secret', sa.String),
-                    sa.Column('client_id', sa.String),
+                    sa.Column('app_name', sa.String(120), unique=True),
+                    sa.Column('client_secret', sa.String(255)),
+                    sa.Column('client_id', sa.String(255)),
                     sa.Column('created_at', sa.DateTime),
                     sa.Column('updated_at', sa.DateTime)
                     )

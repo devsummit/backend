@@ -20,7 +20,7 @@ def upgrade():
 	op.create_table('user_photo',
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
-		sa.Column('url', sa.String, unique=True),
+		sa.Column('url', sa.String(255)),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)

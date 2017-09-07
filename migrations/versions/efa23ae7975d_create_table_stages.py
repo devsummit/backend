@@ -19,9 +19,9 @@ depends_on = None
 def upgrade():
     op.create_table('stages',
                     sa.Column('id', sa.Integer, primary_key=True),
-                    sa.Column('name', sa.String, unique=True),
-                    sa.Column('stage_type', sa.String),
-                    sa.Column('information', sa.String),
+                    sa.Column('name', sa.String(120), unique=True),
+                    sa.Column('stage_type', sa.String(120)),
+                    sa.Column('information', sa.Text),
                     sa.Column('created_at', sa.DateTime),
                     sa.Column('updated_at', sa.DateTime)
                     )
