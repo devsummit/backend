@@ -60,10 +60,8 @@ class PaymentService():
     def get_order_referal(self, order_id):
         order = db.session.query(Order).filter_by(id=order_id).first()
         if (order is not None and order.referal):
-            ref = order.referal.as_dict()
-            return ref
-        else:
-            return None
+            return order.referal.as_dict()
+        return None
 
     def bank_transfer(self, payloads):
 
@@ -89,7 +87,8 @@ class PaymentService():
             ) and not isinstance(payloads['gross_amount'], int):
                 return {
                     'error': True,
-                    'data': 'payload not valid'
+                    'data': {'payment_invalid': True},
+                    'message': 'payload is not valid'
                 }
             # todo create payload for BCA virtual account
             data = {}
@@ -104,7 +103,7 @@ class PaymentService():
             data['customer_details']['phone'] = payloads['phone']
             data['item_details'] = details
             data['bank_transfer'] = {}
-            data['bank_transfer']['bank'] = payloads['ba0nk']
+            data['bank_transfer']['bank'] = payloads['bank']
             data['bank_transfer']['va_number'] = payloads['va_number']
             data['bank_transfer']['free_text'] = {}
             data['bank_transfer']['free_text']['inquiry'] = [
@@ -130,8 +129,10 @@ class PaymentService():
             ) and not isinstance(payloads['gross_amount'], int):
                 return {
                     'error': True,
-                    'data': 'payloads is not valid'
+                    'data': {'payment_invalid': True},
+                    'message': 'payload is not valid'
                 }
+
             # create paylod for midtrans
             data = {}
             data['payment_type'] = payloads['payment_type']
@@ -314,7 +315,8 @@ class PaymentService():
         ]) and not isinstance(payloads['gross_amount'], int):
             return {
                 'error': True,
-                'message': 'payloads is not valid'
+                'data': {'payment_invalid': True},
+                'message': 'payload is not valid'
             }
 
         # get referral by order id
@@ -390,7 +392,7 @@ class PaymentService():
 
         status = payment_status.json()
 
-        if (status['status_code'] == '407' or status['status_code'] == '412'):
+        if status['status_code'] in ['200', '201', '407', '412']:
 
             if (payment['transaction_status'] != status['transaction_status']):
                 payment = db.session.query(Payment).filter_by(id=id)
@@ -404,9 +406,13 @@ class PaymentService():
                     # on payment success
                     self.save_paid_ticket(order)
 
-        return "has expired"
+        return {
+            'error': True,
+            'data': {'payment_invalid': True},
+            'message': 'payload is not valid'
+        }
 
-        if (status['status_code'] == '200' or status['status_code'] == '201'):
+        if status['status_code'] in ['200', '201']:
 
             if (payment['transaction_status'] != status['transaction_status']):
                 payment = db.session.query(Payment).filter_by(id=id)
