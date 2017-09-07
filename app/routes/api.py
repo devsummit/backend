@@ -208,7 +208,7 @@ def create():
 	return EventController.create(request)
 
 
-@api.route('/events/<event_id>', methods=['PATCH'])
+@api.route('/events/<event_id>', methods=['PATCH', 'PUT'])
 def update(event_id):
 	return EventController.update(request, event_id)
 
