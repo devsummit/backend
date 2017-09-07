@@ -145,17 +145,16 @@ class PaymentController(BaseController):
                 'card_exp_month': PaymentController.is_field_exist(request, 'card_exp_month'),
                 'card_exp_year': PaymentController.is_field_exist(request, 'card_exp_year'),
                 'card_cvv': PaymentController.is_field_exist(request, 'card_cvv'),
-                'client_key': PaymentController.is_field_exist(request, 'client_key'),
+                'client_key': PaymentController.is_field_exist(request, 'client_key')
             }
             if None in payloads.values():
                 return BaseController.send_error_api(None, 'field is not complete')
 
             result = paymentservice.credit_payment(payloads)
 
-            if 'status_code' in result and (result['status_code'] == '201' or result['status_code'] == '200'):
-                return BaseController.send_response_api(result, 'credit card transaction is created')
-            else:
-                return BaseController.send_error_api(None, result)
+            if 'error' in result:
+                return BaseController.send_error_api(result['data'], result['message'])
+            return BaseController.send_response_api(result, 'Credit card transaction created succesfully') 
 
         else:
             payloads = {
@@ -259,7 +258,27 @@ class PaymentController(BaseController):
 
                 if 'error' in result:
                     return BaseController.send_error_api(result['data'], result['message'])
+
                 return BaseController.send_response_api(result, 'Indomaret payment transaction created succesfully') 
+
+    @staticmethod
+    def authorize(request):
+        payloads = {
+            'payment_type': PaymentController.is_field_exist(request, 'payment_type'),
+            'type': PaymentController.is_field_exist(request, 'type'),
+            'order_id': PaymentController.is_field_exist(request, 'order_id'),
+            'gross_amount': PaymentController.is_field_exist(request, 'gross_amount')
+        }
+
+        if None in payloads.values():
+            return BaseController.send_error_api(None, 'field is not complete')
+
+        result = paymentservice.authorize(payloads)
+
+        if 'error' in result:
+            return BaseController.send_error_api(result['data'], result['message'])
+
+        return BaseController.send_response_api(result, 'Credit card authorized succesfully')
 
     @staticmethod
     def status(id):
