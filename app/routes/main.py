@@ -49,6 +49,13 @@ def get_speakers():
 	return MainController.getSpeakers()
 
 
+@main.route('/stages')
+def get_stages():
+	return MainController.getStages()
+
+
+
 @main.route('/schedules')
 def schedules():
     return MainController.getSchedules()
+

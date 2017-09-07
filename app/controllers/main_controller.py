@@ -7,8 +7,10 @@ from app.services import referalservice
 from app.services import userservice
 from app.services import boothservice
 from app.services import speakerservice
+from app.services import stageservice
 from app.services import scheduleservice
 from app.services import eventservice
+
 
 class MainController(BaseController):
     def index():
@@ -41,6 +43,13 @@ class MainController(BaseController):
     def getSpeakers():
         speakers = speakerservice.get()
         return render_template('admin/speakers/speakers.html', speakers=speakers['data'])
+
+
+    def getStages():
+        stages = stageservice.get()
+        return render_template('admin/stages/stages.html', stages=stages)
+
     def getSchedules():
         schedules = scheduleservice.get()
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
+

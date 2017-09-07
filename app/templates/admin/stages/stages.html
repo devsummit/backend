@@ -2,7 +2,7 @@
 
 {% block title %} <title> Accounts list </title>  {% endblock %}
 
-{% set globals={'base_route': 'accounts', 'api_route': 'users'} %}
+{% set globals={'base_route': 'stages', 'api_route': 'stages'} %}
 
 {% block header_link %}
     <!-- DataTables -->
@@ -12,14 +12,14 @@
 {% block page_header %}
     {{ super() }}
     <h1>
-        Accounts
-        <small>List of accounts</small>
+        Stages
+        <small>List of stages</small>
         
     </h1>
 {% endblock %}
 
 {% block breadcrumb %}
-    <li class="active">Accounts</li>
+    <li class="active">Stages</li>
 {% endblock %}
 
 {% block content %}
@@ -28,37 +28,25 @@
         <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
         
         <div class="box-body">
-            <table id="account-list1" class="table table-bordered table-striped">
+            <table id="data-list1" class="table table-bordered table-striped">
                 <thead>
         
                     <tr>
-                        <th>Attendee Name</th>
-                        <th>Email</th>
-                        <th>Username</th>
-                        <th>Role</th>
+                        <th>Stage Name</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for account in accounts %}
+                    {% for stage in stages %}
                     <tr>
                         <td>
-                            <a href="" id='atd-{{ account.id }}' class="accounts-name">{{ account['last_name'] + ', ' + account['first_name']|e }}</a> 
+                            <a href="" id='atd-{{ stage.id }}' class="stages-name">{{ stage['name']|e }}</a> 
                         </td>
                         <td>
-                            {{ account.email|e }}
-                        </td>
-                        <td>
-                            {{ account.username|e }}
-                        </td>
-                        <td>
-                            {{ account.role|e }}
-                        </td>
-                        <td>
-                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                            <button id='btd-{{ stage.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
-                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                            <button id='btd-{{ stage.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
                         </td>
@@ -69,8 +57,8 @@
         </div>
 
         {% include "admin/base/modal_delete.html" %}
-        {% include "admin/accounts/account_edit.html" %}
-        {% include "admin/accounts/account_add.html" %}
+        {% include "admin/stages/stage_edit.html" %}
+        {% include "admin/stages/stage_add.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -85,25 +73,23 @@
 
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
-        dsa.get('users/' + id, function(result) {
-            // bind result value in to account_detail.html 
+        dsa.get('{{ globals["api_route"] }}/' + id, function(result) {
+            // bind result value in to modal-detail page 
             const data = result['data'];
-            $('.account-firstname').val(data['first_name']);
-            $('.account-lastname').val(data['last_name']);
-            $('.account-email').val(data['email']);
-            $('.account-username').val(data['username']);
-            $('.account-role_id').val(data['role_id']);
+            $('.stage-name').val(data['name']);
+            $('.stage-type').val(data['stage_type']);
+            $('.stage-information').val(data['information']);
            
             $('.btn-edit-save').attr("id", 'e-' + data['id']);
         });
     });
 
     $('.btn-add').click(function(event){
-        $('.modal-title').html('Add New Account');
+        $('.modal-title').html('Add New Stage');
     });
 
     $('.btn-delete').click(function(event){
-        $('.modal-title').html('Are you sure want to delete this account?');
+        $('.modal-title').html('Are you sure want to delete this stage?');
 
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
@@ -111,7 +97,7 @@
     });
     
     $(function () {
-        $('#account-list1').DataTable();
+        $('#data-list1').DataTable();
     });
 </script>
 
