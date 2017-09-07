@@ -34,7 +34,7 @@
                                 </div>
                             </li>
                         </ul>
-                        <a href="#" class="btn btn-primary btn-block btn-add" id="-"><b>Save</b></a>
+                        <a href="#" class="btn btn-primary btn-block btn-save-add" id="-"><b>Save</b></a>
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -61,7 +61,7 @@
 
 <script>
     /* Display Attendee Detail */
-    $('.btn-add').click(function (event) {
+    $('.btn-save-add').click(function (event) {
         payload = {
             'stage_id': $('.add-schedule-stages').val(),
             'event_id': $('.add-schedule-events').val(),
