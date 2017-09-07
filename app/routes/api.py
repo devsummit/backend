@@ -500,8 +500,7 @@ def payment(*args, **kwargs):
 @api.route('/payments/authorize', methods=['POST'])
 @token_required
 def authorize_credit_card(*args, **kwargs):
-    if (request.method == 'POST'):
-        return PaymentController.authorize(request)
+	return PaymentController.authorize(request)
 
 
 @api.route('/payments/status/<id>', methods=['PATCH', 'PUT'])
