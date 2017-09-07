@@ -45,11 +45,9 @@ class MainController(BaseController):
         speakers = speakerservice.get()
         return render_template('admin/speakers/speakers.html', speakers=speakers['data'])
 
-      
     def getEvents():
         events = eventservice.index()
         return render_template('admin/events/events.html', events=events['data'], event_type=EVENTS_TYPE)
-
 
     def getStages():
         stages = stageservice.get()
@@ -58,5 +56,3 @@ class MainController(BaseController):
     def getSchedules():
         schedules = scheduleservice.get()
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
-
-

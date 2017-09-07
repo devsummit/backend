@@ -299,13 +299,12 @@ class PaymentService():
             db.session.commit()
 
             return transaction_status
-            
+
         return {
             'error': True,
             'data': transaction_status,
             'message': 'change fraud status is failed'
         }
-
 
     def internet_banking(self, payloads):
         if not all(isinstance(string, str) for string in [
