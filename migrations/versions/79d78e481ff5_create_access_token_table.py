@@ -23,8 +23,8 @@ def upgrade():
             sa.ForeignKey('users.id', ondelete='CASCADE')),
         sa.Column('client_id', sa.Integer,
             sa.ForeignKey('clients.id', ondelete='CASCADE')),
-        sa.Column('access_token', sa.String),
-        sa.Column('refresh_token', sa.String),
+        sa.Column('access_token', sa.String(255)),
+        sa.Column('refresh_token', sa.String(255)),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
         )
