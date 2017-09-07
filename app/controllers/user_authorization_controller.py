@@ -36,7 +36,7 @@ class UserAuthorizationController(BaseController):
                     if user.verify_password(password):
                         token = userservice.save_token()
                         user = user.include_photos().as_dict()
-                        return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
+                        return BaseController.send_response_api({'access_token': token['data'].access_token, 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
                         return BaseController.send_error_api({'wrong_credential': True}, 'wrong credentials')
                 else:
@@ -63,7 +63,7 @@ class UserAuthorizationController(BaseController):
                 if user is not None:
                     token = userservice.save_token(provider)
                     user = user.include_photos().as_dict()
-                    return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
+                    return BaseController.send_response_api({'access_token': token['data'].access_token, 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                 else:
                     return BaseController.send_error_api({'not_registered': True}, 'user is not registered')
             else:
