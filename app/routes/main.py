@@ -42,9 +42,9 @@ def login():
 
 @main.route('/accounts')
 def get_accounts():
-    return MainController.getAccounts()
+    return MainController.getAccounts()  
 
-  
+
 @main.route('/speakers')
 def get_speakers():
 	return MainController.getSpeakers()
@@ -54,7 +54,7 @@ def get_speakers():
 def get_events():
     return MainController.getEvents()
 
-  
+
 @main.route('/stages')
 def get_stages():
 	return MainController.getStages()
@@ -63,4 +63,3 @@ def get_stages():
 @main.route('/schedules')
 def schedules():
     return MainController.getSchedules()
-
