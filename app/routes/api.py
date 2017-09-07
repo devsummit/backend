@@ -457,8 +457,17 @@ def user_id(id, *args, **kwargs):
     if(request.method == 'GET'):
         return UserController.show(id)
 
-# Edit User
+# Add new User
 
+
+@api.route('/users', methods=['POST'])
+@token_required
+def add_user(*args, **kwargs):
+    if(request.method == 'POST'):
+        return UserController.add(request)
+
+
+# Edit User
 
 @api.route('/users/<id>', methods=['PUT'])
 @token_required
