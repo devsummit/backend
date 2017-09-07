@@ -59,8 +59,9 @@ class PaymentService():
 
     def get_order_referal(self, order_id):
         order = db.session.query(Order).filter_by(id=order_id).first()
-        ref = order.referal.as_dict() if order.referal else None
-        return ref
+        if (order is not None and order.referal):
+            return order.referal.as_dict()
+        return None
 
     def bank_transfer(self, payloads):
 
@@ -86,7 +87,8 @@ class PaymentService():
             ) and not isinstance(payloads['gross_amount'], int):
                 return {
                     'error': True,
-                    'data': 'payload not valid'
+                    'data': {'payment_invalid': True},
+                    'message': 'payload is not valid'
                 }
             # todo create payload for BCA virtual account
             data = {}
@@ -127,8 +129,10 @@ class PaymentService():
             ) and not isinstance(payloads['gross_amount'], int):
                 return {
                     'error': True,
-                    'data': 'payloads is not valid'
+                    'data': {'payment_invalid': True},
+                    'message': 'payload is not valid'
                 }
+
             # create paylod for midtrans
             data = {}
             data['payment_type'] = payloads['payment_type']
@@ -301,6 +305,44 @@ class PaymentService():
 
         return midtrans_api_response
 
+    def cstore(self, payloads):
+        if not all(isinstance(string, str) for string in [
+            payloads['order_id'],
+            payloads['first_name'],
+            payloads['last_name'],
+            payloads['email'],
+            payloads['phone'],
+        ]) and not isinstance(payloads['gross_amount'], int):
+            return {
+                'error': True,
+                'data': {'payment_invalid': True},
+                'message': 'payload is not valid'
+            }
+
+        # get referral by order id
+        ref = self.get_order_referal(payloads['order_id'])
+
+        details = self.get_order_details(payloads['order_id'], ref)
+
+        data = {}
+        data['payment_type'] = payloads['payment_type']
+        data['transaction_details'] = {}
+        data['transaction_details']['gross_amount'] = payloads['gross_amount']
+        data['transaction_details']['order_id'] = payloads['order_id']
+        data['cstore'] = {}
+        data['cstore']['store'] = 'Indomaret'
+        data['cstore']['message'] = 'dev summit ticket transaction'
+        data['customer_details'] = {}
+        data['customer_details']['first_name'] = payloads['first_name']
+        data['customer_details']['last_name'] = payloads['last_name']
+        data['customer_details']['email'] = payloads['email']
+        data['customer_details']['phone'] = payloads['phone']
+        data['details'] = details
+
+        midtrans_api_response = self.send_to_midtrans_api(data)
+
+        return midtrans_api_response
+
     # this will send the all payment methods payload to midtrand api
     def send_to_midtrans_api(self, payloads):
         endpoint = url + 'charge'
@@ -315,10 +357,18 @@ class PaymentService():
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
                 payload['bank'] = payloads['bank']
             else:
-                payload['bank'] = payload['bank'] if 'bank' in payload else payloads['bank_transfer']['bank']
+                if 'bank' in payload:
+                    payload['bank'] = payload['bank']
+                elif 'bank_transfer' in payload:
+                    payload['bank'] = payloads['bank_transfer']['bank']
+                else:
+                    payload['bank'] = None
 
             if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
                 self.save_payload(payload, payloads)
+
+            if 'status_code' in payload and payload['status_code'] == '406':
+                return payload
 
             # if  not fraud and captured save ticket to user_ticket table
             if('fraud_status' in payload and payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
@@ -342,7 +392,27 @@ class PaymentService():
 
         status = payment_status.json()
 
-        if (status['status_code'] in ['200', '201', '407']):
+        if status['status_code'] in ['200', '201', '407', '412']:
+
+            if (payment['transaction_status'] != status['transaction_status']):
+                payment = db.session.query(Payment).filter_by(id=id)
+                payment.update({
+                    'updated_at': datetime.datetime.now(),
+                    'transaction_status': status['transaction_status']
+                })
+
+                db.session.commit()
+                if (payment.first().as_dict()['transaction_status'] == 'expire'):
+                    # on payment success
+                    self.save_paid_ticket(order)
+
+        return {
+            'error': True,
+            'data': {'payment_invalid': True},
+            'message': 'payload is not valid'
+        }
+
+        if status['status_code'] in ['200', '201']:
 
             if (payment['transaction_status'] != status['transaction_status']):
                 payment = db.session.query(Payment).filter_by(id=id)

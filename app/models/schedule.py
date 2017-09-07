@@ -10,7 +10,7 @@ class Schedule(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'schedules'
 	# displayed fields
-	visible = ['id', 'event_id', 'time_start', 'time_end', 'created_at', 'updated_at']
+	visible = ['id', 'event_id', 'stage_id', 'time_start', 'time_end', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)

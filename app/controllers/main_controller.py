@@ -4,10 +4,13 @@ from app.services import attendeeservice
 from app.services import paymentservice
 from app.services import ticketservice
 from app.services import referalservice
+from app.services import userservice
 from app.services import boothservice
 from app.services import speakerservice
 from app.services import eventservice
 from app.configs.constants import EVENTS_TYPE
+from app.services import stageservice
+from app.services import scheduleservice
 
 
 class MainController(BaseController):
@@ -27,8 +30,12 @@ class MainController(BaseController):
         return render_template('admin/tickets/tickets.html', tickets=tickets)
 
     def getReferals():
-    	referals = referalservice.get()
-    	return render_template('admin/referals/referals.html', referals=referals)
+        referals = referalservice.get()
+        return render_template('admin/referals/referals.html', referals=referals)
+
+    def getAccounts():
+        accounts = userservice.list_user()
+        return render_template('admin/accounts/accounts.html', accounts=accounts)
 
     def getBooths():
         booths = boothservice.get()
@@ -38,6 +45,18 @@ class MainController(BaseController):
         speakers = speakerservice.get()
         return render_template('admin/speakers/speakers.html', speakers=speakers['data'])
 
+      
     def getEvents():
         events = eventservice.index()
         return render_template('admin/events/events.html', events=events['data'], event_type=EVENTS_TYPE)
+
+
+    def getStages():
+        stages = stageservice.get()
+        return render_template('admin/stages/stages.html', stages=stages)
+
+    def getSchedules():
+        schedules = scheduleservice.get()
+        return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
+
+

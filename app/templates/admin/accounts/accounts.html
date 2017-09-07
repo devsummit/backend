@@ -1,0 +1,118 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Accounts list </title>  {% endblock %}
+
+{% set globals={'base_route': 'accounts', 'api_route': 'users'} %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Accounts
+        <small>List of accounts</small>
+        
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Accounts</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+        
+        <div class="box-body">
+            <table id="account-list1" class="table table-bordered table-striped">
+                <thead>
+        
+                    <tr>
+                        <th>Attendee Name</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td>
+                            <a href="" id='atd-{{ account.id }}' class="accounts-name">{{ account['last_name'] + ', ' + account['first_name']|e }}</a> 
+                        </td>
+                        <td>
+                            {{ account.email|e }}
+                        </td>
+                        <td>
+                            {{ account.username|e }}
+                        </td>
+                        <td>
+                            {{ account.role|e }}
+                        </td>
+                        <td>
+                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include "admin/base/modal_delete.html" %}
+        {% include "admin/accounts/account_edit.html" %}
+        {% include "admin/accounts/account_add.html" %}
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    $('.btn-edit').click(function(event){
+        $('.modal-title').html('Edit');
+
+        const btd_id = $(event.target).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        dsa.get('users/' + id, function(result) {
+            // bind result value in to account_detail.html 
+            const data = result['data'];
+            $('.account-firstname').val(data['first_name']);
+            $('.account-lastname').val(data['last_name']);
+            $('.account-email').val(data['email']);
+            $('.account-username').val(data['username']);
+            $('.account-role_id').val(data['role_id']);
+           
+            $('.btn-edit-save').attr("id", 'e-' + data['id']);
+        });
+    });
+
+    $('.btn-add').click(function(event){
+        $('.modal-title').html('Add New Account');
+    });
+
+    $('.btn-delete').click(function(event){
+        $('.modal-title').html('Are you sure want to delete this account?');
+
+        const btd_id = $(event.target).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        $('.btn-yes').attr("id", 'd-'+ id);
+    });
+    
+    $(function () {
+        $('#account-list1').DataTable();
+    });
+</script>
+
+{% endblock %}
