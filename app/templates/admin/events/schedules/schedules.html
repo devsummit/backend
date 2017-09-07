@@ -198,6 +198,17 @@
 
         })
 
+        $('#modal-edit').on('hidden.bs.modal', function (e) {
+            $('.edit-schedule-events').html("")
+            $('.edit-schedule-stages').html("")
+        })
+        $('#modal-add').on('hidden.bs.modal', function (e) {
+            $('.add-schedule-events').html("")
+            $('.add-schedule-stages').html("")
+        })
+            
+        
+
         $(function () {
             $('#schedule-list1').DataTable();
         })
