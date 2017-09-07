@@ -68,8 +68,7 @@
             'time_start': $('.add-date').val() + ' ' + $('.add-time-start').val()+'.000000',
             'time_end': $('.add-date').val() + ' ' + $('.add-time-end').val()+'.000000'
         };
-
-        console.log(payload)    
+   
         dsa.post('schedules', payload, function (result) {
             if (result.meta.success) {
                 window.location = "/schedules";
