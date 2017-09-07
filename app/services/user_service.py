@@ -352,3 +352,26 @@ class UserService:
                 'error': True,
                 'data': data
             }
+
+    def add(self, payloads):
+        try:
+            self.model_user = User()
+
+            self.model_user.first_name = payloads['first_name']
+            self.model_user.last_name = payloads['last_name']
+            self.model_user.email = payloads['email']
+            self.model_user.username = payloads['username']
+            self.model_user.role_id = payloads['role_id']
+            db.session.add(self.model_user)
+            db.session.commit()
+            data = self.model_user.as_dict()
+            return {
+                'error': False,
+                'data': data
+            }
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return {
+                'error': True,
+                'data': data
+            }
