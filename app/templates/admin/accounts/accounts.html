@@ -43,7 +43,7 @@
                     {% for account in accounts %}
                     <tr>
                         <td>
-                            <a href="" id='atd-{{ account.id }}' class="accounts-name">{{ account['last_name'] + ', ' + account['first_name']|e }}</a> 
+                            {{ account['last_name']|e + ', ' + account['first_name']|e }} 
                         </td>
                         <td>
                             {{ account.email|e }}
@@ -83,7 +83,7 @@
     $('.btn-edit').click(function(event){
         $('.modal-title').html('Edit');
 
-        const bte_id = $(event.target).attr('id');
+        const bte_id = $(this).attr('id');
         const id = bte_id.substring(4, bte_id.length);
         dsa.get('users/' + id, function(result) {
             // bind result value in to account_detail.html 
@@ -105,7 +105,7 @@
     $('.btn-delete').click(function(event){
         $('.modal-title').html('Are you sure want to delete this account?');
 
-        const btd_id = $(event.target).attr('id');
+        const btd_id = $(this).attr('id');
         const id = btd_id.substring(4, btd_id.length);
         $('.btn-yes').attr("id", id);
     });
