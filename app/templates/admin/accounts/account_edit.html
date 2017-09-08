@@ -41,7 +41,7 @@
                                     </div>
                                 </li>
                             </ul>
-                        <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
+                        <a href="#" class="btn btn-primary btn-block btn-edit-save" id="-"><b>Save</b></a>
         
                     </div>
                     <!-- /.box-body -->
@@ -58,8 +58,8 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
-    /* Display Attendee Detail */
-    $('.btn-save').click(function(event){
+    /* Save edit account */   
+    $('.btn-edit-save').click(function(event){
         const id = $(event.target).attr('id');
         payload = {
             "first_name": $('.account-firstname').val(),
@@ -71,7 +71,7 @@
         dsa.patch('users/' + id, payload, function(result) {
             console.log(result, 'saved');
             if(result.meta.success) {
-                window.location = "http://localhost:5000/accounts";
+                window.location = "/accounts";
             }
         });
     })
