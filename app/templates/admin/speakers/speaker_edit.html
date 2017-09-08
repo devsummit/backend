@@ -47,7 +47,7 @@
 <script>
     /* Save edited data */
     $('.btn-save').click(function(event){
-        const data = $(event.target).attr('id').split(' ');
+        const data = $(this).attr('id').split(' ');
         payload = {
             "user_id": data[1],
             "job": $('.speaker-job').val(),
@@ -56,7 +56,7 @@
         };
         dsa.patch('speakers/' + data[0], payload, function(result) {
             if(result.meta.success) {
-                window.location = "http://localhost:5000/speakers";
+                window.location = "/speakers";
             }
         });
     })

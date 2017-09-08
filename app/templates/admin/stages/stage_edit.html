@@ -48,9 +48,7 @@
 <script>
     /* Display Attendee Detail */
     $('.btn-edit-save').click(function(event){
-        var id = $(event.target).attr('id');
-        console.log(id);
-        id = id.substring(2, id.length);
+        var id = $(this).attr('id');
         payload = {
             "name": $('.stage-name').val(),
             "stage_type": $('.stage-type').val(),
@@ -59,7 +57,7 @@
         dsa.patch('{{ globals["api_route"] }}/' + id, payload, function(result) {
             console.log(result, 'saved');
             if(result.meta.success) {
-                window.location = 'http://localhost:5000/{{ globals["base_route"] }}';
+                window.location = '/{{ globals["base_route"] }}';
             }
         });
     })

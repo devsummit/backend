@@ -28,11 +28,11 @@
                 {% for schedule in schedules %}
                 <tr>
                     <td>
-                        <a href="" id='atd-{{ schedule.event["id"] }}' class="schedules-title" data-toggle="modal" data-target="#modal-event">  {{ schedule.event['title']|e }}</a>
+                        <a href="" id='ate-{{ schedule.event["id"] }}' class="schedules-title" data-toggle="modal" data-target="#modal-event">  {{ schedule.event['title']|e }}</a>
 
                     </td>
                     <td>
-                        <a href="" id='atd-{{ schedule.user["id"] }}' class="schedules-name" data-toggle="modal" data-target="#modal-detail">{{ schedule.user['last_name']|e + ' ' + schedule.user['first_name']|e }}</a>
+                        <a href="" id='atu-{{ schedule.user["id"] }}' class="schedules-name" data-toggle="modal" data-target="#modal-detail">{{ schedule.user['last_name']|e + ' ' + schedule.user['first_name']|e }}</a>
                     </td>
                     <td>
                         {{ schedule.event["type"]|e }}
@@ -44,7 +44,7 @@
                         {{ schedule['time_end']|e }}
                     </td>
                     <td>
-                        <button id='btd-{{ schedule["id"] }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                        <button id='bte-{{ schedule["id"] }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                         </button>
                         <button id='btd-{{ schedule["id"] }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
@@ -71,8 +71,8 @@
         /* Display user Detail using user detail template*/
         $('.schedules-name').click(function (event) {
             event.preventDefault();
-            const atd_id = $(event.target).attr('id');
-            const id = atd_id.substring(4, atd_id.length);
+            const ate_id = $(this).attr('id');
+            const id = ate_id.substring(4, ate_id.length);
             dsa.get('users/' + id, function (result) {
                 // bind result value in to user_detail.html 
                 const data = result['data'];
@@ -91,8 +91,8 @@
         /* Display event Detail using user detail template*/
         $('.schedules-title').click(function (event) {
             event.preventDefault();
-            const atd_id = $(event.target).attr('id');
-            const id = atd_id.substring(4, atd_id.length);
+            const atu_id = $(this).attr('id');
+            const id = atu_id.substring(4, atu_id.length);
             dsa.get('events/' + id, function (result) {
                 // bind result value in to user_detail.html 
                 const data = result['data'];
@@ -109,7 +109,7 @@
         $('.btn-delete').click(function (event) {
             $('.modal-title').html('Delete');
 
-            const btd_id = $(event.target).attr('id');
+            const btd_id = $(this).attr('id');
             const id = btd_id.substring(4, btd_id.length);
             console.log(id)
             $('.btn-yes').attr("id", id);
@@ -151,7 +151,7 @@
         $('.btn-edit').click(function (event) {
             $('.modal-title').html('Edit');
             var selected_stage_id;
-            const btd_id = $(event.target).attr('id');
+            const btd_id = $(this).attr('id');
             const id = btd_id.substring(4, btd_id.length);
             dsa.get('schedules/' + id, function (result) {
                 // bind result value in to attendee_detail.html 
@@ -206,12 +206,11 @@
             $('.add-schedule-events').html("")
             $('.add-schedule-stages').html("")
         })
-            
-        
 
         $(function () {
             $('#schedule-list1').DataTable();
         })
+
     </script>
 
     {% endblock %}

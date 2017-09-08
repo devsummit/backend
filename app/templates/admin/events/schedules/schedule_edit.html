@@ -60,7 +60,7 @@
     <script>
         /* Confirm save edit */
         $('.btn-save-edit').click(function (event) {
-            const id = $(event.target).attr('id');
+            const id = $(this).attr('id');
             payload = {
                 'stage_id': $('.edit-schedule-stages').val(),
                 'event_id': $('.edit-schedule-events').val(),

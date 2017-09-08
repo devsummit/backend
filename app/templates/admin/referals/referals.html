@@ -46,7 +46,7 @@
                             {{ referal.referal_code }}
                         </td>
                          <td>
-                            <button id='btd-{{ referal.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                            <button id='bte-{{ referal.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
                             <button id='btd-{{ referal.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
@@ -78,8 +78,8 @@
     $('.btn-edit').click(function(event){
         $('.modal-title').html('Edit');
 
-        const btd_id = $(event.target).attr('id');
-        const id = btd_id.substring(4, btd_id.length);
+        const bte_id = $(this).attr('id');
+        const id = bte_id.substring(4, bte_id.length);
         dsa.get('referals/' + id, function(result) {
             // bind result value in to attendee_detail.html 
             const data = result['data'];
@@ -97,7 +97,7 @@
     $('.btn-delete').click(function(event){
         $('.modal-title').html('Delete');
 
-        const btd_id = $(event.target).attr('id');
+        const btd_id = $(this).attr('id');
         const id = btd_id.substring(4, btd_id.length);
         $('.btn-yes').attr("id", id);
     })

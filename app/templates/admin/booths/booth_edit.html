@@ -54,7 +54,7 @@
 
         dsa.patch('booths/' + booth_id, payload, function(result) {
             if(result.meta.success) {
-                window.location = "http://localhost:5000/booths";
+                window.location = "/booths";
             }
         });
     })
