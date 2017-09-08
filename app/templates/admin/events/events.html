@@ -55,7 +55,7 @@
                             {{ event.type.title() }}
                         </td>
                         <td class="text-center">
-                            <button id='btd-{{ event.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                            <button id='bte-{{ event.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
                             <button id='btd-{{ event.id }}' type="button" class="btn btn-sm btn-info btn-events-delete" data-toggle="modal" data-target="#modal-delete">
@@ -90,7 +90,7 @@
         $('.btn-events-delete').click(function(event){
             $('.modal-title').html('Delete Event');
 
-            const btd_id = $(event.target).attr('id');
+            const btd_id = $(this).attr('id');
             const id = btd_id.substring(4, btd_id.length);
             $('.btn-events-yes').attr("id", id);
         })
@@ -120,8 +120,8 @@
         /* Edit event action */
         $('.btn-edit').click(function(event){
             $('.modal-title').html('Edit Event');
-            const btd_id = $(event.target).attr('id');
-            const id = btd_id.substring(4, btd_id.length);
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
             let selected_type;
             let selected_participant;
 
