@@ -149,7 +149,10 @@ class PaymentController(BaseController):
             }
             if None in payloads.values():
                 return BaseController.send_error_api(None, 'field is not complete')
-
+            
+            if PaymentController.card_number_validation(payloads['card_number']) == False:
+                return BaseController.send_error_api(None, 'Credit Card not valid')
+            
             result = paymentservice.credit_payment(payloads)
 
             if 'status_code' in result and (result['status_code'] == '201' or result['status_code'] == '200'):
@@ -207,6 +210,9 @@ class PaymentController(BaseController):
                     request, 'input1')
                 payloads['input3'] = PaymentController.is_field_exist(
                     request, 'random')
+                
+                if card_number_validation(payloads['card_number']) == False:
+                    return BaseController.send_error_api(None, 'Credit Card not valid')
 
                 result = paymentservice.internet_banking(payloads)
 
@@ -277,3 +283,22 @@ class PaymentController(BaseController):
             return request.json[field_name]
         else:
             return None
+
+    def card_number_validation(card_number):
+        sum = 0
+        valid = bool
+        num_digits = len(card_number)
+        oddeven = num_digits & 1
+        
+        for count in range(0, num_digits):
+            digit = int(card_number[count])
+        
+            if not (( count & 1) ^ oddeven):
+                digit = digit * 2
+            if digit > 9:
+                digit = digit - 9
+            
+            sum = sum + digit
+        
+        valid = ( (sum % 10) == 0)
+        return valid
