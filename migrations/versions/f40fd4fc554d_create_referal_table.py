@@ -20,9 +20,9 @@ def upgrade():
     op.create_table(
         'referals',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('owner', sa.String),
+        sa.Column('owner', sa.String(255)),
         sa.Column('discount_amount', sa.Float(precision=2)),
-        sa.Column('referal_code', sa.String),
+        sa.Column('referal_code', sa.String(120)),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
         )

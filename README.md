@@ -3,6 +3,8 @@
 ## setup instruction 
 
 - clone the repo to your local machine
+- copy the `.env.example` if you need to run on local machine `cp .env.example .env` and change the value accordingly.
+- create database called `devsummit` on your mysql if you haven't  change the `DB_NAME` on `.env` file.
 - run `make env` to setup your environments.
 - activate the virtual environment by running `source env/bin/activate`
 - run `make deps` inside `env` to automatically install all dependencies in `requirements.txt`
@@ -20,6 +22,8 @@ You can run the server on docker simply by running:
 
 - `docker-compose build`
 - `docker-compose up` 
+- `docker-compose exec database sh` and run `mysql_upgrade -u root -p`
+- `docker-compose exec web sh` and run `alembic upgrade head` then seed by running `python manage.py seed` 
 
 additional setup including `migrations` and `seeding` will be the same as setup instruction above by `docker-compose exec bash web sh` to get into the container environment.
 and server should be up on `localhost:5000`

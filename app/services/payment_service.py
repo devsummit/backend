@@ -214,7 +214,11 @@ class PaymentService():
                 payloads['client_key']
             ]
         ) and not isinstance(payloads['gross_amount'], int):
-            return 'Payload is not valid'
+            return {
+                'error': True,
+                'data': {'payment_invalid': True},
+                'message': 'payload is not valid'
+            }
 
         # get the token id first
         token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + str(payloads['gross_amount']) + '&client_key=' + payloads['client_key'], headers=self.headers)
@@ -243,8 +247,64 @@ class PaymentService():
         data['customer_details']['first_name'] = payloads['first_name']
         data['customer_details']['last_name'] = payloads['last_name']
         data['customer_details']['email'] = payloads['email']
+
         midtrans_api_response = self.send_to_midtrans_api(data)
+
         return midtrans_api_response
+
+    def authorize(self, payloads):
+        if not all(isinstance(string, str) for string in [ 
+            payloads['payment_type'], 
+            payloads['type'],
+            payloads['order_id']
+        ]) and not isinstance(payloads['gross_amount'], int):
+            return {
+                'error': True,
+                'data': {'payload_invalid': True},
+                'message': 'payload is invalid'
+            }
+
+        token = db.session.query(Payment).filter_by(order_id=payloads['order_id']).first()
+
+        token = token.as_dict()
+
+        transaction_id = token['transaction_id']
+
+        data = {}
+        data['payment_type'] = payloads['payment_type']
+        data['transaction_details'] = {}
+        data['transaction_details']['order_id'] = payloads['order_id']
+        data['transaction_details']['gross_amount'] = payloads['gross_amount']
+        data['credit_card'] = {}
+        data['credit_card']['token_id'] = token['saved_token_id']
+        data['credit_card']['type'] = payloads['type']
+
+        endpoint = url + str(transaction_id) + '/approve'
+
+        transaction_status = requests.post(
+            endpoint,
+            headers=self.headers,
+            json=data 
+        )
+
+        transaction_status = transaction_status.json()
+
+        if 'status_code' in transaction_status and transaction_status['status_code'] in ['200', '201']:
+            payment = db.session.query(Payment).filter_by(order_id=transaction_status['order_id'])
+            payment.update({
+                'updated_at': datetime.datetime.now(),
+                'fraud_status': transaction_status['fraud_status']
+            })
+
+            db.session.commit()
+
+            return transaction_status
+
+        return {
+            'error': True,
+            'data': transaction_status,
+            'message': 'change fraud status is failed'
+        }
 
     def internet_banking(self, payloads):
         if not all(isinstance(string, str) for string in [
@@ -385,6 +445,7 @@ class PaymentService():
             payment = payment.as_dict()
         else:
             return 'payment not found'
+
         payment_status = requests.get(
             url + str(payment['order_id']) + '/status',
             headers=self.headers
@@ -409,7 +470,7 @@ class PaymentService():
         return {
             'error': True,
             'data': {'payment_invalid': True},
-            'message': 'payload is not valid'
+            'message': 'transaction status is failed'
         }
 
         if status['status_code'] in ['200', '201']:

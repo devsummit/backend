@@ -49,8 +49,6 @@
     </div>
     <!-- /.modal -->
     <!-- page script -->
-    <!-- <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-        <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script> -->
     
     <link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/jquery.timepicker.css" />
     <link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/bootstrap-datepicker.css" />
@@ -60,10 +58,9 @@
     <script type="text/javascript" src="static/assets/datepicker/js/datepair.js"></script>
     
     <script>
-        /* Display Attendee Detail */
+        /* Confirm save edit */
         $('.btn-save-edit').click(function (event) {
             const id = $(event.target).attr('id');
-            console.log(id)
             payload = {
                 'stage_id': $('.edit-schedule-stages').val(),
                 'event_id': $('.edit-schedule-events').val(),

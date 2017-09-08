@@ -1,0 +1,98 @@
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="event-title-add">Event title:</label>
+                                    <input type="text" class="form-control event-title-add" id="event-title-add">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="event-information-add">Event information:</label>
+                                    <input type="text" class="form-control event-information-add" id="event-information-add">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <label for="event-type-add">Event type:</label>
+                                <select class="event-types-add form-control">
+                                </select>
+                            </li>
+                            <li class="list-group-item" id="participant-add">
+                                <label for="event-participant-add">Participants:</label>
+                                <select class="event-participants-add form-control">
+                                </select>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-events-add" id="-"><b>Save</b></a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- page script -->
+<script>
+    // Change participants based on event type
+    $('.event-types-add').on('change', function() {
+        if (this.value === 'hackaton') {
+            $('#participant-add').hide();
+        } else {
+            $('#participant-add').show();
+            let participant = $(".event-participants-add");
+            participant.find('option').remove();
+
+            dsa.get(`${this.value}s`, function(result) {
+                result.data.map(function(res) {
+                    let option = document.createElement('option');
+
+                    option.innerHTML = capitalizeFirstLetter(res.user.first_name) + ' ' + capitalizeFirstLetter(res.user.last_name);
+                    option.value = res.user.id;
+
+                    participant.append(option);
+                })
+            });
+        }
+    })
+
+    // Used for capitalize words
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    /* Saved event action */
+    $('.btn-events-add').click(function(event){
+        let user_id = $('#participant-add').find(":selected").val();
+
+        if ($('.event-types-add').val() == "hackaton") {
+            user_id = null;
+        }
+
+        payload = {
+            "data": {
+                "user_id": user_id,
+                "title": $('.event-title-add').val(),
+                "information": $('.event-information-add').val(),
+                "type": $('.event-types-add').val() 
+            }          
+        };
+
+        dsa.post('events', payload, function(result) {
+            if(result.meta.success) {
+                window.location = "http://localhost:5000/events";
+            }
+        });
+    })
+</script>

@@ -1,6 +1,5 @@
-from faker import Faker
 from random import randint
-import random
+import random, datetime
 from app.models.base_model import BaseModel
 from app.models.payment import Payment
 from app.models import db
@@ -18,7 +17,6 @@ class PaymentsSeeder():
         """
         Create 4 Payments seeds
         """
-        fake = Faker()
         orders = BaseModel.as_list(db.session.query(Order).all())
         transaction_statuses = ['capture', 'authorize', 'deny']
         statuses = ['accept', 'challenge', 'deny']
@@ -36,6 +34,7 @@ class PaymentsSeeder():
             transaction_time = fake.sentence(
                 nb_words=6, variable_nb_words=True, ext_word_list=None
             )
+
             transaction_status = transaction_statuses[randint(0, 2)]
             masked_card = randint(range_start, range_end)
             payment_type = payment_types[randint(0, 1)]

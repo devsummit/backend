@@ -20,7 +20,7 @@ def upgrade():
 	op.create_table('materials',
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('speaker_id', sa.Integer, sa.ForeignKey('speakers.id')),
-		sa.Column('material', sa.String),
+		sa.Column('material', sa.String(255)),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)

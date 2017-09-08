@@ -10,6 +10,12 @@ SLOT = {
 	'commercial': 3600
 }
 
+EVENTS_TYPE = {
+    'booth',
+    'speaker',
+    'hackaton'
+}
+
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
 # Change these consts to devsummit later
 MERCHANT_ID = 'M1066775'

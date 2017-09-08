@@ -55,7 +55,7 @@
                             {{ account.role|e }}
                         </td>
                         <td>
-                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                            <button id='bte-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
                             <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
@@ -83,8 +83,8 @@
     $('.btn-edit').click(function(event){
         $('.modal-title').html('Edit');
 
-        const btd_id = $(event.target).attr('id');
-        const id = btd_id.substring(4, btd_id.length);
+        const bte_id = $(event.target).attr('id');
+        const id = bte_id.substring(4, bte_id.length);
         dsa.get('users/' + id, function(result) {
             // bind result value in to account_detail.html 
             const data = result['data'];
@@ -94,7 +94,7 @@
             $('.account-username').val(data['username']);
             $('.account-role_id').val(data['role_id']);
            
-            $('.btn-edit-save').attr("id", 'e-' + data['id']);
+            $('.btn-edit-save').attr("id", data['id'] || '-');
         });
     });
 
@@ -107,7 +107,7 @@
 
         const btd_id = $(event.target).attr('id');
         const id = btd_id.substring(4, btd_id.length);
-        $('.btn-yes').attr("id", 'd-'+ id);
+        $('.btn-yes').attr("id", id);
     });
     
     $(function () {

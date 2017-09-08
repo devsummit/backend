@@ -34,7 +34,7 @@ class BoothService():
             }
         data = booth.as_dict()
         data['user'] = booth.user.include_photos().as_dict()
-        data['stage'] = booth.stage.as_dict()
+        data['stage'] = booth.stage.as_dict() if booth.stage else None
         return {
             'error': False,
             'data': data,

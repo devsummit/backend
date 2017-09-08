@@ -38,10 +38,13 @@ class EventService:
         try:
             information = payloads['information'] if 'information' in payloads else None
             title = payloads['title'] if 'title' in payloads else None
-            title = payloads['type'] if 'type' in payloads else None
+            type = payloads['type'] if 'type' in payloads else None
+            user_id = payloads['user_id'] if 'user_id' in payloads else None
             self.events_model = Event()
             self.events_model.information = information
+            self.events_model.title = title
             self.events_model.type = type
+            self.events_model.user_id = user_id
 
             db.session.add(self.events_model)
             db.session.commit()
@@ -66,7 +69,7 @@ class EventService:
             information = payloads['information'] if 'information' in payloads else None
             title = payloads['title'] if 'title' in payloads else None
             type = payloads['type'] if 'type' in payloads else None
-
+            user_id = payloads['user_id'] if 'user_id' in payloads else None
             new_event = {}
             if information:
                 new_event['information'] = information
@@ -74,7 +77,8 @@ class EventService:
                 new_event['title'] = title
             if type:
                 new_event['type'] = type
-
+            if user_id:
+                new_event['user_id'] = user_id
             self.events_model.update(new_event)
 
             db.session.commit()

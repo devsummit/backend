@@ -24,7 +24,7 @@ def upgrade():
             sa.ForeignKey('users.id', ondelete='CASCADE')),
         sa.Column('referal_id', sa.Integer,
             sa.ForeignKey('referals.id')),
-        sa.Column('status', sa.String),
+        sa.Column('status', sa.String(40)),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
         )
