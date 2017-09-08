@@ -21,7 +21,7 @@ def upgrade():
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('stage_id', sa.Integer, sa.ForeignKey(
             'stages.id', ondelete='CASCADE')),
-        sa.Column('url', sa.String),
+        sa.Column('url', sa.String(255)),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime),
         )

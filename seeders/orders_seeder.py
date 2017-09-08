@@ -1,4 +1,3 @@
-from faker import Faker
 from app.models.base_model import BaseModel
 from app.models import db
 from app.models.order import Order

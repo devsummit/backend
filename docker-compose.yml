@@ -1,7 +1,22 @@
-web:
-  build: .
-  container_name: devsummit
-  ports:
-    - "5000:5000"
-  volumes:
-    - .:/backend
+version: '2'
+
+services:
+  database:
+    build: ./mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: devsummit
+      MYSQL_USER: root
+      MYSQL_PASSWORD: GAKtahu
+      MYSQL_ROOT_PASSWORD: GAKtahu
+
+  web:
+    depends_on:
+      - database
+    build: .
+    container_name: devsummit
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/backend

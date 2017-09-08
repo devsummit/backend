@@ -1,15 +1,19 @@
+# settings.py
 import os
-basedir = os.path.dirname(__file__)
+from dotenv import load_dotenv
+
+load_dotenv('.env')
 
 # app setting only for development purpose comment this out if not used
 DEBUG = True
 
 # constants
-API_BASE_URL = '/api/v1'
-SECRET_KEY = 'supersecret'
+API_BASE_URL = os.environ.get("API_BASE_URL")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # sqlite database file path
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, '../../app.db')
+SQLALCHEMY_DATABASE_URI = 'mysql://' + os.environ.get("DB_USERNAME") + ':' + os.environ.get("DB_PASSWORD") \
+							+ '@' + os.environ.get("DB_HOST") + '/' + os.environ.get("DB_NAME")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # default saving, database saving & domain based url

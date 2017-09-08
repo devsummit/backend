@@ -18,9 +18,9 @@ def upgrade():
     op.create_table(
         'tickets',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('ticket_type', sa.String, unique=True),
+        sa.Column('ticket_type', sa.String(120), unique=True),
         sa.Column('price', sa.Float),
-        sa.Column('information', sa.String),
+        sa.Column('information', sa.Text),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
     )

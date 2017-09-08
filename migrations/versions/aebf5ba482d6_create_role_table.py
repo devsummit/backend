@@ -21,7 +21,7 @@ def upgrade():
 	op.create_table(
 		'roles',
 		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('name', sa.String),
+		sa.Column('name', sa.String(255)),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime)
 		)
