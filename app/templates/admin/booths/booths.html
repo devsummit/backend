@@ -1,6 +1,6 @@
 {% extends "admin/base/index.html" %}
 
-{% block title %} <title> Attendees list </title>  {% endblock %}
+{% block title %} <title> Booths list </title> {% endblock %}
 
 {% block header_link %}
     <!-- DataTables -->
@@ -21,22 +21,24 @@
 
 {% block content %}
     <div class="box">
-        <!-- /.box-header -->
-        
         <div class="box-body">
             <table id="booth-list1" class="table table-bordered table-striped">
                 <thead>
-                <tr>
-                    <th>Email</th>
-                    <th>Summary</th>
-                    <th>Stage</th>
-                    <th>Points</th>
-                    <th>Actions</th>
-                </tr>
+                    <tr>
+                        <th>Owner</th>
+                        <th>Email</th>
+                        <th>Summary</th>
+                        <th>Stage</th>
+                        <th>Points</th>
+                        <th>Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
                     {% for booth in booths %}
                     <tr>
+                        <td>
+                            {{ booth.user.first_name.title() }} {{ booth.user.last_name.title() }}
+                        </td>
                         <td>
                             {{ booth.user.email }}
                         </td>
@@ -44,7 +46,11 @@
                             {{ booth.summary }}
                         </td>
                         <td>
-                            {{ booth.stage.name }}
+                            {% if booth.stage.name %}
+                                {{ booth.stage.name.title() }}
+                            {% else %}
+                                -
+                            {% endif %}
                         </td>
                         <td>
                             {{ booth.points }}
@@ -59,56 +65,73 @@
                 </tbody>
             </table>
         </div>
-         {% include "admin/booths/booth_edit.html" %}
-
+    </div>
+    {% include "admin/booths/booth_edit.html" %}
 {% endblock %}
 
 {% block footer_link %}
-<!-- DataTables -->
-<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
 
-<!-- page script -->
-<script>
-    /* Display Attendee Detail */
-    $('.btn-edit').click(function(event){
-        $('.modal-title').html('Edit');
-        var selected_stage_id;
-        const bte_id = $(this).attr('id');
-        const id = bte_id.substring(4, bte_id.length);
-        dsa.get('booths/' + id, function(result) {
-            // bind result value in to attendee_detail.html 
-            const data = result['data'];
-            selected_stage_id = data['stage'].id;
-            $('.booth-summary').val(data['summary']);
-            $('.booth-points').val(data['points']);
-            $('.booth-stage').html(data['stage'].name);
-            $('.btn-save').attr("id", data['id']);
-        });
-        dsa.get('stages', function(result) {
-            const stages = result['data'];
-            var select = $(".booth-stages")
-            stages.map(function(response) {
-                if(response.stage_type === 'booth') {
-                    // add to select
-                    var option = document.createElement('option');
-                    option.innerHTML = response.name
-                    option.value = response.id;
-                    // if id === current stage id, set as selected
-                    if (response.id == selected_stage_id) {
-                        option.selected = true
+    <!-- page script -->
+    <script>
+        /* Display booths edit detail */
+        $('.btn-edit').click(function(event) {
+            $('.modal-title').html('Edit');
+            var selected_stage_id;
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+
+            dsa.get('booths/' + id, function(result) {
+                // bind result value in to attendee_detail.html 
+                const data = result['data'];
+                selected_stage_id = data['stage'] ? data['stage'].id : null;
+                $('.booth-summary').val(data['summary']);
+                $('.booth-points').val(data['points']);
+                $('.booth-user-id').val(data['user_id']);
+                $('.btn-save-booth-edit').attr("id", id);
+            });
+
+            dsa.get('stages', function(result) {
+                const stages = result['data'];
+                var select = $(".booth-stages");
+                select.find('option').remove();
+
+                var withoutStageOpt = document.createElement('option');
+                withoutStageOpt.innerHTML = 'Without stage';
+                withoutStageOpt.value = 0;
+                select.append(withoutStageOpt);
+
+                stages.map(function(response) {
+                    if(response.stage_type === 'booth') {
+                        // add to select
+                        var option = document.createElement('option');
+                        option.innerHTML = capitalizeFirstLetter(response.name);
+                        option.value = response.id;
+
+                        // if id === current stage id, set as selected
+                        if (response.id == selected_stage_id) {
+                            option.selected = true;
+                        }
+
+                        select.append(option);
                     }
-                    select.append(option)
-                }
+                });
             });
         });
-        
-    })
 
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
 
-    $(function () {
-        $('#booth-list1').DataTable();
-    })
-</script>
-
+        $(function () {
+            $('#booth-list1').DataTable({
+                columnDefs: [{
+                    targets: [ -1 ],
+                    orderable: false,
+                }]
+            });
+        });
+    </script>
 {% endblock %}

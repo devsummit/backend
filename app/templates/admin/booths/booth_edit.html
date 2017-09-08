@@ -1,64 +1,61 @@
 <div class="modal fade" id="modal-edit">
     <div class="modal-dialog">
         <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Default title</h4>
-        </div>
-        <div class="modal-body">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
                 <div class="box box-primary">
                     <div class="box-body box-profile">
-                            <ul class="list-group list-group-unbordered">
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="booth-summary">Booth summary:</label>
-                                        <input type="text" class="form-control booth-summary" id="booth-summary">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="booth-points">Booth points:</label>
-                                        <input type="text" class="form-control booth-points" id="booth-points">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <select class="booth-stages form-control">
-                                    </select>
-                                </li>
-                            </ul>
-                        <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
-        
+                        <ul class="list-group list-group-unbordered">
+                            <input type="hidden" class="form-control booth-user-id" id="booth-user-id">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="booth-summary">Booth summary:</label>
+                                    <input type="text" class="form-control booth-summary" id="booth-summary">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="booth-points">Booth points:</label>
+                                    <input type="text" class="form-control booth-points" id="booth-points">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <label for="booth-stages">Stages:</label>
+                                <select class="booth-stages form-control">
+                                </select>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-save-booth-edit" id="-"><b>Save</b></a>
                     </div>
-                    <!-- /.box-body -->
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
-        </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 <!-- page script -->
 <script>
-    /* Display Booth Detail */
-    $('.btn-save').click(function(event){
-        const id = $(this).attr('id');
+    /* Booth edit action */
+    $('.btn-save-booth-edit').click(function(event){
+        const booth_id = $(this).attr('id');
+        
         payload = {
             "summary": $('.booth-summary').val(),
             "points": $('.booth-points').val(),
-            "stage_id": $('.booth-stages').val() 
+            "stage_id": $('.booth-stages').val() > 0 ? parseInt($('.booth-stages').val()) : -1,  
+            "user_id": $('.booth-user-id').val()
         };
-        dsa.patch('booths/' + id, payload, function(result) {
+
+        dsa.patch('booths/' + booth_id, payload, function(result) {
             if(result.meta.success) {
                 window.location = "/booths";
             }
         });
-    })
-    $(function () {
-        $('#booth-list1').DataTable();
     })
 </script>
