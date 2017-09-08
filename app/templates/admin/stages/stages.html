@@ -43,7 +43,7 @@
                             <a href="" id='atd-{{ stage.id }}' class="stages-name">{{ stage['name']|e }}</a> 
                         </td>
                         <td>
-                            <button id='btd-{{ stage.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                            <button id='bte-{{ stage.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
                             <button id='btd-{{ stage.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
@@ -71,8 +71,8 @@
     $('.btn-edit').click(function(event){
         $('.modal-title').html('Edit');
 
-        const btd_id = $(event.target).attr('id');
-        const id = btd_id.substring(4, btd_id.length);
+        const bte_id = $(this).attr('id');
+        const id = bte_id.substring(4, bte_id.length);
         dsa.get('{{ globals["api_route"] }}/' + id, function(result) {
             // bind result value in to modal-detail page 
             const data = result['data'];
@@ -80,7 +80,7 @@
             $('.stage-type').val(data['stage_type']);
             $('.stage-information').val(data['information']);
            
-            $('.btn-edit-save').attr("id", 'e-' + data['id']);
+            $('.btn-edit-save').attr("id", data['id']);
         });
     });
 
@@ -91,9 +91,9 @@
     $('.btn-delete').click(function(event){
         $('.modal-title').html('Are you sure want to delete this stage?');
 
-        const btd_id = $(event.target).attr('id');
+        const btd_id = $(this).attr('id');
         const id = btd_id.substring(4, btd_id.length);
-        $('.btn-yes').attr("id", 'd-'+ id);
+        $('.btn-yes').attr("id", id);
     });
     
     $(function () {
