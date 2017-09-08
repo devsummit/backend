@@ -27,7 +27,25 @@ class PaymentService():
             data = result.as_dict()
             data['user'] = result.order.user.as_dict()
             _results.append(data)
-        return _results
+        return {
+            'data': _results,
+            'error': False,
+            'message': 'payments retrieved succesfully',
+            'included': {}
+        }
+
+    def admin_filter(self, param):
+        results = self.admin_get()['data']
+        _results = []
+        for result in results:
+            if result['transaction_status'] is not None and result['transaction_status'] == param['transaction_status']:
+                _results.append(result)
+        return {
+            'data': _results,
+            'error': False,
+            'message': 'payments retrieved succesfully',
+            'included': {}
+        }
 
     def get(self, user_id):
         # get the orders
