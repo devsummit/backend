@@ -60,7 +60,7 @@
 <script>
     /* Save edit account */   
     $('.btn-edit-save').click(function(event){
-        const id = $(event.target).attr('id');
+        const id = $(this).attr('id');
         payload = {
             "first_name": $('.account-firstname').val(),
             "last_name": $('.account-lastname').val(),
