@@ -211,7 +211,7 @@ class PaymentController(BaseController):
                 payloads['input3'] = PaymentController.is_field_exist(
                     request, 'random')
                 
-                if card_number_validation(payloads['card_number']) == False:
+                if PaymenController.card_number_validation(payloads['card_number']) == False:
                     return BaseController.send_error_api(None, 'Credit Card not valid')
 
                 result = paymentservice.internet_banking(payloads)
@@ -288,15 +288,11 @@ class PaymentController(BaseController):
         sum = 0
         num_digits = len(card_number)
         oddeven = num_digits & 1
-        
         for count in range(0, num_digits):
             digit = int(card_number[count])
-        
             if not (( count & 1) ^ oddeven):
                 digit = digit * 2
             if digit > 9:
                 digit = digit - 9
-            
             sum = sum + digit
-        
         return ( (sum % 10) == 0)
