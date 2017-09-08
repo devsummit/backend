@@ -33,10 +33,11 @@ class BoothController(BaseController):
             booth_id = db.session.query(Booth).filter_by(user_id=user_id).first().as_dict()['id']
 
         stage_id = request.json['stage_id'] if 'stage_id' in request.json else None
+        stage_id = None if stage_id < 0 else stage_id
         points = request.json['points'] if 'points' in request.json else None
         summary = request.json['summary'] if 'summary' in request.json else None
 
-        if stage_id and points and summary:
+        if points and summary:
             payloads = {
                 'stage_id': stage_id,
                 'points': points,
