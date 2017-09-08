@@ -48,7 +48,7 @@
 <script>
     /* Display Attendee Detail */
     $('.btn-save').click(function(event){
-        const id = $(event.target).attr('id');
+        const id = $(this).attr('id');
         payload = {
             "ticket_type": $('.ticket-type').val(),
             "price": $('.ticket-price').val(),
@@ -57,7 +57,7 @@
         dsa.patch('tickets/' + id, payload, function(result) {
             console.log(result, 'saved');
             if(result.meta.success) {
-                window.location = "http://localhost:5000/tickets";
+                window.location = "/tickets";
             }
         });
     })
