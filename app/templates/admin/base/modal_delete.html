@@ -26,8 +26,8 @@
         /* Display  Detail */
         $('.btn-yes').click(function(event){
             event.preventDefault();
-            var id = $(event.target).attr('id');
-            id = id.substring(3, id.length);
+            const id = $(event.target).attr('id');
+            // id = id.substring(3, id.length);
             dsa.delete('{{ globals["api_route"] }}' + '/' + id, function(result) {
                 // console.log('{{ globals["api_route"] }}' + '/' + id, result);
                 $('.modal-title').html(result['meta']['message']);

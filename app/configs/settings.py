@@ -13,7 +13,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # sqlite database file path
 SQLALCHEMY_DATABASE_URI = 'mysql://' + os.environ.get("DB_USERNAME") + ':' + os.environ.get("DB_PASSWORD") \
-							+  '@' + os.environ.get("DB_HOST") + '/' + os.environ.get("DB_NAME")
+							+ '@' + os.environ.get("DB_HOST") + '/' + os.environ.get("DB_NAME")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # default saving, database saving & domain based url
