@@ -12,6 +12,16 @@ class PaymentController(BaseController):
         return BaseController.send_error_api(payments['data'], 'payment not found')
 
     @staticmethod
+    def admin_filter_payments(transaction_status):
+        param = {}
+        param['transaction_status'] = transaction_status
+        payment = paymentservice.admin_filter(param)
+        if payment['error']:
+            return BaseController.send_error_api(payment['data'], payment['message'])
+        else:
+            return BaseController.send_response_api(payment['data'], payment['message'], payment['included'])
+
+    @staticmethod
     def get_payments(user_id):
         payments = paymentservice.get(user_id)
         if(len(payments) != 0):
