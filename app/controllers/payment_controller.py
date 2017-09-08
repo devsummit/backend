@@ -286,7 +286,6 @@ class PaymentController(BaseController):
 
     def card_number_validation(card_number):
         sum = 0
-        valid = bool
         num_digits = len(card_number)
         oddeven = num_digits & 1
         
@@ -300,5 +299,4 @@ class PaymentController(BaseController):
             
             sum = sum + digit
         
-        valid = ( (sum % 10) == 0)
-        return valid
+        return ( (sum % 10) == 0)

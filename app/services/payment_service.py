@@ -364,8 +364,8 @@ class PaymentService():
                 else:
                     payload['bank'] = None
 
-            if payload['transacion_details']['gross_amount'] != payload['item_details']['total']:
-                return self.BaseController.send_error_api(None, 'Gross Amount does not match')
+            if payloads['transacion_details']['gross_amount'] != payload['item_details']['total']:
+                return BaseController.send_error_api(None, 'Gross Amount does not match')
                 
             if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
                 self.save_payload(payload, payloads)
@@ -466,7 +466,6 @@ class PaymentService():
             temp['id'] = last_id + 1
             result.append(temp)
         return result
-        print("result", result)
 
     def save_payload(self, data, payloads):
         new_payment = Payment()
