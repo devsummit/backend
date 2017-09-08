@@ -9,6 +9,7 @@ from seeders.clients_seeder import ClientsSeeder
 from seeders.payments_seeder import PaymentsSeeder
 from seeders.orders_seeder import OrdersSeeder
 from seeders.order_details_seeder import OrdersDetailsSeeder
+from seeders.user_tickets_seeder import UserTicketsSeeder
 
 
 class Seed():
@@ -55,6 +56,10 @@ class Seed():
 		PaymentsSeeder.run()
 		print('finish seeding payment')
 
-		print('seeding orderdetailsseeder')
+		print('seeding orderdetailsseeder...')
 		OrdersDetailsSeeder.run()
-		print('finish Order Details Seeder')
+		print('finish seeding Order Details Seeder')
+
+		print('seeding user tickets seeder...')
+		UserTicketsSeeder.run()
+		print('finish seeding user tickets seeder')
