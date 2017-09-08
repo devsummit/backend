@@ -16,7 +16,7 @@ class PaymentsSeeder():
     @staticmethod
     def run():
         """
-        Create 10 Payments seeds
+        Create 4 Payments seeds
         """
         fake = Faker()
         orders = BaseModel.as_list(db.session.query(Order).all())
@@ -26,20 +26,21 @@ class PaymentsSeeder():
         banks = ['bri', 'bni', 'permata', 'maybank', 'mandiri', 'bca', 'cimb']
         range_start = 10 ** (7 - 1)
         range_end = (10 ** 7) - 1
+        order_id_arr = [2, 1, 3, 4]
 
-        for i in range(0, 10):
-            order_id = random.choice(orders)['id']
+        for i in range(0, 4):
+            order_id = order_id_arr[i]
             saved_token_id = randint(range_start, range_end)
             transaction_id = randint(range_start, range_end)
             gross_amount = randint(range_start, range_end)
-            transaction_time = fake.sentence(  
+            transaction_time = fake.sentence(
                 nb_words=6, variable_nb_words=True, ext_word_list=None
             )
             transaction_status = transaction_statuses[randint(0, 2)]
             masked_card = randint(range_start, range_end)
             payment_type = payment_types[randint(0, 1)]
             bank = banks[randint(0, 6)]
-            fraud_status = statuses[randint(0, 2)] 
+            fraud_status = statuses[randint(0, 2)]
 
             new_payment = Payment()
             new_payment.order_id = order_id

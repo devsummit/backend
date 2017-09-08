@@ -1,6 +1,8 @@
+from app.models.base_model import BaseModel
 from app.models.user_ticket import UserTicket
+from app.models.payment import Payment
 from app.models import db
-from random import randint
+
 
 '''
 Seeder class for
@@ -11,13 +13,16 @@ class UserTicketsSeeder():
 
     @staticmethod
     def run():
+        
         """
-        Create 10 UserTicket seeds
+        Create UserTicket seeds
         """
 
-        for i in range(1, 5):
+        userid = [2, 1, 2, 3]
+       
+        for i in range(0,4):
             new_user_ticket = UserTicket()
-            new_user_ticket.user_id = i
-            new_user_ticket.ticket_id = randint(1, 3)
+            new_user_ticket.user_id = userid[i]
+            
             db.session.add(new_user_ticket)
             db.session.commit()
