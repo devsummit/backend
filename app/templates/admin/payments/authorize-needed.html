@@ -1,0 +1,116 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Payments list need authorize </title> {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Payments
+        <small>List of payments need authorize</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>Payments</li>
+    <li class="active">Authorize Needed</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <div class="box-body">
+            <table id="payment-list1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>OrderID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Gross Amount</th>
+                        <th>Bank</th>
+                        <th>TransactionID</th>
+                        <th>Transaction Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>
+                            {{ payment.order_id|e }}
+                        </td>
+                        <td>
+                            {{ payment.user['last_name'] + ', ' + payment.user['first_name']|e }}</a> 
+                        </td>
+                        <td>
+                            {{ payment.user['email']|e }}
+                        </td>
+                        <td>
+                            {{ payment.gross_amount|e }}
+                        </td>
+                        <td>
+                            {% if payment.bank|length > 3 %}
+                                {{ payment.bank|e|title }}
+                            {% else %}
+                                {{ payment.bank|e|upper }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ payment.transaction_id|e }}
+                        </td>
+                        <td>
+                            {{ payment.transaction_time|e }}
+                        </td>
+                        <td>
+                            <button id='btd-{{ payment.id }}' type="button" class="btn btn-sm btn-confirm-authorize btn-info" data-toggle="modal" data-target="#modal-payment-authorize">
+                                Authorize
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include "admin/payments/authorize-modal.html" %}
+    </div>
+{% endblock %}
+
+{% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+    <!-- page script -->
+    <script>
+        $('.btn-confirm-authorize').click(function(event) {
+            $('.modal-title').html('Are you sure want to authorize this payment?');
+
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+
+            dsa.get('payments/' + id, function(result) {
+                const payloads = {
+                    'payment_type': result.data.payment_type,
+                    'type': 'authorize',
+                    'order_id': result.data.order_id,
+                    'gross_amount': result.data.gross_amount
+                }
+
+                $('#payment-authorize-payload').val(JSON.stringify(payloads));
+            });
+        });
+
+        $(function () {
+            $('#payment-list1').DataTable({
+                columnDefs: [{
+                    targets: [ -1 ],
+                    orderable: false,
+                }]
+            });
+        })
+    </script>
+{% endblock %}
