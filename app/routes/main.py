@@ -20,6 +20,11 @@ def getPayments():
     return MainController.getPayments()
 
 
+@main.route('/authorize-payments')
+def getPaymentsAuthorize():
+    return MainController.getAuthorizePayments()
+
+
 @main.route('/tickets')
 def get_tickets():
     return MainController.getTickets()
