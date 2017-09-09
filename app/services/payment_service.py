@@ -265,9 +265,8 @@ class PaymentService():
         data['customer_details']['first_name'] = payloads['first_name']
         data['customer_details']['last_name'] = payloads['last_name']
         data['customer_details']['email'] = payloads['email']
-
+        data['customer_details']['phone'] = payloads['phone']
         midtrans_api_response = self.send_to_midtrans_api(data)
-
         return midtrans_api_response
 
     def authorize(self, payloads):
@@ -283,10 +282,7 @@ class PaymentService():
             }
 
         token = db.session.query(Payment).filter_by(order_id=payloads['order_id']).first()
-
         token = token.as_dict()
-
-        transaction_id = token['transaction_id']
 
         data = {}
         data['payment_type'] = payloads['payment_type']
@@ -296,15 +292,12 @@ class PaymentService():
         data['credit_card'] = {}
         data['credit_card']['token_id'] = token['saved_token_id']
         data['credit_card']['type'] = payloads['type']
-
-        endpoint = url + str(transaction_id) + '/approve'
-
+        endpoint = url + str(payloads['order_id']) + '/approve'
         transaction_status = requests.post(
             endpoint,
             headers=self.headers,
             json=data 
         )
-
         transaction_status = transaction_status.json()
 
         if 'status_code' in transaction_status and transaction_status['status_code'] in ['200', '201']:
@@ -430,7 +423,6 @@ class PaymentService():
                 json=payloads
         )
         payload = result.json()
-
         if(payload['status_code'] != '400'):
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
                 payload['bank'] = payloads['bank']
