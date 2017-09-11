@@ -1,22 +1,27 @@
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.event import Event
+from app.services.base_service import BaseService
+from app.builders.response_builder import ResponseBuilder
 
 
-class EventService:
+class EventService(BaseService):
 
-    def index(self):
-        events = db.session.query(Event).all()
-        _results = []
-        for event in events:
-            data = event.as_dict()
-            data['user'] = event.user.as_dict() if event.user else None
-            _results.append(data)
-        return {
-            'error': False,
-            'data': _results,
-            'message': 'Events succesfully retrieved'
-        }
+    def __init__(self, perpage): 
+        self.perpage = perpage
+
+    def index(self, request):
+        self.total_items = Event.query.count()
+        if request.args.get('page'):
+            self.page = request.args.get('page')
+        else:
+            self.perpage = self.total_items
+            self.page = 1
+        self.base_url = request.base_url
+        paginate = super().paginate(db.session.query(Event))
+        response = ResponseBuilder()
+        result = response.set_data(paginate['data']).set_links(paginate['links']).build()
+        return result
 
     def show(self, id):
         self.events_model = db.session.query(Event).filter_by(id=id)
