@@ -16,6 +16,12 @@ EVENTS_TYPE = {
     'hackaton'
 }
 
+EVENT_DATES = {
+    '1': '2017-11-13',
+    '2': '2017-11-14',
+    '3': '2017-11-15'
+}
+
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
 # Change these consts to devsummit later
 MERCHANT_ID = 'M1066775'

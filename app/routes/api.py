@@ -195,7 +195,7 @@ def orders_details_id(order_id, detail_id, *args, **kwargs):
 
 @api.route('/events', methods=['GET'])
 def index():
-    return EventController.index()
+    return EventController.index(request)
 
 
 @api.route('/events/<event_id>', methods=['GET'])
@@ -225,12 +225,15 @@ def delete(event_id):
 @token_required
 def schedule(*args, **kwargs):
 	filter = request.args.get('filter')
+	day = request.args.get('day')
 	if(request.method == 'POST'):
 		return ScheduleController.create(request)
-	elif(request.method == 'GET' and filter is None):
+	elif(request.method == 'GET' and filter is None and day is None):
 		return ScheduleController.index()
 	elif(request.method == 'GET' and filter is not None):
 		return ScheduleController.filter(filter)
+	elif(request.method == 'GET' and day is not None):
+		return ScheduleController.filter(day)
 
 
 # Beacon route by id
@@ -278,7 +281,7 @@ def booth(*args, **kwargs):
     elif(request.method == 'POST'):
         return BoothController.create(request)
     elif(request.method == 'GET'):
-        return BoothController.index()
+        return BoothController.index(request)
 
 # Booth route by id
 
@@ -430,7 +433,7 @@ def check_in(*args, **kwargs):
 @token_required
 def attendees(*args, **kwargs):
     if(request.method == 'GET'):
-        return AttendeeController.index()
+        return AttendeeController.index(request)
 
 # Attendee route by id
 
@@ -448,7 +451,7 @@ def attendees_id(id, *args, **kwargs):
 @token_required
 def users(*args, **kwargs):
     if(request.method == 'GET'):
-        return UserController.index()
+        return UserController.index(request)
 
 # User detail/ route by id
 

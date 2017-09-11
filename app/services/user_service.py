@@ -15,9 +15,14 @@ from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
+from app.services.base_service import BaseService
+from app.builders.response_builder import ResponseBuilder
 
 
-class UserService:
+class UserService(BaseService):
+
+    def __init__(self, perpage): 
+        self.perpage = perpage
 
     def register(self, payloads):
         role = int(payloads['role'])
@@ -91,15 +96,18 @@ class UserService:
                 'message': data
             }
 
-    def list_user(self):
-        users = db.session.query(
-            User).all()
-        _users = []
-        for user in users:
-            data = user.include_photos().as_dict()
-            data = user.include_role().as_dict()
-            _users.append(data)
-        return _users
+    def list_user(self, request):
+        self.total_items = User.query.count()
+        if request.args.get('page'):
+            self.page = request.args.get('page')
+        else:
+            self.perpage = self.total_items
+            self.page = 1
+        self.base_url = request.base_url
+        paginate = super().paginate(db.session.query(User))
+        response = ResponseBuilder()
+        result = response.set_data(paginate['data']).set_links(paginate['links']).build()
+        return result
 
     def get_user_by_id(self, id):
         user = db.session.query(
