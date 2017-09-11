@@ -6,11 +6,11 @@ from app.services import eventservice
 class EventController(BaseController):
 
         @staticmethod
-        def index():
-                result = eventservice.index()
+        def index(request):
+                result = eventservice.index(request)
                 if result['error']:
                         return BaseController.send_error_api(result['data'], result['message'])
-                return BaseController.send_response_api(result['data'], result['message'])
+                return BaseController.send_response_api(result['data'], result['message'], {}, result['links'])
 
         @staticmethod
         def show(id):
