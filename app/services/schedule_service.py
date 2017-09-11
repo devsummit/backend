@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.schedule import Schedule
 from app.models.booth import Booth
 from app.models.speaker import Speaker
-from app.configs.constants import EVENTS_DATE
+from app.configs.constants import EVENT_DATES
 
 
 class ScheduleService():
@@ -43,7 +43,7 @@ class ScheduleService():
 		for schedule in schedules:
 			if schedule['event'] is not None and schedule['event']['type'] == param:
 				results.append(schedule)
-			elif schedule['created_at'] is not None and param.isdigit() and int(param) < 4 and EVENTS_DATE[param] in schedule['created_at']:
+			elif schedule['created_at'] is not None and param.isdigit() and int(param) < 4 and EVENT_DATES[param] in schedule['created_at']:
 			  results.append(schedule)
 		return {
 			'error': False,
