@@ -61,3 +61,6 @@ class MainController(BaseController):
     def getSchedules():
         schedules = scheduleservice.get()
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
+
+    def getPassword():
+        return render_template('admin/users/changepassword.html')
