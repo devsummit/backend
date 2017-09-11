@@ -51,7 +51,7 @@ class MainController(BaseController):
         return render_template('admin/speakers/speakers.html', speakers=speakers['data'])
 
     def getEvents():
-        events = eventservice.index()
+        events = eventservice.index(request)
         return render_template('admin/events/events.html', events=events['data'], event_type=EVENTS_TYPE)
 
     def getStages():
