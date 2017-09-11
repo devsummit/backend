@@ -1,8 +1,5 @@
-from app.models.base_model import BaseModel
 from app.models import db
-from app.models.order import Order
 from app.models.order_details import OrderDetails
-from app.models.ticket import Ticket
 import random
 
 '''
@@ -17,17 +14,13 @@ class OrdersDetailsSeeder():
         """
         Create 6 orders seeds
         """
-        orders = BaseModel.as_list(db.session.query(Order).all())
-        
-        tickets = BaseModel.as_list(db.session.query(Ticket).all())
 
-        orderidarr =  [1,1,2,2,3,4]
+        orderidarr = [1, 1, 2, 2, 3, 4]
 
-        ticketid = [2,3,3,4,1,5]
-        
+        ticketid = [2, 3, 3, 4, 1, 5]
+
         ticketprice = [200000, 300000, 300000, 350000, 400000, 0]
 
-                
         for i in range(0, 6):
             order_id = orderidarr[i]
             ticket_id = ticketid[i]

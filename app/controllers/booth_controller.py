@@ -7,11 +7,13 @@ from app.models import db
 class BoothController(BaseController):
 
     @staticmethod
-    def index():
-        booths = boothservice.get()
+    def index(request):
+        booths = boothservice.get(request)
         return BaseController.send_response_api(
             booths['data'],
-            booths['message']
+            booths['message'],
+            {},
+            booths['links']
         )
 
     @staticmethod

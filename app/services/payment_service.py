@@ -9,6 +9,7 @@ from app.models.order import Order
 from app.models.user_ticket import UserTicket
 from app.builders.response_builder import ResponseBuilder
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
+from app.controllers.base_controller import BaseController
 
 
 class PaymentService():
@@ -188,7 +189,7 @@ class PaymentService():
             data['transaction_details'] = {}
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
-        
+
         midtrans_api_response = self.send_to_midtrans_api(data)
 
         return midtrans_api_response
@@ -394,7 +395,7 @@ class PaymentService():
 
             if payloads['transacion_details']['gross_amount'] != payload['item_details']['total']:
                 return BaseController.send_error_api(None, 'Gross Amount does not match')
-                
+
             if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
                 self.save_payload(payload, payloads)
 

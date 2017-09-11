@@ -1,11 +1,10 @@
 from random import randint
-import random
-import datetime
-from app.models.base_model import BaseModel
 from app.models.payment import Payment
 from app.models import db
+
 from app.models.order import Order
 from faker import Faker
+
 
 '''
 Seeder class for
@@ -19,7 +18,6 @@ class PaymentsSeeder():
         """
         Create 4 Payments seeds
         """
-        orders = BaseModel.as_list(db.session.query(Order).all())
         transaction_statuses = ['capture', 'authorize', 'deny']
         statuses = ['accept', 'challenge', 'deny']
         payment_types = ['bank_transfer', 'credit_card']
