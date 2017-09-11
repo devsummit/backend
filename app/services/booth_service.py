@@ -19,6 +19,7 @@ class BoothService(BaseService):
             self.page = 1
         self.base_url = request.base_url
         paginate = super().paginate(db.session.query(Booth))
+        paginate = super().include(['user', 'stage'])
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
         return result
