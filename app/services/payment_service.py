@@ -7,6 +7,7 @@ from app.models.payment import Payment
 from app.models.order_details import OrderDetails
 from app.models.order import Order
 from app.models.user_ticket import UserTicket
+from app.builders.response_builder import ResponseBuilder
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 
 
@@ -21,59 +22,47 @@ class PaymentService():
         }
 
     def admin_get(self):
+        response = ResponseBuilder()
         results = db.session.query(Payment).all()
         _results = []
         for result in results:
             data = result.as_dict()
             data['user'] = result.order.user.as_dict()
             _results.append(data)
-        return {
-            'data': _results,
-            'error': False,
-            'message': 'payments retrieved succesfully',
-            'included': {}
-        }
+        return response.set_data(_results).build()
 
     def admin_filter(self, param):
+        response = ResponseBuilder()
         results = self.admin_get()['data']
         _results = []
         for result in results:
             if result['transaction_status'] is not None and result['transaction_status'] == param['transaction_status']:
                 _results.append(result)
-        return {
-            'data': _results,
-            'error': False,
-            'message': 'payments retrieved succesfully',
-            'included': {}
-        }
+        return response.set_data(_results).build()
 
     def get(self, user_id):
+        response = ResponseBuilder()
         # get the orders
         orders = db.session.query(Order).filter_by(user_id=user_id).all()
         _results = []
         for order in orders:
-            data = db.session.query(Payment).filter_by(order_id=order.id).first().as_dict()
+            data = db.session.query(Payment).filter_by(order_id=order.id).first()
+            data = data.as_dict() if data else None
             _results.append(data)
-        return {
-            'data': _results,
-            'message': 'payment retrieved successsfully'
-        }
+        return response.set_data(_results).build()
 
     def admin_show(self, payment_id):
+        response = ResponseBuilder()
         result = db.session.query(Payment).filter_by(id=payment_id).first()
         data = result.as_dict()
         data['user'] = result.order.user.as_dict()
-        return {
-            'data': data,
-            'message': 'payment retrieved successsfully'
-        }
+        return response.set_data(data).build()
 
     def show(self, payment_id):
+        response = ResponseBuilder()
         result = db.session.query(Payment).filter_by(id=payment_id).first()
-        return {
-            'data': result.as_dict(),
-            'message': 'payment retrieved successsfully'
-        }
+        result = result.as_dict() if result else None
+        return response.set_data(result).build()
 
     def get_order_referal(self, order_id):
         order = db.session.query(Order).filter_by(id=order_id).first()
@@ -82,7 +71,7 @@ class PaymentService():
         return None
 
     def bank_transfer(self, payloads):
-
+        response = ResponseBuilder()
         payloads['gross_amount'] = int(payloads['gross_amount'])
         # check for referal discount
         ref = self.get_order_referal(payloads['order_id'])
@@ -103,11 +92,8 @@ class PaymentService():
                         payloads['va_number']
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
-                return {
-                    'error': True,
-                    'data': {'payment_invalid': True},
-                    'message': 'payload is not valid'
-                }
+                return response.build_invalid_payload_response()
+
             # todo create payload for BCA virtual account
             data = {}
             data['payment_type'] = payloads['payment_type']
@@ -145,11 +131,7 @@ class PaymentService():
                     payloads['order_id']
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
-                return {
-                    'error': True,
-                    'data': {'payment_invalid': True},
-                    'message': 'payload is not valid'
-                }
+                return response.build_invalid_payload_response()
 
             # create paylod for midtrans
             data = {}
@@ -172,10 +154,7 @@ class PaymentService():
                     payloads['va_number']
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
-                return {
-                    'error': True,
-                    'data': 'payloads is not valid'
-                }
+                return response.build_invalid_payload_response()
 
             # create payload for midtrans
             data = {}
@@ -200,10 +179,7 @@ class PaymentService():
                     payloads['payment_type'],
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
-                return {
-                    'error': True,
-                    'data': 'payloads is not valid'
-                }
+                return response.build_invalid_payload_response()
 
             # create payload for midtrans
             data = {}
@@ -218,6 +194,7 @@ class PaymentService():
         return midtrans_api_response
 
     def credit_payment(self, payloads):
+        response = ResponseBuilder()
         if not all(
             isinstance(string, str) for string in [
                 payloads['order_id'],
@@ -232,11 +209,7 @@ class PaymentService():
                 payloads['client_key']
             ]
         ) and not isinstance(payloads['gross_amount'], int):
-            return {
-                'error': True,
-                'data': {'payment_invalid': True},
-                'message': 'payload is not valid'
-            }
+            return response.build_invalid_payload_response()
 
         # get the token id first
         token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + str(payloads['gross_amount']) + '&client_key=' + payloads['client_key'], headers=self.headers)
@@ -266,20 +239,17 @@ class PaymentService():
         data['customer_details']['last_name'] = payloads['last_name']
         data['customer_details']['email'] = payloads['email']
         data['customer_details']['phone'] = payloads['phone']
-        midtrans_api_response = self.send_to_midtrans_api(data)
-        return midtrans_api_response
+
+        return self.send_to_midtrans_api(data)
 
     def authorize(self, payloads):
+        response = ResponseBuilder()
         if not all(isinstance(string, str) for string in [ 
             payloads['payment_type'], 
             payloads['type'],
             payloads['order_id']
         ]) and not isinstance(payloads['gross_amount'], int):
-            return {
-                'error': True,
-                'data': {'payload_invalid': True},
-                'message': 'payload is invalid'
-            }
+            return response.build_invalid_payload_response()
 
         token = db.session.query(Payment).filter_by(order_id=payloads['order_id']).first()
         token = token.as_dict()
@@ -311,13 +281,10 @@ class PaymentService():
 
             return transaction_status
 
-        return {
-            'error': True,
-            'data': transaction_status,
-            'message': 'change fraud status is failed'
-        }
+        return response.set_error(True).set_data(transaction_status).set_message('change fraud status is failed').build()
 
     def internet_banking(self, payloads):
+        response = ResponseBuilder()
         if not all(isinstance(string, str) for string in [
             payloads['order_id'],
             payloads['first_name'],
@@ -325,10 +292,7 @@ class PaymentService():
             payloads['email'],
             payloads['phone']
         ]) and not isinstance(payloads['gross_amount'], int):
-            return {
-                'error': True,
-                'message': 'payloads is not valid'
-            }
+            return response.build_invalid_payload_response()
 
         # check for referal discount
         ref = self.get_order_referal(payloads['order_id'])
@@ -372,11 +336,11 @@ class PaymentService():
             data['mandiri_clickpay']['token'] = payloads['token']
             data['bank'] = 'mandiri'
 
-        midtrans_api_response = self.send_to_midtrans_api(data)
+        return self.send_to_midtrans_api(data)
 
-        return midtrans_api_response
 
     def cstore(self, payloads):
+        response = ResponseBuilder()
         if not all(isinstance(string, str) for string in [
             payloads['order_id'],
             payloads['first_name'],
@@ -384,11 +348,7 @@ class PaymentService():
             payloads['email'],
             payloads['phone'],
         ]) and not isinstance(payloads['gross_amount'], int):
-            return {
-                'error': True,
-                'data': {'payment_invalid': True},
-                'message': 'payload is not valid'
-            }
+            return response.build_invalid_payload_response()
 
         # get referral by order id
         ref = self.get_order_referal(payloads['order_id'])
@@ -410,12 +370,11 @@ class PaymentService():
         data['customer_details']['phone'] = payloads['phone']
         data['details'] = details
 
-        midtrans_api_response = self.send_to_midtrans_api(data)
-
-        return midtrans_api_response
+        return self.send_to_midtrans_api(data)
 
     # this will send the all payment methods payload to midtrand api
     def send_to_midtrans_api(self, payloads):
+        response = ResponseBuilder()
         endpoint = url + 'charge'
         result = requests.post(
                 endpoint,
@@ -445,9 +404,10 @@ class PaymentService():
                 order = db.session.query(Order).filter_by(id=payload['order_id']).first()
                 self.save_paid_ticket(order.as_dict())
 
-        return payload
+        return response.set_data(response).build()
 
     def update(self, id):
+        response = ResponseBuilder()
         # get the transaction id from payment table
         payment = db.session.query(Payment).filter_by(id=id).first()
         if payment is not None:
@@ -477,11 +437,7 @@ class PaymentService():
                     # on payment success
                     self.save_paid_ticket(order)
 
-        return {
-            'error': True,
-            'data': {'payment_invalid': True},
-            'message': 'transaction status is failed'
-        }
+        return response.build_invalid_payload_response()
 
         if status['status_code'] in ['200', '201']:
 
@@ -497,7 +453,7 @@ class PaymentService():
                     # on payment success
                     self.save_paid_ticket(order)
 
-        return status
+        return response.set_data(status).build()
 
     def save_paid_ticket(self, order):
         item_details = db.session.query(OrderDetails).filter_by(order_id=order['id']).all()
