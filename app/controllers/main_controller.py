@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request
 from app.controllers.base_controller import BaseController
 from app.services import attendeeservice
 from app.services import paymentservice
@@ -18,8 +18,8 @@ class MainController(BaseController):
         return render_template('admin/base/index.html')
 
     def getAttendees():
-        attendees = attendeeservice.get()
-        return render_template('admin/attendees/attendees.html', attendees=attendees)
+        attendees = attendeeservice.get(request)
+        return render_template('admin/attendees/attendees.html', attendees=attendees['data'])
 
     def getPayments():
         payments = paymentservice.admin_get()
@@ -39,11 +39,11 @@ class MainController(BaseController):
         return render_template('admin/referals/referals.html', referals=referals)
 
     def getAccounts():
-        accounts = userservice.list_user()
-        return render_template('admin/accounts/accounts.html', accounts=accounts)
+        accounts = userservice.list_user(request)
+        return render_template('admin/accounts/accounts.html', accounts=accounts['data'])
 
     def getBooths():
-        booths = boothservice.get()
+        booths = boothservice.get(request)
         return render_template('admin/booths/booths.html', booths=booths['data'])
 
     def getSpeakers():
