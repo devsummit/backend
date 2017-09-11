@@ -7,9 +7,9 @@ class PaymentController(BaseController):
     @staticmethod
     def admin_get_payments():
         payments = paymentservice.admin_get()
-        if(len(payments) != 0):
-            return BaseController.send_response_api(payments['data'], payments['message'])
-        return BaseController.send_error_api(payments['data'], 'payment not found')
+        if(payments['error']):
+            return BaseController.send_error_api(payments['data'], payments['message'])
+        return BaseController.send_response_api(payments['data'], payments['message'])
 
     @staticmethod
     def admin_filter_payments(transaction_status):
@@ -24,23 +24,23 @@ class PaymentController(BaseController):
     @staticmethod
     def get_payments(user_id):
         payments = paymentservice.get(user_id)
-        if(len(payments) != 0):
-            return BaseController.send_response_api(payments['data'], payments['message'])
-        return BaseController.send_error_api(payments['data'], 'payment not found')
+        if(payments['error']):
+            return BaseController.send_error_api(payments['data'], payments['message'])
+        return BaseController.send_response_api(payments['data'], payments['message'])
 
     @staticmethod
     def admin_show_payment(payment_id):
         payment = paymentservice.admin_show(payment_id)
-        if payment is not None:
-            return BaseController.send_response_api(payment['data'], payment['message'])
-        return BaseController.send_error_api(payment['data'], 'payment not found')
+        if payment['error']:
+            return BaseController.send_error_api(payment['data'], payment['message'])
+        return BaseController.send_response_api(payment['data'], payment['message'])
 
     @staticmethod
     def show_payment(payment_id):
         payment = paymentservice.show(payment_id)
-        if payment is not None:
-            return BaseController.send_response_api(payment['data'], payment['message'])
-        return BaseController.send_error_api(payment['data'], 'payment not found')
+        if payment['error']:
+            return BaseController.send_error_api(payment['data'], payment['message'])
+        return BaseController.send_response_api(payment['data'], payment['message'])
 
     @staticmethod
     def create(request):
@@ -266,10 +266,10 @@ class PaymentController(BaseController):
 
                 result = paymentservice.cstore(payloads)
 
-                if 'error' in result:
+                if result['error']:
                     return BaseController.send_error_api(result['data'], result['message'])
 
-                return BaseController.send_response_api(result, 'Indomaret payment transaction created succesfully') 
+                return BaseController.send_response_api(result['data'], result['message']) 
 
     @staticmethod
     def authorize(request):
@@ -285,10 +285,10 @@ class PaymentController(BaseController):
 
         result = paymentservice.authorize(payloads)
 
-        if 'error' in result:
+        if result['error']:
             return BaseController.send_error_api(result['data'], result['message'])
 
-        return BaseController.send_response_api(result, 'Credit card authorized succesfully')
+        return BaseController.send_response_api(result['data'], result['message'])
 
     @staticmethod
     def status(id):
