@@ -76,7 +76,7 @@
             contentType: "application/json; charset=utf-8",
             dataType   : "json",
             headers: {
-                Authorization: dsa.acess_token()
+            Authorization: dsa.acess_token()
             },
             success    : function(result){
                 if(result['expired']) {
