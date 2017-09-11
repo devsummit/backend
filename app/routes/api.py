@@ -195,7 +195,7 @@ def orders_details_id(order_id, detail_id, *args, **kwargs):
 
 @api.route('/events', methods=['GET'])
 def index():
-    return EventController.index()
+    return EventController.index(request)
 
 
 @api.route('/events/<event_id>', methods=['GET'])
@@ -278,7 +278,7 @@ def booth(*args, **kwargs):
     elif(request.method == 'POST'):
         return BoothController.create(request)
     elif(request.method == 'GET'):
-        return BoothController.index()
+        return BoothController.index(request)
 
 # Booth route by id
 
@@ -430,7 +430,7 @@ def check_in(*args, **kwargs):
 @token_required
 def attendees(*args, **kwargs):
     if(request.method == 'GET'):
-        return AttendeeController.index()
+        return AttendeeController.index(request)
 
 # Attendee route by id
 
@@ -448,7 +448,7 @@ def attendees_id(id, *args, **kwargs):
 @token_required
 def users(*args, **kwargs):
     if(request.method == 'GET'):
-        return UserController.index()
+        return UserController.index(request)
 
 # User detail/ route by id
 
