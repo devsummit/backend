@@ -1,24 +1,27 @@
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.booth import Booth
+from app.services.base_service import BaseService
+from app.builders.response_builder import ResponseBuilder
 
 
-class BoothService():
+class BoothService(BaseService):
 
-    def get(self):
-        booths = db.session.query(Booth).all()
-        _booths = []
-        # add included
-        for booth in booths:
-            data = booth.as_dict()
-            data['user'] = booth.user.include_photos().as_dict()
-            data['stage'] = booth.stage.as_dict() if booth.stage else None
-            _booths.append(data)
-        return {
-            'data': _booths,
-            'error': False,
-            'message': 'Booths retrieved succesfully'
-        }
+    def __init__(self, perpage): 
+        self.perpage = perpage
+
+    def get(self, request):
+        self.total_items = Booth.query.count()
+        if request.args.get('page'):
+            self.page = request.args.get('page')
+        else:
+            self.perpage = self.total_items
+            self.page = 1
+        self.base_url = request.base_url
+        paginate = super().paginate(db.session.query(Booth))
+        response = ResponseBuilder()
+        result = response.set_data(paginate['data']).set_links(paginate['links']).build()
+        return result
 
     def show(self, id):
         # get the booth id
