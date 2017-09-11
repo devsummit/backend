@@ -338,7 +338,6 @@ class PaymentService():
 
         return self.send_to_midtrans_api(data)
 
-
     def cstore(self, payloads):
         response = ResponseBuilder()
         if not all(isinstance(string, str) for string in [
