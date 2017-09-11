@@ -1,6 +1,3 @@
-from app.models.base_model import BaseModel
-
-
 class BaseService():
 
     def __init__(self, page=0, base_url='', total_items=0):
@@ -28,7 +25,6 @@ class BaseService():
         for item in self.paginated['data']:
             data = item.as_dict()
             for field in fields:
-                print(field)
                 data[field] = getattr(item, field).as_dict() if getattr(item, field) else None
             _results.append(data)
         self.paginated['data'] = _results

@@ -4,7 +4,7 @@ import requests
 import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from flask import request, current_app
+from flask import request
 
 from app.models.access_token import AccessToken
 from app.models.user import User
