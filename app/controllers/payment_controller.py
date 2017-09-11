@@ -272,10 +272,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.cstore(payloads)
 
-                if result['error']:
-                    return BaseController.send_error_api(result['data'], result['message'])
-
-                return BaseController.send_response_api(result['data'], result['message']) 
+                return BaseController.send_response_api(result['data']) 
 
     @staticmethod
     def authorize(request):
