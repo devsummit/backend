@@ -35,7 +35,6 @@ class PaymentsSeeder():
             transaction_id = randint(range_start, range_end)
             gross_amount = randint(range_start, range_end)
             transaction_time = fake.date_time_this_month(before_now=True, after_now=False, tzinfo=None)
-
             transaction_status = transaction_statuses[randint(0, 2)]
             masked_card = randint(range_start, range_end)
             payment_type = payment_types[randint(0, 1)]
