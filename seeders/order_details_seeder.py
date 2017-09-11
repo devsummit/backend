@@ -25,10 +25,6 @@ class OrdersDetailsSeeder():
             order_id = orderidarr[i]
             ticket_id = ticketid[i]
             ticket_price = ticketprice[i]
-            # ticket = random.choice(tickets)
-            # tickets['id']
-            # ticket_id = ticket['id']
-            # ticket_price = ticket['price']
             new_orderdetails = OrderDetails()
             new_orderdetails.ticket_id = ticket_id
             new_orderdetails.order_id = order_id
