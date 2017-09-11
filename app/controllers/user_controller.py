@@ -4,9 +4,9 @@ from app.services import userservice
 
 class UserController(BaseController):
     @staticmethod
-    def index():
-        users = userservice.list_user()
-        return BaseController.send_response_api(users, 'users retrieved successfully')
+    def index(request):
+        users = userservice.list_user(request)
+        return BaseController.send_response_api(users['data'], 'users retrieved successfully', {}, users['links'])
 
     @staticmethod
     def show(id):
