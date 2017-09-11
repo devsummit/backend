@@ -225,12 +225,15 @@ def delete(event_id):
 @token_required
 def schedule(*args, **kwargs):
 	filter = request.args.get('filter')
+	day = request.args.get('day')
 	if(request.method == 'POST'):
 		return ScheduleController.create(request)
-	elif(request.method == 'GET' and filter is None):
+	elif(request.method == 'GET' and filter is None and day is None):
 		return ScheduleController.index()
 	elif(request.method == 'GET' and filter is not None):
 		return ScheduleController.filter(filter)
+	elif(request.method == 'GET' and day is not None):
+		return ScheduleController.filter(day)
 
 
 # Beacon route by id
