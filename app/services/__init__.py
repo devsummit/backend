@@ -19,16 +19,17 @@ from app.services.user_ticket_service import UserTicketService
 from app.services.attendee_service import AttendeeService
 from app.services.payment_service import PaymentService 
 from app.services.referal_service import ReferalService 
+from app.services.base_service import BaseService
 
 # instantiate service
-userservice = UserService()
+userservice = UserService(10)  # number of item per page
 ticketservice = TicketService()
 stageservice = StageService()
 beaconservice = BeaconService()
 spotservice = SpotService()
 orderservice = OrderService()
 orderdetailservice = OrderDetailsService()
-eventservice = EventService()
+eventservice = EventService(10)  # number of item per page
 scheduleservice = ScheduleService()
 pointtransactionservice = PointsTransactionService()
 userphotoservice = UserPhotoService()
@@ -36,8 +37,9 @@ speakerservice = SpeakerService()
 tickettransferservice = TicketTransferService()
 speakerdocumentservice = SpeakerDocumentService()
 newsletterservice = NewsletterService()
-boothservice = BoothService()
+boothservice = BoothService(10)  # number of item per page
 userticketservice = UserTicketService()
-attendeeservice = AttendeeService()
+attendeeservice = AttendeeService(10)  # number of item per page
 paymentservice = PaymentService()
 referalservice = ReferalService()
+baseservice = BaseService()

@@ -24,6 +24,10 @@ class ResponseBuilder():
 		self.base_response_structure['included'] = included
 		return self
 
+	def set_links(self, links):
+		self.base_response_structure['links'] = links
+		return self
+
 	def set_message(self, message):
 		self.base_response_structure['message'] = message
 		return self
