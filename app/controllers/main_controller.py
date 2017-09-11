@@ -25,6 +25,11 @@ class MainController(BaseController):
         payments = paymentservice.admin_get()
         return render_template('admin/payments/payments.html', payments=payments)
 
+    def getAuthorizePayments():
+        param = {'transaction_status': 'authorize'}
+        authorizepayments = paymentservice.admin_filter(param)
+        return render_template('admin/payments/authorize-needed.html', payments=authorizepayments['data'])
+
     def getTickets():
         tickets = ticketservice.get()
         return render_template('admin/tickets/tickets.html', tickets=tickets)

@@ -1,5 +1,6 @@
 from random import randint
-import random, datetime
+import random
+import datetime
 from app.models.base_model import BaseModel
 from app.models.payment import Payment
 from app.models import db

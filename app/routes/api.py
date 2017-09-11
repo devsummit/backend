@@ -486,15 +486,23 @@ def delete_user(id, *args, **kwargs):
     if(request.method == 'DELETE'):
         return UserController.delete(id)
 
-
 # Payment api
 
 
-@api.route('/payments', methods=['POST'])
+@api.route('/payments', methods=['POST', 'GET'])
 @token_required
 def payment(*args, **kwargs):
+    filter = request.args.get('transaction_status')
+    user = kwargs['user'].as_dict()
     if (request.method == 'POST'):
         return PaymentController.create(request)
+    elif(request.method == 'GET'):
+        if(user['role_id'] == ROLE['admin'] and filter):
+            return PaymentController.admin_filter_payments(filter)
+        elif (user['role_id'] == ROLE['admin'] and filter is None):
+            return PaymentController.admin_get_payments()
+        else:
+            return PaymentController.get_payments(user['id'])
 
 
 @api.route('/payments/authorize', methods=['POST'])
@@ -508,16 +516,6 @@ def authorize_credit_card(*args, **kwargs):
 def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
         return PaymentController.status(id)
-
-
-@api.route('/payments', methods=['GET'])
-@token_required
-def get_payments(*args, **kwargs):
-    user = kwargs['user'].as_dict()
-    if(user['role_id'] == ROLE['admin']):
-        return PaymentController.admin_get_payments()
-    else:
-        return PaymentController.get_payments(user['id'])
 
 
 @api.route('/payments/<payment_id>', methods=['GET'])
