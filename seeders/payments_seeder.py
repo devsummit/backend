@@ -32,9 +32,7 @@ class PaymentsSeeder():
             saved_token_id = randint(range_start, range_end)
             transaction_id = randint(range_start, range_end)
             gross_amount = randint(range_start, range_end)
-            transaction_time = fake.sentence(
-                nb_words=6, variable_nb_words=True, ext_word_list=None
-            )
+            transaction_time = datetime.datetime.now()
 
             transaction_status = transaction_statuses[randint(0, 2)]
             masked_card = randint(range_start, range_end)
