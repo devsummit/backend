@@ -68,3 +68,8 @@ def get_stages():
 @main.route('/schedules')
 def schedules():
     return MainController.getSchedules()
+
+
+@main.route('/password')
+def changepassword():
+    return MainController.changepassword()
