@@ -27,6 +27,7 @@ from app.controllers.attendee_controller import AttendeeController
 from app.controllers.payment_controller import PaymentController
 from app.controllers.referal_controller import ReferalController
 from app.controllers.user_controller import UserController
+from app.controllers.partner_controller import PartnerController
 from app.configs.constants import ROLE
 
 
@@ -568,3 +569,22 @@ def check_referal(*args, **kwargs):
 def me(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return UserController.show(user['id'])
+
+@api.route('/partners/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def partners_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return PartnerController.show(id)
+    elif(request.method == 'PATCH' or request.method == 'PUT'):
+        return PartnerController.update(id, request)
+    else:
+        return PartnerController.delete(id)
+
+
+@api.route('/partners', methods=['GET', 'POST'])
+@token_required
+def partners(*args, **kwargs):
+    if(request.method == 'GET'):
+        return PartnerController.index(request)
+    else:
+        return PartnerController.create(request)
