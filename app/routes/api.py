@@ -29,6 +29,7 @@ from app.controllers.referal_controller import ReferalController
 from app.controllers.user_controller import UserController
 from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
+from app.controllers.sponsor_controller import SponsorController
 from app.configs.constants import ROLE
 
 
@@ -610,3 +611,32 @@ def entry_cash_log_id(id, *args, **kwargs):
         return EntryCashLogController.delete(id)
     elif (request.method == 'GET'):
         return EntryCashLogController.show(id)
+
+
+@api.route('/sponsors', methods=['GET', 'POST'])
+@token_required
+def get_sponsors(*args, **kwargs):
+    if(request.method == 'GET'):
+        return SponsorController.index(request)
+    elif(request.method == 'POST'):
+        return SponsorController.create(request)
+
+
+@api.route('/sponsors/<id>', methods=['GET', 'PATCH', 'PUT', 'DELETE'])
+@token_required
+def get_sponsor_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SponsorController.show(id)
+    elif (request.method in ['PATCH', 'PUT']):
+        return SponsorController.update(id, request)
+    else:
+        return SponsorController.delete(id)
+
+
+@api.route('/sponsors/<id>/logs', methods=['GET', 'POST'])
+@token_required
+def get_sponsor_log(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SponsorController.get_logs(id)
+    elif (request.method in 'POST'):
+        return SponsorController.create_log(request, id)

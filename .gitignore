@@ -12,3 +12,4 @@ env/*
 __pycache__
 
 .vscode/
+app/static/images/partners/

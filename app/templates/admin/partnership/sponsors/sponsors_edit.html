@@ -1,0 +1,82 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="sponsor-name">Sponsor Name:</label>
+                                    <input type="text" class="form-control" id="sponsor-name">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="sponsor-email">Email:</label>
+                                    <input type="text" class="form-control" id="sponsor-email">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="sponsor-phone">Phone:</label>
+                                    <input type="text" class="form-control" id="sponsor-phone">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="sponsor-stage">Stage:</label>
+                                    <select class="form-control" id="sponsor-stage"></select>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="sponsor-note">Note:</label>
+                                    <textarea type="text" class="form-control" id="sponsor-note"></textarea>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-edit-save" id="-"><b>Save</b></a>
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Save edit account */
+    $('.btn-edit-save').click(function (event) {
+        const id = $(this).attr('id');
+        let payloads = {
+            name: $('#sponsor-name').val(),
+            email: $('#sponsor-email').val(),
+            phone: $('#sponsor-phone').val(),
+            note: $('#sponsor-note').val(),
+            stage: $('#sponsor-stage').val()
+        }
+        dsa.patch('sponsors/' + id, payloads, function(result) {
+            if (result.meta.success) {
+                window.location = "/sponsors";
+            }
+        });
+    })
+
+    $(function () {
+        $('#sponsors-list1').DataTable();
+    })
+
+</script>

@@ -21,6 +21,7 @@ from app.services.payment_service import PaymentService
 from app.services.referal_service import ReferalService 
 from app.services.partner_service import PartnerService
 from app.services.entry_cash_log_service import EntryCashLogService
+from app.services.sponsor_service import SponsorService
 from app.services.base_service import BaseService
 
 # instantiate service
@@ -46,4 +47,5 @@ paymentservice = PaymentService()
 referalservice = ReferalService()
 partnerservice = PartnerService(10)
 entrycashlogservice = EntryCashLogService(10)
+sponsorservice = SponsorService(10)
 baseservice = BaseService()
