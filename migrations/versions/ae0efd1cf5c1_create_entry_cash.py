@@ -19,9 +19,8 @@ depends_on = None
 def upgrade():
     op.create_table('entry_cash_log',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('expense', sa.Integer),
-        sa.Column('income', sa.Integer),
-        sa.Column('details', sa.String(120)),
+        sa.Column('amount', sa.Integer),
+        sa.Column('description', sa.String(120)),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime),
     )
