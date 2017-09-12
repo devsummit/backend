@@ -1,0 +1,92 @@
+{% extends "admin/base/index.html" %} {% block title %}
+<title> Entry list </title> {% endblock %} {% set globals={'base_route': 'entrycashlogs', 'api_route': 'entrycashlogs'} %} {% block header_link
+%}
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Entry Cash Logs
+    <small>List of Entry Cash</small>
+
+</h1>
+{% endblock %} {% block breadcrumb %}
+<li class="active">Entry Cash Logs</li>
+{% endblock %} {% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <a href="#" class="btn btn-primary btn-entry-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+
+    <div class="box-body">
+        <table id="data-list1" class="table table-bordered table-striped">
+            <thead>
+
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Action</th>                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entrycashlogs %}
+                <tr>
+                    <td>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-description">{{ entry['description']|e }}</a>
+                    </td>
+                    <td>
+                        <a href="" id='atd-{{ entry.amount }}' class="entry-amount">{{ entry['amount']|e }}</a>
+                    </td>
+                    <td>
+                        <button id='entry-{{ entry.id }}' type="button" class="btn btn-sm btn-info btn-entry-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                        </button>
+                        <button id='entry-{{ entry.id }}' type="button" class="btn btn-sm btn-info btn-entry-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "admin/base/modal_delete.html" %} {% include "admin/entrycash/entrycash_edit.html" %} {% include "admin/entrycash/entrycash_add.html"
+    %} {% endblock %} {% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+    <!-- page script -->
+    <script>
+        $('.btn-entry-edit').click(function (event) {
+
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(6, bte_id.length);
+            const url = `{{ globals["api_route"] }}/${id}`;
+
+            dsa.get(url, function (result) {
+                // bind result value in to modal-detail page 
+                const data = result['data']
+                $('#entrycashlog-desc').val(data['description']);
+                $('#entrycashlog-amount').val(data['amount']);
+            });
+            $('.btn-edit-save').attr("id", id);
+        });
+
+        $('.btn-entry-add').click(function (event) {
+            $('.modal-title').html('Add New Entry Cash');
+        });
+
+        $('.btn-entry-delete').click(function (event) {
+            $('.modal-title').html('Are you sure want to delete this entry cash?');
+
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(6, btd_id.length);
+            $('.btn-yes').attr("id", id);
+        });
+
+        $(function () {
+            $('#data-list1').DataTable();
+        });
+
+    </script>
+
+    {% endblock %}
