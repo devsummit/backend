@@ -68,3 +68,8 @@ def get_stages():
 @main.route('/schedules')
 def schedules():
     return MainController.getSchedules()
+
+
+@main.route('/entrycashlogs')
+def entrycashlog():
+    return MainController.getEntryCashLogs()
