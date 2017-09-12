@@ -7,59 +7,73 @@
             <h4 class="modal-title">Default title</h4>
         </div>
         <div class="modal-body">
-                <div class="box box-primary">
-                    <div class="box-body box-profile">
-                            <ul class="list-group list-group-unbordered">
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="account-firstname">First Name:</label>
-                                        <input type="text" class="form-control account-firstname" id="account-firstname">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                        <div class="form-group">
-                                            <label for="account-lastname">Last Name:</label>
-                                            <input type="text" class="form-control account-lastname" id="account-lastname">
-                                        </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="account-email">Email:</label>
-                                        <input type="text" class="form-control account-email" id="account-email">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="account-username">Username:</label>
-                                        <input type="text" class="form-control account-username" id="account-username">
-                                    </div>
-                                </li>
-                                <li style="display:none">
-                                    <div class="form-group">
-                                        <label for="account-role_id"></label>
-                                        <input type="text" class="form-control account-role_id" id="account-role_id">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                        <div class="form-group">
-                                            <label>Select</label>
-                                            <select class="form-control" id="account-edit-select-role">
-                                                <!-- roles here taken from jinja global-env which initiated in app __init__ file -->
-                                                {% for role, i in roles.items() %}
-                                                    <option id='edit-role{{ i }}' value={{ i }}>{{ role }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                </li>
-                            </ul>
-                        <a href="#" class="btn btn-primary btn-block btn-edit-save" id="-"><b>Save</b></a>
-        
-                    </div>
-                    <!-- /.box-body -->
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs" id="form-tabs" >
+                        <li class="tab1 active"><a id="a-tab1" href="#tab1" data-toggle="tab" aria-expanded="true">Accounts Informations</a></li>
+                        <li class="tab2"><a id="a-tab2" href="#tab2" data-toggle="tab" aria-expanded="false">Other Datas</a></li>
+                    </ul>
                 </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                <div class="tab-content">
+                    <div class="tab-pane tab1 active" id="tab1">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="account-firstname">First Name:</label>
+                                    <input type="text" class="form-control account-firstname" id="account-firstname">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="account-lastname">Last Name:</label>
+                                        <input type="text" class="form-control account-lastname" id="account-lastname">
+                                    </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="account-email">Email:</label>
+                                    <input type="text" class="form-control account-email" id="account-email">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="account-username">Username:</label>
+                                    <input type="text" class="form-control account-username" id="account-username">
+                                </div>
+                            </li>
+                            <li style="display:none">
+                                <div class="form-group">
+                                    <label for="account-role_id"></label>
+                                    <input type="text" class="form-control account-role_id" id="account-role_id">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label>Select</label>
+                                        <select class="form-control" id="account-edit-select-role">
+                                            <!-- roles here taken from jinja global-env which initiated in app __init__ file -->
+                                            {% for role, i in roles.items() %}
+                                                <option id='edit-role{{ i }}' value={{ i }}>{{ role }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-pane tab2" id="tab2">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="account-firstname">First Name:</label>
+                                    <input type="text" class="form-control account-firstname" id="account-firstname">
+                                </div>
+                            </li>  
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <a href="#" class="btn btn-primary btn-edit-save" id="-"><b>Save</b></a>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
         </div>
         <!-- /.modal-content -->
@@ -71,6 +85,12 @@
 <script>
     /* Save edit account */   
     $('.btn-edit-save').click(function(event){
+        if ($('.btn-edit-save').html() == 'NEXT') {
+            $('.tab1').removeClass('active');
+            $('.tab2').addClass('active');
+            $('.btn-edit-save').html('SAVE');
+            return
+        }
         const id = $(this).attr('id');
         payload = {
             "first_name": $('.account-firstname').val(),
@@ -85,5 +105,25 @@
                 window.location = '/{{ globals["base_route"] }}';
             }
         });
+    });
+
+    /* Tab change event */
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href") // activated tab
+        var btnCaption = target=='#tab1' ? "NEXT" : "SAVE"
+        $('.btn-edit-save').html(btnCaption);
+    });
+
+    /* Uppercase first letter */
+    function UCFL(string) 
+    {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    /* Role dropdown select change */
+    $( "#account-edit-select-role").change(function(event) {
+        role = $('#account-edit-select-role').find(":selected").text();
+        console.log(role);
+        $("#a-tab2").html(UCFL(role) + 'Informations');
     });
 </script>
