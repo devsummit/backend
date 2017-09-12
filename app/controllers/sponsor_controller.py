@@ -67,3 +67,25 @@ class SponsorController(BaseController):
         if data['error']:
             return BaseController.send_error_api(data['data'], data['message'])
         return BaseController.send_response_api(data['data'], data['message'])
+
+    @staticmethod
+    def get_logs(id):
+        logs = sponsorservice.get_logs(id)
+        return BaseController.send_response_api(logs['data'], logs['message'])
+
+    @staticmethod
+    def create_log(request, id):
+        description = request.json['description'] if 'description' in request.json else None
+
+        if description:
+            payload = {
+                'description': description,
+            }
+        else:
+            return BaseController.send_error_api(None, 'payload invalid')
+
+        result = sponsorservice.post_log(payload, id)
+
+        if result['error']:
+            return BaseController.send_error_api(result['data'], result['message'])
+        return BaseController.send_response_api(result['data'], result['message'])
