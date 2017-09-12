@@ -1,0 +1,133 @@
+{% extends "admin/base/index.html" %} {% block title %}
+<title> Attendees list </title> {% endblock %} {% set globals={'base_route': 'sponsors', 'api_route': 'sponsors'} %} {% block header_link
+%}
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Sponsors
+    <small>List of Sponsors</small>
+</h1>
+{% endblock %} {% block breadcrumb %}
+<li class="active">Sponsors</li>
+{% endblock %} {% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+
+    <div class="box-body">
+        <table id="sponsors-list1" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Sponsor Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Note</th>
+                    <th>Type</th>
+                    <th>Stage</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sponsors in sponsor %}
+                <tr>
+                    <td>
+                        {{ sponsor.name|e }}
+                    </td>
+                    <td>
+                        {{ sponsor.email|e }}
+                    </td>
+                    <td>
+                        {{ sponsor.phone|e }}
+                    </td>
+                    <td>
+                        {{ sponsor.note|e }}
+                    </td>
+                    <td>
+                        {{ sponsor.type|e }}
+                    </td>
+                    <td>
+                        {{ sponsor.stage|e }}
+                    </td>
+                    <td>
+                        <button id='btd-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                            Edit
+                        </button>
+                        <button id='btd-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "admin/base/modal_delete.html" %} {% include "admin/partnership/sponsors/sponsors_edit.html" %} {% include "admin/partnership/sponsors/sponsors_add.html"
+    %} {% endblock %} {% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+
+
+    <!-- page script -->
+    <script>
+        /* Display Attendee Detail */
+
+        $('.btn-edit').click(function (event) {
+            $('.modal-title').html('Edit');
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+            let select = $(".partner-type");
+            select.find('option').remove();
+            dsa.get('partners/' + id, function (result) {
+                // bind result value in to account_detail.html 
+                const data = result['data'];
+                $('.partner-name').val(data['name']);
+                $('.partner-email').val(data['email']);
+                selected_type = data['type'];
+                $('.partner-website').val(data['website']);
+                PARTNER_TYPES.map(function (type) {
+                    let option = document.createElement('option');
+                    option.innerHTML = type;
+                    option.value = type;
+
+                    // Set selected option
+                    if (type === selected_type) {
+                        option.selected = true;
+                    }
+
+                    select.append(option);
+                });
+                $("#img-upload").attr("src", 'static/' + data['photo']);
+                $('.partner-photo').val(data['photo'] ? data['photo'] : '-');
+            });
+            $('.btn-edit-save').attr("id", id);
+        });
+
+        $('.btn-add').click(function (event) {
+            $('.modal-title').html('Add New Account');
+            let select = $(".i-type");
+            select.find('option').remove();
+            PARTNER_TYPES.map(function (type) {
+                let option = document.createElement('option');
+                option.innerHTML = type;
+                option.value = type;
+                select.append(option);
+            });
+        });
+
+        $('.btn-delete').click(function (event) {
+            $('.modal-title').html('Are you sure want to delete this account?');
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            $('.btn-yes').attr("id", id);
+        });
+
+        $(function () {
+            $('#partner-list1').DataTable();
+        })
+
+    </script>
+
+    {% endblock %}
