@@ -43,10 +43,10 @@
                                 <li class="list-group-item">
                                         <div class="form-group">
                                             <label>Select</label>
-                                            <select class="form-control" id="account-select-role">
+                                            <select class="form-control" id="account-edit-select-role">
                                                 <!-- roles here taken from jinja global-env which initiated in app __init__ file -->
                                                 {% for role, i in roles.items() %}
-                                                    <option id='role{{ i }}' value={{ i }}>{{ role }}</option>
+                                                    <option id='edit-role{{ i }}' value={{ i }}>{{ role }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -77,7 +77,7 @@
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
-            "role_id": $('#account-select-role').find(":selected").val()
+            "role_id": $('#account-edit-select-role').find(":selected").val()
         };
         dsa.patch('{{ globals["api_route"] }}/' + id, payload, function(result) {
             console.log(result, 'saved');
