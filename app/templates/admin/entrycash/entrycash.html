@@ -53,6 +53,7 @@
     <!-- DataTables -->
     <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='constants.js') }}"></script>
 
     <!-- page script -->
     <script>
@@ -61,6 +62,16 @@
             const bte_id = $(this).attr('id');
             const id = bte_id.substring(6, bte_id.length);
             const url = `{{ globals["api_route"] }}/${id}`;
+
+            let select = $('#entry-cash-flow');
+            select.find('option').remove()
+            CASH_FLOWS.map(function (item) {
+                let option = document.createElement('option');
+                option.innerHTML = item;
+                option.value = item;
+
+                select.append(option);
+            });
 
             dsa.get(url, function (result) {
                 // bind result value in to modal-detail page 
@@ -73,6 +84,15 @@
 
         $('.btn-entry-add').click(function (event) {
             $('.modal-title').html('Add New Entry Cash');
+            let select = $('#i-entry-cash-flow');
+            select.find('option').remove()
+            CASH_FLOWS.map(function(cashflow) {
+                let option = document.createElement('option');
+                option.innerHTML = cashflow;
+                option.value = cashflow;
+
+                select.append(option);
+            });
         });
 
         $('.btn-entry-delete').click(function (event) {

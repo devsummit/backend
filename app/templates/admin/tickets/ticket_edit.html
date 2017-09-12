@@ -55,7 +55,6 @@
             "information": $('.ticket-information').val()
         };
         dsa.patch('tickets/' + id, payload, function(result) {
-            console.log(result, 'saved');
             if(result.meta.success) {
                 window.location = "/tickets";
             }

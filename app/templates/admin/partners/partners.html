@@ -96,7 +96,6 @@
         dsa.get('partners/' + id, function(result) {
             // bind result value in to account_detail.html 
             const data = result['data'];
-            console.log(data, 'sss')
             $('.partner-name').val(data['name']);
             $('.partner-email').val(data['email']);
             selected_type = data['type'];
