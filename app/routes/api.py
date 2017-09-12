@@ -631,3 +631,12 @@ def get_sponsor_id(id, *args, **kwargs):
         return SponsorController.update(id, request)
     else:
         return SponsorController.delete(id)
+
+
+@api.route('/sponsors/<id>/logs', methods=['GET', 'POST'])
+@token_required
+def get_sponsor_log(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SponsorController.get_logs(id)
+    elif (request.method in 'POST'):
+        return SponsorController.create_log(request, id)

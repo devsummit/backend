@@ -6,6 +6,7 @@ from app.configs.constants import SPONSOR_STAGES, SPONSOR_TYPES
 from app.models.sponsor import Sponsor
 from app.models.sponsor_interaction_log import SponsorInteractionLog
 from app.services.base_service import BaseService
+from app.models.base_model import BaseModel
 from app.builders.response_builder import ResponseBuilder
 
 
@@ -29,6 +30,24 @@ class SponsorService(BaseService):
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
         return result
+
+    def get_logs(self, id):
+        response = ResponseBuilder()
+        logs = db.session.query(SponsorInteractionLog).filter_by(sponsor_id=id).all()
+        return response.set_data(BaseModel.as_list(logs)).build()
+
+    def post_log(self, payload, id):
+        response = ResponseBuilder()
+        log = SponsorInteractionLog()
+        log.description = payload['description']
+        log.sponsor_id = id
+        db.session.add(log)
+        try:
+            db.session.commit()
+            return response.set_data(log.as_dict()).set_message('logged').build()
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return response.set_data(data).set_error(True).build()
 
     def show(self, id):
         response = ResponseBuilder()
