@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from app.controllers.main_controller import MainController
 
 
@@ -68,6 +68,14 @@ def get_stages():
 @main.route('/schedules')
 def schedules():
     return MainController.getSchedules()
+
+
+@main.route('/partners', methods=['GET', 'POST'])
+def partners():
+    if(request.method == 'GET'):
+        return MainController.getPartners()
+    else:
+        return MainController.createPartner(request)
 
 
 @main.route('/entrycashlogs')
