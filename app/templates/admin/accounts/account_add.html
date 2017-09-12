@@ -34,11 +34,22 @@
                                         <input type="text" class="form-control i-username" id="i-username">
                                     </div>
                                 </li>
-                                <li class="list-group-item">
+                                <li style="display:none" class="list-group-item">
                                     <div class="form-group">
                                         <label for="i-role_id">Role:</label>
                                         <input type="text" class="form-control i-role_id" id="i-role_id">
                                     </div>
+                                </li>
+                                <li class="list-group-item">
+                                        <div class="form-group">
+                                            <label>Select</label>
+                                            <select class="form-control" id="account-add-select-role">
+                                                <!-- roles here taken from jinja global-env which initiated in app __init__ file -->
+                                                {% for role, i in roles.items() %}
+                                                    <option id='add-role{{ i }}' value={{ i }}>{{ role }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                 </li>
                             </ul>
                         <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
@@ -64,7 +75,7 @@
             "last_name": $('.i-lastname').val(),
             "email": $('.i-email').val(),
             "username": $('.i-username').val(),
-            "role_id": $('.i-role_id').val()
+            "role_id": $('#account-add-select-role').find(":selected").val()
         };
         dsa.post('users', payload, function(result) {
             if(result.meta.success) {
