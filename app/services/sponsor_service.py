@@ -1,3 +1,4 @@
+import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
@@ -30,8 +31,10 @@ class SponsorService(BaseService):
     def show(self, id):
         response = ResponseBuilder()
         sponsor = db.session.query(Sponsor).filter_by(id=id).first()
-        data = sponsor.as_dict()
-        return response.set_data(data).build()
+        data = sponsor.as_dict() if sponsor else None
+        if data:
+            return response.set_data(data).build()
+        return response.set_error(True).set_message('data not found').set_data(None).build()
 
     def create(self, payload):
         response = ResponseBuilder()
@@ -49,3 +52,27 @@ class SponsorService(BaseService):
         except SQLAlchemyError as e:
             data = e.orig.args
             return response.set_data(data).set_error(True).build()
+
+    def update(self, id, payload):
+        response = ResponseBuilder()
+        sponsor = db.session.query(Sponsor).filter_by(id=id)
+        new_data = super().filter_update_payload(payload)        
+        new_data['updated_at'] = datetime.datetime.now()
+        sponsor.update(new_data)
+
+        try:
+            db.session.commit()
+            return response.set_data(sponsor.first().as_dict()).build()
+
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return response.set_data(data).set_error(True).build()
+
+    def delete(self, id):
+        response = ResponseBuilder()
+        sponsor = db.session.query(Sponsor).filter_by(id=id)
+        if sponsor.first():
+            sponsor.delete()
+            db.session.commit()
+            return response.set_message('data deleted').set_data(None).build()
+        return response.set_message('data not found').set_error(True).build()

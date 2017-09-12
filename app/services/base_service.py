@@ -37,3 +37,10 @@ class BaseService():
             _results.append(item)
         self.paginated['data'] = _results
         return self.paginated
+
+    def filter_update_payload(self, payload):
+        new_data = {}
+        for key in payload:
+            if payload[key] is not None:
+                new_data[key] = payload[key]
+        return new_data
