@@ -12,26 +12,26 @@
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="i-sponsor-name">Sponsor Name:</label>
-                                    <input type="text" class="form-control" id="i-sponsor-name">
+                                    <label for="sponsor-name">Sponsor Name:</label>
+                                    <input type="text" class="form-control" id="sponsor-name">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="i-sponsor-email">Email:</label>
-                                    <input type="text" class="form-control" id="i-sponsor-email">
+                                    <label for="sponsor-email">Email:</label>
+                                    <input type="text" class="form-control" id="sponsor-email">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="i-sponsor-phone">Phone:</label>
-                                    <input type="text" class="form-control" id="i-sponsor-phone">
+                                    <label for="sponsor-phone">Phone:</label>
+                                    <input type="text" class="form-control" id="sponsor-phone">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="i-sponsor-note">Note:</label>
-                                    <textarea type="text" class="form-control" id="i-sponsor-note"></textarea>
+                                    <label for="sponsor-note">Note:</label>
+                                    <textarea type="text" class="form-control" id="sponsor-note"></textarea>
                                 </div>
                             </li>
                         </ul>
@@ -55,36 +55,22 @@
     /* Save edit account */
     $('.btn-edit-save').click(function (event) {
         const id = $(this).attr('id');
-        const type = $('.partner-type').find(":selected").val();
-        const formdata = new FormData();
-        formdata.append('image_file', $('#fileInput')[0].files[0])
-        formdata.append('name', $('.partner-name').val())
-        formdata.append('type', type)
-        formdata.append('website', $('.partner-website').val())
-        formdata.append('email', $('.partner-email').val())
-        dsa.patchForm('partners/' + id, formdata, function (result) {
+        console.log(id)
+        let payloads = {
+            name: $('#sponsor-name').val(),
+            email: $('#sponsor-email').val(),
+            phone: $('#sponsor-phone').val(),
+            note: $('#sponsor-note').val()
+        }
+        dsa.patch('sponsors/' + id, payloads, function(result) {
             if (result.meta.success) {
-                window.location = "/partners";
+                window.location = "/sponsors";
             }
         });
     })
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
 
-            reader.onload = function (e) {
-                $('#img-upload').attr('src', e.target.result);
-            }
-
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    $("#fileInput").change(function () {
-        readURL(this);
-    });
     $(function () {
-        $('#partner-list1').DataTable();
+        $('#sponsors-list1').DataTable();
     })
 
 </script>
