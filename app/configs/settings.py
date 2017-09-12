@@ -20,6 +20,8 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 POST_STAGE_PHOTO_DEST = 'app/static/images/stages/'
 SAVE_STAGE_PHOTO_DEST = 'images/stages/'
+POST_PARTNER_PHOTO_DEST = 'app/static/images/partners/'
+SAVE_PARTNER_PHOTO_DEST = 'images/partners/'
 POST_USER_PHOTO_DEST = 'app/static/images/users/'
 SAVE_USER_PHOTO_DEST = 'images/users/'
 GET_DEST = 'static/'
