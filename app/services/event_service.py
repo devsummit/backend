@@ -94,5 +94,4 @@ class EventService(BaseService):
             db.session.commit()
             return response.set_data(None).build()
         else:
-            data = 'data not found'
             return response.set_data(None).set_error(True).build()
