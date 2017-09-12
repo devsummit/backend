@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request
 from app.controllers.base_controller import BaseController
 from app.services import attendeeservice
 from app.services import paymentservice
@@ -11,6 +11,7 @@ from app.services import eventservice
 from app.configs.constants import EVENTS_TYPE
 from app.services import stageservice
 from app.services import scheduleservice
+from app.services import entrycashlogservice
 
 
 class MainController(BaseController):
@@ -61,3 +62,7 @@ class MainController(BaseController):
     def getSchedules():
         schedules = scheduleservice.get()
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
+
+    def getEntryCashLogs():
+        entrycashlogs = entrycashlogservice.get(request)
+        return render_template('admin/entrycash/entrycash.html', entrycashlogs=entrycashlogs['data'])
