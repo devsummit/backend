@@ -1,0 +1,55 @@
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Entry Cash Logs</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-entry-cash-desc">Description:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-desc">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-entry-cash-amount">Amount:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-amount">
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block" id="btn-add-save"><b>Save</b></a>
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    $('#btn-add-save').click(function (event) {
+        const payload = {
+            "description": $('#i-entry-cash-desc').val(),
+            "amount": $('#i-entry-cash-amount').val()
+        };
+        dsa.post('{{ globals["api_route"] }}', payload, function (result) {
+            if (result.meta.success) {
+                window.location = '/entrycashlogs';
+            }
+        });
+    });
+
+</script>
