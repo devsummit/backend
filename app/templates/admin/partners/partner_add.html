@@ -77,7 +77,7 @@
         });
     });
 
-    function readURL(input) {
+    function readCreateURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
@@ -88,6 +88,6 @@
     }
 
     $("#i-fileInput").change(function(){
-        readURL(this);
+        readCreateURL(this);
     }); 
 </script>
