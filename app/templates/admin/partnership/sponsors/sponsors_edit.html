@@ -1,0 +1,90 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-name">Sponsor Name:</label>
+                                    <input type="text" class="form-control" id="i-sponsor-name">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-email">Email:</label>
+                                    <input type="text" class="form-control" id="i-sponsor-email">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-phone">Phone:</label>
+                                    <input type="text" class="form-control" id="i-sponsor-phone">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-note">Note:</label>
+                                    <textarea type="text" class="form-control" id="i-sponsor-note"></textarea>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-edit-save" id="-"><b>Save</b></a>
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Save edit account */
+    $('.btn-edit-save').click(function (event) {
+        const id = $(this).attr('id');
+        const type = $('.partner-type').find(":selected").val();
+        const formdata = new FormData();
+        formdata.append('image_file', $('#fileInput')[0].files[0])
+        formdata.append('name', $('.partner-name').val())
+        formdata.append('type', type)
+        formdata.append('website', $('.partner-website').val())
+        formdata.append('email', $('.partner-email').val())
+        dsa.patchForm('partners/' + id, formdata, function (result) {
+            if (result.meta.success) {
+                window.location = "/partners";
+            }
+        });
+    })
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#img-upload').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#fileInput").change(function () {
+        readURL(this);
+    });
+    $(function () {
+        $('#partner-list1').DataTable();
+    })
+
+</script>
