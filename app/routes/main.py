@@ -81,3 +81,7 @@ def partners():
 @main.route('/entrycashlogs')
 def entrycashlog():
     return MainController.getEntryCashLogs()
+
+@main.route('/sponsors')
+def sponsors():
+    return MainController.getSponsors()
