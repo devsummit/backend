@@ -27,6 +27,7 @@ from app.controllers.attendee_controller import AttendeeController
 from app.controllers.payment_controller import PaymentController
 from app.controllers.referal_controller import ReferalController
 from app.controllers.user_controller import UserController
+from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.configs.constants import ROLE
 
 
@@ -568,3 +569,9 @@ def check_referal(*args, **kwargs):
 def me(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return UserController.show(user['id'])
+
+
+@api.route('/entrycashlog', method=['GET'])
+@token_required
+def get_entry_cash_log(*args, **kwargs):
+    return EntryCashLogController.index()
