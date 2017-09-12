@@ -11,17 +11,15 @@ class EntryCashLog(db.Model, BaseModel):
     # display visible field
     visible = [
         'id',
-        'expense',
-        'income',
-        'details',
+        'amount',
+        'description',
         'created_at',
         'updated_at'
     ]
 
     id = db.Column(db.Integer, primary_key=True)
-    expense = db.Column(db.Integer)
-    income = db.Column(db.Integer)
-    details = db.Column(db.String)
+    amount = db.Column(db.Integer)
+    description = db.Column(db.String)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
 
