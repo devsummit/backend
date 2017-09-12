@@ -59,7 +59,7 @@
                     </td>
                     {% endif %}
                     <td>
-                        <button id='btd-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                        <button id='btd-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-sponsor-edit" data-toggle="modal" data-target="#modal-edit">
                             Edit
                         </button>
                         <button id='btd-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
@@ -86,33 +86,16 @@
     <script>
         /* Display Attendee Detail */
 
-        $('.btn-edit').click(function (event) {
+        $('.btn-sponsor-edit').click(function (event) {
             $('.modal-title').html('Edit Sponsor');
             const bte_id = $(this).attr('id');
             const id = bte_id.substring(4, bte_id.length);
-            let select = $(".partner-type");
-            select.find('option').remove();
             dsa.get('sponsors/' + id, function (result) {
-                // bind result value in to account_detail.html 
-                // const data = result['data'];
-                // $('.partner-name').val(data['name']);
-                // $('.partner-email').val(data['email']);
-                // selected_type = data['type'];
-                // $('.partner-website').val(data['website']);
-                // PARTNER_TYPES.map(function (type) {
-                //     let option = document.createElement('option');
-                //     option.innerHTML = type;
-                //     option.value = type;
-
-                //     // Set selected option
-                //     if (type === selected_type) {
-                //         option.selected = true;
-                //     }
-
-                //     select.append(option);
-                // });
-                // $("#img-upload").attr("src", 'static/' + data['photo']);
-                // $('.partner-photo').val(data['photo'] ? data['photo'] : '-');
+                const data = result['data'];
+                $('#sponsor-name').val(data['name']);
+                $('#sponsor-email').val(data['email']);
+                $('#sponsor-phone').val(data['phone']);
+                $('#sponsor-note').val(data['note']);
             });
             $('.btn-edit-save').attr("id", id);
         });
@@ -122,14 +105,14 @@
         });
 
         $('.btn-delete').click(function (event) {
-            $('.modal-title').html('Are you sure want to delete this account?');
+            $('.modal-title').html('Are you sure want to delete this sponsor?');
             const btd_id = $(this).attr('id');
             const id = btd_id.substring(4, btd_id.length);
             $('.btn-yes').attr("id", id);
         });
 
         $(function () {
-            $('#partner-list1').DataTable();
+            $('#sponsors-list1').DataTable();
         })
 
     </script>
