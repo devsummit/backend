@@ -28,6 +28,7 @@ from app.controllers.payment_controller import PaymentController
 from app.controllers.referal_controller import ReferalController
 from app.controllers.user_controller import UserController
 from app.controllers.partner_controller import PartnerController
+from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.configs.constants import ROLE
 
 
@@ -589,3 +590,23 @@ def partners(*args, **kwargs):
         return PartnerController.index(request)
     else:
         return PartnerController.create(request)
+
+
+@api.route('/entrycashlogs', methods=['GET', 'POST'])
+@token_required
+def get_entry_cash_log(*args, **kwargs):
+    if(request.method == 'POST'):
+        return EntryCashLogController.create(request)
+    elif(request.method == 'GET'):
+        return EntryCashLogController.index(request)
+
+
+@api.route('/entrycashlogs/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def entry_cash_log_id(id, *args, **kwargs):
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        return EntryCashLogController.update(request, id)
+    elif (request.method == 'DELETE'):
+        return EntryCashLogController.delete(id)
+    elif (request.method == 'GET'):
+        return EntryCashLogController.show(id)

@@ -76,3 +76,8 @@ def partners():
         return MainController.getPartners()
     else:
         return MainController.createPartner(request)
+
+
+@main.route('/entrycashlogs')
+def entrycashlog():
+    return MainController.getEntryCashLogs()

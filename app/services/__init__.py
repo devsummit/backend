@@ -20,6 +20,7 @@ from app.services.attendee_service import AttendeeService
 from app.services.payment_service import PaymentService 
 from app.services.referal_service import ReferalService 
 from app.services.partner_service import PartnerService
+from app.services.entry_cash_log_service import EntryCashLogService
 from app.services.base_service import BaseService
 
 # instantiate service
@@ -44,4 +45,5 @@ attendeeservice = AttendeeService(10)  # number of item per page
 paymentservice = PaymentService()
 referalservice = ReferalService()
 partnerservice = PartnerService(10)
+entrycashlogservice = EntryCashLogService(10)
 baseservice = BaseService()

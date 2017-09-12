@@ -1,0 +1,61 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Entry Cash Edit</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="entrycashlog-desc">Entry Cash Description:</label>
+                                    <input type="text" class="form-control" id="entrycashlog-desc">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="entrycashlog-amount">Entry Cash Amount:</label>
+                                    <input type="text" class="form-control" id="entrycashlog-amount">
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-edit-save" id="-"><b>Save</b></a>
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    $('.btn-edit-save').click(function (event) {
+        var id = $(this).attr('id');
+        console.log(id)
+        const data = {
+            "description": $('#entrycashlog-desc').val(),
+            "amount": $('#entrycashlog-amount').val(),
+        };
+        dsa.patch('{{ globals["api_route"] }}/' + id, data, function (result) {
+            console.log(result, 'saved');
+            if (result.meta.success) {
+                window.location = '/{{ globals["base_route"] }}';
+            }
+        });
+    })
+    $(function () {
+        $('#data-list1').DataTable();
+    })
+
+</script>
