@@ -69,7 +69,6 @@
             "role_id": $('.account-role_id').val()
         };
         dsa.patch('users/' + id, payload, function(result) {
-            console.log(result, 'saved');
             if(result.meta.success) {
                 window.location = "/accounts";
             }
