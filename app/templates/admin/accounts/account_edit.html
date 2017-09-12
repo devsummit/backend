@@ -34,11 +34,22 @@
                                         <input type="text" class="form-control account-username" id="account-username">
                                     </div>
                                 </li>
-                                <li class="list-group-item">
+                                <li style="display:none">
                                     <div class="form-group">
-                                        <label for="account-role_id">Role:</label>
+                                        <label for="account-role_id"></label>
                                         <input type="text" class="form-control account-role_id" id="account-role_id">
                                     </div>
+                                </li>
+                                <li class="list-group-item">
+                                        <div class="form-group">
+                                            <label>Select</label>
+                                            <select class="form-control" id="account-select-role">
+                                                <!-- roles here taken from jinja global-env which initiated in app __init__ file -->
+                                                {% for role, i in roles.items() %}
+                                                    <option id='role{{ i }}' value={{ i }}>{{ role }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                 </li>
                             </ul>
                         <a href="#" class="btn btn-primary btn-block btn-edit-save" id="-"><b>Save</b></a>
@@ -66,16 +77,13 @@
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
-            "role_id": $('.account-role_id').val()
+            "role_id": $('#account-select-role').find(":selected").val()
         };
-        dsa.patch('users/' + id, payload, function(result) {
+        dsa.patch('{{ globals["api_route"] }}/' + id, payload, function(result) {
             console.log(result, 'saved');
             if(result.meta.success) {
-                window.location = "/accounts";
+                window.location = '/{{ globals["base_route"] }}';
             }
         });
-    })
-    $(function () {
-        $('#account-list1').DataTable();
-    })
+    });
 </script>

@@ -4,6 +4,7 @@
 
 {% set globals={'base_route': 'accounts', 'api_route': 'users'} %}
 
+
 {% block header_link %}
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
@@ -88,12 +89,13 @@
         dsa.get('users/' + id, function(result) {
             // bind result value in to account_detail.html 
             const data = result['data'];
-            $('.account-firstname').val(data['first_name']);
-            $('.account-lastname').val(data['last_name']);
-            $('.account-email').val(data['email']);
-            $('.account-username').val(data['username']);
-            $('.account-role_id').val(data['role_id']);
-           
+            $('#account-firstname').val(data['first_name']);
+            $('#account-lastname').val(data['last_name']);
+            $('#account-email').val(data['email']);
+            $('#account-username').val(data['username']);
+            $('#account-role_id').val(data['role_id']);
+            $('#role'+data['role_id']).attr('selected', 'selected');
+            
             $('.btn-edit-save').attr("id", data['id'] || '-');
         });
     });
