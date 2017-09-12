@@ -30,6 +30,12 @@
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
+                                    <label for="sponsor-stage">Stage:</label>
+                                    <select class="form-control" id="sponsor-stage"></select>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
                                     <label for="sponsor-note">Note:</label>
                                     <textarea type="text" class="form-control" id="sponsor-note"></textarea>
                                 </div>
@@ -55,12 +61,12 @@
     /* Save edit account */
     $('.btn-edit-save').click(function (event) {
         const id = $(this).attr('id');
-        console.log(id)
         let payloads = {
             name: $('#sponsor-name').val(),
             email: $('#sponsor-email').val(),
             phone: $('#sponsor-phone').val(),
-            note: $('#sponsor-note').val()
+            note: $('#sponsor-note').val(),
+            stage: $('#sponsor-stage').val()
         }
         dsa.patch('sponsors/' + id, payloads, function(result) {
             if (result.meta.success) {

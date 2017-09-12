@@ -16,7 +16,7 @@ const SPONSOR_TYPES = [
 	{ id: 4, type: 'Silver' }
 ];
 
-const STAGES = [
+const SPONSOR_STAGES = [
 	{ id: 1, type: 'lead' },
 	{ id: 2, type: 'prospect' },
 	{ id: 3, type: 'official' }

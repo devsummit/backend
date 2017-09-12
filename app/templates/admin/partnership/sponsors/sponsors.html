@@ -90,6 +90,15 @@
             $('.modal-title').html('Edit Sponsor');
             const bte_id = $(this).attr('id');
             const id = bte_id.substring(4, bte_id.length);
+            let select = $('#sponsor-stage');
+            select.find('option').remove();
+            SPONSOR_STAGES.map(function (stage) {
+                    let option = document.createElement('option');
+                    option.innerHTML = stage.type;
+                    option.value = stage.id;
+
+                    select.append(option);
+                });
             dsa.get('sponsors/' + id, function (result) {
                 const data = result['data'];
                 $('#sponsor-name').val(data['name']);
