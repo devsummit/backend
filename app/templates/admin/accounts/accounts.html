@@ -94,7 +94,7 @@
             $('#account-email').val(data['email']);
             $('#account-username').val(data['username']);
             $('#account-role_id').val(data['role_id']);
-            $('#role'+data['role_id']).attr('selected', 'selected');
+            $('#edit-role'+data['role_id']).attr('selected', 'selected');
             
             $('.btn-edit-save').attr("id", data['id'] || '-');
         });
