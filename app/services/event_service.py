@@ -19,27 +19,23 @@ class EventService(BaseService):
             self.page = 1
         self.base_url = request.base_url
         paginate = super().paginate(db.session.query(Event))
+        paginate = super().include(['user'])
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
         return result
 
     def show(self, id):
+        response = ResponseBuilder()
         self.events_model = db.session.query(Event).filter_by(id=id)
         if self.events_model.first() is None:
-            return {
-                'error': True, 
-                'data': None,
-                'message': 'event not found'
-            }
+            return response.set_data(None).set_error(True).set_message('Event not found').build()
+
         data = self.events_model.first().as_dict()
         data['user'] = self.events_model.first().user.as_dict() if self.events_model.first().user else None
-        return {
-            'error': False,
-            'data': data,
-            'message': 'event retrieved succesfully'
-        }
+        return response.set_data(data).build()
 
     def create(self, payloads):
+        response = ResponseBuilder()
         try:
             information = payloads['information'] if 'information' in payloads else None
             title = payloads['title'] if 'title' in payloads else None
@@ -56,19 +52,14 @@ class EventService(BaseService):
 
             data = self.events_model.as_dict()
 
-            return {
-                'error': False,
-                'data': data
-            }
+            return response.set_data(data).build()
 
         except SQLAlchemyError as e:
             data = e.orig.args
-            return {
-                'error': True,
-                'data': data
-            }
+            response.set_data(data).set_error(True).build()
 
     def update(self, id, payloads):
+        response = ResponseBuilder()
         try:
             self.events_model = db.session.query(Event).filter_by(id=id)
             information = payloads['information'] if 'information' in payloads else None
@@ -88,31 +79,20 @@ class EventService(BaseService):
 
             db.session.commit()
             data = self.events_model.first().as_dict()
-            return {
-                'error': False,
-                'data': data
-            }
+            return response.set_data(data).build()
 
         except SQLAlchemyError as e:
             data = e.orig.args
-            return {
-                'error': True,
-                'data': data
-            }
+            return response.set_data(data).build()
 
     def delete(self, id):
+        response = ResponseBuilder()
         self.events_model = db.session.query(Event).filter_by(id=id)
         if self.events_model.first() is not None:
             # delete row
             self.events_model.delete()
             db.session.commit()
-            return {
-                'error': False,
-                'data': None
-            }
+            return response.set_data(None).build()
         else:
             data = 'data not found'
-            return {
-                'error': True,
-                'data': data
-            }
+            return response.set_data(None).set_error(True).build()

@@ -19,8 +19,8 @@ class MainController(BaseController):
         return render_template('admin/base/index.html')
 
     def getAttendees():
-        attendees = attendeeservice.get()
-        return render_template('admin/attendees/attendees.html', attendees=attendees)
+        attendees = attendeeservice.get(request)
+        return render_template('admin/attendees/attendees.html', attendees=attendees['data'])
 
     def getPayments():
         payments = paymentservice.admin_get()
@@ -40,11 +40,11 @@ class MainController(BaseController):
         return render_template('admin/referals/referals.html', referals=referals)
 
     def getAccounts():
-        accounts = userservice.list_user()
-        return render_template('admin/accounts/accounts.html', accounts=accounts)
+        accounts = userservice.list_user(request)
+        return render_template('admin/accounts/accounts.html', accounts=accounts['data'])
 
     def getBooths():
-        booths = boothservice.get()
+        booths = boothservice.get(request)
         return render_template('admin/booths/booths.html', booths=booths['data'])
 
     def getSpeakers():
@@ -52,7 +52,7 @@ class MainController(BaseController):
         return render_template('admin/speakers/speakers.html', speakers=speakers['data'])
 
     def getEvents():
-        events = eventservice.index()
+        events = eventservice.index(request)
         return render_template('admin/events/events.html', events=events['data'], event_type=EVENTS_TYPE)
 
     def getStages():

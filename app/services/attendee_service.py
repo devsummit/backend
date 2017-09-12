@@ -19,7 +19,9 @@ class AttendeeService(BaseService):
             self.perpage = self.total_items
             self.page = 1
         self.base_url = request.base_url
+        # paginate
         paginate = super().paginate(db.session.query(Attendee))
+        paginate = super().include(['user'])
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
         return result
