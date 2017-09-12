@@ -10,7 +10,7 @@ from seeders.payments_seeder import PaymentsSeeder
 from seeders.orders_seeder import OrdersSeeder
 from seeders.order_details_seeder import OrdersDetailsSeeder
 from seeders.user_tickets_seeder import UserTicketsSeeder
-
+from seeders.entry_cash_log_seeder import EntryCashLogSeeder
 
 class Seed():
 
@@ -63,3 +63,7 @@ class Seed():
 		print('seeding user tickets seeder...')
 		UserTicketsSeeder.run()
 		print('finish seeding user tickets seeder')
+                
+		print('seeding entry cash log seeder...')
+		EntryCashLogSeeder.run()
+		print('finish seeding cash log seeder')
