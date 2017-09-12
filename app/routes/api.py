@@ -571,7 +571,21 @@ def me(*args, **kwargs):
 	return UserController.show(user['id'])
 
 
-@api.route('/entrycashlog', method=['GET'])
+@api.route('/entrycashlogs', methods=['GET', 'POST'])
 @token_required
 def get_entry_cash_log(*args, **kwargs):
-    return EntryCashLogController.index()
+    if(request.method == 'POST'):
+        return EntryCashLogController.create(request)
+    elif(request.method == 'GET'):
+        return EntryCashLogController.index(request)
+
+
+@api.route('/entrycashlogs/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def entry_cash_log_id(id, *args, **kwargs):
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        return EntryCashLogController.update(request, id)
+    elif (request.method == 'DELETE'):
+        return EntryCashLogController.delete(id)
+    elif (request.method == 'GET'):
+        return EntryCashLogController.show(id)
