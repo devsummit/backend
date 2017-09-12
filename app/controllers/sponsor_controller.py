@@ -59,5 +59,11 @@ class SponsorController(BaseController):
 
         if result['error']:
             return BaseController.send_error_api(result['data'], result['message'])
-
         return BaseController.send_response_api(result['data'], result['message'])        
+
+    @staticmethod
+    def delete(id):
+        data = sponsorservice.delete(id)
+        if data['error']:
+            return BaseController.send_error_api(data['data'], data['message'])
+        return BaseController.send_response_api(data['data'], data['message'])

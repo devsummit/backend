@@ -625,7 +625,9 @@ def get_sponsors(*args, **kwargs):
 @api.route('/sponsors/<id>', methods=['GET', 'PATCH', 'PUT', 'DELETE'])
 @token_required
 def get_sponsor_id(id, *args, **kwargs):
-    if(request.method == 'GET'):
+    if (request.method == 'GET'):
         return SponsorController.show(id)
-    elif(request.method in ['PATCH', 'PUT']):
+    elif (request.method in ['PATCH', 'PUT']):
         return SponsorController.update(id, request)
+    else:
+        return SponsorController.delete(id)
