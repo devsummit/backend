@@ -29,7 +29,6 @@
     /* Display  Detail */
     $('.btn-yes').click(function(event){
         const id = $(this).attr('id');
-        console.log(id, 'ssss');
         dsa.delete('referals/' + id, function(result) {
             if(result.meta.success) {
                 window.location = "/referals";

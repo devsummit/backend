@@ -11,6 +11,7 @@ from seeders.orders_seeder import OrdersSeeder
 from seeders.order_details_seeder import OrdersDetailsSeeder
 from seeders.user_tickets_seeder import UserTicketsSeeder
 
+
 class Seed():
 
 	@staticmethod

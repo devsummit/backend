@@ -18,6 +18,12 @@
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
+                                    <label for="entry-cash-flow">Cash Flow:</label>
+                                    <select class="form-control" id="entry-cash-flow"></select>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
                                     <label for="entrycashlog-amount">Entry Cash Amount:</label>
                                     <input type="text" class="form-control" id="entrycashlog-amount">
                                 </div>
@@ -40,15 +46,24 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
+    let selectedCash
+    $('#entry-cash-flow').click(function () {
+        let selectedValue = $(this).val();
+        if (selectedValue == 'Expense') {
+            selectedCash = selectedValue;
+        } else {
+            selectedCash = selectedValue;
+        }
+    });    
     $('.btn-edit-save').click(function (event) {
         var id = $(this).attr('id');
-        console.log(id)
+        let cash = $('#entrycashlog-amount').val();
+        let amount = selectedCash == 'Expense' ? -cash : cash
         const data = {
             "description": $('#entrycashlog-desc').val(),
-            "amount": $('#entrycashlog-amount').val(),
+            "amount": amount,
         };
         dsa.patch('{{ globals["api_route"] }}/' + id, data, function (result) {
-            console.log(result, 'saved');
             if (result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
             }

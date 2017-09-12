@@ -30,7 +30,7 @@ class EntryCashLogService(BaseService):
         response = ResponseBuilder()
         if not isinstance(payloads['amount'], int) and not isinstance(payloads['description'], str):
             return response.set_error(True).set_status_code(400).set_message('payloads is invalid').build()
-        
+
         try:
             self.model_entrycashlog = db.session.query(EntryCashLog).filter_by(id=entrycashlog_id)
             self.model_entrycashlog.update({
