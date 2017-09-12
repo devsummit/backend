@@ -43,5 +43,5 @@ userticketservice = UserTicketService()
 attendeeservice = AttendeeService(10)  # number of item per page
 paymentservice = PaymentService()
 referalservice = ReferalService()
-entrycashlogservice = EntryCashLogService()
+entrycashlogservice = EntryCashLogService(10)
 baseservice = BaseService()
