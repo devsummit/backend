@@ -1,3 +1,4 @@
+import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
@@ -46,6 +47,21 @@ class SponsorService(BaseService):
         try:
             db.session.commit()
             return response.set_data(sponsor.as_dict()).set_message('Data created succesfully').build()
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return response.set_data(data).set_error(True).build()
+
+    def update(self, id, payload):
+        response = ResponseBuilder()
+        sponsor = db.session.query(Sponsor).filter_by(id=id)
+        new_data = super().filter_update_payload(payload)        
+        new_data['updated_at'] = datetime.datetime.now()
+        sponsor.update(new_data)
+
+        try:
+            db.session.commit()
+            return response.set_data(sponsor.first().as_dict()).build()
+
         except SQLAlchemyError as e:
             data = e.orig.args
             return response.set_data(data).set_error(True).build()
