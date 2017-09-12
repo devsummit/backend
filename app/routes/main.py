@@ -69,6 +69,7 @@ def get_stages():
 def schedules():
     return MainController.getSchedules()
 
+
 @main.route('/partners', methods=['GET', 'POST'])
 def partners():
     if(request.method == 'GET'):

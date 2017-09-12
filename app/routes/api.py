@@ -570,6 +570,7 @@ def me(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return UserController.show(user['id'])
 
+
 @api.route('/partners/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @token_required
 def partners_id(id, *args, **kwargs):
