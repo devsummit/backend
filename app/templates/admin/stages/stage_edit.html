@@ -55,7 +55,6 @@
             "information": $('.stage-information').val(),
         };
         dsa.patch('{{ globals["api_route"] }}/' + id, payload, function(result) {
-            console.log(result, 'saved');
             if(result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
             }

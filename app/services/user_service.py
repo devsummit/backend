@@ -96,15 +96,16 @@ class UserService(BaseService):
                 'message': data
             }
 
-    def list_user(self, request):
+    def list_user(self, request, admin=False):
         self.total_items = User.query.count()
         if request.args.get('page'):
             self.page = request.args.get('page')
         else:
             self.perpage = self.total_items
             self.page = 1
-        self.base_url = request.base_url
+        self.base_url = request.base_url if not admin else request.url_root + 'users'
         paginate = super().paginate(db.session.query(User))
+        paginate = super().include(['role'])
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
         return result

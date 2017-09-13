@@ -29,6 +29,29 @@
         } : null
     });
 
+    const ajaxObjForm = (url, methodType, payloads, onSuccess) => ({
+        url : 'api/v1/'+url,
+        type: methodType,
+        data: payloads,
+        processData: false,
+        dataType: 'json',
+        contentType: false,
+        headers: {
+            'Authorization': dsa.acess_token()
+        },
+        success: onSuccess ? function(result){
+            if(result['expired']) {
+                clearCredential();
+                window.location.href = '/login';
+            } else {
+                onSuccess(result);
+            }
+        } : null,
+        error: function(err) {
+            console.log(err)
+        }
+    });
+
     function storeCredential(data){
       Object.keys(data).map((key)=>{
         localStorage.setItem(baseStorage+'-'+key, data[key]);

@@ -103,7 +103,6 @@
         dsa.get('users/' + id, function(result) {
             // bind result value in to user_detail.html 
             const data = result['data'];
-            console.log(data);
             if (data['photos'].length>0) {
                 $('.user-picture').attr('src', data['photos'][0]['url']);
             }

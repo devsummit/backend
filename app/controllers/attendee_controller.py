@@ -6,7 +6,7 @@ class AttendeeController(BaseController):
     @staticmethod
     def index(request):
         attendees = attendeeservice.get(request)
-        return BaseController.send_response_api(attendees['data'], 'attendees retrieved successfully', {}, attendees['links'])
+        return BaseController.send_response_api(attendees['data'], attendees['message'], {}, attendees['links'])
 
     @staticmethod
     def show(id):

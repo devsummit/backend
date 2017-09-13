@@ -1,10 +1,10 @@
-<div class="modal fade" id="modal-edit">
+<div class="modal fade" id="modal-add">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Default title</h4>
+                <h4 class="modal-title">Entry Cash Logs</h4>
             </div>
             <div class="modal-body">
                 <div class="box box-primary">
@@ -12,24 +12,24 @@
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="ticket-type">Ticket type:</label>
-                                    <input type="text" class="form-control ticket-type" id="ticket-type">
+                                    <label for="i-entry-cash-desc">Description:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-desc">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="ticket-price">Ticket price:</label>
-                                    <input type="text" class="form-control ticket-price" id="ticket-price">
+                                    <label for="i-entry-cash-flow">Cash Flow:</label>
+                                    <select class="form-control" id="i-entry-cash-flow"></select>
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="ticket-information">Ticket information:</label>
-                                    <input type="text" class="form-control ticket-information" id="ticket-information">
+                                    <label for="i-entry-cash-amount">Amount:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-amount">
                                 </div>
                             </li>
                         </ul>
-                        <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
+                        <a href="#" class="btn btn-primary btn-block" id="btn-add-save"><b>Save</b></a>
 
                     </div>
                     <!-- /.box-body -->
@@ -46,23 +46,27 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
-    /* Display Attendee Detail */
-    $('.btn-save').click(function(event) {
-        const id = $(this).attr('id');
-        payload = {
-            "ticket_type": $('.ticket-type').val(),
-            "price": $('.ticket-price').val(),
-            "information": $('.ticket-information').val()
+    let cashFlow 
+    $('#i-entry-cash-flow').click(function() {
+        let selectedValue = $(this).val();
+        if (selectedValue == 'Expense') {
+            cashFlow = selectedValue;
+        } else {
+            cashFlow = selectedValue;
+        }
+    });
+    $('#btn-add-save').click(function (event) {
+        let cash = $('#i-entry-cash-amount').val();
+        let amount = cashFlow == 'Expense' ? -cash : cash
+        const payload = {
+            "description": $('#i-entry-cash-desc').val(),
+            "amount": amount
         };
-        dsa.patch('tickets/' + id, payload, function(result) {
-
-            console.log(result, 'saved');
+        dsa.post('{{ globals["api_route"] }}', payload, function (result) {
             if (result.meta.success) {
-                window.location = "/tickets";
+                window.location = '/entrycashlogs';
             }
         });
-    })
-    $(function() {
-        $('#attendee-list1').DataTable();
-    })
+    });
+
 </script>

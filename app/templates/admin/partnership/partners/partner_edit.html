@@ -12,32 +12,34 @@
                             <ul class="list-group list-group-unbordered">
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="account-firstname">First Name:</label>
-                                        <input type="text" class="form-control account-firstname" id="account-firstname">
+                                        <label for="partner-name">Name:</label>
+                                        <input type="text" class="form-control partner-name" id="partner-name">
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                         <div class="form-group">
-                                            <label for="account-lastname">Last Name:</label>
-                                            <input type="text" class="form-control account-lastname" id="account-lastname">
+                                            <label for="partner-email">Email:</label>
+                                            <input type="text" class="form-control partner-email" id="partner-email">
                                         </div>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="account-email">Email:</label>
-                                        <input type="text" class="form-control account-email" id="account-email">
+                                        <label for="partner-type">Type:</label>
+                                        <select class="partner-type form-control">
+                                        </select>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="account-username">Username:</label>
-                                        <input type="text" class="form-control account-username" id="account-username">
+                                        <label for="partner-website">Website:</label>
+                                        <input type="text" class="form-control partner-website" id="partner-website">
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="account-role_id">Role:</label>
-                                        <input type="text" class="form-control account-role_id" id="account-role_id">
+                                        <label for="partner-photo">Photo:</label>
+                                         <input class="input-file partner-photo" id="fileInput" type="file" name="file">
+                                         <img id='img-upload' style="width: 300px; height: 200px" />
                                     </div>
                                 </li>
                             </ul>
@@ -61,20 +63,35 @@
     /* Save edit account */   
     $('.btn-edit-save').click(function(event){
         const id = $(this).attr('id');
-        payload = {
-            "first_name": $('.account-firstname').val(),
-            "last_name": $('.account-lastname').val(),
-            "email": $('.account-email').val(),
-            "username": $('.account-username').val(),
-            "role_id": $('.account-role_id').val()
-        };
-        dsa.patch('users/' + id, payload, function(result) {
+        const type = $('.partner-type').find(":selected").val();
+        const formdata = new FormData();
+        formdata.append('image_file', $('#fileInput')[0].files[0])
+        formdata.append('name', $('.partner-name').val())
+        formdata.append('type', type)
+        formdata.append('website', $('.partner-website').val())
+        formdata.append('email', $('.partner-email').val())
+        dsa.patchForm('partners/' + id, formdata, function(result) {
             if(result.meta.success) {
-                window.location = "/accounts";
+                window.location = "/partners";
             }
         });
     })
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                $('#img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#fileInput").change(function(){
+        readURL(this);
+    }); 
     $(function () {
-        $('#account-list1').DataTable();
+        $('#partner-list1').DataTable();
     })
 </script>
