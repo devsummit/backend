@@ -65,5 +65,17 @@ class MainController(BaseController):
         schedules = scheduleservice.get()
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
 
+    def getPartners():
+        partners = partnerservice.get(request)
+        return render_template('admin/partnership/partners/partners.html', partners=partners['data'])
+
+    def getEntryCashLogs():
+        entrycashlogs = entrycashlogservice.get(request)
+        return render_template('admin/entrycash/entrycash.html', entrycashlogs=entrycashlogs['data'])
+
+    def getSponsors():
+        sponsors = sponsorservice.get(request)
+        return render_template('admin/partnership/sponsors/sponsors.html', sponsors=sponsors['data'])
+
     def changepassword():
         return render_template('admin/users/changepassword.html')

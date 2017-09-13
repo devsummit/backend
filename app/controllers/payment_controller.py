@@ -299,9 +299,9 @@ class PaymentController(BaseController):
         payment = paymentservice.update(id)
 
         if not payment['status_code'] == '404':
-            return BaseController.send_response_api(payment, payment['status_message'])
+            return BaseController.send_response_api(payment, payment['data'], payment['message'])
         else:
-            return BaseController.send_error_api(None, payment)
+            return BaseController.send_error_api(payment['data'], payment['message'])
 
     @staticmethod
     def is_field_exist(request, field_name):
