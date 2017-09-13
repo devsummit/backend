@@ -70,18 +70,6 @@ def schedules():
     return MainController.getSchedules()
 
 
-@main.route('/partners', methods=['GET', 'POST'])
-def partners():
-    if(request.method == 'GET'):
-        return MainController.getPartners()
-    else:
-        return MainController.createPartner(request)
-
-
-@main.route('/entrycashlogs')
-def entrycashlog():
-    return MainController.getEntryCashLogs()
-
-@main.route('/sponsors')
-def sponsors():
-    return MainController.getSponsors()
+@main.route('/password')
+def changepassword():
+    return MainController.changepassword()
