@@ -91,6 +91,18 @@
         return refresh;
     }
 
+    dsa.getForm = function(url, onSuccess=null) {
+        $.ajax(ajaxObjForm(url, 'GET', null, onSuccess));
+    };
+
+    dsa.postForm = function(url, payloads=null, onSuccess=null) {
+        $.ajax(ajaxObjForm(url, 'POST', payloads, onSuccess));
+    };
+
+    dsa.patchForm = function(url, payloads=null, onSuccess=null) {
+        $.ajax(ajaxObjForm(url, 'PATCH', payloads, onSuccess));
+    };
+    
     dsa.request = function(url, method, payloads, onSuccess){
         $.ajax({
             url : url,
