@@ -26,7 +26,6 @@
         const payload = JSON.parse($('#payment-authorize-payload').val());
 
         dsa.post('payments/authorize', payload, function(result) {
-            console.log('Result: ', result);
             if(result.meta.success) {
                 window.location = 'authorize-payments';
             }

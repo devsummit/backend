@@ -14,7 +14,6 @@ class SpeakerController(BaseController):
 
     @staticmethod
     def show(id):
-        print(id)
         speaker = speakerservice.show(id)
         if speaker['error']:
             return BaseController.send_error_api(
