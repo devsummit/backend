@@ -29,6 +29,16 @@
                                 </div>
                             </li>
                             <li class="list-group-item">
+                                <label for="i-sponsor-stage">Stage:</label>
+                                <select class="form-control" id="i-sponsor-stage">
+                                </select>
+                            </li>
+                            <li class="list-group-item" style="display: none;" id="i-sponsor-type-wrap">
+                                <label for="i-sponsor-type">Type:</label>
+                                <select class="form-control" id="i-sponsor-type">
+                                </select>
+                            </li>
+                            <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-sponsor-note">Note:</label>
                                     <textarea type="text" class="form-control" id="i-sponsor-note"></textarea>
@@ -52,15 +62,32 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
+    $('#i-sponsor-stage').on('change', function() {
+        if (this.value !== '3') {
+            $('#i-sponsor-type-wrap').hide();
+        } else {
+            $('#i-sponsor-type-wrap').show();
+        }
+    })
+
+    // Used for capitalize words
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     $('.btn-sponsor-save').click(function (event) {
+        let sponsor_type = $('#i-sponsor-stage').val() !== '3' ?
+                             null : parseInt($('#i-sponsor-type').val());
 
         let payloads = {
             name: $('#i-sponsor-name').val(),
             email: $('#i-sponsor-email').val(),
             phone: $('#i-sponsor-phone').val(),
-            note: $('#i-sponsor-note').val()
+            note: $('#i-sponsor-note').val(),
+            type: sponsor_type,
+            stage: parseInt($('#i-sponsor-stage').val())
         }
-        console.log(payloads)
+
         dsa.post('sponsors', payloads, function (result) {
             if (result.meta.success) {
                 window.location = "/sponsors";
@@ -81,5 +108,4 @@
     $("#i-fileInput").change(function () {
         readCreateURL(this);
     });
-
 </script>
