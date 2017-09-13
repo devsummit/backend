@@ -64,7 +64,8 @@ class SponsorService(BaseService):
         sponsor.phone = payload['phone']
         sponsor.email = payload['email']
         sponsor.note = payload['note']
-        sponsor.stage = 1 # default to one as lead
+        sponsor.stage = payload['stage'] if payload['stage'] else 1 # default to one as lead
+        sponsor.type = payload['type'] or 4 if sponsor.stage == 3 else None # default to four if stage is official
         db.session.add(sponsor)
 
         try:
