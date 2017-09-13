@@ -34,6 +34,11 @@
                                     <select class="form-control" id="sponsor-stage"></select>
                                 </div>
                             </li>
+                            <li class="list-group-item" style="display: none;" id="sponsor-type-wrap">
+                                <label for="sponsor-type">Type:</label>
+                                <select class="form-control" id="sponsor-type">
+                                </select>
+                            </li>
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="sponsor-note">Note:</label>
@@ -58,25 +63,36 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
+    $('#sponsor-stage').on('change', function() {
+        if (this.value !== '3') {
+            $('#sponsor-type-wrap').hide();
+        } else {
+            $('#sponsor-type-wrap').show();
+        }
+    })
+
     /* Save edit account */
     $('.btn-edit-save').click(function (event) {
+        let sponsor_type = $('#sponsor-stage').val() !== '3' ?
+                             null : parseInt($('#sponsor-type').val());
+
         const id = $(this).attr('id');
+
         let payloads = {
             name: $('#sponsor-name').val(),
             email: $('#sponsor-email').val(),
             phone: $('#sponsor-phone').val(),
             note: $('#sponsor-note').val(),
-            stage: $('#sponsor-stage').val()
+            type: sponsor_type,
+            stage: parseInt($('#sponsor-stage').val())
         }
+
+        // console.log('Payload: ', payloads);
+
         dsa.patch('sponsors/' + id, payloads, function(result) {
             if (result.meta.success) {
                 window.location = "/sponsors";
             }
         });
     })
-
-    $(function () {
-        $('#sponsors-list1').DataTable();
-    })
-
 </script>

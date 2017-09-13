@@ -8,7 +8,7 @@ class SponsorController(BaseController):
     def index(request):
         sponsors = sponsorservice.get(request)
         return BaseController.send_response_api(sponsors['data'], sponsors['message'], {}, sponsors['links'])
-    
+
     @staticmethod
     def show(id):
         sponsor = sponsorservice.show(id)
@@ -20,12 +20,16 @@ class SponsorController(BaseController):
         email = request.json['email'] if 'email' in request.json else None
         phone = request.json['phone'] if 'phone' in request.json else None
         note = request.json['note'] if 'note' in request.json else ''
+        type = request.json['type'] if 'type' in request.json else None
+        stage = request.json['stage'] if 'stage' in request.json else None
         if name and (email or phone):
             payloads = {
                 'name': name,
                 'email': email,
                 'phone': phone,
-                'note': note
+                'note': note,
+                'type': type,
+                'stage': stage
             }
         else:
             BaseController.send_error_api(None, 'payload is invalid')
@@ -54,7 +58,7 @@ class SponsorController(BaseController):
             'type': type,
             'stage': stage
         }
-        
+
         result = sponsorservice.update(id, payloads)
 
         if result['error']:

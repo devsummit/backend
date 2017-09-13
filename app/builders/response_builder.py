@@ -38,6 +38,7 @@ class ResponseBuilder():
 
 	def set_payload_invalid(self):
 		self.base_response_structure['data']['payload_invalid'] = True
+		return self
 
 	def build_invalid_payload_response(self):
 		return self.set_payload_invalid().set_error(True).set_status_code(400).set_message('payload is invalid').build()

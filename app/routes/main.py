@@ -70,6 +70,31 @@ def get_stages():
 def schedules():
     return MainController.getSchedules()
 
+<<<<<<< HEAD
 @main.route('/adduserphoto')
 def adduserphoto():
     return render_template('admin/users/user_photos_add.html')
+=======
+
+@main.route('/partners', methods=['GET', 'POST'])
+def partners():
+    if(request.method == 'GET'):
+        return MainController.getPartners()
+    else:
+        return MainController.createPartner(request)
+
+
+@main.route('/entrycashlogs')
+def entrycashlog():
+    return MainController.getEntryCashLogs()
+
+
+@main.route('/sponsors')
+def sponsors():
+    return MainController.getSponsors()
+
+
+@main.route('/password')
+def changepassword():
+    return MainController.changepassword()
+>>>>>>> develop
