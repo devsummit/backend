@@ -64,8 +64,8 @@ class SponsorService(BaseService):
         sponsor.phone = payload['phone']
         sponsor.email = payload['email']
         sponsor.note = payload['note']
-        sponsor.stage = payload['stage'] if payload['stage'] else 1 # default to one as lead
-        sponsor.type = payload['type'] or 4 if sponsor.stage == 3 else None # default to four if stage is official
+        sponsor.stage = str(payload['stage']) if payload['stage'] else '1'  # default to one as lead
+        sponsor.type = str(payload['type']) or '4' if sponsor.stage == '3' else None  # default to four if stage is official
         db.session.add(sponsor)
 
         try:
@@ -84,20 +84,24 @@ class SponsorService(BaseService):
         if data['stage'] != payload['stage']:
             log = SponsorInteractionLog()
             _from = SPONSOR_STAGES[data['stage']] if data['stage'] else 'None'
-            _to = SPONSOR_STAGES[payload['stage']] if payload['stage'] else 'None'
+            _to = SPONSOR_STAGES[str(payload['stage'])] if payload['stage'] else 'None'
             log.description = 'Admin move stage from: ' + _from + ' to: ' + _to
             log.sponsor_id = id
             db.session.add(log)
-        
+
         if (data['type'] != payload['type']):
             log = SponsorInteractionLog()
             _from = SPONSOR_TYPES[data['type']] if data['type'] else 'None'
-            _to = SPONSOR_TYPES[payload['type']] if payload['type'] else 'None'
+            _to = SPONSOR_TYPES[str(payload['type'])] if payload['type'] else 'None'
             log.description = 'Admin move stage from: ' + _from + ' to: ' + _to
             log.sponsor_id = id
             db.session.add(log)
 
         new_data = super().filter_update_payload(payload)        
+
+        if SPONSOR_STAGES[str(payload['stage'])] is not SPONSOR_STAGES['3']:
+            new_data['type'] = None
+
         new_data['updated_at'] = datetime.datetime.now()
         sponsor.update(new_data)
 
