@@ -76,3 +76,6 @@ class MainController(BaseController):
     def getSponsors():
         sponsors = sponsorservice.get(request)
         return render_template('admin/partnership/sponsors/sponsors.html', sponsors=sponsors['data'])
+
+    def changepassword():
+        return render_template('admin/users/changepassword.html')

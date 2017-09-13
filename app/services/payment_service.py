@@ -382,7 +382,9 @@ class PaymentService():
                 json=payloads
         )
         payload = result.json()
+
         if(payload['status_code'] != '400'):
+
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
                 payload['bank'] = payloads['bank']
             else:
@@ -393,21 +395,27 @@ class PaymentService():
                 else:
                     payload['bank'] = None
 
-            if payloads['transacion_details']['gross_amount'] != payload['item_details']['total']:
+            if 'status_code' in payload and payload['status_code'] == '406':
+                return payload
+
+            # handle indomaret payment
+            if payloads['payment_type'] == 'cstore':
+                payload['bank'] = 'indomaret'
+                payload['fraud_status'] = payload['payment_code']
+
+            if payloads['payment_type'] != 'cstore' and payloads['transaction_details']['gross_amount'] != payload['item_details']['total']:
                 return BaseController.send_error_api(None, 'Gross Amount does not match')
 
             if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
                 self.save_payload(payload, payloads)
 
-            if 'status_code' in payload and payload['status_code'] == '406':
-                return payload
 
             # if  not fraud and captured save ticket to user_ticket table
             if('fraud_status' in payload and payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
                 order = db.session.query(Order).filter_by(id=payload['order_id']).first()
                 self.save_paid_ticket(order.as_dict())
 
-        return response.set_data(response).build()
+        return response.set_data(payload).build()
 
     def update(self, id):
         response = ResponseBuilder()

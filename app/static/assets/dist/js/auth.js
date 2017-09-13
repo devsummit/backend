@@ -102,6 +102,27 @@
     dsa.patchForm = function(url, payloads=null, onSuccess=null) {
         $.ajax(ajaxObjForm(url, 'PATCH', payloads, onSuccess));
     };
+    
+    dsa.request = function(url, method, payloads, onSuccess){
+        $.ajax({
+            url : url,
+            type: method,
+            data: JSON.stringify(payloads),
+            contentType: "application/json; charset=utf-8",
+            dataType   : "json",
+            headers: {
+            Authorization: dsa.acess_token()
+            },
+            success    : function(result){
+                if(result['expired']) {
+                    clearCredential();
+                    window.location.href = '/login';
+                } else {
+                    onSuccess(result);
+                }
+            }
+        });
+    } 
 
     /* Login func */
     dsa.login = function(payloads, onSuccess) {

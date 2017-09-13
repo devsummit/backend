@@ -1,43 +1,43 @@
 <div class="modal fade" id="modal-edit">
     <div class="modal-dialog">
         <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Default title</h4>
-        </div>
-        <div class="modal-body">
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
                 <div class="box box-primary">
                     <div class="box-body box-profile">
-                            <ul class="list-group list-group-unbordered">
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="ticket-type">Ticket type:</label>
-                                        <input type="text" class="form-control ticket-type" id="ticket-type">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="ticket-price">Ticket price:</label>
-                                        <input type="text" class="form-control ticket-price" id="ticket-price">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="ticket-information">Ticket information:</label>
-                                        <input type="text" class="form-control ticket-information" id="ticket-information">
-                                    </div>
-                                </li>
-                            </ul>
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="ticket-type">Ticket type:</label>
+                                    <input type="text" class="form-control ticket-type" id="ticket-type">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="ticket-price">Ticket price:</label>
+                                    <input type="text" class="form-control ticket-price" id="ticket-price">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="ticket-information">Ticket information:</label>
+                                    <input type="text" class="form-control ticket-information" id="ticket-information">
+                                </div>
+                            </li>
+                        </ul>
                         <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
-        
+
                     </div>
                     <!-- /.box-body -->
                 </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
         </div>
         <!-- /.modal-content -->
     </div>
@@ -47,7 +47,7 @@
 <!-- page script -->
 <script>
     /* Display Attendee Detail */
-    $('.btn-save').click(function(event){
+    $('.btn-save').click(function(event) {
         const id = $(this).attr('id');
         payload = {
             "ticket_type": $('.ticket-type').val(),
@@ -55,12 +55,14 @@
             "information": $('.ticket-information').val()
         };
         dsa.patch('tickets/' + id, payload, function(result) {
-            if(result.meta.success) {
+
+            console.log(result, 'saved');
+            if (result.meta.success) {
                 window.location = "/tickets";
             }
         });
     })
-    $(function () {
+    $(function() {
         $('#attendee-list1').DataTable();
     })
 </script>
