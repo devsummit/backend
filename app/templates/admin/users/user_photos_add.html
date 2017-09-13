@@ -1,0 +1,60 @@
+  <!-- jQuery 3 -->
+  <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
+  <!-- Devsummit Auth Client -->
+  <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
+  
+{% block content %}
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                            <form method="post" action="" name="user-photo-form" id="upload-photo">
+                                    <ul class="list-group list-group-unbordered">                                            
+                                            <li class="list-group list-group-unbordered">
+                                                <div class="list-group-item">
+                                                    <label for="i-user-photo">Photo</label>
+                                                    <input type="file" class="form-control i-photo" id="i-user-photo" accept=".jpg, .jpeg, .png" name="n-user-photo">
+                                                </div>
+                                            </li>                                
+                                        </ul> 
+                            </form>
+                        <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
+        
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endblock %}
+</html>
+
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    
+    $('.btn-save').click(function(event){
+        var form = $('#upload-photo')[0];
+        var payload = new FormData();
+        payload.append('image_data', $('#i-user-photo')[0].files[0]);
+                   
+        dsa.postForm('user/photo', payload, function(result) {
+            if(result.meta.success) {
+                window.location = "http://localhost:5000/accounts";
+            };
+        });
+    });
+</script>
