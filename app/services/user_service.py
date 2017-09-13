@@ -105,7 +105,7 @@ class UserService(BaseService):
             self.page = 1
         self.base_url = request.base_url if not admin else request.url_root + 'users'
         paginate = super().paginate(db.session.query(User))
-        paginate = super().transform()
+        paginate = super().include(['role'])
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
         return result
