@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request
 from app.controllers.main_controller import MainController
 
 
+
 main = Blueprint('main', __name__)
 
 
@@ -70,6 +71,11 @@ def schedules():
     return MainController.getSchedules()
 
 
+@main.route('/adduserphoto')
+def adduserphoto():
+    return render_template('admin/users/user_photos_add.html')
+
+
 @main.route('/partners', methods=['GET', 'POST'])
 def partners():
     if(request.method == 'GET'):
@@ -91,3 +97,4 @@ def sponsors():
 @main.route('/password')
 def changepassword():
     return MainController.changepassword()
+
