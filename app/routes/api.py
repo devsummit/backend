@@ -365,6 +365,14 @@ def speaker_document(*args, **kwargs):
     elif(request.method == 'GET'):
         return SpeakerDocumentController.show(user)
 
+@api.route('/document_speaker_admin', methods=['POST'])
+@token_required
+def speaker_document_admin(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    print(request);
+    if(request.method == 'POST'):
+        return SpeakerDocumentController.admin_create(request, user)
+
 # GET SPECIFIC FILE UPLOADED BY THE SPEAKER || DELETE SPECIFIC FILE
 
 
