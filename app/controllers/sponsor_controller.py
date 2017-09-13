@@ -8,7 +8,7 @@ class SponsorController(BaseController):
     def index(request):
         sponsors = sponsorservice.get(request)
         return BaseController.send_response_api(sponsors['data'], sponsors['message'], {}, sponsors['links'])
-    
+
     @staticmethod
     def show(id):
         sponsor = sponsorservice.show(id)
@@ -58,7 +58,7 @@ class SponsorController(BaseController):
             'type': type,
             'stage': stage
         }
-        
+
         result = sponsorservice.update(id, payloads)
 
         if result['error']:
