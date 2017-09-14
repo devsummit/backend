@@ -47,14 +47,14 @@
 <script>
     // Change participants based on event type
     $('.event-types-add').on('change', function() {
-        if (this.value === 'hackaton') {
+        if (this.value !== 'speaker') {
             $('#participant-add').hide();
         } else {
             $('#participant-add').show();
             let participant = $(".event-participants-add");
             participant.find('option').remove();
 
-            dsa.get(`${this.value}s`, function(result) {
+            dsa.get('speakers', function(result) {
                 result.data.map(function(res) {
                     let option = document.createElement('option');
 
@@ -76,7 +76,7 @@
     $('.btn-events-add').click(function(event){
         let user_id = $('#participant-add').find(":selected").val();
 
-        if ($('.event-types-add').val() == "hackaton") {
+        if ($('.event-types-add').val() !== "speaker") {
             user_id = null;
         }
 
