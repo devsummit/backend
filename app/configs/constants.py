@@ -35,6 +35,13 @@ SPONSOR_TYPES = {
     '4': 'silver'
 }
 
+VA_NUMBER = {
+    'BCA': '877800',
+    'Permata': '431800',
+    'Mandiri_bill': '242801',
+    'BNI': '119800'
+}
+
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
 # Change these consts to devsummit later
 MERCHANT_ID = 'M1066775'

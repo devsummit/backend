@@ -30,6 +30,7 @@ def upgrade():
             sa.Column('masked_card', sa.String(255)),
             sa.Column('bank', sa.String(120)),
             sa.Column('fraud_status', sa.String(120)),
+            sa.Column('va_number', sa.String(120)),
             sa.Column('created_at', sa.DateTime),
             sa.Column('updated_at', sa.DateTime),
     )
