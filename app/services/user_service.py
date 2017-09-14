@@ -382,6 +382,13 @@ class UserService(BaseService):
             db.session.add(self.model_user)
             db.session.commit()
             data = self.model_user.as_dict()
+
+            # apply includes data
+            if 'includes' in payloads.keys():
+                includes = payloads['includes']
+                includes_data = payloads[includes]
+                self.postIncludes(includes, includes_data)
+                
             return {
                 'error': False,
                 'data': data
