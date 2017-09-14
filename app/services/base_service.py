@@ -1,5 +1,9 @@
+import sys
 from app.models import db
 from app.models.attendee import Attendee
+from app.models.booth import Booth
+from app.models.speaker import Speaker
+from app.models.ambassador import Ambassador
 
 class BaseService():
 
@@ -37,8 +41,11 @@ class BaseService():
     def outer_include(self, data, fields):
         # TODO: add filterby key need to be dynamic to be able to used by other class than user
         for field in fields:
-            prep = db.session.query(eval(field)).filter_by(user_id=data['id']).first()
-            data[field.lower()] = prep.as_dict() if prep else None
+            if field:
+                base_model = getattr(sys.modules[__name__], field.title())
+                Model = type(field, (base_model,), {})
+                prep = db.session.query(Model).filter_by(user_id=data['id']).first()
+                data[field.lower()] = prep.as_dict() if prep else None
         return data
 
 
