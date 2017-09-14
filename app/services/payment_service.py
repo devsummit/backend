@@ -72,7 +72,6 @@ class PaymentService():
         return None
 
     def bank_transfer(self, payloads):
-        print(payloads)
         response = ResponseBuilder()
         payloads['gross_amount'] = int(payloads['gross_amount'])
         # check for referal discount
@@ -196,7 +195,6 @@ class PaymentService():
             data['echannel']['bill_info2'] = 'DevSummit Indonesia'
         
 
-        print("MANDIRI", data)
         midtrans_api_response = self.send_to_midtrans_api(data)
 
         return midtrans_api_response
@@ -219,11 +217,11 @@ class PaymentService():
         ) and not isinstance(payloads['gross_amount'], int):
             return response.build_invalid_payload_response()
 
-        print('PAYLOAAAAAAAAAAADSSS', payloads)
         # CHECK TOKEN ID BEFORE CONTINUE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         # get the token id first
         token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + str(payloads['gross_amount']) + '&client_key=' + payloads['client_key'], headers=self.headers)
         token_id = token_id.json()
+
 
         # prepare data
         data = {}
@@ -231,7 +229,7 @@ class PaymentService():
             data['saved_token_id'] = token_id['saved_token_id']
             data['masked_card'] = token_id['masked_card']
         else:
-            return 'Failed to get token'
+            return response.set_message(token_id['validation_messages'][0]).set_error(True).build()
 
         # check for referal discount
         ref = self.get_order_referal(payloads['order_id'])
@@ -250,7 +248,7 @@ class PaymentService():
         data['customer_details']['last_name'] = payloads['last_name']
         data['customer_details']['email'] = payloads['email']
         data['customer_details']['phone'] = payloads['phone']
-        print("DATA", data)
+
         return self.send_to_midtrans_api(data)
 
     def authorize(self, payloads):
@@ -392,10 +390,9 @@ class PaymentService():
                 json=payloads
         )
         payload = result.json()
-        print("PAYLOAD", payload)
-        print("PAYLOADS", payloads)
-        if(payload['status_code'] != '400'):
-
+        if(payload['status_code'] == '400'):
+            return response.set_message(payload['validation_messages'][0]).set_error(True).build()
+        else:
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
                 payload['bank'] = payloads['bank']
             elif payloads['payment_type'] == 'echannel':
