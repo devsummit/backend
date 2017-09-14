@@ -56,7 +56,7 @@ class SpeakerDocumentController(BaseController):
                 return BaseController.send_error_api(None, result['data'])
         else:
             return BaseController.send_error_api(None, 'Unauthorized user')
-        
+
     @staticmethod
     def admin_create(request, user):
         if(user['role_id'] == ROLE['admin']):
@@ -81,7 +81,6 @@ class SpeakerDocumentController(BaseController):
                 return BaseController.send_error_api(None, result['data'])
         else:
             return BaseController.send_error_api(None, 'Unauthorized user')
-
 
     @staticmethod
     def delete(user, id):
