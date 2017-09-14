@@ -113,9 +113,13 @@ class UserService(BaseService):
         return result
 
     def get_user_by_id(self, id):
+        response = ResponseBuilder()
         user = db.session.query(
             User).filter_by(id=id).first()
-        return user.include_photos().as_dict()
+        user = user.include_photos().as_dict()
+        # TODO: dynamic second param
+        user = super().outer_include(user, ['Attendee'])
+        return response.set_data(user).build()
 
     def get_user(self, username):
         self.model_user = db.session.query(
