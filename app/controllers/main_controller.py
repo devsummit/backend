@@ -60,8 +60,14 @@ class MainController(BaseController):
         stages = stageservice.get()
         return render_template('admin/stages/stages.html', stages=stages)
 
-    def getSchedules():
-        schedules = scheduleservice.get()
+    def getSchedules(request):
+        schedules = {}
+        if request.args.get('filter') is not None:
+            filter = request.args.get('filter')
+            schedules = scheduleservice.filter(filter)
+        else: 
+            schedules = scheduleservice.get()
+
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
 
     def getPartners():
