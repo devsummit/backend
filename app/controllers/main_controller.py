@@ -8,7 +8,6 @@ from app.services import userservice
 from app.services import boothservice
 from app.services import speakerservice
 from app.services import eventservice
-from app.configs.constants import EVENTS_TYPE
 from app.services import stageservice
 from app.services import scheduleservice
 from app.services import partnerservice
@@ -56,7 +55,7 @@ class MainController(BaseController):
 
     def getEvents():
         events = eventservice.index(request)
-        return render_template('admin/events/events.html', events=events['data'], event_type=EVENTS_TYPE)
+        return render_template('admin/events/events.html', events=events['data'])
 
     def getStages():
         stages = stageservice.get()

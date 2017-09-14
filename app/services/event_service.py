@@ -73,8 +73,9 @@ class EventService(BaseService):
                 new_event['title'] = title
             if type:
                 new_event['type'] = type
-            if user_id:
-                new_event['user_id'] = user_id
+
+            new_event['user_id'] = user_id
+
             self.events_model.update(new_event)
 
             db.session.commit()

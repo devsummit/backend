@@ -13,6 +13,7 @@
     <!-- /.box-header -->
 
     <div class="box-body">
+        <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
         <table id="schedule-list1" class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -55,9 +56,6 @@
                 {% endfor %}
             </tbody>
         </table>
-        <tr>
-            <a href="#" class="btn btn-primary btn-block btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
-        </tr>
     </div>
     {% include "admin/users/user_detail.html" ignore missing %} {% include "admin/events/event_detail.html" ignore missing %}
     {% include "admin/events/schedules/schedule_edit.html" %} {% include "admin/events/schedules/schedule_delete.html" %}

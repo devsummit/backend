@@ -21,3 +21,10 @@ const SPONSOR_STAGES = [
 	{ id: 2, type: 'prospect' },
 	{ id: 3, type: 'official' }
 ]
+
+const EVENT_TYPES = [
+	'discuss panel',
+	'speaker',
+	'hackaton',
+	'other'
+]

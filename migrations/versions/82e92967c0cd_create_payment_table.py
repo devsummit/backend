@@ -21,8 +21,8 @@ def upgrade():
             'payments',
             sa.Column('id', sa.Integer, primary_key=True),
             sa.Column('order_id', sa.Integer, sa.ForeignKey('orders.id')),
-            sa.Column('saved_token_id', sa.Integer),
-            sa.Column('transaction_id', sa.Integer),
+            sa.Column('saved_token_id', sa.String(255)),
+            sa.Column('transaction_id', sa.String(255)),
             sa.Column('payment_type', sa.String(120)),
             sa.Column('gross_amount', sa.Integer),
             sa.Column('transaction_time', sa.DateTime),
@@ -30,6 +30,7 @@ def upgrade():
             sa.Column('masked_card', sa.String(255)),
             sa.Column('bank', sa.String(120)),
             sa.Column('fraud_status', sa.String(120)),
+            sa.Column('va_number', sa.String(120)),
             sa.Column('created_at', sa.DateTime),
             sa.Column('updated_at', sa.DateTime),
     )

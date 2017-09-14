@@ -21,6 +21,7 @@ class Payment(db.Model, BaseModel):
                 'masked_card',
                 'bank', 
                 'fraud_status',
+                'va_number',
                 'created_at', 
                 'updated_at'
         ]
@@ -42,6 +43,7 @@ class Payment(db.Model, BaseModel):
         masked_card = db.Column(db.String)
         bank = db.Column(db.String)
         fraud_status = db.Column(db.String)
+        va_number = db.Column(db.String)
         created_at = db.Column(db.DateTime)
         updated_at = db.Column(db.DateTime)
 
