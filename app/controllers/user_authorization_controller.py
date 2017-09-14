@@ -132,21 +132,22 @@ class UserAuthorizationController(BaseController):
     def change_name(request, user):
         firstname = request.json['first_name'] if 'first_name' in request.json else None
         lastname = request.json['last_name'] if 'last_name' in request.json else ''
-
+        booth_info = request.json['booth_info'] if 'booth_info' in request.json else None
         if firstname:
             payloads = {
                 'first_name': firstname,
                 'last_name': lastname,
+                'booth_info': booth_info,
                 'user': user
             }
 
         else:
             return BaseController.send_response_api(None, 'payloads not valid')
         result = userservice.change_name(payloads)
-        if not result['error']:
-            return BaseController.send_response_api(result['data'], 'name succesfully changed')
+        if result['error']:
+            return BaseController.send_error_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_response_api(result['data'], result['message'])
 
     @staticmethod
     def change_password(request, user):
