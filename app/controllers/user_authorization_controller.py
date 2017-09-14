@@ -133,11 +133,15 @@ class UserAuthorizationController(BaseController):
         firstname = request.json['first_name'] if 'first_name' in request.json else None
         lastname = request.json['last_name'] if 'last_name' in request.json else ''
         booth_info = request.json['booth_info'] if 'booth_info' in request.json else None
+        speaker_job = request.json['speaker_job'] if 'speaker_job' in request.json else None
+        speaker_summary = request.json['speaker_summary'] if 'speaker_summary' in request.json else None
         if firstname:
             payloads = {
                 'first_name': firstname,
                 'last_name': lastname,
                 'booth_info': booth_info,
+                'speaker_job': speaker_job,
+                'speaker_summary': speaker_summary,
                 'user': user
             }
 
