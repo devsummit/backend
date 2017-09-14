@@ -73,6 +73,9 @@
                             <button id='btd-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
+                            <button id='btl-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-logs" data-toggle="modal" data-target="#modal-logs">
+                                Show Log
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -83,7 +86,8 @@
 
     {% include "admin/base/modal_delete.html" %} 
     {% include "admin/partnership/sponsors/sponsors_edit.html" %} 
-    {% include "admin/partnership/sponsors/sponsors_add.html" %} 
+    {% include "admin/partnership/sponsors/sponsors_add.html" %}
+    {% include "admin/partnership/sponsors/sponsors_showlogs.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -192,6 +196,17 @@
             const id = btd_id.substring(4, btd_id.length);
             $('.btn-yes').attr("id", id);
         });
+
+        $('.btn-logs').click(function(event){
+        $('.modal-title').html('Show Log');
+
+        const btd_id = $(this).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        $('.btn-yes').attr("id", id);
+        dsa.get('sponsors/'+id+'/logs',function(result){
+            console.log(result);
+        })
+    })
 
         $(function () {
             $('#sponsors-list1').DataTable({
