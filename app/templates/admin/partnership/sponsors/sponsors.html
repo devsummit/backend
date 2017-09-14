@@ -73,7 +73,7 @@
                             <button id='btd-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
-                            <button id='btl-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-logs" data-toggle="modal" data-target="#modal-logs">
+                            <button id='btl-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-sl" data-toggle="modal" data-target="#modal-logs">
                                 Show Log
                             </button>
                         </td>
@@ -197,7 +197,7 @@
             $('.btn-yes').attr("id", id);
         });
 
-        $('.btn-logs').click(function(event){
+        $('btn-sl').click(function(event){
         $('.modal-title').html('Show Log');
 
         const btd_id = $(this).attr('id');
