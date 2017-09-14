@@ -49,8 +49,6 @@ class PaymentController(BaseController):
         bank = request.json['bank'] if 'bank' in request.json else None
         order_id = request.json['order_id'] if 'order_id' in request.json else None
 
-        print(request.json)
-
         if(payment_type and payment_type == 'bank_transfer'):
 
             if (bank == 'permata'):
@@ -138,7 +136,6 @@ class PaymentController(BaseController):
                 }
 
                 result = paymentservice.bank_transfer(payloads)
-                print(result)
 
                 if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'bank transfer transaction is created')
