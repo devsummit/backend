@@ -409,7 +409,6 @@ class PaymentService():
             if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
                 self.save_payload(payload, payloads)
 
-
             # if  not fraud and captured save ticket to user_ticket table
             if('fraud_status' in payload and payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
                 order = db.session.query(Order).filter_by(id=payload['order_id']).first()
