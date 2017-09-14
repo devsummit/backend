@@ -22,7 +22,7 @@ from app.builders.response_builder import ResponseBuilder
 
 class UserService(BaseService):
 
-    def __init__(self, perpage): 
+    def __init__(self, perpage):
         self.perpage = perpage
 
     def register(self, payloads):
@@ -108,7 +108,8 @@ class UserService(BaseService):
         paginate = super().paginate(db.session.query(User))
         paginate = super().include(['role'])
         response = ResponseBuilder()
-        result = response.set_data(paginate['data']).set_links(paginate['links']).build()
+        result = response.set_data(paginate['data']).set_links(
+            paginate['links']).build()
         return result
 
     def get_user_by_id(self, id):
@@ -358,7 +359,7 @@ class UserService(BaseService):
                 includes = payloads['includes']
                 includes_data = payloads[includes]
                 self.postIncludes(includes, includes_data)
-                
+
             return {
                 'error': False,
                 'data': data
@@ -388,7 +389,7 @@ class UserService(BaseService):
                 includes = payloads['includes']
                 includes_data = payloads[includes]
                 self.postIncludes(includes, includes_data)
-                
+
             return {
                 'error': False,
                 'data': data

@@ -43,7 +43,7 @@ class UserController(BaseController):
             }
         else:
             return BaseController.send_error_api(None, 'field is not complete')
-        
+
         result = userservice.update(payloads, id)
 
         if not result['error']:
