@@ -61,6 +61,9 @@
                             <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
+                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-logs" data-toggle="modal" data-target="#modal-logs">
+                                Show Log
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -68,9 +71,11 @@
             </table>
         </div>
 
+
         {% include "admin/base/modal_delete.html" %}
         {% include "admin/accounts/account_edit.html" %}
-        {% include "admin/accounts/account_add.html" %}
+        {% include "admin/accounts/account_add.html" %}   
+        {% include "admin/accounts/account_showlogs.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -109,8 +114,20 @@
         const id = btd_id.substring(4, btd_id.length);
         $('.btn-yes').attr("id", id);
     });
+
+    $('.btn-logs').click(function(event){
+        $('.modal-title').html('Show Log');
+
+        const btd_id = $(this).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        $('.btn-yes').attr("id", id);
+        dsa.get('sponsors/'+id+'/logs',function(result){
+            console.log(result);
+        })
+    })
     
-    $(function () {
+    
+    $(function (){
         $('#account-list1').DataTable();
     });
 </script>
