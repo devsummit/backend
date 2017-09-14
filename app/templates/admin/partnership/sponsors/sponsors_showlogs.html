@@ -1,0 +1,44 @@
+<div class="modal fade" id="modal-logs">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="table-responsive-vertical shadow-z-1">
+                <div class="modal-body">
+                    <div class="box box-primary">
+                        <div class="box-body box-profile">
+    <!-- Table starts here -->
+                <table id="table" class="table table-hover table-mc-light-blue">
+                <thead>
+                    <tr>
+                    <th>Sponsor ID</th>
+                    <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td for="sponsor-id" class="sponsor-id" id="sponsor-id"></td>
+                    <td  for="sponsor-logs" class="sponsor-logs" id="sponsor-logs"></td>
+                    </tr>
+                </tbody>
+                </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  <script>
+    /* Save edit account */
+        $('.btn-logs').click(function(event){
+            $('.modal-title').html('Show Logs');
+            
+            const id = $('.btn-yes').attr('id');
+            dsa.get('sponsors/'+id+ '/logs',function(result){
+            console.log(result);
+            const sponsor=result.data[0];
+            console.log('Sponsor',sponsor)
+                $("#sponsor-id").html(sponsor.id);
+                $("#sponsor-logs").html(sponsor.description);
+            })
+        })
+</script>
