@@ -48,14 +48,14 @@
     $('.event-types').on('change', function() {
         const user_id = $('#participant').find(":selected").val();
 
-        if (this.value === 'hackaton') {
+        if (this.value !== 'speaker') {
             $('#participant').hide();
         } else {
             let participant = $(".event-participants");
             participant.find('option').remove();
             $('#participant').show();
 
-            dsa.get(`${this.value}s`, function(result) {
+            dsa.get('speakers', function(result) {
                 result.data.map(function(res) {
                     let option = document.createElement('option');
 
@@ -76,7 +76,11 @@
     /* Save edited data */
     $('.btn-save').click(function(event){
         const id = $(this).attr('id');
-        const user_id = $('#participant').find(":selected").val();
+        let user_id = $('#participant').find(":selected").val();
+
+        if ($('.event-types').val() !== "speaker") {
+            user_id = null;
+        }
 
         payload = {
             "data": {

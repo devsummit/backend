@@ -4,6 +4,8 @@
     <title> Events list </title>
 {% endblock %}
 
+{% set globals={'base_route': 'events', 'api_route': 'events'} %}
+
 {% block header_link %}
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
@@ -25,6 +27,8 @@
 {% block content %}
     <div class="box">
         <div class="box-body">
+            <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+
             <table id="event-list" class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -66,48 +70,42 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <tr>
-                <a href="#" class="btn btn-primary btn-block btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
-            </tr>
         </div>
 
         {% include "admin/events/events_edit.html" %}
         {% include "admin/events/events_add.html" %}
-        {% include "admin/events/events_delete.html" %}
+        {% include "admin/base/modal_delete.html" %} 
 {% endblock %}
 
 {% block footer_link %}
     <!-- DataTables -->
     <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
 
     <!-- page script -->
     <script>
-        var event_type = "{{ event_type }}";
-        event_type = event_type.replace(/[&#39;{},]/g, '').split(' ');
-
         // Delete button action
-        $('.btn-events-delete').click(function(event){
-            $('.modal-title').html('Delete Event');
-
+        $('.btn-events-delete').click(function (event) {
+            $('.modal-title').html('Are you sure want to delete this event?');
             const btd_id = $(this).attr('id');
             const id = btd_id.substring(4, btd_id.length);
-            $('.btn-events-yes').attr("id", id);
-        })
+            $('.btn-yes').attr("id", id);
+        });
 
         // Add button action
         $('.btn-add').click(function(event){
             $('.modal-title').html('Add New Event');
             $(".event-types-add").find('option').remove();
 
-            event_type.map(function(type) {
+            EVENT_TYPES.map(function(type) {
                 // add to select
                 let option = document.createElement('option');
 
                 option.innerHTML = capitalizeFirstLetter(type);
                 option.value = type;
 
-                if (type === 'hackaton') {
+                if (type === 'discuss panel') {
                     option.selected = true;
                 }
 
@@ -138,7 +136,7 @@
                 let select = $(".event-types");
                 select.find('option').remove();
 
-                event_type.map(function(type) {
+                EVENT_TYPES.map(function(type) {
                     // add to select
                     let option = document.createElement('option');
 
@@ -157,10 +155,10 @@
                 participant.find('option').remove();
                 $('#participant').show();
 
-                if (selected_type === 'hackaton') {
+                if (selected_type !== 'speaker') {
                     $('#participant').hide();
                 } else {
-                    dsa.get(`${selected_type}s`, function(result) {
+                    dsa.get('speakers', function(result) {
                         result.data.map(function(res) {
                             let option = document.createElement('option');
 
