@@ -1,3 +1,6 @@
+from app.models import db
+from app.models.attendee import Attendee
+
 class BaseService():
 
     def __init__(self, page=0, base_url='', total_items=0):
@@ -29,6 +32,15 @@ class BaseService():
             _results.append(data)
         self.paginated['data'] = _results
         return self.paginated
+
+
+    def outer_include(self, data, fields):
+        # TODO: add filterby key need to be dynamic to be able to used by other class than user
+        for field in fields:
+            prep = db.session.query(eval(field)).filter_by(user_id=data['id']).first()
+            data[field.lower()] = prep.as_dict() if prep else None
+        return data
+
 
     def transform(self):
         _results = []
