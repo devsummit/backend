@@ -117,8 +117,13 @@ class UserService(BaseService):
         user = db.session.query(
             User).filter_by(id=id).first()
         user = user.include_photos().as_dict()
-        # TODO: dynamic second param
-        user = super().outer_include(user, ['Attendee'])
+        # add relation includes
+        includes = ''
+        if user['role_id']!=1:
+            for role, role_id in ROLE.items():
+                if role_id==user['role_id']:
+                    includes = role.title()   
+        user = super().outer_include(user, [includes])
         return response.set_data(user).build()
 
     def get_user(self, username):
