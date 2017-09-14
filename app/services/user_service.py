@@ -2,10 +2,10 @@ import oauth2 as oauth
 import json
 import requests
 import datetime
+
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from flask import request
-
 from app.models.access_token import AccessToken
 from app.models.user import User
 from app.models.user_photo import UserPhoto
@@ -13,6 +13,7 @@ from app.models.booth import Booth  # noqa
 from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
+from app.models.ambassador import Ambassador
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
@@ -105,7 +106,7 @@ class UserService(BaseService):
             self.page = 1
         self.base_url = request.base_url if not admin else request.url_root + 'users'
         paginate = super().paginate(db.session.query(User))
-        paginate = super().transform()
+        paginate = super().include(['role'])
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
         return result
@@ -351,6 +352,13 @@ class UserService(BaseService):
             })
             db.session.commit()
             data = self.model_user.first().as_dict()
+
+            # apply includes data
+            if 'includes' in payloads.keys():
+                includes = payloads['includes']
+                includes_data = payloads[includes]
+                self.postIncludes(includes, includes_data)
+                
             return {
                 'error': False,
                 'data': data
@@ -384,3 +392,30 @@ class UserService(BaseService):
                 'error': True,
                 'data': data
             }
+
+    def postIncludes(self, includes, payloads):
+        user_id = self.model_user.first().as_dict()['id']
+        Model = self.mapIncludesToModel(includes)
+        entityModel = db.session.query(Model).filter_by(user_id=user_id)
+        entity = entityModel.first()
+
+        if (entity):
+            entityModel.update(payloads)
+        else:
+            entityModel = Model()
+            entityModel.user_id = user_id
+            for key in payloads:
+                setattr(entityModel, key, payloads[key])
+            db.session.add(entityModel)
+        db.session.commit()
+
+    def mapIncludesToModel(self, includes):
+        models = {
+            'attendee': Attendee,
+            'speaker': Speaker,
+            'booth': Booth,
+            'ambassador': Ambassador,
+        }
+        if includes in models.keys():
+            return models[includes]
+        return None
