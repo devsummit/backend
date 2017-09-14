@@ -32,7 +32,8 @@
         $('.btn-logs').click(function(event){
             $('.modal-title').html('Show Logs');
             
-            const id = $('.btn-yes').attr('id');
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
             dsa.get('sponsors/'+id+ '/logs',function(result){
             console.log(result);
             const sponsor=result.data[0];
