@@ -652,10 +652,14 @@ def get_sponsor_log(id, *args, **kwargs):
 
 
 # Add rundown list API
-@api.route('/rundownlist', methods=['GET', 'POST'])
+@api.route('/rundownlist', methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
 @token_required
 def rundown(*args, **kwargs):
-    if(request.method == 'GET'):
+    if (request.method == 'GET'):
         return RundownListController.index(request)
-    else:
+    elif (request.method == 'POST'):
         return RundownListController.create(request)
+    elif (request.method in ['PATCH', 'PUT']):
+        return RundownListController.update(request)   
+    else:
+        return RundownListController.delete()
