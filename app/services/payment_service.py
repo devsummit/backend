@@ -193,8 +193,8 @@ class PaymentService():
             data['echannel'] = {}
             data['echannel']['bill_info1'] = 'Payment for:'
             data['echannel']['bill_info2'] = 'DevSummit Indonesia'
-        
 
+        
         midtrans_api_response = self.send_to_midtrans_api(data)
 
         return midtrans_api_response
@@ -380,6 +380,23 @@ class PaymentService():
 
         return self.send_to_midtrans_api(data)
 
+    def get_midtrans_va_number(self, payload):
+        # Permata = "permata_va_number" = "8562000087926752"
+        # BCA = "va_numbers": [{"bank": "bca", "va_number": "91019021579"}]
+        # Mandiri Bill = no va number (use bill_key and biller_code instead)
+        # BNI = "va_numbers": [{"bank": "bni", "va_number": "8578000000111111"}]
+
+        if 'va_numbers' in payload:
+            va_number = payload['va_numbers'][0]['va_number']
+        elif 'permata_va_number' in payload:
+            va_number = payload['permata_va_number']
+        elif 'bill_key' in payload and 'biller_code' in payload:
+            va_number = payload['bill_key'] + '-' + payload['biller_code']
+        else:
+            va_number = None
+        
+        return va_number
+
     # this will send the all payment methods payload to midtrand api
     def send_to_midtrans_api(self, payloads):
         response = ResponseBuilder()
@@ -390,18 +407,19 @@ class PaymentService():
                 json=payloads
         )
         payload = result.json()
-        if(payload['status_code'] == '400'):
+
+        if(str(payload['status_code']) == '400'):
             return response.set_message(payload['validation_messages'][0]).set_error(True).build()
         else:
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
                 payload['bank'] = payloads['bank']
             elif payloads['payment_type'] == 'echannel':
                 payload['bank'] = 'mandiri_bill'
+                payload['va_number'] = self.get_midtrans_va_number(payload)
             else:
-                if 'bank' in payload:
-                    payload['bank'] = payload['bank']
-                elif 'bank_transfer' in payloads:
+                if 'bank_transfer' in payloads:
                     payload['bank'] = payloads['bank_transfer']['bank']
+                    payload['va_number'] = self.get_midtrans_va_number(payload)
                 else:
                     payload['bank'] = None
 
@@ -413,7 +431,7 @@ class PaymentService():
                 payload['bank'] = 'indomaret'
                 payload['fraud_status'] = payload['payment_code']
 
-            if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
+            if ('status_code' in payload and str(payload['status_code']) in ['201', '200']):
                 self.save_payload(payload, payloads)
 
             # if  not fraud and captured save ticket to user_ticket table
@@ -520,6 +538,7 @@ class PaymentService():
         new_payment.fraud_status = data['fraud_status'] if 'fraud_status' in data else None
         new_payment.masked_card = payloads['masked_card'] if 'masked_card' in payloads else None
         new_payment.saved_token_id = payloads['saved_token_id'] if 'saved_token_id' in payloads else None
+        new_payment.va_number = data['va_number'] if 'va_number' in data else None
 
         db.session.add(new_payment)
         db.session.commit()
