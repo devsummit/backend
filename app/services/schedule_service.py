@@ -1,5 +1,4 @@
 import datetime
-import time
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
@@ -7,7 +6,7 @@ from app.models.schedule import Schedule
 from app.models.booth import Booth
 from app.models.speaker import Speaker
 from app.configs.constants import EVENT_DATES
-
+from app.builders.response_builder import ResponseBuilder
 
 class ScheduleService():
 
@@ -54,12 +53,9 @@ class ScheduleService():
 			elif schedule['event'] is not None and EVENT_DATES['3'] in schedule['created_at']:
 				day3.append(schedule)
 				results.append(day3)
-		return {
-			'error': False,
-			'data': results,
-			'message': "Schedule retrieved successfully",
-			'included': {}
-		}
+		response = ResponseBuilder()
+		result = response.set_data(results).build()
+		return result
 
 	def show(self, id):
 		schedule = db.session.query(Schedule).filter_by(id=id).first()
