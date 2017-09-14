@@ -1,3 +1,8 @@
+<!-- jQuery 3 -->
+<script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
+<!-- Devsummit Auth Client -->
+<script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
+
 <div class="modal fade" id="modal-add">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -13,7 +18,13 @@
                                 <li class="list-group-item">
                                     <div class="form-group">
                                         <label for="i-firstname">Description:</label>
-                                        <input type="text" class="form-control i-description" id="i-name">
+                                        <input type="text" class="form-control i-description" id="i-description">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="i-date">Date:</label>
+                                        <input type="date" class="form-control i-date" id="i-date">
                                     </div>
                                 </li>
                                 <li class="list-group-item">
@@ -51,3 +62,22 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+<!-- page script -->
+<script>
+    $('.btn-primary').click(function(event){
+        const payload = {
+            "description": $('.i-description').val(),
+            "time_start": $('#time-start').val(),
+            "time_end": $('#i-time-end').val(),
+            "location" : $('#i-location').val()
+        };
+        console.log(payload);
+
+        dsa.postForm('', payload, function(result) {
+            if(result.meta.success) {
+                window.location = "/accounts";
+            }
+        });
+    });
+</script>

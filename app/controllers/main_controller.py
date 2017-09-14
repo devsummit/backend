@@ -14,6 +14,7 @@ from app.services import scheduleservice
 from app.services import partnerservice
 from app.services import entrycashlogservice
 from app.services import sponsorservice
+from app.services import rundownlistservice
 
 
 class MainController(BaseController):
@@ -79,3 +80,7 @@ class MainController(BaseController):
 
     def changepassword():
         return render_template('admin/users/changepassword.html')
+
+    def getRundownList():
+        rundownlist = rundownlistservice.get(request)
+        return render_template('admin/rundown/rundown_list.html', rundownlist=rundownlist['data'])

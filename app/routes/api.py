@@ -648,3 +648,13 @@ def get_sponsor_log(id, *args, **kwargs):
         return SponsorController.get_logs(id)
     elif (request.method in 'POST'):
         return SponsorController.create_log(request, id)
+
+
+# Add rundown list API
+@api.route('/rundownlist', methods=['GET', 'POST'])
+@token_required
+def rundown(*args, **kwargs):
+    if(request.method == 'GET'):
+        return RundownListController.index(request)
+    else:
+        return RundownListController.create(request)
