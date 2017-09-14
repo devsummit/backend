@@ -63,8 +63,7 @@ class PaymentController(BaseController):
                     return BaseController.send_error_api(None, 'field is not complete')
 
                 result = paymentservice.bank_transfer(payloads)
-                
-                
+
                 if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'Succesfully')
                 else:
@@ -166,7 +165,7 @@ class PaymentController(BaseController):
                 return BaseController.send_error_api(None, 'Credit Card not valid')
 
             result = paymentservice.credit_payment(payloads)
-            
+
             if 'error' in result:
                 return BaseController.send_error_api(result['data'], result['message'])
             return BaseController.send_response_api(result, 'Credit card transaction created succesfully') 

@@ -9,7 +9,6 @@ from app.models.order import Order
 from app.models.user_ticket import UserTicket
 from app.builders.response_builder import ResponseBuilder
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
-from app.controllers.base_controller import BaseController
 
 
 class PaymentService():
@@ -174,7 +173,6 @@ class PaymentService():
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
         if(payloads['bank'] == 'mandiri_bill'):
-            
             # payload validation for mandiri
             if not all(
                 isinstance(string, str) for string in [
@@ -194,7 +192,6 @@ class PaymentService():
             data['echannel']['bill_info1'] = 'Payment for:'
             data['echannel']['bill_info2'] = 'DevSummit Indonesia'
 
-        
         midtrans_api_response = self.send_to_midtrans_api(data)
 
         return midtrans_api_response
@@ -221,7 +218,6 @@ class PaymentService():
         # get the token id first
         token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + str(payloads['gross_amount']) + '&client_key=' + payloads['client_key'], headers=self.headers)
         token_id = token_id.json()
-
 
         # prepare data
         data = {}
@@ -394,7 +390,7 @@ class PaymentService():
             va_number = payload['bill_key'] + '-' + payload['biller_code']
         else:
             va_number = None
-        
+
         return va_number
 
     # this will send the all payment methods payload to midtrand api
@@ -438,7 +434,7 @@ class PaymentService():
             if('fraud_status' in payload and payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
                 order = db.session.query(Order).filter_by(id=payload['order_id']).first()
                 self.save_paid_ticket(order.as_dict())
-            
+
         return response.set_data(payload).build()
 
     def update(self, id):
