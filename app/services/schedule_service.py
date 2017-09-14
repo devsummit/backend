@@ -1,4 +1,5 @@
 import datetime
+import time
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
@@ -21,7 +22,7 @@ class ScheduleService():
 			data['user'] = user.as_dict() if user else None
 			data['event'] = event.as_dict() if event else None
 			data['stage'] = stage.as_dict() if stage else None
-
+			
 			if data['user'] and data['user']['role_id'] == 3:
 				booth = db.session.query(Booth).filter_by(user_id=data['user']['id']).first()
 				data['booth'] = booth.as_dict() if booth else None
@@ -40,15 +41,23 @@ class ScheduleService():
 	def filter(self, param):
 		schedules = self.get()['data']
 		results = []
+		day1 = []
+		day2 = []
+		day3 = []
 		for schedule in schedules:
-			if schedule['event'] is not None and schedule['event']['type'] == param:
-				results.append(schedule)
-			elif schedule['created_at'] is not None and param.isdigit() and int(param) < 4 and EVENT_DATES[param] in schedule['created_at']:
-			  results.append(schedule)
+			if schedule['event'] is not None and EVENT_DATES['1'] in schedule['created_at']:
+				day1.append(schedule)
+				results.append(day1)
+			elif schedule['event'] is not None and EVENT_DATES['2'] in schedule['created_at']:
+				day2.append(schedule)
+				results.append(day2)
+			elif schedule['event'] is not None and EVENT_DATES['3'] in schedule['created_at']:
+				day3.append(schedule)
+				results.append(day3)
 		return {
 			'error': False,
 			'data': results,
-			'message': 'schedule retrieved successfully',
+			'message': "Schedule retrieved successfully",
 			'included': {}
 		}
 
