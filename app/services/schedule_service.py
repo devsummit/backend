@@ -8,6 +8,7 @@ from app.models.speaker import Speaker
 from app.configs.constants import EVENT_DATES
 from app.builders.response_builder import ResponseBuilder
 
+
 class ScheduleService():
 
 	def get(self):
@@ -21,7 +22,7 @@ class ScheduleService():
 			data['user'] = user.as_dict() if user else None
 			data['event'] = event.as_dict() if event else None
 			data['stage'] = stage.as_dict() if stage else None
-			
+
 			if data['user'] and data['user']['role_id'] == 3:
 				booth = db.session.query(Booth).filter_by(user_id=data['user']['id']).first()
 				data['booth'] = booth.as_dict() if booth else None
@@ -44,16 +45,23 @@ class ScheduleService():
 		day2 = []
 		day3 = []
 		for schedule in schedules:
-			if schedule['event'] is not None and EVENT_DATES['1'] in schedule['created_at']:
+			if schedule['event'] is not None and EVENT_DATES['1'] in schedule['time_start']:
 				day1.append(schedule)
-				results.append(day1)
-			elif schedule['event'] is not None and EVENT_DATES['2'] in schedule['created_at']:
+			elif schedule['event'] is not None and EVENT_DATES['2'] in schedule['time_start']:
 				day2.append(schedule)
-				results.append(day2)
-			elif schedule['event'] is not None and EVENT_DATES['3'] in schedule['created_at']:
+			elif schedule['event'] is not None and EVENT_DATES['3'] in schedule['time_start']:
 				day3.append(schedule)
-				results.append(day3)
 		response = ResponseBuilder()
+
+		if param == 'day-1': 
+			results = day1
+		elif param == 'day-2':
+			results = day2
+		elif param == 'day-3':
+			results = day3
+		else:
+			results.append([day1, day2, day3])
+
 		result = response.set_data(results).build()
 		return result
 
