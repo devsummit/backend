@@ -37,29 +37,26 @@
                 </tr>
                 </thead>
                 <tbody>
-                    {% for partner in partners %}
+                    {% for rundown in rundownlist %}
                     <tr>
                         <td>
-                            <a href="http://{{ partner.website }}" id='atd-{{ partner.id }}' class="partner-name">
-                            {{ partner.name }}</a> 
+                            <a href="http://{{ rundown.website }}" id='atd-{{ rundown.id }}' class="rundown-name">
+                            {{ rundown.description }}</a> 
                         </td>
                         <td>
-                            {{ partner.email|e }}
+                            {{ rundown.time_start|e }}
                         </td>
                         <td>
-                            {{ partner.website|e }}
+                            {{ rundown.time_end|e }}
                         </td>
                         <td>
-                            {{ partner.type|e }}
+                            {{ rundown.location|e }}
                         </td>
                         <td>
-                            {{ partner.photo|e }}
-                        </td>
-                        <td>
-                            <button id='btd-{{ partner.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                            <button id='btd-{{ rundown.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
-                            <button id='btd-{{ partner.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                            <button id='btd-{{ rundown.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
                         </td>
@@ -85,36 +82,36 @@
 <script>
     /* Display Attendee Detail */
 
-    $('.btn-edit').click(function(event){
-        $('.modal-title').html('Edit');
-        const bte_id = $(this).attr('id');
-        const id = bte_id.substring(4, bte_id.length);
-        let select = $(".partner-type");
-        select.find('option').remove();
-        dsa.get('partners/' + id, function(result) {
-            // bind result value in to account_detail.html 
-            const data = result['data'];
-            $('.partner-name').val(data['name']);
-            $('.partner-email').val(data['email']);
-            selected_type = data['type'];
-            $('.partner-website').val(data['website']);
-            PARTNER_TYPES.map(function(type) {
-                let option = document.createElement('option');
-                option.innerHTML = type;
-                option.value = type;
+    // $('.btn-edit').click(function(event){
+    //     $('.modal-title').html('Edit');
+    //     const bte_id = $(this).attr('id');
+    //     const id = bte_id.substring(4, bte_id.length);
+    //     let select = $(".partner-type");
+    //     select.find('option').remove();
+    //     dsa.get('rundownlist/' + id, function(result) {
+    //         // bind result value in to account_detail.html 
+    //         const data = result['data'];
+    //         $('.partner-name').val(data['name']);
+    //         $('.partner-email').val(data['email']);
+    //         selected_type = data['type'];
+    //         $('.partner-website').val(data['website']);
+    //         PARTNER_TYPES.map(function(type) {
+    //             let option = document.createElement('option');
+    //             option.innerHTML = type;
+    //             option.value = type;
 
-                // Set selected option
-                if (type === selected_type) {
-                    option.selected = true;
-                }
+    //             // Set selected option
+    //             if (type === selected_type) {
+    //                 option.selected = true;
+    //             }
 
-                select.append(option);
-            });
-            $("#img-upload").attr("src", 'static/' + data['photo']);
-            $('.partner-photo').val(data['photo'] ? data['photo'] : '-');
-        });
-        $('.btn-edit-save').attr("id", id);
-    });
+    //             select.append(option);
+    //         });
+    //         $("#img-upload").attr("src", 'static/' + data['photo']);
+    //         $('.partner-photo').val(data['photo'] ? data['photo'] : '-');
+    //     });
+    //     $('.btn-edit-save').attr("id", id);
+    // });
 
     $('.btn-add').click(function(event){
         $('.modal-title').html('Add New Rundown');

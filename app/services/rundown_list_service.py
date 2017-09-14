@@ -11,87 +11,65 @@ from app.configs.constants import EVENT_DATES
 class RundownListService():
 
 	def get(self, request):
-		self.total_items = Partner.query.count()
-		if request.args.get('page'):
-			self.page = request.args.get('page')
-		else:
-			self.perpage = self.total_items
-			self.page = 1
-		self.base_url = request.base_url
-        # paginate
-		paginate = super().paginate(db.session.query(Partner))
-		paginate = super().transform()
-		response = ResponseBuilder()
-		return response.set_data(paginate['data']).set_links(paginate['links']).build()
-
-	def show(self, id):
-		response = ResponseBuilder()
-		partner = db.session.query(Partner).filter_by(id=id).first()
-		data = {}
-		data = partner.as_dict() if partner else None
-		return response.set_data(data).build()
-
+		rundownlists = db.session.query(RundownList).all()
+		results = []		
+		for rundownlist in rundownlists:
+			data = rundownlist.as_dict()			
+			results.append(data)
+		return {
+			'error': False,
+			'data': results,
+			'message': 'Schedules retrieved succesfully',
+			'included': {}
+		}
+	
 	def create(self, payloads):
 		response = ResponseBuilder()
-		partner = Partner()
-		photo = self.save_file(payloads['photo'])
-		partner.name = payloads['name']
-		partner.email = payloads['email']
-		partner.website = payloads['website']
-		partner.photo = photo
-		partner.type = payloads['type']
-
-		db.session.add(partner)
+		rundownlist = RundownList()		
+		rundownlist.description = payloads['description']
+		rundownlist.time_start = datetime.datetime.strptime(payloads['time_start'], "%Y-%m-%d %H:%M:%S.%f")
+		rundownlist.time_end = datetime.datetime.strptime(payloads['time_end'], "%Y-%m-%d %H:%M:%S.%f")
+		rundownlist.location = payloads['location']
+		db.session.add(rundownlist)			
 		try:
 			db.session.commit()
-			data = partner.as_dict()
+			data = rundownlist.as_dict()
 			return response.set_data(data).build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
 			return response.set_data(data).set_error(True).build()
 
-	def save_file(self, file, id=None):
-		if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
-				filename = secure_filename(file.filename)
-				filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
-				file.save(os.path.join(current_app.config['POST_PARTNER_PHOTO_DEST'], filename))
-				if id:
-					temp_partner = db.session.query(Partner).filter_by(id=id).first()
-					partner_photo = temp_partner.as_dict() if temp_partner else None
-					if partner_photo is not None and partner_photo['photo'] is not None:
-						Helper().silent_remove(current_app.config['STATIC_DEST'] + partner_photo['photo']) 
-				return current_app.config['SAVE_PARTNER_PHOTO_DEST'] + filename
-		else:
-			return None
-
-	def update(self, payloads, id):
+	def update(self, payloads, id):		
 		response = ResponseBuilder()
 		try:
-			partner = db.session.query(Partner).filter_by(id=id)
-			file = payloads['photo']
-			photo = None
-			photo = self.save_file(file, id)
-			partner.update({
-				'name': payloads['name'],
-				'email': payloads['email'],
-				'website': payloads['website'],
-				'photo': photo,
-				'type': payloads['type'],
+			rundownlist = db.session.query(RundownList).filter_by(id=id)
+			print (rundownlist)		
+			rundownlist.update({
+				'description': payloads['description'],
+				'time_start': datetime.datetime.strptime(payloads['time_start'], "%Y-%m-%d %H:%M:%S.%f"),
+				'time_end': datetime.datetime.strptime(payloads['time_end'], "%Y-%m-%d %H:%M:%S.%f"),				
+				'location': payloads['location'],
 				'updated_at': datetime.datetime.now()
 			})
 			db.session.commit()
-			data = partner.first().as_dict()
-			return response.set_data(data).build()
+			data = rundownlist.first()
+			return response.set_data(data.as_dict()).build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
 			return response.set_error(True).set_data(data).build()
+	
+	def show(self, id):
+		response = ResponseBuilder()
+		result = db.session.query(RundownList).filter_by(id=id).first()
+		result = result.as_dict() if result else None
+		return response.set_data(result).build()
 
 	def delete(self, id):
 		response = ResponseBuilder()
-		partner = db.session.query(Partner).filter_by(id=id)
-		if partner.first() is not None:
+		rundown = db.session.query(RundownList).filter_by(id=id)
+		if rundown.first() is not None:
 			# delete row
-			partner.delete()
+			rundown.delete()
 			db.session.commit()
 			return response.set_message('data deleted').build()
 		else:

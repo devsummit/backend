@@ -23,7 +23,7 @@
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for"i-date">Data and time start</label>
+                                        <label for"i-date">Date and Time</label>
                                         <p id="event-time">
                                             <input type="text" class="add-date date start" />
                                             <input type="text" class="add-time-start time start" />                                                                        to
@@ -61,14 +61,13 @@
 
 <!-- page script -->
 <script>
-    $('.btn-primary').click(function(event){
+    $('.btn-save').click(function(event){
         payload = {
-            'descsription': $('#i-description').val(),
+            'description': $('#i-description').val(),
             'time_start': $('.add-date').val() + ' ' + $('.add-time-start').val() + '.000000',
             'time_end': $('.add-date').val() + ' ' + $('.add-time-end').val() + '.000000',
             "location" : $('#i-location').val()
         };
-        console.log(payload);
         dsa.post('rundownlist', payload, function(result) {
             if(result.meta.success) {
                 window.location = "/rundownlist";

@@ -228,7 +228,7 @@ def delete(event_id):
 @api.route('/schedules', methods=['GET', 'POST'])
 @token_required
 def schedule(*args, **kwargs):
-	filter = request.args.get('filter')
+	filter = request.args.get('filter')    
 	day = request.args.get('day')
 	if(request.method == 'POST'):
 		return ScheduleController.create(request)
@@ -652,14 +652,21 @@ def get_sponsor_log(id, *args, **kwargs):
 
 
 # Add rundown list API
-@api.route('/rundownlist', methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
+@api.route('/rundownlist', methods=['GET', 'POST'])
 @token_required
-def rundown(*args, **kwargs):
-    if (request.method == 'GET'):
-        return RundownListController.index(request)
+def rundown(*args, **kwargs):    
+    if (request.method == 'GET'):                
+        return RundownListController.get(request)
     elif (request.method == 'POST'):
         return RundownListController.create(request)
-    elif (request.method in ['PATCH', 'PUT']):
-        return RundownListController.update(request)   
-    else:
-        return RundownListController.delete()
+   
+
+@api.route('/rundownlist/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def rundown_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return RundownListController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):                
+        return RundownListController.update(request, id)
+    elif (request.method == 'DELETE'):
+        return RundownListController.delete(id)
