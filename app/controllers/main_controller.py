@@ -82,5 +82,6 @@ class MainController(BaseController):
         return render_template('admin/users/changepassword.html')
 
     def getRundownList():
-        rundownlist = rundownlistservice.get(request)
-        return render_template('admin/rundown/rundown_list.html', rundownlist=rundownlist['data'])
+        # rundownlist = rundownlistservice.get(request)
+        # return render_template('admin/rundown/rundown_list.html', rundownlist=rundownlist['data'])
+        return render_template('admin/rundown/rundown_list.html')

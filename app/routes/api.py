@@ -30,6 +30,7 @@ from app.controllers.user_controller import UserController
 from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
+from app.controllers.rundown_list_controller import RundownListController
 from app.configs.constants import ROLE
 
 

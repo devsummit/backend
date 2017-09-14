@@ -23,24 +23,14 @@
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="i-date">Date:</label>
-                                        <input type="date" class="form-control i-date" id="i-date">
+                                        <label for"i-date">Data and time start</label>
+                                        <p id="event-time">
+                                            <input type="text" class="add-date date start" />
+                                            <input type="text" class="add-time-start time start" />                                                                        to
+                                            <input type="text" class="add-time-end time end" />
+                                        </p>
                                     </div>
                                 </li>
-                                <li class="list-group-item">
-                                        <div class="form-group">
-                                            <label for="i-time-start">Time Start:</label>
-                                            <input type="time" class="form-control i-time-start" id="i-time-start">
-                                        </div>
-                                </li>
-                                </li>
-                                <li class="list-group-item">
-                                        <div class="form-group">
-                                            <label for="i-time-end">Time End:</label>
-                                            <input type="time" class="form-control i-time-end" id="i-time-end">
-                                        </div>
-                                </li>
-                                </li>                                
                                 <li class="list-group-item">
                                     <div class="form-group">
                                         <label for="i-location">Location:</label>
@@ -62,22 +52,43 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+<link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/jquery.timepicker.css" />
+<link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/bootstrap-datepicker.css" />
+<script type="text/javascript" src="static/assets/datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="static/assets/datepicker/js/jquery.timepicker.js"></script>
+
+<script type="text/javascript" src="static/assets/datepicker/js/datepair.js"></script>
 
 <!-- page script -->
 <script>
     $('.btn-primary').click(function(event){
-        const payload = {
-            "description": $('.i-description').val(),
-            "time_start": $('#time-start').val(),
-            "time_end": $('#i-time-end').val(),
+        payload = {
+            'descsription': $('#i-description').val(),
+            'time_start': $('.add-date').val() + ' ' + $('.add-time-start').val() + '.000000',
+            'time_end': $('.add-date').val() + ' ' + $('.add-time-end').val() + '.000000',
             "location" : $('#i-location').val()
         };
         console.log(payload);
-
-        dsa.postForm('', payload, function(result) {
+        dsa.post('rundownlist', payload, function(result) {
             if(result.meta.success) {
-                window.location = "/accounts";
+                window.location = "/rundownlist";
             }
         });
     });
+
+    // initialize input widgets first
+    $('#event-time .time').timepicker({
+        'showDuration': true,
+        'timeFormat': 'H:i:s'
+    });
+
+    $('#event-time .date').datepicker({
+        'format': 'yyyy-mm-dd',
+        'autoclose': true
+    });
+
+    // initialize datepair
+    var eventTimeElement = document.getElementById('event-time');
+    var datepair = new Datepair(eventTimeElement);
+
 </script>

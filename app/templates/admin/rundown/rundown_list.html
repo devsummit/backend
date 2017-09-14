@@ -70,8 +70,8 @@
         </div>
 
         {% include "admin/base/modal_delete.html" %}
-        {% include "admin/partnership/partners/partner_edit.html" %}
-        {% include "admin/partnership/partners/partner_add.html" %}
+        {% include "admin/rundown/rundown_list_edit.html" %}
+        {% include "admin/rundown/rundown_list_add.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -117,7 +117,7 @@
     });
 
     $('.btn-add').click(function(event){
-        $('.modal-title').html('Add New Account');
+        $('.modal-title').html('Add New Rundown');
         let select = $(".i-type");
         select.find('option').remove();
         PARTNER_TYPES.map(function(type) {
