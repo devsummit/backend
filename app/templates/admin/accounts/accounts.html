@@ -97,6 +97,9 @@
         $('#tab-'+ role +'-fields').css('display', 'block');
         
         $('.btn-input-save').attr("id", id || '-');
+        //set default tab
+        $('.tab1-input').addClass('active');
+        $('.tab2-input').removeClass('active');
         $('.btn-input-save').html("NEXT");
     }
 
