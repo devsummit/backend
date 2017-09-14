@@ -10,6 +10,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 from app.models.base_model import BaseModel
 from app.models.user_photo import UserPhoto
 from app.models.role import Role
+
 from app.models import db
 from app.services.helper import Helper
 
@@ -18,7 +19,8 @@ class User(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'users'
 	# displayed fields
-	visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id', 'username', 'email', 'photos', 'role', 'created_at', 'updated_at']
+	visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id',
+				'username', 'email', 'photos', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -27,12 +29,17 @@ class User(db.Model, BaseModel):
 	username = db.Column(db.String, index=True, unique=True)
 	email = db.Column(db.String, index=True, unique=True)
 	password = db.Column(db.String)
-	role_id = db.Column(db.Integer)
 	social_id = db.Column(db.String)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 	photos = []
-	role = ''
+	role_id = db.Column(
+		db.Integer,
+		db.ForeignKey('roles.id'),
+		nullable=False
+	)
+	role = db.relationship('Role')
+
 
 	def __init__(self):
 		self.created_at = datetime.datetime.now()
@@ -68,11 +75,7 @@ class User(db.Model, BaseModel):
 		self.photos = []
 		for result in results:
 			data = result.as_dict()
-			data['url'] = Helper().url_helper(data['url'], current_app.config['GET_DEST'])
+			data['url'] = Helper().url_helper(
+				data['url'], current_app.config['GET_DEST'])
 			self.photos.append(data)
-		return self
-
-	def include_role(self):
-		result = db.session.query(Role).filter_by(id=self.role_id).first()
-		self.role = result.as_dict()['name']
 		return self
