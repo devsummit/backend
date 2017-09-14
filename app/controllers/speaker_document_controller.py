@@ -56,6 +56,32 @@ class SpeakerDocumentController(BaseController):
                 return BaseController.send_error_api(None, result['data'])
         else:
             return BaseController.send_error_api(None, 'Unauthorized user')
+        
+    @staticmethod
+    def admin_create(request, user):
+        if(user['role_id'] == ROLE['admin']):
+            speaker_id = request.form['speaker_id'] if 'speaker_id' in request.form else None
+            speaker = db.session.query(Speaker).filter_by(user_id=speaker_id).first()
+            if speaker is None:
+                return BaseController.send_error_api(None, request.form.to_dict())
+            speaker = speaker.as_dict()
+            speaker_id = speaker['id']
+            document_data = request.files['document_data']
+            if document_data and speaker_id:
+                payloads = {
+                    'document_data': document_data,
+                    'speaker_id': speaker_id
+                }
+            else:
+                return BaseController.send_error_api(None, 'field is not complete')
+            result = speakerdocumentservice.create(payloads)
+            if not result['error']:
+                return BaseController.send_response_api(result['data'], 'speaker document succesfully uploaded')
+            else:
+                return BaseController.send_error_api(None, result['data'])
+        else:
+            return BaseController.send_error_api(None, 'Unauthorized user')
+
 
     @staticmethod
     def delete(user, id):

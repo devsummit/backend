@@ -1,0 +1,80 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="account-firstname">First Name:</label>
+                                        <input type="text" class="form-control account-firstname" id="account-firstname">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                        <div class="form-group">
+                                            <label for="account-lastname">Last Name:</label>
+                                            <input type="text" class="form-control account-lastname" id="account-lastname">
+                                        </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="account-email">Email:</label>
+                                        <input type="text" class="form-control account-email" id="account-email">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="account-username">Username:</label>
+                                        <input type="text" class="form-control account-username" id="account-username">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="account-role_id">Role:</label>
+                                        <input type="text" class="form-control account-role_id" id="account-role_id">
+                                    </div>
+                                </li>
+                            </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-edit-save" id="-"><b>Save</b></a>
+        
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Save edit account */   
+    $('.btn-edit-save').click(function(event){
+        const id = $(this).attr('id');
+        payload = {
+            "first_name": $('.account-firstname').val(),
+            "last_name": $('.account-lastname').val(),
+            "email": $('.account-email').val(),
+            "username": $('.account-username').val(),
+            "role_id": $('.account-role_id').val()
+        };
+        dsa.patch('users/' + id, payload, function(result) {
+            if(result.meta.success) {
+                window.location = "/accounts";
+            }
+        });
+    })
+    $(function () {
+        $('#account-list1').DataTable();
+    })
+</script>

@@ -1,5 +1,6 @@
 from flask import request
 import datetime
+import os
 
 
 class Helper():
@@ -19,3 +20,11 @@ class Helper():
     def time_string():
         now = datetime.datetime.now()
         return str(now.year) + str(now.month) + str(now.day) + str(now.hour) + str(now.minute) + str(now.second) + str(now.microsecond)
+
+    # silent remove file that may or may not exist
+    @staticmethod
+    def silent_remove(filename):
+        try:
+            os.remove(filename)
+        except OSError:
+            pass

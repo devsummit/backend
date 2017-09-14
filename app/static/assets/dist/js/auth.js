@@ -29,6 +29,29 @@
         } : null
     });
 
+    const ajaxObjForm = (url, methodType, payloads, onSuccess) => ({
+        url : 'api/v1/'+url,
+        type: methodType,
+        data: payloads,
+        processData: false,
+        dataType: 'json',
+        contentType: false,
+        headers: {
+            'Authorization': dsa.acess_token()
+        },
+        success: onSuccess ? function(result){
+            if(result['expired']) {
+                clearCredential();
+                window.location.href = '/login';
+            } else {
+                onSuccess(result);
+            }
+        } : null,
+        error: function(err) {
+            console.log(err)
+        }
+    });
+
     function storeCredential(data){
       Object.keys(data).map((key)=>{
         localStorage.setItem(baseStorage+'-'+key, data[key]);
@@ -41,7 +64,7 @@
     }
 
     var dsa = {}
-
+    
     /* Request service To Api */
     dsa.get = function(url, onSuccess=null) {
         $.ajax(ajaxObj(url, 'GET', null, onSuccess));
@@ -67,6 +90,39 @@
         const refresh = !!localStorage[baseStorage+'-refresh_token'] ? localStorage[baseStorage+'-refresh_token'] : '';
         return refresh;
     }
+
+    dsa.getForm = function(url, onSuccess=null) {
+        $.ajax(ajaxObjForm(url, 'GET', null, onSuccess));
+    };
+
+    dsa.postForm = function(url, payloads=null, onSuccess=null) {
+        $.ajax(ajaxObjForm(url, 'POST', payloads, onSuccess));
+    };
+
+    dsa.patchForm = function(url, payloads=null, onSuccess=null) {
+        $.ajax(ajaxObjForm(url, 'PATCH', payloads, onSuccess));
+    };
+    
+    dsa.request = function(url, method, payloads, onSuccess){
+        $.ajax({
+            url : url,
+            type: method,
+            data: JSON.stringify(payloads),
+            contentType: "application/json; charset=utf-8",
+            dataType   : "json",
+            headers: {
+            Authorization: dsa.acess_token()
+            },
+            success    : function(result){
+                if(result['expired']) {
+                    clearCredential();
+                    window.location.href = '/login';
+                } else {
+                    onSuccess(result);
+                }
+            }
+        });
+    } 
 
     /* Login func */
     dsa.login = function(payloads, onSuccess) {

@@ -111,7 +111,6 @@
 
             const btd_id = $(this).attr('id');
             const id = btd_id.substring(4, btd_id.length);
-            console.log(id)
             $('.btn-yes').attr("id", id);
         })
 
@@ -121,7 +120,6 @@
 
             dsa.get('events', function (result) {
                 const events = result['data'];
-                console.log(events)
                 var select = $(".add-schedule-events")
                 events.map(function (response) {
                     // add to select

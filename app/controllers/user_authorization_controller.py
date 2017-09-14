@@ -19,8 +19,8 @@ class UserAuthorizationController(BaseController):
 
     @staticmethod
     def login(request):
-
         provider = request.json['provider'] if 'provider' in request.json else None
+
         admin = request.json['admin'] if 'admin' in request.json else None
         if provider is None:
             username = request.json['username'] if 'username' in request.json else None

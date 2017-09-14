@@ -55,7 +55,6 @@
             "referal_code": $('.referal-code').val()
         };
         dsa.patch('referals/' + id, payload, function(result) {
-            console.log(result, 'saved');
             if(result.meta.success) {
                 window.location = "http://localhost:5000/referals";
             }

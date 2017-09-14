@@ -27,6 +27,9 @@ from app.controllers.attendee_controller import AttendeeController
 from app.controllers.payment_controller import PaymentController
 from app.controllers.referal_controller import ReferalController
 from app.controllers.user_controller import UserController
+from app.controllers.partner_controller import PartnerController
+from app.controllers.entry_cash_log_controller import EntryCashLogController
+from app.controllers.sponsor_controller import SponsorController
 from app.configs.constants import ROLE
 
 
@@ -362,6 +365,14 @@ def speaker_document(*args, **kwargs):
     elif(request.method == 'GET'):
         return SpeakerDocumentController.show(user)
 
+@api.route('/document_speaker_admin', methods=['POST'])
+@token_required
+def speaker_document_admin(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    print(request);
+    if(request.method == 'POST'):
+        return SpeakerDocumentController.admin_create(request, user)
+
 # GET SPECIFIC FILE UPLOADED BY THE SPEAKER || DELETE SPECIFIC FILE
 
 
@@ -568,3 +579,72 @@ def check_referal(*args, **kwargs):
 def me(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return UserController.show(user['id'])
+
+
+@api.route('/partners/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def partners_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return PartnerController.show(id)
+    elif(request.method == 'PATCH' or request.method == 'PUT'):
+        return PartnerController.update(id, request)
+    else:
+        return PartnerController.delete(id)
+
+
+@api.route('/partners', methods=['GET', 'POST'])
+@token_required
+def partners(*args, **kwargs):
+    if(request.method == 'GET'):
+        return PartnerController.index(request)
+    else:
+        return PartnerController.create(request)
+
+
+@api.route('/entrycashlogs', methods=['GET', 'POST'])
+@token_required
+def get_entry_cash_log(*args, **kwargs):
+    if(request.method == 'POST'):
+        return EntryCashLogController.create(request)
+    elif(request.method == 'GET'):
+        return EntryCashLogController.index(request)
+
+
+@api.route('/entrycashlogs/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def entry_cash_log_id(id, *args, **kwargs):
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        return EntryCashLogController.update(request, id)
+    elif (request.method == 'DELETE'):
+        return EntryCashLogController.delete(id)
+    elif (request.method == 'GET'):
+        return EntryCashLogController.show(id)
+
+
+@api.route('/sponsors', methods=['GET', 'POST'])
+@token_required
+def get_sponsors(*args, **kwargs):
+    if(request.method == 'GET'):
+        return SponsorController.index(request)
+    elif(request.method == 'POST'):
+        return SponsorController.create(request)
+
+
+@api.route('/sponsors/<id>', methods=['GET', 'PATCH', 'PUT', 'DELETE'])
+@token_required
+def get_sponsor_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SponsorController.show(id)
+    elif (request.method in ['PATCH', 'PUT']):
+        return SponsorController.update(id, request)
+    else:
+        return SponsorController.delete(id)
+
+
+@api.route('/sponsors/<id>/logs', methods=['GET', 'POST'])
+@token_required
+def get_sponsor_log(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SponsorController.get_logs(id)
+    elif (request.method in 'POST'):
+        return SponsorController.create_log(request, id)

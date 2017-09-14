@@ -11,6 +11,9 @@ from app.services import eventservice
 from app.configs.constants import EVENTS_TYPE
 from app.services import stageservice
 from app.services import scheduleservice
+from app.services import partnerservice
+from app.services import entrycashlogservice
+from app.services import sponsorservice
 
 
 class MainController(BaseController):
@@ -61,3 +64,18 @@ class MainController(BaseController):
     def getSchedules():
         schedules = scheduleservice.get()
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
+
+    def getPartners():
+        partners = partnerservice.get(request)
+        return render_template('admin/partnership/partners/partners.html', partners=partners['data'])
+
+    def getEntryCashLogs():
+        entrycashlogs = entrycashlogservice.get(request)
+        return render_template('admin/entrycash/entrycash.html', entrycashlogs=entrycashlogs['data'])
+
+    def getSponsors():
+        sponsors = sponsorservice.get(request)
+        return render_template('admin/partnership/sponsors/sponsors.html', sponsors=sponsors['data'])
+
+    def changepassword():
+        return render_template('admin/users/changepassword.html')

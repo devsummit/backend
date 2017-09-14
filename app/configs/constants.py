@@ -23,6 +23,19 @@ EVENT_DATES = {
     '3': '2017-11-15'
 }
 
+SPONSOR_STAGES = {
+    '1': 'lead',
+    '2': 'prospect',
+    '3': 'official'
+}
+
+SPONSOR_TYPES = {
+    '1': 'diamond',
+    '2': 'platinum',
+    '3': 'gold',
+    '4': 'silver'
+}
+
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
 # Change these consts to devsummit later
 MERCHANT_ID = 'M1066775'

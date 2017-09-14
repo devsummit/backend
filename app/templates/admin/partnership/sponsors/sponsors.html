@@ -1,0 +1,205 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %}
+    <title> Sponsor lists </title>
+{% endblock %}
+    
+{% set globals={'base_route': 'sponsors', 'api_route': 'sponsors'} %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+
+    <h1>
+        Sponsors
+        <small>List of Sponsors</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Sponsors</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <div class="box-body">
+            <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+
+            <table id="sponsors-list1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Sponsor Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Note</th>
+                        <th>Type</th>
+                        <th>Stage</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sponsor in sponsors %}
+                    <tr>
+                        <td>
+                            {{ sponsor.name|e }}
+                        </td>
+                        <td>
+                            {{ sponsor.email|e }}
+                        </td>
+                        <td>
+                            {{ sponsor.phone|e }}
+                        </td>
+                        <td>
+                            {{ sponsor.note|e }}
+                        </td>
+                        <td>
+                            {% if sponsor.type %}
+                                {{ sponsor_types[sponsor.type]|e|title }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ sponsor_stages[sponsor.stage]|title }}
+                        </td>
+                        <td>
+                            <button id='btd-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-sponsor-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                            <button id='btd-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% include "admin/base/modal_delete.html" %} 
+    {% include "admin/partnership/sponsors/sponsors_edit.html" %} 
+    {% include "admin/partnership/sponsors/sponsors_add.html" %} 
+{% endblock %}
+
+{% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+
+    <!-- page script -->
+    <script>
+        /* Display sponsor Detail */
+        $('.btn-sponsor-edit').click(function (event) {
+            $('.modal-title').html('Edit Sponsor');
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+            let select = $('#sponsor-stage');
+            select.find('option').remove();
+
+            let selected_sponsor_type;
+            let selected_sponsor_stage;
+
+            dsa.get('sponsors/' + id, function (result) {
+                const data = result['data'];
+
+                selected_sponsor_stage = data['stage']
+                selected_sponsor_type = data['type']
+
+                $('#sponsor-name').val(data['name']);
+                $('#sponsor-email').val(data['email']);
+                $('#sponsor-phone').val(data['phone']);
+                $('#sponsor-note').val(data['note']);
+
+                SPONSOR_STAGES.map(function (stage) {
+                    let option = document.createElement('option');
+                    option.innerHTML = capitalizeFirstLetter(stage.type);
+                    option.value = stage.id;
+
+                    // Set selected option
+                    if (stage.id === parseInt(selected_sponsor_stage)) {
+                        option.selected = true;
+                    }
+
+                    select.append(option);
+                });
+
+                let sponsor_type_select_edit = $("#sponsor-type");
+                sponsor_type_select_edit.find('option').remove();
+
+                SPONSOR_TYPES.map(function (type) {
+                    let option = document.createElement('option');
+                    option.innerHTML = capitalizeFirstLetter(type.type);
+                    option.value = type.id;
+
+                    // Set selected option
+                    if (type.id === parseInt(selected_sponsor_type)) {
+                        option.selected = true;
+                    }
+
+                    sponsor_type_select_edit.append(option);
+                });
+
+                if (parseInt(data['stage']) === 3) {
+                    $('#sponsor-type-wrap').show();
+                } else {
+                    $('#sponsor-type-wrap').hide();
+                }
+            });
+
+            $('.btn-edit-save').attr("id", id);
+        });
+
+        $('.btn-add').click(function (event) {
+            $('#i-sponsor-type-wrap').hide();
+            $('.modal-title').html('Add New Sponsor');
+
+            let sponsor_stage_select = $("#i-sponsor-stage");
+            sponsor_stage_select.find('option').remove();
+
+            SPONSOR_STAGES.map(function (stage) {
+                let option = document.createElement('option');
+                option.innerHTML = capitalizeFirstLetter(stage.type);
+                option.value = stage.id;
+
+                sponsor_stage_select.append(option);
+            });
+
+            let sponsor_type_select = $("#i-sponsor-type");
+            sponsor_type_select.find('option').remove();
+
+            SPONSOR_TYPES.map(function (type) {
+                let option = document.createElement('option');
+                option.innerHTML = capitalizeFirstLetter(type.type);
+                option.value = type.id;
+
+                sponsor_type_select.append(option);
+            });
+        });
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        $('.btn-delete').click(function (event) {
+            $('.modal-title').html('Are you sure want to delete this sponsor?');
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            $('.btn-yes').attr("id", id);
+        });
+
+        $(function () {
+            $('#sponsors-list1').DataTable({
+                columnDefs: [{
+                    targets: [ -1 ],
+                    orderable: false,
+                }]
+            });
+        })
+    </script>
+{% endblock %}

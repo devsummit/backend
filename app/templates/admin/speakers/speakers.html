@@ -54,6 +54,9 @@
                             <button id='bte-{{ speaker.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
+                            <button id='bte-{{ speaker.id }}' type="button" class="btn btn-sm btn-info btn-document" data-toggle="modal" data-target="#modal-document">
+                                Add Document
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -63,6 +66,8 @@
 
         {% include "admin/users/user_detail.html" %}
         {% include "admin/speakers/speaker_edit.html" %}
+        {% include "admin/speakers/speaker_document.html" %}
+
 {% endblock %}
 
 {% block footer_link %}
@@ -86,6 +91,18 @@
                 $('.speaker-summary').val(data['summary']);
                 $('.speaker-information').val(data['information']);
                 $('.btn-save').attr("id", `${data['id']} ${data['user_id']}`);
+            });
+        })
+
+        $('.btn-document').click(function (event) {
+            $('.modal-title').html('Add Document');
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+
+            dsa.get('speakers/' + id, function (result) {
+                // bind result value in to speaker_detail.html 
+                const data = result['data'];
+                $('.btn-add').attr("id", `${data['id']} ${data['user_id']}`);
             });
         })
 
