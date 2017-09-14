@@ -18,7 +18,7 @@ class PaymentService():
         self.authorization = base64.b64encode(bytes(SERVER_KEY, 'utf-8')).decode()
         self.headers = {
             'Accept': 'application/json',
-            'Content-Type': 'application/json', 
+            'Content-Type': 'application/json',
             'Authorization': 'Basic ' + self.authorization
         }
 
@@ -84,8 +84,8 @@ class PaymentService():
             # payloads validation for BCA virtual account
             if not all(
                 isinstance(string, str) for string in [
-                        payloads['payment_type'], 
-                        payloads['order_id'], 
+                        payloads['payment_type'],
+                        payloads['order_id'],
                         payloads['email'],
                         payloads['first_name'],
                         payloads['last_name'],
@@ -174,7 +174,8 @@ class PaymentService():
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
 
         if(payloads['bank'] == 'mandiri_bill'):
-            # payload validation for bni
+            
+            # payload validation for mandiri
             if not all(
                 isinstance(string, str) for string in [
                     payloads['payment_type'],
@@ -189,6 +190,10 @@ class PaymentService():
             data['transaction_details'] = {}
             data['transaction_details']['order_id'] = payloads['order_id']
             data['transaction_details']['gross_amount'] = payloads['gross_amount']
+            data['echannel'] = {}
+            data['echannel']['bill_info1'] = 'Payment for:'
+            data['echannel']['bill_info2'] = 'DevSummit Indonesia'
+        
 
         midtrans_api_response = self.send_to_midtrans_api(data)
 
@@ -212,16 +217,19 @@ class PaymentService():
         ) and not isinstance(payloads['gross_amount'], int):
             return response.build_invalid_payload_response()
 
+        # CHECK TOKEN ID BEFORE CONTINUE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         # get the token id first
         token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + str(payloads['gross_amount']) + '&client_key=' + payloads['client_key'], headers=self.headers)
         token_id = token_id.json()
-        # prepare data 
+
+
+        # prepare data
         data = {}
         if 'status_code' in token_id and token_id['status_code'] == '200':
             data['saved_token_id'] = token_id['saved_token_id']
             data['masked_card'] = token_id['masked_card']
         else:
-            return 'Failed to get token'
+            return response.set_message(token_id['validation_messages'][0]).set_error(True).build()
 
         # check for referal discount
         ref = self.get_order_referal(payloads['order_id'])
@@ -245,8 +253,8 @@ class PaymentService():
 
     def authorize(self, payloads):
         response = ResponseBuilder()
-        if not all(isinstance(string, str) for string in [ 
-            payloads['payment_type'], 
+        if not all(isinstance(string, str) for string in [
+            payloads['payment_type'],
             payloads['type'],
             payloads['order_id']
         ]) and not isinstance(payloads['gross_amount'], int):
@@ -267,7 +275,7 @@ class PaymentService():
         transaction_status = requests.post(
             endpoint,
             headers=self.headers,
-            json=data 
+            json=data
         )
         transaction_status = transaction_status.json()
 
@@ -309,7 +317,7 @@ class PaymentService():
         data['customer_details']['first_name'] = payloads['first_name']
         data['customer_details']['last_name'] = payloads['last_name']
         data['customer_details']['email'] = payloads['email']
-        data['customer_details']['phone'] = payloads['phone']        
+        data['customer_details']['phone'] = payloads['phone']
 
         if (payloads['payment_type'] == 'cimb_clicks'):
             data['cimb_clicks'] = {}
@@ -382,15 +390,17 @@ class PaymentService():
                 json=payloads
         )
         payload = result.json()
-
-        if(payload['status_code'] != '400'):
-
+        if(payload['status_code'] == '400'):
+            return response.set_message(payload['validation_messages'][0]).set_error(True).build()
+        else:
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
                 payload['bank'] = payloads['bank']
+            elif payloads['payment_type'] == 'echannel':
+                payload['bank'] = 'mandiri_bill'
             else:
                 if 'bank' in payload:
                     payload['bank'] = payload['bank']
-                elif 'bank_transfer' in payload:
+                elif 'bank_transfer' in payloads:
                     payload['bank'] = payloads['bank_transfer']['bank']
                 else:
                     payload['bank'] = None
@@ -403,18 +413,14 @@ class PaymentService():
                 payload['bank'] = 'indomaret'
                 payload['fraud_status'] = payload['payment_code']
 
-            if payloads['payment_type'] != 'cstore' and payloads['transaction_details']['gross_amount'] != payload['item_details']['total']:
-                return BaseController.send_error_api(None, 'Gross Amount does not match')
-
             if ('status_code' in payload and payload['status_code'] == '201' or payload['status_code'] == '200'):
                 self.save_payload(payload, payloads)
-
 
             # if  not fraud and captured save ticket to user_ticket table
             if('fraud_status' in payload and payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
                 order = db.session.query(Order).filter_by(id=payload['order_id']).first()
                 self.save_paid_ticket(order.as_dict())
-
+            
         return response.set_data(payload).build()
 
     def update(self, id):
