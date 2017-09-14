@@ -10,10 +10,11 @@ SLOT = {
 	'commercial': 3600
 }
 
-EVENTS_TYPE = {
-    'booth',
+EVENT_TYPES = {
+    'discuss panel',
     'speaker',
-    'hackaton'
+    'hackaton',
+    'other'
 }
 
 EVENT_DATES = {
