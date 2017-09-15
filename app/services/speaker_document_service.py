@@ -1,6 +1,6 @@
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from flask import Flask, request
+from flask import Flask, request  # noqa
 import os
 from app.services.helper import Helper 
 # import model class

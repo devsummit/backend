@@ -52,4 +52,4 @@ class Payment(db.Model, BaseModel):
         def __init__(self):
             self.created_at = datetime.datetime.now()
             self.updated_at = datetime.datetime.now()
-            self.expired_at = datetime.datetime.now() + datetime.timedelta(minutes = 60)
+            self.expired_at = datetime.datetime.now() + datetime.timedelta(minutes=60)
