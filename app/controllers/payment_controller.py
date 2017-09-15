@@ -43,7 +43,7 @@ class PaymentController(BaseController):
         return BaseController.send_response_api(payment['data'], payment['message'])
 
     @staticmethod
-    def create(request):
+    def create(request, user_id):
         payment_type = request.json['payment_type'] if 'payment_type' in request.json else None
         gross_amount = request.json['gross_amount'] if 'gross_amount' in request.json else None
         bank = request.json['bank'] if 'bank' in request.json else None
@@ -188,18 +188,17 @@ class PaymentController(BaseController):
 
                 result = paymentservice.internet_banking(payloads)
 
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
+                if result['error']:
+                    return BaseController.send_response_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_error_api(result['data'], result['message'])
 
             if (payment_type == 'bca_klikbca'):
 
                 payloads['payment_type'] = payment_type
                 payloads['description'] = PaymentController.is_field_exist(
                     request, 'description')
-                payloads['user_id'] = PaymentController.is_field_exist(
-                    request, 'user_id')
+                payloads['user_id'] = user_id
 
                 result = paymentservice.internet_banking(payloads)
 
@@ -221,12 +220,11 @@ class PaymentController(BaseController):
                     request, 'random')
 
                 if PaymentController.card_number_validation(payloads['card_number']) is False:
-                    return BaseController.send_error_api(None, 'Credit Card not valid')
+                    return BaseController.send_error_api(None, 'Card number is not valid')
 
                 result = paymentservice.internet_banking(payloads)
-
                 if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
+                    return BaseController.send_response_api(result, 'Mandiri klikpay transaction created succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
 
