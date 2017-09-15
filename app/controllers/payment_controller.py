@@ -71,11 +71,11 @@ class PaymentController(BaseController):
             if (bank == 'bca'):
                 email = request.json['email'] if 'email' in request.json else None
                 first_name = request.json['first_name'] if 'first_name' in request.json else None
-                last_name = request.json['last_name'] if 'last_name' in request.json else None
+                last_name = request.json['last_name'] if 'last_name' in request.json else ''
                 phone = request.json['phone'] if 'phone' in request.json else None
-                va_number = request.json['va_number'] if 'va_number' in request.json else None
+                # va_number = request.json['va_number'] if 'va_number' in request.json else None
 
-                if payment_type and gross_amount and order_id and email and first_name and last_name and phone and bank and va_number:
+                if payment_type and gross_amount and order_id and email and first_name and phone and bank:
                     payloads = {
                         'payment_type': payment_type,
                         'gross_amount': gross_amount,
@@ -84,8 +84,8 @@ class PaymentController(BaseController):
                         'first_name': first_name,
                         'last_name': last_name,
                         'phone': phone,
-                        'bank': bank,
-                        'va_number': va_number
+                        'bank': bank
+                        # 'va_number': va_number
                     }
                 else:
                     return BaseController.send_error_api(None, 'field is not complete')
@@ -102,8 +102,7 @@ class PaymentController(BaseController):
                 first_name = request.json['first_name'] if 'first_name' in request.json else None
                 last_name = request.json['last_name'] if 'last_name' in request.json else ''
                 phone = request.json['phone'] if 'phone' in request.json else None
-                va_number = request.json['va_number'] if 'va_number' in request.json else None
-                if email and first_name and last_name and phone and va_number:
+                if email and first_name and last_name and phone:
                     payloads = {
                         'payment_type': payment_type,
                         'gross_amount': gross_amount,
@@ -112,8 +111,7 @@ class PaymentController(BaseController):
                         'first_name': first_name,
                         'last_name': last_name,
                         'phone': phone,
-                        'bank': bank,
-                        'va_number': va_number
+                        'bank': bank
                     }
                 else:
                     return BaseController.send_error_api(None, 'field is not complete')
@@ -187,7 +185,6 @@ class PaymentController(BaseController):
                 payloads['payment_type'] = payment_type
 
                 result = paymentservice.internet_banking(payloads)
-
                 if result['error']:
                     return BaseController.send_error_api(result['data'], result['message'])
                 else:
