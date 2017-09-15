@@ -38,10 +38,10 @@ SPONSOR_TYPES = {
 }
 
 VA_NUMBER = {
-    'BCA': '877800',
-    'Permata': '431800',
-    'Mandiri_bill': '242801',
-    'BNI': '119800'
+    'bca': '877800',
+    'permata': '431800',
+    'mandiri_bill': '242801',
+    'bni': '119800'
 }
 
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
