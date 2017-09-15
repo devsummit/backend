@@ -9,7 +9,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 # import classes
 from app.models.base_model import BaseModel
 from app.models.user_photo import UserPhoto
-from app.models.role import Role
+from app.models.role import Role  # noqa
 
 from app.models import db
 from app.services.helper import Helper
@@ -72,9 +72,14 @@ class User(db.Model, BaseModel):
     def include_photos(self):
         results = db.session.query(UserPhoto).filter_by(user_id=self.id).all()
         self.photos = []
-        for result in results:
-            data = result.as_dict()
-            data['url'] = Helper().url_helper(
-                data['url'], current_app.config['GET_DEST'])
-            self.photos.append(data)
+        if len(results) < 1:
+            self.photos.append({
+                'url': 'https://museum.wales/media/40374/thumb_480/empty-profile-grey.jpg'
+            })
+        else:
+            for result in results:
+                data = result.as_dict()
+                data['url'] = Helper().url_helper(
+                    data['url'], current_app.config['GET_DEST'])
+                self.photos.append(data)
         return self

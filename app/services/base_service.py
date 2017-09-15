@@ -1,9 +1,10 @@
 import sys
 from app.models import db
-from app.models.attendee import Attendee
-from app.models.booth import Booth
-from app.models.speaker import Speaker
-from app.models.ambassador import Ambassador
+from app.models.attendee import Attendee  # noqa
+from app.models.booth import Booth  # noqa
+from app.models.speaker import Speaker  # noqa
+from app.models.ambassador import Ambassador  # noqa
+
 
 class BaseService():
 
@@ -37,9 +38,8 @@ class BaseService():
         self.paginated['data'] = _results
         return self.paginated
 
-
     def outer_include(self, data, fields):
-        entity_name = self.__class__.__name__.lower().replace('service','')
+        entity_name = self.__class__.__name__.lower().replace('service', '')
         for field in fields:
             if field:
                 base_model = getattr(sys.modules[__name__], field.title())
@@ -48,13 +48,12 @@ class BaseService():
                 # we cannot do like this:
                 # filter_by(eval(entity_name)=data['id'])
                 # so we still have to apply it with condition
-                if entity_name=='user':
+                if entity_name == 'user':
                     prep = db.session.query(Model).filter_by(user_id=data['id']).first()
                     data[field.lower()] = prep.as_dict() if prep else None
                 # add other enitity filtering here like above if needed
                 # if ...
         return data
-
 
     def transform(self):
         _results = []

@@ -35,7 +35,7 @@ class UserAuthorizationController(BaseController):
                             return BaseController.send_error_api({'unauthorized': True}, 'unauthorized, must be admin to access this page.')
                     if user.verify_password(password):
                         token = userservice.save_token()
-                        user = user.include_photos().as_dict()
+                        user = userservice.include_role_data(user.include_photos().as_dict())
                         return BaseController.send_response_api({'access_token': token['data'].access_token, 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
                         return BaseController.send_error_api({'wrong_credential': True}, 'wrong credentials')
@@ -62,7 +62,7 @@ class UserAuthorizationController(BaseController):
                     provider, user_social_id)
                 if user is not None:
                     token = userservice.save_token(provider)
-                    user = user.include_photos().as_dict()
+                    user = userservice.include_role_data(user.include_photos().as_dict())
                     return BaseController.send_response_api({'access_token': token['data'].access_token, 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                 else:
                     return BaseController.send_error_api({'not_registered': True}, 'user is not registered')
