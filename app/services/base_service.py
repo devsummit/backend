@@ -39,13 +39,20 @@ class BaseService():
 
 
     def outer_include(self, data, fields):
-        # TODO: add filterby key need to be dynamic to be able to used by other class than user
+        entity_name = self.__class__.__name__.lower().replace('service','')
         for field in fields:
             if field:
                 base_model = getattr(sys.modules[__name__], field.title())
                 Model = type(field, (base_model,), {})
-                prep = db.session.query(Model).filter_by(user_id=data['id']).first()
-                data[field.lower()] = prep.as_dict() if prep else None
+                # since filter_by need an explicit keyword not an expression
+                # we cannot do like this:
+                # filter_by(eval(entity_name)=data['id'])
+                # so we still have to apply it with condition
+                if entity_name=='user':
+                    prep = db.session.query(Model).filter_by(user_id=data['id']).first()
+                    data[field.lower()] = prep.as_dict() if prep else None
+                # add other enitity filtering here like above if needed
+                # if ...
         return data
 
 
