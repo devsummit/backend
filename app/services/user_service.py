@@ -119,9 +119,9 @@ class UserService(BaseService):
         user = user.include_photos().as_dict()
         # add relation includes
         includes = ''
-        if user['role_id']!=1:
+        if user['role_id'] != 1:
             for role, role_id in ROLE.items():
-                if role_id==user['role_id']:
+                if role_id == user['role_id']:
                     includes = role.title()   
         user = super().outer_include(user, [includes])
         return response.set_data(user).build()
