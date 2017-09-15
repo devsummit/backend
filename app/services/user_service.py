@@ -2,7 +2,6 @@ import oauth2 as oauth
 import json
 import requests
 import datetime
-import copy
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -14,7 +13,7 @@ from app.models.booth import Booth  # noqa
 from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
-from app.models.ambassador import Ambassador
+from app.models.ambassador import Ambassador  # noqa
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
@@ -409,7 +408,6 @@ class UserService(BaseService):
 
 			# apply includes data if not admin (role_id != 1)
 			if 'role_id' in payloads and payloads['role_id'] != 1:
-				models = ['attendee', 'speaker', 'booth', 'ambassador']
 				includes = payloads['includes']
 				data = self.postIncludes(includes)
 				return data
@@ -441,7 +439,6 @@ class UserService(BaseService):
 		except SQLAlchemyError as e:
 			data = e.args
 			return response.set_message(data).set_error(True).set_data(None).build()
-			
 
 	def editIncludes(self, includes, payloads):		
 		user_id = self.model_user.first().as_dict()['id']				
@@ -458,4 +455,3 @@ class UserService(BaseService):
 				setattr(entityModel, key, payloads[key])
 			db.session.add(entityModel)
 		db.session.commit()
-

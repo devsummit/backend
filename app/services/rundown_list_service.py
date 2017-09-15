@@ -37,7 +37,6 @@ class RundownListService():
         response = ResponseBuilder()
         try:
             rundownlist = db.session.query(RundownList).filter_by(id=id)
-            print (rundownlist)
             rundownlist.update({
                 'description': payloads['description'],
                 'time_start': datetime.datetime.strptime(payloads['time_start'], "%Y-%m-%d %H:%M:%S.%f"),
