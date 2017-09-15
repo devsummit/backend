@@ -214,7 +214,6 @@ class PaymentService():
         ) and not isinstance(payloads['gross_amount'], int):
             return response.build_invalid_payload_response()
 
-        # CHECK TOKEN ID BEFORE CONTINUE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         # get the token id first
         token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + str(payloads['gross_amount']) + '&client_key=' + payloads['client_key'], headers=self.headers)
         token_id = token_id.json()
@@ -285,7 +284,7 @@ class PaymentService():
 
             db.session.commit()
 
-            return response.set_data(transaction_status).set_message('Success').build()
+            return response.set_data(transaction_status).set_message('Authorization success').build()
 
         else:
             return response.set_error(True).set_data(transaction_status).set_message('change fraud status is failed').build()
@@ -447,7 +446,7 @@ class PaymentService():
             order = payment.order.as_dict()
             payment = payment.as_dict()
         else:
-            return 'payment not found'
+            return response.set_error(True).set_message('payment not found').build()
 
         payment_status = requests.get(
             url + str(payment['order_id']) + '/status',
@@ -469,24 +468,9 @@ class PaymentService():
                 if (payment.first().as_dict()['transaction_status'] == 'expire'):
                     # on payment success
                     self.save_paid_ticket(order)
+            return response.set_data(status).build()
 
         return response.build_invalid_payload_response()
-
-        if status['status_code'] in ['200', '201']:
-
-            if (payment['transaction_status'] != status['transaction_status']):
-                payment = db.session.query(Payment).filter_by(id=id)
-                payment.update({
-                    'updated_at': datetime.datetime.now(),
-                    'transaction_status': status['transaction_status']
-                })
-
-                db.session.commit()
-                if (payment.first().as_dict()['transaction_status'] == 'capture'):
-                    # on payment success
-                    self.save_paid_ticket(order)
-
-        return response.set_data(status).build()
 
     def save_paid_ticket(self, order):
         item_details = db.session.query(OrderDetails).filter_by(order_id=order['id']).all()
