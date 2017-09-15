@@ -9,6 +9,7 @@ from app.models.order import Order
 from app.models.user_ticket import UserTicket
 from app.builders.response_builder import ResponseBuilder
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
+from app.configs.constants import VA_NUMBER
 
 
 class PaymentService():
@@ -89,7 +90,7 @@ class PaymentService():
                         payloads['first_name'],
                         payloads['last_name'],
                         payloads['phone'],
-                        payloads['va_number']
+                        # payloads['va_number']
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
                 return response.build_invalid_payload_response()
@@ -108,7 +109,7 @@ class PaymentService():
             data['item_details'] = details
             data['bank_transfer'] = {}
             data['bank_transfer']['bank'] = payloads['bank']
-            data['bank_transfer']['va_number'] = payloads['va_number']
+            data['bank_transfer']['va_number'] = VA_NUMBER[payloads['bank']]
             data['bank_transfer']['free_text'] = {}
             data['bank_transfer']['free_text']['inquiry'] = [
                 {
@@ -150,8 +151,7 @@ class PaymentService():
                     payloads['email'],
                     payloads['first_name'],
                     payloads['last_name'],
-                    payloads['phone'],
-                    payloads['va_number']
+                    payloads['phone']
                 ]
             ) and not isinstance(payloads['gross_amount'], int):
                 return response.build_invalid_payload_response()
@@ -161,7 +161,7 @@ class PaymentService():
             data['payment_type'] = payloads['payment_type']
             data['bank_transfer'] = {}
             data['bank_transfer']['bank'] = payloads['bank']
-            data['bank_transfer']['va_number'] = payloads['va_number']
+            data['bank_transfer']['va_number'] = VA_NUMBER[payloads['bank']]
             data['customer_details'] = {}
             data['customer_details']['email'] = payloads['email']
             data['customer_details']['first_name'] = payloads['first_name']
@@ -405,8 +405,16 @@ class PaymentService():
         )
         payload = result.json()
 
-        if(str(payload['status_code']) == '400'):
-            return response.set_message(payload['validation_messages'][0]).set_error(True).build()
+        if(str(payload['status_code']) in ['400', '202']):
+
+            if 'validation_messages' in payload and payload['validation_messages'][0]:
+                messages = payload['validation_messages'][0] 
+            elif 'status_message' in payload:
+                messages = payload['status_message']
+            else:
+                messages = 'unknown error occured'
+
+            return response.set_error(True).set_status_code(payload['status_code']).set_message(messages).build()
         else:
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
                 payload['bank'] = payloads['bank']
@@ -421,7 +429,7 @@ class PaymentService():
                     payload['bank'] = None
 
             if 'status_code' in payload and payload['status_code'] == '406':
-                return payload
+                return response.set_data(payload).set_error(True).set_message('Duplicate order ID. Order ID has already been utilized previously').build()
 
             # handle indomaret payment
             if payloads['payment_type'] == 'cstore':
@@ -435,8 +443,8 @@ class PaymentService():
             if('fraud_status' in payload and payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
                 order = db.session.query(Order).filter_by(id=payload['order_id']).first()
                 self.save_paid_ticket(order.as_dict())
-
-        return response.set_data(payload).build()
+        message = payload['status_message'] if 'status_message' in payload else 'No message from payload' 
+        return response.set_data(payload).set_message(message).build()
 
     def update(self, id):
         response = ResponseBuilder()

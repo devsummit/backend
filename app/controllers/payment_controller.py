@@ -43,7 +43,7 @@ class PaymentController(BaseController):
         return BaseController.send_response_api(payment['data'], payment['message'])
 
     @staticmethod
-    def create(request):
+    def create(request, user_id):
         payment_type = request.json['payment_type'] if 'payment_type' in request.json else None
         gross_amount = request.json['gross_amount'] if 'gross_amount' in request.json else None
         bank = request.json['bank'] if 'bank' in request.json else None
@@ -63,19 +63,19 @@ class PaymentController(BaseController):
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'Succesfully')
+                if result['error']:
+                    return BaseController.send_error_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_response_api(result['data'], result['message'])
 
             if (bank == 'bca'):
                 email = request.json['email'] if 'email' in request.json else None
                 first_name = request.json['first_name'] if 'first_name' in request.json else None
-                last_name = request.json['last_name'] if 'last_name' in request.json else None
+                last_name = request.json['last_name'] if 'last_name' in request.json else ''
                 phone = request.json['phone'] if 'phone' in request.json else None
-                va_number = request.json['va_number'] if 'va_number' in request.json else None
+                # va_number = request.json['va_number'] if 'va_number' in request.json else None
 
-                if payment_type and gross_amount and order_id and email and first_name and last_name and phone and bank and va_number:
+                if payment_type and gross_amount and order_id and email and first_name and phone and bank:
                     payloads = {
                         'payment_type': payment_type,
                         'gross_amount': gross_amount,
@@ -84,26 +84,25 @@ class PaymentController(BaseController):
                         'first_name': first_name,
                         'last_name': last_name,
                         'phone': phone,
-                        'bank': bank,
-                        'va_number': va_number
+                        'bank': bank
+                        # 'va_number': va_number
                     }
                 else:
                     return BaseController.send_error_api(None, 'field is not complete')
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'Succesfully')
+                if result['error']:
+                    return BaseController.send_error_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_response_api(result['data'], result['message'])
 
             if(bank == 'bni'):
                 email = request.json['email'] if 'email' in request.json else None
                 first_name = request.json['first_name'] if 'first_name' in request.json else None
                 last_name = request.json['last_name'] if 'last_name' in request.json else ''
                 phone = request.json['phone'] if 'phone' in request.json else None
-                va_number = request.json['va_number'] if 'va_number' in request.json else None
-                if email and first_name and last_name and phone and va_number:
+                if email and first_name and last_name and phone:
                     payloads = {
                         'payment_type': payment_type,
                         'gross_amount': gross_amount,
@@ -112,18 +111,17 @@ class PaymentController(BaseController):
                         'first_name': first_name,
                         'last_name': last_name,
                         'phone': phone,
-                        'bank': bank,
-                        'va_number': va_number
+                        'bank': bank
                     }
                 else:
                     return BaseController.send_error_api(None, 'field is not complete')
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'bank transfer transaction is created')
+                if result['error']:
+                    return BaseController.send_error_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_response_api(result['data'], result['message'])
 
             if(bank == 'mandiri_bill'):
                 payloads = {
@@ -165,9 +163,9 @@ class PaymentController(BaseController):
 
             result = paymentservice.credit_payment(payloads)
 
-            if 'error' in result:
+            if result['error']:
                 return BaseController.send_error_api(result['data'], result['message'])
-            return BaseController.send_response_api(result, 'Credit card transaction created succesfully') 
+            return BaseController.send_response_api(result['data'], result['message']) 
 
         else:
             payloads = {
@@ -187,26 +185,24 @@ class PaymentController(BaseController):
                 payloads['payment_type'] = payment_type
 
                 result = paymentservice.internet_banking(payloads)
-
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
+                if result['error']:
+                    return BaseController.send_error_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_response_api(result['data'], result['message'])
 
             if (payment_type == 'bca_klikbca'):
 
                 payloads['payment_type'] = payment_type
                 payloads['description'] = PaymentController.is_field_exist(
                     request, 'description')
-                payloads['user_id'] = PaymentController.is_field_exist(
-                    request, 'user_id')
+                payloads['user_id'] = user_id
 
                 result = paymentservice.internet_banking(payloads)
 
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'BCA klikbca transaction created succesfully')
+                if result['error']:
+                    return BaseController.send_error_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_response_api(result['data'], result['message'])
 
             if (payment_type == 'mandiri_clickpay'):
 
@@ -221,14 +217,13 @@ class PaymentController(BaseController):
                     request, 'random')
 
                 if PaymentController.card_number_validation(payloads['card_number']) is False:
-                    return BaseController.send_error_api(None, 'Credit Card not valid')
+                    return BaseController.send_error_api(None, 'Card number is not valid')
 
                 result = paymentservice.internet_banking(payloads)
-
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
+                if result['error']:
+                    return BaseController.send_error_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_response_api(result['data'], result['message'])
 
             if (payment_type == 'bri_epay'):
 
@@ -236,10 +231,10 @@ class PaymentController(BaseController):
 
                 result = paymentservice.internet_banking(payloads)
 
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'BRI epay transaction created succesfully')
+                if result['error']:
+                    return BaseController.send_error_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_response_api(result['data'], result['message'])
 
             if (payment_type == 'cimb_clicks'):
 
@@ -250,30 +245,30 @@ class PaymentController(BaseController):
 
                 result = paymentservice.internet_banking(payloads)
 
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'CIMB click transaction created succesfully')
+                if result['error']:
+                    return BaseController.send_error_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_response_api(result['data'], result['message'])
 
             if (payment_type == 'danamon_online'):
                 payloads['payment_type'] = payment_type
 
                 result = paymentservice.internet_banking(payloads)
 
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'Danamon online transaction created succesfully')
+                if result['error']:
+                    return BaseController.send_response_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_error_api(result['data'], result['message'])
 
             if (payment_type == 'cstore'):
                 payloads['payment_type'] = payment_type
 
                 result = paymentservice.cstore(payloads)
 
-                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'Indomaret transaction created succesfully')
+                if result['error']:
+                    return BaseController.send_response_api(result['data'], result['message'])
                 else:
-                    return BaseController.send_error_api(None, result)
+                    return BaseController.send_error_api(result['data'], result['message'])
 
     @staticmethod
     def authorize(request):

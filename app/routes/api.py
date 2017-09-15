@@ -507,7 +507,7 @@ def payment(*args, **kwargs):
     filter = request.args.get('transaction_status')
     user = kwargs['user'].as_dict()
     if (request.method == 'POST'):
-        return PaymentController.create(request)
+        return PaymentController.create(request, user['id'])
     elif(request.method == 'GET'):
         if(user['role_id'] == ROLE['admin'] and filter):
             return PaymentController.admin_filter_payments(filter)
