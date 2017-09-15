@@ -2,6 +2,7 @@ import oauth2 as oauth
 import json
 import requests
 import datetime
+import copy
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -119,9 +120,9 @@ class UserService(BaseService):
 		user = user.include_photos().as_dict()
 		# add relation includes
 		includes = ''
-		if user['role_id']!=1:
+		if user['role_id'] != 1:
 			for role, role_id in ROLE.items():
-				if role_id==user['role_id']:
+				if role_id == user['role_id']:
 					includes = role.title()   
 		user = super().outer_include(user, [includes])
 		return response.set_data(user).build()
@@ -377,7 +378,7 @@ class UserService(BaseService):
 			data = self.model_user.first().as_dict()
 
 			# apply includes data
-			if 'admin' in payloads.values():
+			if 'admin' not in payloads.values():
 				includes = payloads['includes']
 				includes_data = payloads[includes]
 				self.postIncludes(includes, includes_data)
@@ -393,10 +394,9 @@ class UserService(BaseService):
 				'data': data
 			}
 
-	def add(self, payloads):
+	def add(self, payloads):		
 		try:
 			self.model_user = User()
-
 			self.model_user.first_name = payloads['first_name']
 			self.model_user.last_name = payloads['last_name']
 			self.model_user.email = payloads['email']
@@ -406,25 +406,68 @@ class UserService(BaseService):
 			db.session.commit()
 			data = self.model_user.as_dict()
 			
-			# apply includes data
-			if 'admin' in payloads.values():
-				includes = payloads['includes']				
-				includes_data = payloads[includes]				
-				self.postIncludes(includes, includes_data)
+			
+			# apply includes data if not admin (role_id != 1)
+			if 'role_id' in payloads and payloads['role_id'] != 1:
+				models = ['attendee', 'speaker', 'booth', 'ambassador']
+				includes = payloads['includes']
+				# for model in models:
+				# 	if model in includes.keys():				
+				# 		del includes[model]															
+				self.postIncludes(includes)
 
 			return {
 				'error': False,
 				'data': data
 			}
 		except SQLAlchemyError as e:
-			data = e.orig.args
+			data = e.args
 			return {
 				'error': True,
 				'data': data
 			}
 
-	def postIncludes(self, includes, payloads):			
-		user_id = self.model_user.first().as_dict()['id']		
+	def include_role_data(self, user):
+		if (user['role_id'] is ROLE['speaker']):
+			user = super().outer_include(user, ['Speaker'])
+		elif (user['role_id'] is ROLE['booth']):
+			user = super().outer_include(user, ['Booth'])
+		return user
+
+	def postIncludes(self, includes):
+		# included = copy.deepcopy(includes)
+		user_id = self.model_user.as_dict()['id']
+		# print ('a')
+		# print (included)								
+		# Model = self.mapIncludesToModel(included)
+		# print ('b')
+		# print (included)
+		entityModel = eval(includes['name'])()
+		entityModel.user_id = user_id
+		print(entityModel.as_dict())
+
+		for key in includes:
+			if key is not 'name':
+				setattr(entityModel, key, includes[key])
+		print(entiti)
+		db.session.add(entityModel)
+		print('cuk')
+		try:
+			db.session.commit()
+		except SQLAlchemyError as e:
+			print(e.args)
+			
+		print('berhasil cuk')
+
+	# def mapIncludesToModel(self, includes):		
+	# 	models = ['attendee', 'speaker', 'booth', 'ambassador']		
+	# 	for model in models:
+	# 		if model in includes.keys():				
+	# 			return model		
+	# 	return None
+
+	def editIncludes(self, includes, payloads):		
+		user_id = self.model_user.first().as_dict()['id']				
 		Model = self.mapIncludesToModel(includes)
 		entityModel = db.session.query(Model).filter_by(user_id=user_id)
 		entity = entityModel.first()
@@ -439,13 +482,3 @@ class UserService(BaseService):
 			db.session.add(entityModel)
 		db.session.commit()
 
-	def mapIncludesToModel(self, includes):
-		models = {
-			'attendee': Attendee,
-			'speaker': Speaker,
-			'booth': Booth,
-			'ambassador': Ambassador,
-		}
-		if includes in models.keys():
-			return models[includes]
-		return None

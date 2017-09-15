@@ -85,12 +85,14 @@
             case 'attendee':
                 var points = $('#attendee-points').val();
                 payload = {
+                    name: 'Attendee',
                     points: points ? points : 0
                 }
                 break;
             case 'booth':
                 var points = $('#booth-points').val();
                 payload = {
+                    name: 'Booth',
                     stage_id: $('#booth-stageid').val(),
                     points: points ? points : 0,
                     summary: $('#booth-summary').val()
@@ -98,6 +100,7 @@
                 break;
             case 'speaker':
                 payload = {
+                    name: 'Speaker',
                     job: $('#speaker-job').val(),
                     summary: $('#speaker-summary').val(),
                     information: $('#speaker-information').val()
@@ -105,6 +108,7 @@
                 break;
             case 'ambassador':
                 payload = {
+                    name: 'Ambassador',
                     informations: $('#ambassador-informations').val(),
                     institution: $('#ambassador-institution').val()
                 }
@@ -118,7 +122,7 @@
     var saveEdit = function(id) {
         const role = $('#account-input-select-role').find(":selected").text();
         const role_id = $('#account-input-select-role').find(":selected").val();
-        let payload = {
+        var payload = {
             "first_name": $('.account-firstname').val(),
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
@@ -126,8 +130,8 @@
             "role_id": role_id            
         };
         if(role!=='admin') {
-            payload['includes'] = role;
-            payload[role] = buildIncludesPayload(role);
+            payload['includes'] = buildIncludesPayload(role);
+            
         };
         dsa.patch('{{ globals["api_route"] }}/' + id, payload, function(result) {            
             if(result.meta.success) {
@@ -139,17 +143,17 @@
     var saveAdd = function() {
         const role = $('#account-input-select-role').find(":selected").text();
         const role_id = $('#account-input-select-role').find(":selected").val();
-        let payload = {
+        var payload = {
             "first_name": $('.account-firstname').val(),
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
             "role_id": $('#account-input-select-role').find(":selected").val()
             };
-        if(role!=='admin') {
-            payload['includes'] = role;
-            payload[role] = buildIncludesPayload(role);
             console.log(payload);
+            
+        if(role!=='admin') {
+            payload['includes'] = buildIncludesPayload(role);           
         };        
         dsa.post('{{ globals["api_route"] }}', payload, function(result) {            
             if(result.meta.success) {
