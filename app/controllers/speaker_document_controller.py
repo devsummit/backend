@@ -14,17 +14,17 @@ class SpeakerDocumentController(BaseController):
         if speaker is None:
             return BaseController.send_error_api(None, 'speaker not found')
         speaker = speaker.as_dict()
-        _speaker_documents = speakerdocumentservice.show(speaker['id'])
-        if _speaker_documents is None:
-            return BaseController.send_error_api(None, 'documents are not found')
-        return BaseController.send_response_api(_speaker_documents, 'documents retrieved succesfully')
+        _speaker_documents = speakerdocumentservice.show(speaker)
+        if _speaker_documents['error']:
+            return BaseController.send_error_api(_speaker_documents['data'], _speaker_documents['message'])
+        return BaseController.send_response_api(_speaker_documents['data'], _speaker_documents['message'])
 
     @staticmethod
     def _show(speaker_id):
         speaker_documents = speakerdocumentservice.shows(speaker_id)
-        if speaker_documents is None:
-            return BaseController.send_error_api(None, 'documents are not found')
-        return BaseController.send_response_api(speaker_documents, 'documents retrieved succesfully')
+        if speaker_documents['error']:
+            return BaseController.send_error_api(speaker_documents['data'], speaker_documents['message'])
+        return BaseController.send_response_api(speaker_documents['data'], speaker_documents['message'])
 
     @staticmethod
     def view(id):
@@ -42,18 +42,22 @@ class SpeakerDocumentController(BaseController):
             speaker = speaker.as_dict()
             speaker_id = speaker['id']
             document_data = request.files['document_data']
+            summary = request.form['summary'] if 'summary' in request.form else ''
+            title = request.form['title'] if 'title' in request.form else ''
             if document_data and speaker_id:
                 payloads = {
                     'document_data': document_data,
-                    'speaker_id': speaker_id
+                    'speaker_id': speaker_id,
+                    'title': title,
+                    'summary': summary
                 }
             else:
                 return BaseController.send_error_api(None, 'field is not complete')
             result = speakerdocumentservice.create(payloads)
             if not result['error']:
-                return BaseController.send_response_api(result['data'], 'speaker document succesfully uploaded')
+                return BaseController.send_response_api(result['data'], result['message'])
             else:
-                return BaseController.send_error_api(None, result['data'])
+                return BaseController.send_error_api(result['data'], result['message'])
         else:
             return BaseController.send_error_api(None, 'Unauthorized user')
 
