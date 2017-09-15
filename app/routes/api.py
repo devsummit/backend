@@ -231,10 +231,10 @@ def schedule(*args, **kwargs):
         filter = request.args.get('filter')
         if(request.method == 'POST'):
             return ScheduleController.create(request)
-        elif(request.method == 'GET' and filter is None and day is None):
-            return ScheduleController.index()
         elif(request.method == 'GET' and filter is not None):
             return ScheduleController.filter(filter)
+        elif(request.method == 'GET'):
+            return ScheduleController.index()
 
 
 # Beacon route by id
@@ -363,11 +363,11 @@ def speaker_document(*args, **kwargs):
     elif(request.method == 'GET'):
         return SpeakerDocumentController.show(user)
 
+
 @api.route('/document_speaker_admin', methods=['POST'])
 @token_required
 def speaker_document_admin(*args, **kwargs):
     user = kwargs['user'].as_dict()
-    print(request);
     if(request.method == 'POST'):
         return SpeakerDocumentController.admin_create(request, user)
 

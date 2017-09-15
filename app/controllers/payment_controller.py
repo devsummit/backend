@@ -48,7 +48,6 @@ class PaymentController(BaseController):
         gross_amount = request.json['gross_amount'] if 'gross_amount' in request.json else None
         bank = request.json['bank'] if 'bank' in request.json else None
         order_id = request.json['order_id'] if 'order_id' in request.json else None
-
         if(payment_type and payment_type == 'bank_transfer'):
 
             if (bank == 'permata'):
@@ -257,7 +256,6 @@ class PaymentController(BaseController):
                     return BaseController.send_error_api(None, result)
 
             if (payment_type == 'danamon_online'):
-
                 payloads['payment_type'] = payment_type
 
                 result = paymentservice.internet_banking(payloads)
@@ -268,13 +266,12 @@ class PaymentController(BaseController):
                     return BaseController.send_error_api(None, result)
 
             if (payment_type == 'cstore'):
-
                 payloads['payment_type'] = payment_type
 
                 result = paymentservice.cstore(payloads)
 
                 if 'status_code' in result and str(result['status_code']) in ['201', '200']:
-                    return BaseController.send_response_api(result, 'Danamon online transaction created succesfully')
+                    return BaseController.send_response_api(result, 'Indomaret transaction created succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
 

@@ -2,7 +2,8 @@ ROLE = {
     'admin': 1,
     'attendee': 2,
     'booth': 3,
-    'speaker': 4 
+    'speaker': 4,
+    'ambassador': 5,
 }
 
 SLOT = {
@@ -18,9 +19,9 @@ EVENT_TYPES = {
 }
 
 EVENT_DATES = {
-    '1': '2017-11-13',
-    '2': '2017-11-14',
-    '3': '2017-11-15'
+    '1': '2017-11-21',
+    '2': '2017-11-22',
+    '3': '2017-11-23'
 }
 
 SPONSOR_STAGES = {
