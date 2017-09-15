@@ -14,7 +14,7 @@ class SpeakerDocumentController(BaseController):
         if speaker is None:
             return BaseController.send_error_api(None, 'speaker not found')
         speaker = speaker.as_dict()
-        _speaker_documents = speakerdocumentservice.show(speaker['id'])
+        _speaker_documents = speakerdocumentservice.show(speaker)
         if _speaker_documents is None:
             return BaseController.send_error_api(None, 'documents are not found')
         return BaseController.send_response_api(_speaker_documents, 'documents retrieved succesfully')
@@ -42,10 +42,14 @@ class SpeakerDocumentController(BaseController):
             speaker = speaker.as_dict()
             speaker_id = speaker['id']
             document_data = request.files['document_data']
+            summary = request.form['summary'] if 'summary' in request.form else ''
+            title = request.form['title'] if 'title' in request.form else ''
             if document_data and speaker_id:
                 payloads = {
                     'document_data': document_data,
-                    'speaker_id': speaker_id
+                    'speaker_id': speaker_id,
+                    'title': title,
+                    'summary': summary
                 }
             else:
                 return BaseController.send_error_api(None, 'field is not complete')
