@@ -2,10 +2,10 @@ import oauth2 as oauth
 import json
 import requests
 import datetime
+
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from flask import request
-
 from app.models.access_token import AccessToken
 from app.models.user import User
 from app.models.user_photo import UserPhoto
@@ -13,6 +13,7 @@ from app.models.booth import Booth  # noqa
 from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
+from app.models.ambassador import Ambassador
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
@@ -21,7 +22,7 @@ from app.builders.response_builder import ResponseBuilder
 
 class UserService(BaseService):
 
-    def __init__(self, perpage): 
+    def __init__(self, perpage):
         self.perpage = perpage
 
     def register(self, payloads):
@@ -107,13 +108,23 @@ class UserService(BaseService):
         paginate = super().paginate(db.session.query(User))
         paginate = super().include(['role'])
         response = ResponseBuilder()
-        result = response.set_data(paginate['data']).set_links(paginate['links']).build()
+        result = response.set_data(paginate['data']).set_links(
+            paginate['links']).build()
         return result
 
     def get_user_by_id(self, id):
+        response = ResponseBuilder()
         user = db.session.query(
             User).filter_by(id=id).first()
-        return user.include_photos().as_dict()
+        user = user.include_photos().as_dict()
+        # add relation includes
+        includes = ''
+        if user['role_id']!=1:
+            for role, role_id in ROLE.items():
+                if role_id==user['role_id']:
+                    includes = role.title()   
+        user = super().outer_include(user, [includes])
+        return response.set_data(user).build()
 
     def get_user(self, username):
         self.model_user = db.session.query(
@@ -364,6 +375,13 @@ class UserService(BaseService):
             })
             db.session.commit()
             data = self.model_user.first().as_dict()
+
+            # apply includes data
+            if 'includes' in payloads.keys():
+                includes = payloads['includes']
+                includes_data = payloads[includes]
+                self.postIncludes(includes, includes_data)
+
             return {
                 'error': False,
                 'data': data
@@ -387,6 +405,13 @@ class UserService(BaseService):
             db.session.add(self.model_user)
             db.session.commit()
             data = self.model_user.as_dict()
+
+            # apply includes data
+            if 'includes' in payloads.keys():
+                includes = payloads['includes']
+                includes_data = payloads[includes]
+                self.postIncludes(includes, includes_data)
+
             return {
                 'error': False,
                 'data': data
@@ -397,3 +422,30 @@ class UserService(BaseService):
                 'error': True,
                 'data': data
             }
+
+    def postIncludes(self, includes, payloads):
+        user_id = self.model_user.first().as_dict()['id']
+        Model = self.mapIncludesToModel(includes)
+        entityModel = db.session.query(Model).filter_by(user_id=user_id)
+        entity = entityModel.first()
+
+        if (entity):
+            entityModel.update(payloads)
+        else:
+            entityModel = Model()
+            entityModel.user_id = user_id
+            for key in payloads:
+                setattr(entityModel, key, payloads[key])
+            db.session.add(entityModel)
+        db.session.commit()
+
+    def mapIncludesToModel(self, includes):
+        models = {
+            'attendee': Attendee,
+            'speaker': Speaker,
+            'booth': Booth,
+            'ambassador': Ambassador,
+        }
+        if includes in models.keys():
+            return models[includes]
+        return None

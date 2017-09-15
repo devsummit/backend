@@ -12,8 +12,8 @@ class UserController(BaseController):
     def show(id):
         user = userservice.get_user_by_id(id)
         if user is None:
-            return BaseController.send_error_api(None, 'user not found')
-        return BaseController.send_response_api(user, 'user retrieved succesfully')
+            return BaseController.send_error_api(user['data'], user['message'])
+        return BaseController.send_response_api(user['data'], user['message'])
 
     @staticmethod
     def delete(id):
@@ -29,14 +29,17 @@ class UserController(BaseController):
         email = request.json['email'] if 'email' in request.json else None
         username = request.json['username'] if 'username' in request.json else None
         role_id = request.json['role_id'] if 'role_id' in request.json else None
+        includes = request.json['includes'] if 'includes' in request.json else None
+
         if first_name and last_name and email and username and role_id:
             payloads = {
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,
                 'username': username,
-                'role_id': role_id
-
+                'role_id': role_id,
+                'includes': includes,
+                includes: request.json[includes] if includes in request.json else None
             }
         else:
             return BaseController.send_error_api(None, 'field is not complete')
@@ -55,14 +58,17 @@ class UserController(BaseController):
         email = request.json['email'] if 'email' in request.json else None
         username = request.json['username'] if 'username' in request.json else None
         role_id = request.json['role_id'] if 'role_id' in request.json else None
+        includes = request.json['includes'] if 'includes' in request.json else None
+
         if first_name and email and username and role_id:
             payloads = {
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,
                 'username': username,
-                'role_id': role_id
-
+                'role_id': role_id,
+                'includes': includes,
+                includes: request.json[includes] if includes in request.json else None
             }
         else:
             return BaseController.send_error_api(None, 'field is not complete')
