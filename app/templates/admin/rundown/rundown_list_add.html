@@ -1,0 +1,100 @@
+<!-- jQuery 3 -->
+<script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
+<!-- Devsummit Auth Client -->
+<script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
+
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                            <form action="#" id="add-form">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="i-firstname">Description:</label>
+                                        <input type="text" class="form-control i-description" id="i-description">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for"i-date">Date and Time</label>
+                                        <p id="event-time">
+                                            <input type="text" class="add-date date start" />
+                                            <input type="text" class="add-time-start time start" />                                                                        to
+                                            <input type="text" class="add-time-end time end" />
+                                        </p>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="i-location">Location:</label>
+                                        <input type="text" class="form-control i-location" id="i-location">
+                                    </div>
+                                </li>                                
+                            </ul>
+                        <!-- <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a> -->
+                        <input type="submit" class="btn btn-primary btn-block btn-save" id="-" value="Save">
+                        </form>
+        
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/jquery.timepicker.css" />
+<link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/bootstrap-datepicker.css" />
+<script type="text/javascript" src="static/assets/datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="static/assets/datepicker/js/jquery.timepicker.js"></script>
+
+<script type="text/javascript" src="static/assets/datepicker/js/datepair.js"></script>
+
+<!-- page script -->
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#add-form').on('submit', function(e){
+        e.preventDefault();
+        var target = $(this);
+        payload = {
+            "description" : target.find('#i-description').val(),
+            "time_start" : target.find('.add-date').val() + ' ' + target.find('.add-time-start').val() + '.000000',
+            "time_end" : target.find('.add-date').val() + ' ' + target.find('.add-time-end').val() + '.000000',
+            "location" : target.find('#i-location').val()
+        };
+        dsa.post('rundownlist', payload, function (result) {
+                if (result.meta.success) {
+                    window.location = "/rundownlist";
+                } else {
+                    console.log(result)
+                }
+            });
+    })
+    // initialize input widgets first
+    $('#event-time .time').timepicker({
+        'showDuration': true,
+        'timeFormat': 'H:i:s'
+    });
+
+    $('#event-time .date').datepicker({
+        'format': 'yyyy-mm-dd',
+        'autoclose': true
+    });
+
+    // initialize datepair
+    var eventTimeElement = document.getElementById('event-time');
+    var datepair = new Datepair(eventTimeElement);
+})
+</script>

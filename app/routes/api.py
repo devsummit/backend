@@ -30,6 +30,7 @@ from app.controllers.user_controller import UserController
 from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
+from app.controllers.rundown_list_controller import RundownListController
 from app.configs.constants import ROLE
 
 
@@ -645,3 +646,24 @@ def get_sponsor_log(id, *args, **kwargs):
         return SponsorController.get_logs(id)
     elif (request.method in 'POST'):
         return SponsorController.create_log(request, id)
+
+
+# Add rundown list API
+@api.route('/rundownlist', methods=['GET', 'POST'])
+@token_required
+def rundown(*args, **kwargs):    
+    if (request.method == 'GET'):                
+        return RundownListController.get(request)
+    elif (request.method == 'POST'):
+        return RundownListController.create(request)
+   
+
+@api.route('/rundownlist/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def rundown_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return RundownListController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):                
+        return RundownListController.update(request, id)
+    elif (request.method == 'DELETE'):
+        return RundownListController.delete(id)
