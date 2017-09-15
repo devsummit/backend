@@ -29,7 +29,7 @@ class MainController(BaseController):
         return render_template('admin/payments/payments.html', payments=payments['data'])
 
     def getAuthorizePayments():
-        param = {'transaction_status': 'authorize'}
+        param = {'fraud_status': 'challenge'}
         authorizepayments = paymentservice.admin_filter(param)
         return render_template('admin/payments/authorize-needed.html', payments=authorizepayments['data'])
 

@@ -22,11 +22,11 @@ def upgrade():
 		sa.Column('description', sa.String(255)),
 		sa.Column('time_start', sa.DateTime),
 		sa.Column('time_end', sa.DateTime),
-        sa.Column('location', sa.String(255)),
+		sa.Column('location', sa.String(255)),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)
 
 
 def downgrade():
-    pass
+	op.drop_table('rundown_lists')

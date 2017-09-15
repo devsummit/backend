@@ -36,7 +36,7 @@ class PaymentService():
         results = self.admin_get()['data']
         _results = []
         for result in results:
-            if result['transaction_status'] is not None and result['transaction_status'] == param['transaction_status']:
+            if result['fraud_status'] is not None and result['fraud_status'] == param['fraud_status']:
                 _results.append(result)
         return response.set_data(_results).build()
 
@@ -267,6 +267,7 @@ class PaymentService():
         data['credit_card'] = {}
         data['credit_card']['token_id'] = token['saved_token_id']
         data['credit_card']['type'] = payloads['type']
+
         endpoint = url + str(payloads['order_id']) + '/approve'
         transaction_status = requests.post(
             endpoint,
@@ -284,9 +285,10 @@ class PaymentService():
 
             db.session.commit()
 
-            return transaction_status
+            return response.set_data(transaction_status).set_message('Success').build()
 
-        return response.set_error(True).set_data(transaction_status).set_message('change fraud status is failed').build()
+        else:
+            return response.set_error(True).set_data(transaction_status).set_message('change fraud status is failed').build()
 
     def internet_banking(self, payloads):
         response = ResponseBuilder()
