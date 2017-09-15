@@ -424,7 +424,7 @@ class UserService(BaseService):
 			}
 
 	def postIncludes(self, includes, payloads):			
-		user_id = self.model_user.first().as_dict()['id']
+		user_id = self.model_user.first().as_dict()['id']		
 		Model = self.mapIncludesToModel(includes)
 		entityModel = db.session.query(Model).filter_by(user_id=user_id)
 		entity = entityModel.first()

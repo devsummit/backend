@@ -115,10 +115,10 @@
         return payload
     }
 
-    const saveEdit = function(id) {
+    var saveEdit = function(id) {
         const role = $('#account-input-select-role').find(":selected").text();
         const role_id = $('#account-input-select-role').find(":selected").val();
-        payload = {
+        let payload = {
             "first_name": $('.account-firstname').val(),
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
@@ -136,10 +136,10 @@
         });
     }
 
-    const saveAdd = function() {
+    var saveAdd = function() {
         const role = $('#account-input-select-role').find(":selected").text();
         const role_id = $('#account-input-select-role').find(":selected").val();
-        payload = {
+        let payload = {
             "first_name": $('.account-firstname').val(),
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
