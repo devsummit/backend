@@ -150,7 +150,6 @@
             "username": $('.account-username').val(),
             "role_id": $('#account-input-select-role').find(":selected").val()
             };
-            console.log(payload);
             
         if(role!=='admin') {
             payload['includes'] = buildIncludesPayload(role);           

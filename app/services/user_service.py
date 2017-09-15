@@ -394,7 +394,8 @@ class UserService(BaseService):
 				'data': data
 			}
 
-	def add(self, payloads):		
+	def add(self, payloads):
+		response = ResponseBuilder()
 		try:
 			self.model_user = User()
 			self.model_user.first_name = payloads['first_name']
@@ -405,27 +406,17 @@ class UserService(BaseService):
 			db.session.add(self.model_user)
 			db.session.commit()
 			data = self.model_user.as_dict()
-			
-			
+
 			# apply includes data if not admin (role_id != 1)
 			if 'role_id' in payloads and payloads['role_id'] != 1:
 				models = ['attendee', 'speaker', 'booth', 'ambassador']
 				includes = payloads['includes']
-				# for model in models:
-				# 	if model in includes.keys():				
-				# 		del includes[model]															
-				self.postIncludes(includes)
+				data = self.postIncludes(includes)
+				return data
 
-			return {
-				'error': False,
-				'data': data
-			}
 		except SQLAlchemyError as e:
 			data = e.args
-			return {
-				'error': True,
-				'data': data
-			}
+			return response.set_message(data).set_error(True).build()
 
 	def include_role_data(self, user):
 		if (user['role_id'] is ROLE['speaker']):
@@ -435,36 +426,22 @@ class UserService(BaseService):
 		return user
 
 	def postIncludes(self, includes):
-		# included = copy.deepcopy(includes)
+		response = ResponseBuilder()
 		user_id = self.model_user.as_dict()['id']
-		# print ('a')
-		# print (included)								
-		# Model = self.mapIncludesToModel(included)
-		# print ('b')
-		# print (included)
+
 		entityModel = eval(includes['name'])()
 		entityModel.user_id = user_id
-		print(entityModel.as_dict())
-
 		for key in includes:
 			if key is not 'name':
 				setattr(entityModel, key, includes[key])
-		print(entiti)
 		db.session.add(entityModel)
-		print('cuk')
 		try:
 			db.session.commit()
+			return response.set_data(None).build()
 		except SQLAlchemyError as e:
-			print(e.args)
+			data = e.args
+			return response.set_message(data).set_error(True).set_data(None).build()
 			
-		print('berhasil cuk')
-
-	# def mapIncludesToModel(self, includes):		
-	# 	models = ['attendee', 'speaker', 'booth', 'ambassador']		
-	# 	for model in models:
-	# 		if model in includes.keys():				
-	# 			return model		
-	# 	return None
 
 	def editIncludes(self, includes, payloads):		
 		user_id = self.model_user.first().as_dict()['id']				
