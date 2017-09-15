@@ -33,24 +33,24 @@
                     <th>Description</th>
                     <th>Time Start</th>
                     <th>Time End</th>
-                    <th>Location</th> 
+                    <th>Location</th>
+                    <th>action</th> 
                 </tr>
                 </thead>
                 <tbody>
                     {% for rundown in rundownlist %}
                     <tr>
                         <td>
-                            <a href="http://{{ rundown.website }}" id='atd-{{ rundown.id }}' class="rundown-name">
                             {{ rundown.description }}</a> 
                         </td>
                         <td>
-                            {{ rundown.time_start|e }}
+                            {{ rundown.time_start }}
                         </td>
                         <td>
-                            {{ rundown.time_end|e }}
+                            {{ rundown.time_end }}
                         </td>
                         <td>
-                            {{ rundown.location|e }}
+                            {{ rundown.location }}
                         </td>
                         <td>
                             <button id='btd-{{ rundown.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
@@ -76,53 +76,34 @@
 <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/moment/moment.js') }}"></script>
 
 
 <!-- page script -->
 <script>
     /* Display Attendee Detail */
+    $('.btn-edit').click(function (event) {
+        $('.modal-title').html('Edit Rundown');
+        const bte_id = $(this).attr('id');
+        const id = bte_id.substring(4, bte_id.length);
 
-    // $('.btn-edit').click(function(event){
-    //     $('.modal-title').html('Edit');
-    //     const bte_id = $(this).attr('id');
-    //     const id = bte_id.substring(4, bte_id.length);
-    //     let select = $(".partner-type");
-    //     select.find('option').remove();
-    //     dsa.get('rundownlist/' + id, function(result) {
-    //         // bind result value in to account_detail.html 
-    //         const data = result['data'];
-    //         $('.partner-name').val(data['name']);
-    //         $('.partner-email').val(data['email']);
-    //         selected_type = data['type'];
-    //         $('.partner-website').val(data['website']);
-    //         PARTNER_TYPES.map(function(type) {
-    //             let option = document.createElement('option');
-    //             option.innerHTML = type;
-    //             option.value = type;
-
-    //             // Set selected option
-    //             if (type === selected_type) {
-    //                 option.selected = true;
-    //             }
-
-    //             select.append(option);
-    //         });
-    //         $("#img-upload").attr("src", 'static/' + data['photo']);
-    //         $('.partner-photo').val(data['photo'] ? data['photo'] : '-');
-    //     });
-    //     $('.btn-edit-save').attr("id", id);
-    // });
+        dsa.get('rundownlist/' + id, function (result) { 
+            const data = result['data'];
+            var d = new Date(data['time_start'])
+            var hours = d.getHours();
+            console.log(hours);
+            $('.edit-description').val(data['description']);
+            $('.edit-date').val(moment(new Date(data['time_start'])).format("YYYY-MM-DD"));
+            $('.edit-time-start').val(moment(data['time_start']).format("HH:mm:ss"));
+            $('.edit-time-end').val(moment(data['time_end']).format("HH:mm:ss"));
+            $('.edit-location').val(data['location']);
+            $('.hidden-rundown-id').val(data['id']);
+            $('.btn-save').attr("id", `${data['id']}`);
+        });
+    })
 
     $('.btn-add').click(function(event){
         $('.modal-title').html('Add New Rundown');
-        let select = $(".i-type");
-        select.find('option').remove();
-        PARTNER_TYPES.map(function(type) {
-            let option = document.createElement('option');
-            option.innerHTML = type;
-            option.value = type;
-            select.append(option);
-        });
     });
 
     $('.btn-delete').click(function(event){

@@ -14,6 +14,7 @@
         <div class="modal-body">
                 <div class="box box-primary">
                     <div class="box-body box-profile">
+                            <form action="#" id="add-form">
                             <ul class="list-group list-group-unbordered">
                                 <li class="list-group-item">
                                     <div class="form-group">
@@ -38,7 +39,9 @@
                                     </div>
                                 </li>                                
                             </ul>
-                        <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
+                        <!-- <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a> -->
+                        <input type="submit" class="btn btn-primary btn-block btn-save" id="-" value="Save">
+                        </form>
         
                     </div>
                     <!-- /.box-body -->
@@ -60,21 +63,25 @@
 <script type="text/javascript" src="static/assets/datepicker/js/datepair.js"></script>
 
 <!-- page script -->
-<script>
-    $('.btn-save').click(function(event){
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#add-form').on('submit', function(e){
+        e.preventDefault();
+        var target = $(this);
         payload = {
-            'description': $('#i-description').val(),
-            'time_start': $('.add-date').val() + ' ' + $('.add-time-start').val() + '.000000',
-            'time_end': $('.add-date').val() + ' ' + $('.add-time-end').val() + '.000000',
-            "location" : $('#i-location').val()
+            "description" : target.find('#i-description').val(),
+            "time_start" : target.find('.add-date').val() + ' ' + target.find('.add-time-start').val() + '.000000',
+            "time_end" : target.find('.add-date').val() + ' ' + target.find('.add-time-end').val() + '.000000',
+            "location" : target.find('#i-location').val()
         };
-        dsa.post('rundownlist', payload, function(result) {
-            if(result.meta.success) {
-                window.location = "/rundownlist";
-            }
-        });
-    });
-
+        dsa.post('rundownlist', payload, function (result) {
+                if (result.meta.success) {
+                    window.location = "/rundownlist";
+                } else {
+                    console.log(result)
+                }
+            });
+    })
     // initialize input widgets first
     $('#event-time .time').timepicker({
         'showDuration': true,
@@ -89,5 +96,5 @@
     // initialize datepair
     var eventTimeElement = document.getElementById('event-time');
     var datepair = new Datepair(eventTimeElement);
-
+})
 </script>
