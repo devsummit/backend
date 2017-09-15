@@ -246,6 +246,7 @@ class UserService(BaseService):
         }
 
     def change_name(self, payloads):
+        response = ResponseBuilder()
         try:
             self.model_user = db.session.query(
                 User).filter_by(id=payloads['user']['id'])
@@ -256,16 +257,28 @@ class UserService(BaseService):
             })
             db.session.commit()
             data = self.model_user.first().as_dict()
-            return {
-                'error': False,
-                'data': data
-            }
+            if (data['role_id'] is ROLE['booth']):
+                booth = db.session.query(Booth).filter_by(user_id=payloads['user']['id'])
+                if payloads['booth_info'] is not None:
+                    booth.update({
+                        'summary': payloads['booth_info']
+                    })
+                    db.session.commit()
+                data['booth'] = booth.first().as_dict()
+            elif data['role_id'] is ROLE['speaker']:
+                speaker = db.session.query(Speaker).filter_by(user_id=payloads['user']['id'])
+                if payloads['speaker_job'] is not None and payloads['speaker_summary'] is not None:
+                    speaker.update({
+                        'job': payloads['speaker_job'],
+                        'summary': payloads['speaker_summary']
+                    })
+                    db.session.commit()
+                data['speaker'] = speaker.first().as_dict()
+
+            return response.set_data(data).build()
         except SQLAlchemyError as e:
             data = e.orig.args
-            return {
-                'error': True,
-                'data': data
-            }
+            return response.set_error(True).set_message(data).build()
 
     def change_password(self, payloads):
         user = self.get_user(payloads['user']['username'])

@@ -70,7 +70,7 @@
      
             dsa.patch('schedules/' + id, payload, function (result) {
                 if (result.meta.success) {
-                    window.location = "/schedules";
+                    location.reload()
                 }
             });
         })
