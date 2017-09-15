@@ -79,7 +79,7 @@ def adduserphoto():
 def partners():
     if(request.method == 'GET'):
         return MainController.getPartners()
-    
+
 
 @main.route('/entrycashlogs')
 def entrycashlog():
@@ -99,4 +99,3 @@ def changepassword():
 @main.route('/rundownlist')
 def rundownlist():
     return MainController.getRundownList()
-
