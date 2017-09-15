@@ -656,7 +656,7 @@ def rundown(*args, **kwargs):
         return RundownListController.get(request)
     elif (request.method == 'POST'):
         return RundownListController.create(request)
-   
+
 
 @api.route('/rundownlist/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
 @token_required

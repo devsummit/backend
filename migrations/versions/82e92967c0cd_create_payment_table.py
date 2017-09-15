@@ -33,6 +33,7 @@ def upgrade():
             sa.Column('va_number', sa.String(120)),
             sa.Column('created_at', sa.DateTime),
             sa.Column('updated_at', sa.DateTime),
+            sa.Column('expired_at', sa.DateTime)
     )
 
 

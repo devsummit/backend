@@ -2,14 +2,17 @@ import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from flask import request, current_app
+from app.configs.constants import ROLE
 from app.services.helper import Helper 
 import os
 # import model class
 from app.models.user_photo import UserPhoto
 from app.models.base_model import BaseModel
+from app.services.base_service import BaseService
+from app.builders.response_builder import ResponseBuilder
 
 
-class UserPhotoService():
+class UserPhotoService(BaseService):
 
     def get(self):
         user_photos = BaseModel.as_list(db.session.query(UserPhoto).all())
@@ -37,6 +40,7 @@ class UserPhotoService():
         }
 
     def create(self, payloads):
+        response = ResponseBuilder()
         user_id = payloads['user_id']
         is_exist = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
         if(is_exist is not None):
@@ -51,22 +55,25 @@ class UserPhotoService():
                 self.model_user_photo.url = current_app.config['SAVE_USER_PHOTO_DEST'] + filename
                 self.model_user_photo.user_id = user_id
                 db.session.commit()
-                data = self.model_user_photo.as_dict()
-                data['url'] = Helper().url_helper(self.model_user_photo.url, current_app.config['GET_DEST'])
-                return {
-                    'error': False,
-                    'data': data,
-                    'message': 'photo saved'
-                }
+
+                data = self.model_user_photo.first().user.include_photos().as_dict()
+                data = self.include_user_role(data)
+                return response.set_data(data).set_message('photo saved').build()
             except SQLAlchemyError as e:
                 data = e.orig.args
-                return {
-                    'error': True,
-                    'data': None,
-                    'message': data
-			}
+                return response.set_error(True).set_data(None).set_message(data).build()
+
+    def include_user_role(self, user):
+        if (user['role_id'] is ROLE['speaker']):
+            user = super().outer_include(user, ['Speaker'])
+        elif (user['role_id'] is ROLE['booth']):
+            user = super().outer_include(user, ['Booth'])
+        elif (user['role_id'] is ROLE['attendee']):
+            user = super().outer_include(user, ['Attendee'])
+        return user
 
     def update(self, payloads):
+        response = ResponseBuilder()
         user_id = payloads['user_id']
         file = request.files['image_data']
         if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
@@ -82,20 +89,13 @@ class UserPhotoService():
                     'updated_at': datetime.datetime.now()
                 })
                 db.session.commit()
-                data = self.model_user_photo.first().as_dict()
-                data['url'] = Helper().url_helper(newUrl, current_app.config['GET_DEST'])
-                return {
-                    'error': False,
-                    'data': data,
-                    'message': 'photo saved'
-                }
+                data = self.model_user_photo.first().user.include_photos().as_dict()
+                data = self.include_user_role(data)
+
+                return response.set_data(data).set_message('user photo updated').build()
             except SQLAlchemyError as e:
                 data = e.orig.args
-                return {
-                    'error': True,
-                    'data': None,
-                    'message': data
-                }
+                return response.set_error(True).set_data(None).set_message(data).build()
 
     def delete(self, user_id):
         self.model_user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id)
