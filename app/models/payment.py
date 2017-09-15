@@ -23,7 +23,8 @@ class Payment(db.Model, BaseModel):
                 'fraud_status',
                 'va_number',
                 'created_at', 
-                'updated_at'
+                'updated_at',
+                'expired_at'
         ]
 
         id = db.Column(db.Integer, primary_key=True)
