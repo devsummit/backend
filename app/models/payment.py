@@ -23,7 +23,8 @@ class Payment(db.Model, BaseModel):
                 'fraud_status',
                 'va_number',
                 'created_at', 
-                'updated_at'
+                'updated_at',
+                'expired_at'
         ]
 
         id = db.Column(db.Integer, primary_key=True)
@@ -46,7 +47,9 @@ class Payment(db.Model, BaseModel):
         va_number = db.Column(db.String)
         created_at = db.Column(db.DateTime)
         updated_at = db.Column(db.DateTime)
+        expired_at = db.Column(db.DateTime)
 
         def __init__(self):
             self.created_at = datetime.datetime.now()
             self.updated_at = datetime.datetime.now()
+            self.expired_at = datetime.datetime.now() + datetime.timedelta(minutes = 60)

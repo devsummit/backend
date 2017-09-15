@@ -48,7 +48,7 @@ class BaseService():
                 # we cannot do like this:
                 # filter_by(eval(entity_name)=data['id'])
                 # so we still have to apply it with condition
-                if entity_name == 'user':
+                if entity_name in ['user', 'userphoto']:
                     prep = db.session.query(Model).filter_by(user_id=data['id']).first()
                     data[field.lower()] = prep.as_dict() if prep else None
                 # add other enitity filtering here like above if needed
