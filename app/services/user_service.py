@@ -423,6 +423,13 @@ class UserService(BaseService):
                 'data': data
             }
 
+    def include_role_data(self, user):
+        if (user['role_id'] is ROLE['speaker']):
+            user = super().outer_include(user, ['Speaker'])
+        elif (user['role_id'] is ROLE['booth']):
+            user = super().outer_include(user, ['Booth'])
+        return user
+
     def postIncludes(self, includes, payloads):
         user_id = self.model_user.first().as_dict()['id']
         Model = self.mapIncludesToModel(includes)
