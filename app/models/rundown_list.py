@@ -3,11 +3,12 @@ import datetime
 from app.models.base_model import BaseModel
 from app.models import db
 
+
 class RundownList(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'rundown_lists'
 	# displayed fields
-	visible = ['id', 'description', 'time_start', 'time_end', 'location','created_at', 'updated_at']
+	visible = ['id', 'description', 'time_start', 'time_end', 'location', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
