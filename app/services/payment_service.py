@@ -404,9 +404,8 @@ class PaymentService():
                 json=payloads
         )
         payload = result.json()
-
-        if(str(payload['status_code']) == '400'):
-            return response.set_message(payload['validation_messages'][0]).set_error(True).build()
+        if(str(payload['status_code']) in ['400', '202']):
+            return response.set_error(True).set_status_code(payload['status_code']).set_message(payload['status_message'] or payload['validation_messages'][0]).build()
         else:
             if 'bank' in payloads and payloads['payment_type'] != 'credit_card':
                 payload['bank'] = payloads['bank']
@@ -421,7 +420,7 @@ class PaymentService():
                     payload['bank'] = None
 
             if 'status_code' in payload and payload['status_code'] == '406':
-                return payload
+                return response.set_data(payload).set_error(True).set_message('Duplicate order ID. Order ID has already been utilized previously').build()
 
             # handle indomaret payment
             if payloads['payment_type'] == 'cstore':
@@ -435,8 +434,8 @@ class PaymentService():
             if('fraud_status' in payload and payload['fraud_status'] == 'accept' and payload['transaction_status'] == 'capture'):
                 order = db.session.query(Order).filter_by(id=payload['order_id']).first()
                 self.save_paid_ticket(order.as_dict())
-
-        return response.set_data(payload).build()
+        message = payload['status_message'] if 'status_message' in payload else 'No message from payload' 
+        return response.set_data(payload).set_message(message).build()
 
     def update(self, id):
         response = ResponseBuilder()
