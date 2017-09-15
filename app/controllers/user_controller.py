@@ -12,8 +12,8 @@ class UserController(BaseController):
     def show(id):
         user = userservice.get_user_by_id(id)
         if user is None:
-            return BaseController.send_error_api(None, 'user not found')
-        return BaseController.send_response_api(user, 'user retrieved succesfully')
+            return BaseController.send_error_api(user['data'], user['message'])
+        return BaseController.send_response_api(user['data'], user['message'])
 
     @staticmethod
     def delete(id):
