@@ -32,7 +32,7 @@ class RundownListController(BaseController):
 
 		
 		if not result['error']:
-			return BaseController.send_response_api(result['data'], 'schedule succesfully created', result['included'])
+			return BaseController.send_response_api(result['data'], 'rundown succesfully created', result['included'])
 		else:
 			return BaseController.send_error_api(None, result['data'])
 
@@ -56,7 +56,7 @@ class RundownListController(BaseController):
 			return BaseController.send_error_api(None, 'field is not complete')
 
 		if not result['error']:
-			return BaseController.send_response_api(result['data'], 'schedule succesfully updated', result['included'])
+			return BaseController.send_response_api(result['data'], 'rundown succesfully updated', result['included'])
 		else:
 			return BaseController.send_error_api(None, result['data'])
 	

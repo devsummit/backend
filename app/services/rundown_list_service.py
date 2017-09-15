@@ -16,12 +16,9 @@ class RundownListService():
 		for rundownlist in rundownlists:
 			data = rundownlist.as_dict()			
 			results.append(data)
-		return {
-			'error': False,
-			'data': results,
-			'message': 'Schedules retrieved succesfully',
-			'included': {}
-		}
+		response = ResponseBuilder()
+		result = response.set_data(results).build()
+		return result
 	
 	def create(self, payloads):
 		response = ResponseBuilder()
