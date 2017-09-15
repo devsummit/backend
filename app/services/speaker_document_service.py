@@ -31,24 +31,22 @@ class SpeakerDocumentService():
                 _speaker_document['material'] = Helper().url_helper(_speaker_document['material'], app.config['GET_SPEAKER_DOC_DEST'])
                 user = db.session.query(User).filter_by(id=speaker['user_id']).first().include_photos().as_dict()
                 _speaker_document['user'] = user
-            return speaker_document
+            return response.set_data(speaker_document).build()
         else:
             data = 'data not found'
             return response.set_message(data).set_data(None).build()
 
     def shows(self, speaker_id):
+        response = ResponseBuilder()
         speaker_document = db.session.query(SpeakerDocument).filter_by(speaker_id=speaker_id).all()
         if speaker_document is not None:
             speaker_document = BaseModel.as_list(speaker_document)
             for _speaker_document in speaker_document:
                 _speaker_document['material'] = Helper().url_helper(_speaker_document['material'], app.config['GET_SPEAKER_DOC_DEST'])
-            return speaker_document
+            return response.set_data(_speaker_document).build()
         else:
             data = 'data not found'
-            return {
-                'error': True,
-                'data': data
-            }   
+            return response.set_data(None).set_message(data).build() 
 
     def view(self, id):
             speaker_document = db.session.query(SpeakerDocument).filter_by(id=id).first()
