@@ -48,7 +48,6 @@ class PaymentController(BaseController):
         gross_amount = request.json['gross_amount'] if 'gross_amount' in request.json else None
         bank = request.json['bank'] if 'bank' in request.json else None
         order_id = request.json['order_id'] if 'order_id' in request.json else None
-
         if(payment_type and payment_type == 'bank_transfer'):
 
             if (bank == 'permata'):
@@ -64,7 +63,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if 'status_code' in result and result['status_code'] == '201':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'Succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -93,7 +92,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if result['status_code'] == '201':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'Succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -121,7 +120,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if not result['status_code'] == '201':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'bank transfer transaction is created')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -136,7 +135,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.bank_transfer(payloads)
 
-                if not result['status_code'] == '201':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'bank transfer transaction is created')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -157,6 +156,7 @@ class PaymentController(BaseController):
                 'card_cvv': PaymentController.is_field_exist(request, 'card_cvv'),
                 'client_key': PaymentController.is_field_exist(request, 'client_key')
             }
+
             if None in payloads.values():
                 return BaseController.send_error_api(None, 'field is not complete')
 
@@ -188,7 +188,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.internet_banking(payloads)
 
-                if result['status_code'] == '201' or result['status_code'] == '200':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -203,7 +203,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.internet_banking(payloads)
 
-                if result['status_code'] == '201' or result['status_code'] == '200':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'BCA klikbca transaction created succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -225,7 +225,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.internet_banking(payloads)
 
-                if result['status_code'] == '201' or result['status_code'] == '200':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'BCA klikpay transaction created succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -236,7 +236,7 @@ class PaymentController(BaseController):
 
                 result = paymentservice.internet_banking(payloads)
 
-                if result['status_code'] == '201' or result['status_code'] == '200':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'BRI epay transaction created succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
@@ -250,29 +250,30 @@ class PaymentController(BaseController):
 
                 result = paymentservice.internet_banking(payloads)
 
-                if result['status_code'] == '201' or result['status_code'] == '200':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'CIMB click transaction created succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
 
             if (payment_type == 'danamon_online'):
-
                 payloads['payment_type'] = payment_type
 
                 result = paymentservice.internet_banking(payloads)
 
-                if result['status_code'] == '201' or result['status_code'] == '200':
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
                     return BaseController.send_response_api(result, 'Danamon online transaction created succesfully')
                 else:
                     return BaseController.send_error_api(None, result)
 
             if (payment_type == 'cstore'):
-
                 payloads['payment_type'] = payment_type
 
                 result = paymentservice.cstore(payloads)
 
-                return BaseController.send_response_api(result['data']) 
+                if 'status_code' in result and str(result['status_code']) in ['201', '200']:
+                    return BaseController.send_response_api(result, 'Indomaret transaction created succesfully')
+                else:
+                    return BaseController.send_error_api(None, result)
 
     @staticmethod
     def authorize(request):
@@ -311,6 +312,7 @@ class PaymentController(BaseController):
             return None
 
     def card_number_validation(card_number):
+        card_number = card_number.replace(" ", "")
         sum = 0
         num_digits = len(card_number)
         oddeven = num_digits & 1
