@@ -80,8 +80,7 @@
 <!-- page script -->
 <script>
     /* Build includes payload function */
-    const buildIncludesPayload = function(role) {
-        var payload = null;
+    const buildIncludesPayload = function(role) {        
         switch (role) {
             case 'attendee':
                 var points = $('#attendee-points').val();
@@ -124,14 +123,13 @@
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
-            "role_id": role_id
+            "role_id": role_id            
         };
         if(role!=='admin') {
             payload['includes'] = role;
             payload[role] = buildIncludesPayload(role);
-        }
-        dsa.patch('{{ globals["api_route"] }}/' + id, payload, function(result) {
-            console.log(result, 'saved');
+        };
+        dsa.patch('{{ globals["api_route"] }}/' + id, payload, function(result) {            
             if(result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
             }
@@ -139,14 +137,21 @@
     }
 
     const saveAdd = function() {
-        const payload = {
+        const role = $('#account-input-select-role').find(":selected").text();
+        const role_id = $('#account-input-select-role').find(":selected").val();
+        payload = {
             "first_name": $('.account-firstname').val(),
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
             "role_id": $('#account-input-select-role').find(":selected").val()
-        };
-        dsa.post('{{ globals["api_route"] }}', payload, function(result) {
+            };
+        if(role!=='admin') {
+            payload['includes'] = role;
+            payload[role] = buildIncludesPayload(role);
+            console.log(payload);
+        };        
+        dsa.post('{{ globals["api_route"] }}', payload, function(result) {            
             if(result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
             }
