@@ -60,7 +60,9 @@ class ScheduleService():
 		elif param == 'day-3':
 			results = day3
 		else:
-			results.append([day1, day2, day3])
+			results.append(day1)
+			results.append(day2)
+			results.append(day3)
 
 		result = response.set_data(results).build()
 		return result
