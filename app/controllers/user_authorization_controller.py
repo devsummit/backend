@@ -123,16 +123,17 @@ class UserAuthorizationController(BaseController):
             return BaseController.send_response_api({'payload_invalid': True}, 'payloads not valid')
 
         result = userservice.register(payloads)
-        if not result['error']:
-            return BaseController.send_response_api(result['data'], 'user succesfully registered')
-        else:
+        if result['error']:
             return BaseController.send_error_api(result['data'], result['message'])
+        else:
+            return BaseController.send_response_api(result['data'], result['message'])
 
     @staticmethod
     def change_name(request, user):
         firstname = request.json['first_name'] if 'first_name' in request.json else None
         lastname = request.json['last_name'] if 'last_name' in request.json else ''
         booth_info = request.json['booth_info'] if 'booth_info' in request.json else None
+        hacker_summary = request.json['hacker_summary'] if 'hacker_summary' in request.json else None
         speaker_job = request.json['speaker_job'] if 'speaker_job' in request.json else None
         speaker_summary = request.json['speaker_summary'] if 'speaker_summary' in request.json else None
         if firstname:
@@ -142,6 +143,7 @@ class UserAuthorizationController(BaseController):
                 'booth_info': booth_info,
                 'speaker_job': speaker_job,
                 'speaker_summary': speaker_summary,
+                'hacker_summary': hacker_summary,
                 'user': user
             }
 
