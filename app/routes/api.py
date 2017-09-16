@@ -30,6 +30,7 @@ from app.controllers.user_controller import UserController
 from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
+from app.controllers.hackteamcontroller import HackTeamController
 from app.controllers.rundown_list_controller import RundownListController
 from app.configs.constants import ROLE
 
@@ -667,3 +668,22 @@ def rundown_id(id, *args, **kwargs):
         return RundownListController.update(request, id)
     elif (request.method == 'DELETE'):
         return RundownListController.delete(id)
+
+
+@api.route('/hackteams', methods=['POST', 'GET'])
+@token_required
+def hackteams(*args, **kwargs):
+    user = kwargs['user'].as_dict() if kwargs['user'] else None
+    if (request.method == 'GET'):
+        return HackTeamController.index()
+    elif (request.method == 'POST'):
+        return HackTeamController.create(request, user['id'])
+
+
+@api.route('/hackteams/<id>', methods=['GET', 'DELETE'])
+@token_required
+def hackteam_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return HackTeamController.show(id)
+    elif (request.method == 'DELETE'):
+        return HackTeamController.delete(request, id)
