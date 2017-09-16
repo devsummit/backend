@@ -5,6 +5,7 @@ from seeders.events_seeder import EventsSeeder
 from seeders.beacons_seeder import BeaconsSeeder
 from seeders.schedules_seeder import SchedulesSeeder
 from seeders.tickets_seeder import TicketsSeeder
+from seeders.hackaton_tickets_seeder import HackatonTicketsSeeder
 from seeders.clients_seeder import ClientsSeeder
 from seeders.payments_seeder import PaymentsSeeder
 from seeders.orders_seeder import OrdersSeeder
@@ -63,3 +64,7 @@ class Seed():
 		print('seeding user tickets seeder...')
 		UserTicketsSeeder.run()
 		print('finish seeding user tickets seeder')
+
+		print('seeding hackaton tickets seeder...')
+		HackatonTicketsSeeder.run()
+		print('finish seeding hackaton tickets seeder')
