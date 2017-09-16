@@ -31,6 +31,7 @@ from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
 from app.controllers.hackteamcontroller import HackTeamController
+from app.controllers.notification_controller import NotificationController
 from app.controllers.rundown_list_controller import RundownListController
 from app.configs.constants import ROLE
 
@@ -687,3 +688,19 @@ def hackteam_id(id, *args, **kwargs):
         return HackTeamController.show(id)
     elif (request.method == 'DELETE'):
         return HackTeamController.delete(request, id)
+
+@api.route('/notifications', methods=['POST', 'GET'])
+@token_required
+def notifications(*args, **kwargs):
+    user = kwargs['user'].as_dict() if kwargs['user'] else None
+    if (request.method == 'GET'):
+        return NotificationController.index()
+    elif (request.method == 'POST'):
+        return NotificationController.create(request)
+
+
+@api.route('/notifications/<id>', methods=['GET'])
+@token_required
+def notification_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return NotificationController.show(id)

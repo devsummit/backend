@@ -19,7 +19,8 @@ depends_on = None
 def upgrade():
     op.create_table('notifications',
 		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
+		sa.Column('sender_user_id', sa.Integer, sa.ForeignKey('users.id')),
+		sa.Column('receiver_user_id', sa.Integer, sa.ForeignKey('users.id')),
 		sa.Column('message', sa.Text),
 		sa.Column('attachment', sa.String(255)),
 		sa.Column('type', sa.String(80)),
