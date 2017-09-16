@@ -76,6 +76,9 @@
                             <button id='btl-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-sl" data-toggle="modal" data-target="#modal-logs">
                                 Show Log
                             </button>
+                            <button id='btl-{{ sponsor.id }}' type="button" class="btn btn-sm btn-info btn-log-create" data-toggle="modal" data-target="#modal-log-create">
+                                Write log
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -87,6 +90,7 @@
     {% include "admin/base/modal_delete.html" %} 
     {% include "admin/partnership/sponsors/sponsors_edit.html" %} 
     {% include "admin/partnership/sponsors/sponsors_add.html" %}
+    {% include "admin/partnership/sponsors/log_create.html" %}
     {% include "admin/partnership/sponsors/sponsors_showlogs.html" %}
 {% endblock %}
 
@@ -184,6 +188,12 @@
 
                 sponsor_type_select.append(option);
             });
+        });
+
+        $('.btn-log-create').click(function (event) {
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            $('.btn-log-save').attr("id", 'log-' + id);
         });
 
         function capitalizeFirstLetter(string) {
