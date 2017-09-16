@@ -22,6 +22,7 @@ from app.services.referal_service import ReferalService
 from app.services.partner_service import PartnerService
 from app.services.entry_cash_log_service import EntryCashLogService
 from app.services.sponsor_service import SponsorService
+from app.services.hack_team_service import HackTeamService
 from app.services.base_service import BaseService
 from app.services.rundown_list_service import RundownListService
 
@@ -49,5 +50,6 @@ referalservice = ReferalService()
 partnerservice = PartnerService(10)
 entrycashlogservice = EntryCashLogService(10)
 sponsorservice = SponsorService(10)
+hackteamservice = HackTeamService()
 baseservice = BaseService()
 rundownlistservice = RundownListService()
