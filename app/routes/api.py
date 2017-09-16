@@ -644,7 +644,7 @@ def get_sponsor_id(id, *args, **kwargs):
 def get_sponsor_log(id, *args, **kwargs):
     if (request.method == 'GET'):
         return SponsorController.get_logs(id)
-    elif (request.method in 'POST'):
+    elif (request.method in ['POST']):
         return SponsorController.create_log(request, id)
 
 

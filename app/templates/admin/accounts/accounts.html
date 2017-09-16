@@ -69,6 +69,7 @@
             </table>
         </div>
 
+
         {% include "admin/base/modal_delete.html" %}
         {% include "admin/accounts/account_input.html" %}
 {% endblock %}
@@ -165,9 +166,9 @@
         const btd_id = $(this).attr('id');
         const id = btd_id.substring(4, btd_id.length);
         $('.btn-yes').attr("id", id);
-    });
+    });    
     
-    $(function () {
+    $(function (){
         $('#account-list1').DataTable();
     });
 </script>

@@ -10,9 +10,9 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 from app.models.base_model import BaseModel
 from app.models.user_photo import UserPhoto
 from app.models.role import Role  # noqa
-
 from app.models import db
 from app.services.helper import Helper
+from app.models.role import Role  # noqa
 
 
 class User(db.Model, BaseModel):
