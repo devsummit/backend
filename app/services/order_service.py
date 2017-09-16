@@ -77,6 +77,12 @@ class OrderService():
 
 	def delete(self, id):
 		self.model_order = db.session.query(Order).filter_by(id=id)
+		order_details = db.session.query(OrderDetails).filter_by(order_id=id).all()
+		for item in order_details:
+			data = item.as_dict()
+			item_details = db.session.query(OrderDetails).filter_by(id=data['id'])
+			item_details.delete()
+		db.session.commit()
 		if self.model_order.first() is not None:
 			# delete row
 			self.model_order.delete()

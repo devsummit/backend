@@ -14,6 +14,7 @@ from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
 from app.models.ambassador import Ambassador  # noqa
+from app.models.hacker import Hacker  # noqa
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
@@ -26,13 +27,11 @@ class UserService(BaseService):
 		self.perpage = perpage
 
 	def register(self, payloads):
+		response = ResponseBuilder()
 		role = int(payloads['role'])
 		# payloads validation
 		if (payloads is None) or (not isinstance(role, int)):
-			return {
-				'error': True,
-				'data': 'payload not valid'
-			}
+			return response.set_message('payload not valid').set_error(True).build()
 
 		# check if social or email
 		if payloads['social_id'] is not None:
@@ -47,11 +46,7 @@ class UserService(BaseService):
 			data = {
 				'registered': True
 			}
-			return {
-				'data': data,
-				'message': 'User already registered',
-				'error': True
-			}
+			return response.set_data(data).set_message('user already registered').set_error(True).build()
 
 		self.model_user = User()
 		self.model_user.first_name = payloads['first_name']
@@ -83,19 +78,17 @@ class UserService(BaseService):
 				speaker.user_id = data['id']
 				db.session.add(speaker)
 				db.session.commit()
+			elif(role == ROLE['hacker']):
+				hacker = Hacker()
+				hacker.user_id = data['id']
+				db.session.add(hacker)
+				db.session.commit()
 
-			return {
-				'error': False,
-				'data': data,
-				'message': 'user registered successfully'
-			}
+			return response.set_data(data).set_message('user registered succesfully').build()
 		except SQLAlchemyError as e:
-			data = e.orig.args
-			return {
-				'error': True,
-				'data': {'sql_error': True},
-				'message': data
-			}
+			message = e.orig.args
+			data = {'sql_error': True}
+			return response.set_error(True).set_data(data).set_message(message).build()
 
 	def list_user(self, request, admin=False):
 		self.total_items = User.query.count()
@@ -274,6 +267,14 @@ class UserService(BaseService):
 					})
 					db.session.commit()
 				data['speaker'] = speaker.first().as_dict()
+			elif data['role_id'] is ROLE['hacker']:
+				hacker = db.session.query(Hacker).filter_by(user_id=payloads['user']['id'])
+				if payloads['hacker_summary'] is not None:
+					hacker.update({
+						'summary': payloads['hacker_summary'],
+					})
+					db.session.commit()
+				data['hacker'] = hacker.first().as_dict()
 
 			return response.set_data(data).build()
 		except SQLAlchemyError as e:
@@ -421,6 +422,10 @@ class UserService(BaseService):
 			user = super().outer_include(user, ['Speaker'])
 		elif (user['role_id'] is ROLE['booth']):
 			user = super().outer_include(user, ['Booth'])
+		elif (user['role_id'] is ROLE['hacker']):
+			user = super().outer_include(user, ['Hacker'])
+		elif (user['role_id'] is ROLE['ambassador']):
+			user = super().outer_include(user, ['Ambassador'])
 		return user
 
 	def postIncludes(self, includes):
