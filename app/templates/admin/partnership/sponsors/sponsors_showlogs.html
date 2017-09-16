@@ -11,12 +11,11 @@
                     <tr>
                     <th>Sponsor ID</th>
                     <th>Description</th>
+                    <th>Time</th>
                     </tr>
                 </thead>
                 <tbody class="log-modal">
                     <tr>
-                        <td for="sponsor-id" class="sponsor-id" id="sponsor-id"></td>
-                        <td  for="sponsor-logs" class="sponsor-logs" id="sponsor-logs"></td>
                     </tr>
                 </tbody>
                 </table>
@@ -37,7 +36,7 @@
                 const logs = result.data;
                 $('.log-modal').empty();
                 logs.map(function(log, index) {
-                    $('.log-modal').append('<tr><td>' + (index + 1) + '</td><td> ' + log.description + ' </td></tr>');
+                    $('.log-modal').append('<tr><td>' + (index + 1) + '</td><td> ' + log.description + ' </td><td>' + log.created_at + '</td></tr>');
                 });
             });
         })
