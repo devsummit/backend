@@ -52,7 +52,7 @@
                             {{ payment.gross_amount|e }}
                         </td>
                         <td>
-                            {% if payment.bank|length > 3 %}
+                            {% if bank in payment and payment.bank|length > 3 %}
                                 {{ payment.bank|e|title }}
                             {% else %}
                                 {{ payment.bank|e|upper }}

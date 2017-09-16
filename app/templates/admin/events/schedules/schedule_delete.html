@@ -34,7 +34,7 @@
         const id = $(this).attr('id');
         dsa.delete('schedules/' + id, function (result) {
             if (result.meta.success) {
-                window.location = "/schedules";
+                location.reload()
             }
         });
     })

@@ -22,13 +22,16 @@
 <!-- page script -->
 <script>
     /* Authorize payment confirm action */
-    $('.btn-yes').click(function(event) {
+    $('.btn-yes').click(function (event) {
         const payload = JSON.parse($('#payment-authorize-payload').val());
-
-        dsa.post('payments/authorize', payload, function(result) {
-            if(result.meta.success) {
-                window.location = 'authorize-payments';
+        dsa.post('payments/authorize', payload, function (result) {
+            if (result.meta.success) {
+                location.reload()
+            } else {
+                alert(result.meta.message)
+                location.reload()
             }
         });
     })
+
 </script>

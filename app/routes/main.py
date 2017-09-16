@@ -67,15 +67,18 @@ def get_stages():
 
 @main.route('/schedules')
 def schedules():
-    return MainController.getSchedules()
+    return MainController.getSchedules(request)
+
+
+@main.route('/adduserphoto')
+def adduserphoto():
+    return render_template('admin/users/user_photos_add.html')
 
 
 @main.route('/partners', methods=['GET', 'POST'])
 def partners():
     if(request.method == 'GET'):
-        return MainController.getPartners()
-    else:
-        return MainController.createPartner(request)
+        return MainController.getPartners()    
 
 
 @main.route('/entrycashlogs')
@@ -91,3 +94,8 @@ def sponsors():
 @main.route('/password')
 def changepassword():
     return MainController.changepassword()
+
+
+@main.route('/rundownlist')
+def rundownlist():
+    return MainController.getRundownList()

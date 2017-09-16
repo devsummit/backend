@@ -30,7 +30,6 @@ class UserPhotoController(BaseController):
             return BaseController.send_error_api(None, 'field is not complete')
 
         result = userphotoservice.create(payloads)
-
         if not result['error']:
             return BaseController.send_response_api(result['data'], result['message'])
         else:

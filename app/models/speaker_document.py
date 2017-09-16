@@ -6,7 +6,7 @@ from app.models.base_model import BaseModel
 class SpeakerDocument(db.Model, BaseModel):
     __tablename__ = 'materials'
 
-    visible = ['id', 'speaker_id', 'material', 'created_at', 'updated_at']
+    visible = ['id', 'speaker_id', 'material', 'title', 'summary', 'created_at', 'updated_at']
 
     id = db.Column(db.Integer, primary_key=True)
     speaker_id = db.Column(
@@ -16,6 +16,8 @@ class SpeakerDocument(db.Model, BaseModel):
     )
     speaker = db.relationship('Speaker')
     material = db.Column(db.String)
+    title = db.Column(db.String)
+    summary = db.Column(db.String)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
 

@@ -8,12 +8,12 @@ from app.services import userservice
 from app.services import boothservice
 from app.services import speakerservice
 from app.services import eventservice
-from app.configs.constants import EVENTS_TYPE
 from app.services import stageservice
 from app.services import scheduleservice
 from app.services import partnerservice
 from app.services import entrycashlogservice
 from app.services import sponsorservice
+from app.services import rundownlistservice
 
 
 class MainController(BaseController):
@@ -29,7 +29,7 @@ class MainController(BaseController):
         return render_template('admin/payments/payments.html', payments=payments['data'])
 
     def getAuthorizePayments():
-        param = {'transaction_status': 'authorize'}
+        param = {'fraud_status': 'challenge'}
         authorizepayments = paymentservice.admin_filter(param)
         return render_template('admin/payments/authorize-needed.html', payments=authorizepayments['data'])
 
@@ -55,14 +55,20 @@ class MainController(BaseController):
 
     def getEvents():
         events = eventservice.index(request)
-        return render_template('admin/events/events.html', events=events['data'], event_type=EVENTS_TYPE)
+        return render_template('admin/events/events.html', events=events['data'])
 
     def getStages():
         stages = stageservice.get()
         return render_template('admin/stages/stages.html', stages=stages)
 
-    def getSchedules():
-        schedules = scheduleservice.get()
+    def getSchedules(request):
+        schedules = {}
+        if request.args.get('filter') is not None:
+            filter = request.args.get('filter')
+            schedules = scheduleservice.filter(filter)
+        else: 
+            schedules = scheduleservice.get()
+
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
 
     def getPartners():
@@ -79,3 +85,8 @@ class MainController(BaseController):
 
     def changepassword():
         return render_template('admin/users/changepassword.html')
+
+    def getRundownList():
+        rundownlist = rundownlistservice.get(request)
+        return render_template('admin/rundown/rundown_list.html', rundownlist=rundownlist['data'])
+        # return render_template('admin/rundown/rundown_list.html')

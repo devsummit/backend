@@ -6,6 +6,7 @@ from app.models.schedule import Schedule
 from app.models.booth import Booth
 from app.models.speaker import Speaker
 from app.configs.constants import EVENT_DATES
+from app.builders.response_builder import ResponseBuilder
 
 
 class ScheduleService():
@@ -40,17 +41,29 @@ class ScheduleService():
 	def filter(self, param):
 		schedules = self.get()['data']
 		results = []
+		day1 = []
+		day2 = []
+		day3 = []
 		for schedule in schedules:
-			if schedule['event'] is not None and schedule['event']['type'] == param:
-				results.append(schedule)
-			elif schedule['created_at'] is not None and param.isdigit() and int(param) < 4 and EVENT_DATES[param] in schedule['created_at']:
-			  results.append(schedule)
-		return {
-			'error': False,
-			'data': results,
-			'message': 'schedule retrieved successfully',
-			'included': {}
-		}
+			if schedule['event'] is not None and EVENT_DATES['1'] in schedule['time_start']:
+				day1.append(schedule)
+			elif schedule['event'] is not None and EVENT_DATES['2'] in schedule['time_start']:
+				day2.append(schedule)
+			elif schedule['event'] is not None and EVENT_DATES['3'] in schedule['time_start']:
+				day3.append(schedule)
+		response = ResponseBuilder()
+
+		if param == 'day-1': 
+			results = day1
+		elif param == 'day-2':
+			results = day2
+		elif param == 'day-3':
+			results = day3
+		else:
+			results.append([day1, day2, day3])
+
+		result = response.set_data(results).build()
+		return result
 
 	def show(self, id):
 		schedule = db.session.query(Schedule).filter_by(id=id).first()

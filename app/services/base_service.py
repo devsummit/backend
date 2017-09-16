@@ -1,3 +1,11 @@
+import sys
+from app.models import db
+from app.models.attendee import Attendee  # noqa
+from app.models.booth import Booth  # noqa
+from app.models.speaker import Speaker  # noqa
+from app.models.ambassador import Ambassador  # noqa
+
+
 class BaseService():
 
     def __init__(self, page=0, base_url='', total_items=0):
@@ -29,6 +37,23 @@ class BaseService():
             _results.append(data)
         self.paginated['data'] = _results
         return self.paginated
+
+    def outer_include(self, data, fields):
+        entity_name = self.__class__.__name__.lower().replace('service', '')
+        for field in fields:
+            if field:
+                base_model = getattr(sys.modules[__name__], field.title())
+                Model = type(field, (base_model,), {})
+                # since filter_by need an explicit keyword not an expression
+                # we cannot do like this:
+                # filter_by(eval(entity_name)=data['id'])
+                # so we still have to apply it with condition
+                if entity_name in ['user', 'userphoto']:
+                    prep = db.session.query(Model).filter_by(user_id=data['id']).first()
+                    data[field.lower()] = prep.as_dict() if prep else None
+                # add other enitity filtering here like above if needed
+                # if ...
+        return data
 
     def transform(self):
         _results = []

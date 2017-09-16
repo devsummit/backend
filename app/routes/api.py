@@ -30,6 +30,7 @@ from app.controllers.user_controller import UserController
 from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
+from app.controllers.rundown_list_controller import RundownListController
 from app.configs.constants import ROLE
 
 
@@ -227,16 +228,13 @@ def delete(event_id):
 @api.route('/schedules', methods=['GET', 'POST'])
 @token_required
 def schedule(*args, **kwargs):
-	filter = request.args.get('filter')
-	day = request.args.get('day')
-	if(request.method == 'POST'):
-		return ScheduleController.create(request)
-	elif(request.method == 'GET' and filter is None and day is None):
-		return ScheduleController.index()
-	elif(request.method == 'GET' and filter is not None):
-		return ScheduleController.filter(filter)
-	elif(request.method == 'GET' and day is not None):
-		return ScheduleController.filter(day)
+        filter = request.args.get('filter')
+        if(request.method == 'POST'):
+            return ScheduleController.create(request)
+        elif(request.method == 'GET' and filter is not None):
+            return ScheduleController.filter(filter)
+        elif(request.method == 'GET'):
+            return ScheduleController.index()
 
 
 # Beacon route by id
@@ -364,6 +362,14 @@ def speaker_document(*args, **kwargs):
         return SpeakerDocumentController.create(request, user)
     elif(request.method == 'GET'):
         return SpeakerDocumentController.show(user)
+
+
+@api.route('/document_speaker_admin', methods=['POST'])
+@token_required
+def speaker_document_admin(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'POST'):
+        return SpeakerDocumentController.admin_create(request, user)
 
 # GET SPECIFIC FILE UPLOADED BY THE SPEAKER || DELETE SPECIFIC FILE
 
@@ -501,7 +507,7 @@ def payment(*args, **kwargs):
     filter = request.args.get('transaction_status')
     user = kwargs['user'].as_dict()
     if (request.method == 'POST'):
-        return PaymentController.create(request)
+        return PaymentController.create(request, user['id'])
     elif(request.method == 'GET'):
         if(user['role_id'] == ROLE['admin'] and filter):
             return PaymentController.admin_filter_payments(filter)
@@ -640,3 +646,24 @@ def get_sponsor_log(id, *args, **kwargs):
         return SponsorController.get_logs(id)
     elif (request.method in ['POST']):
         return SponsorController.create_log(request, id)
+
+
+# Add rundown list API
+@api.route('/rundownlist', methods=['GET', 'POST'])
+@token_required
+def rundown(*args, **kwargs):    
+    if (request.method == 'GET'):                
+        return RundownListController.get(request)
+    elif (request.method == 'POST'):
+        return RundownListController.create(request)
+
+
+@api.route('/rundownlist/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def rundown_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return RundownListController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):                
+        return RundownListController.update(request, id)
+    elif (request.method == 'DELETE'):
+        return RundownListController.delete(id)

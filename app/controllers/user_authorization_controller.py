@@ -35,7 +35,7 @@ class UserAuthorizationController(BaseController):
                             return BaseController.send_error_api({'unauthorized': True}, 'unauthorized, must be admin to access this page.')
                     if user.verify_password(password):
                         token = userservice.save_token()
-                        user = user.include_photos().as_dict()
+                        user = userservice.include_role_data(user.include_photos().as_dict())
                         return BaseController.send_response_api({'access_token': token['data'].access_token, 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                     else:
                         return BaseController.send_error_api({'wrong_credential': True}, 'wrong credentials')
@@ -62,7 +62,7 @@ class UserAuthorizationController(BaseController):
                     provider, user_social_id)
                 if user is not None:
                     token = userservice.save_token(provider)
-                    user = user.include_photos().as_dict()
+                    user = userservice.include_role_data(user.include_photos().as_dict())
                     return BaseController.send_response_api({'access_token': token['data'].access_token, 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                 else:
                     return BaseController.send_error_api({'not_registered': True}, 'user is not registered')
@@ -132,21 +132,26 @@ class UserAuthorizationController(BaseController):
     def change_name(request, user):
         firstname = request.json['first_name'] if 'first_name' in request.json else None
         lastname = request.json['last_name'] if 'last_name' in request.json else ''
-
+        booth_info = request.json['booth_info'] if 'booth_info' in request.json else None
+        speaker_job = request.json['speaker_job'] if 'speaker_job' in request.json else None
+        speaker_summary = request.json['speaker_summary'] if 'speaker_summary' in request.json else None
         if firstname:
             payloads = {
                 'first_name': firstname,
                 'last_name': lastname,
+                'booth_info': booth_info,
+                'speaker_job': speaker_job,
+                'speaker_summary': speaker_summary,
                 'user': user
             }
 
         else:
             return BaseController.send_response_api(None, 'payloads not valid')
         result = userservice.change_name(payloads)
-        if not result['error']:
-            return BaseController.send_response_api(result['data'], 'name succesfully changed')
+        if result['error']:
+            return BaseController.send_error_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_response_api(result['data'], result['message'])
 
     @staticmethod
     def change_password(request, user):

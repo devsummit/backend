@@ -21,6 +21,8 @@ def upgrade():
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('speaker_id', sa.Integer, sa.ForeignKey('speakers.id')),
 		sa.Column('material', sa.String(255)),
+		sa.Column('title', sa.String(120)),
+		sa.Column('summary', sa.String(255)),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)

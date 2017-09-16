@@ -2,7 +2,8 @@ ROLE = {
     'admin': 1,
     'attendee': 2,
     'booth': 3,
-    'speaker': 4 
+    'speaker': 4,
+    'ambassador': 5,
 }
 
 SLOT = {
@@ -10,16 +11,17 @@ SLOT = {
 	'commercial': 3600
 }
 
-EVENTS_TYPE = {
-    'booth',
+EVENT_TYPES = {
+    'discuss panel',
     'speaker',
-    'hackaton'
+    'hackaton',
+    'other'
 }
 
 EVENT_DATES = {
-    '1': '2017-11-13',
-    '2': '2017-11-14',
-    '3': '2017-11-15'
+    '1': '2017-11-21',
+    '2': '2017-11-22',
+    '3': '2017-11-23'
 }
 
 SPONSOR_STAGES = {
@@ -33,6 +35,13 @@ SPONSOR_TYPES = {
     '2': 'platinum',
     '3': 'gold',
     '4': 'silver'
+}
+
+VA_NUMBER = {
+    'bca': '877800',
+    'permata': '431800',
+    'mandiri_bill': '242801',
+    'bni': '119800'
 }
 
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
