@@ -56,7 +56,7 @@ class UserPhotoService(BaseService):
                 self.model_user_photo.user_id = user_id
                 db.session.commit()
 
-                data = self.model_user_photo.first().user.include_photos().as_dict()
+                data = self.model_user_photo.user.include_photos().as_dict()
                 data = self.include_user_role(data)
                 return response.set_data(data).set_message('photo saved').build()
             except SQLAlchemyError as e:
