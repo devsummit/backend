@@ -22,7 +22,7 @@ def upgrade():
 		sa.Column('id', sa.Integer, primary_key=True),
 		sa.Column('ticket_id', sa.Integer,
 		sa.ForeignKey('tickets.id')),
-		sa.Column('order_id', sa.Integer,
+		sa.Column('order_id', sa.String(180),
 			sa.ForeignKey('orders.id')),
 		sa.Column('count', sa.Integer),
 		sa.Column('price', sa.Integer),
