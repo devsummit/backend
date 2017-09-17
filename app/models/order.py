@@ -12,7 +12,7 @@ class Order(db.Model, BaseModel):
 	visible = ['id', 'user_id', 'referal_id', 'status', 'created_at', 'updated_at']
 
 	# columns definitions
-	id = db.Column(db.Integer, primary_key=True)
+	id = db.Column(db.String, primary_key=True)
 	user_id = db.Column(
 		db.Integer,
 		db.ForeignKey('users.id'),
@@ -30,5 +30,6 @@ class Order(db.Model, BaseModel):
 	updated_at = db.Column(db.DateTime)
 
 	def __init__(self):
+		self.id = 'ds-' + datetime.datetime.now().strftime("%Y%m%d.%H%M%S%f")
 		self.created_at = datetime.datetime.now()
 		self.updated_at = datetime.datetime.now()

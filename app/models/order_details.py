@@ -19,7 +19,7 @@ class OrderDetails(db.Model, BaseModel):
 	)
 	ticket = db.relationship('Ticket')
 	order_id = db.Column(
-		db.String(40),
+		db.String(180),
 		db.ForeignKey('orders.id'),
 		nullable=False
 	)

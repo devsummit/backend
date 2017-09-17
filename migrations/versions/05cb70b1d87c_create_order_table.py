@@ -19,7 +19,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         'orders',
-        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('id', sa.String(180), primary_key=True),
         sa.Column('user_id', sa.Integer,
             sa.ForeignKey('users.id', ondelete='CASCADE')),
         sa.Column('referal_id', sa.Integer,
