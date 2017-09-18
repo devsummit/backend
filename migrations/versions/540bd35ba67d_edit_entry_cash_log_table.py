@@ -17,7 +17,12 @@ depends_on = None
 
 
 def upgrade():
-    pass
+    op.drop_column('entry_cash_log', 'amount')
+    op.add_column('entry_cash_log',
+        sa.Column('debit', sa.Integer))
+    op.add_column('entry_cash_log',
+        sa.Column('credit', sa.Integer))
+
 
 
 def downgrade():
