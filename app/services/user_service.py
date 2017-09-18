@@ -18,6 +18,9 @@ from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
+from app.models.base_model import BaseModel
+from app.services.user_ticket_service import UserTicketService
+
 
 
 class UserService(BaseService):
@@ -26,38 +29,30 @@ class UserService(BaseService):
 		self.perpage = perpage
 
 	def register(self, payloads):
-		# role = int(payloads['role'])
+		response = ResponseBuilder()
 		# payloads validation
-		# if (payloads is None) or (not isinstance(role, int)):
-		# 	return {
-		# 		'error': True,
-		# 		'data': 'payload not valid'
-		# 	}
+		if payloads is None:
+			return response.set_error(True).set_message('Payload not valid').build()
 
-		# # check if social or email
-		# if payloads['social_id'] is not None:
-		# 	check_user = db.session.query(User).filter_by(
-		# 		social_id=payloads['social_id']).first()
-		# else:
-		# 	check_user = db.session.query(User).filter_by(
-		# 		email=payloads['email']).first()
+		# check if social or email
+		if payloads['social_id'] is not None:
+			check_user = db.session.query(User).filter_by(
+				social_id=payloads['social_id']).first()
+		else:
+			check_user = db.session.query(User).filter_by(
+				email=payloads['email']).first()
 
 		# check if user already exist
-		check_user = db.session.query(User).filter_by(
-				social_id=payloads['social_id']).first()
-		check_referer = db.session.query(User).filter_by(
-				username=payloads['referer']).first()
-
 		if(check_user is not None):
-			data = {
-				'registered': True
-			}
-			return {
-				'data': data,
-				'message': 'User already registered',
-				'error': True
-			}
-		if payloads ['email']:
+			return response.set_data(None).set_message('User already registered').set_error(True).build()
+		
+		# check referal limit
+		check_referer = db.session.query(User).filter_by(
+				username=payloads['referer']).all()
+		if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
+			return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
+		
+		if payloads['email'] is not None:
 			try:
 				self.model_user = User()
 				self.model_user.first_name = payloads['first_name']
@@ -71,19 +66,25 @@ class UserService(BaseService):
 				db.session.add(self.model_user)
 				db.session.commit()
 				data = self.model_user.as_dict()
-				return {
-					'error': False,
-					'data': data,
-					'message': 'user registered successfully'
-				}
+
+				# checking referer add full day ticket if reach 10 counts
+				if payloads['referer'] is not None:
+					check_referer_count = db.session.query(User).filter_by(referer = payloads['referer']).all()
+					if check_referer_count is not None and len(check_referer_count) > 0:
+						referer_detail = db.session.query(User).filter_by(username = payloads['referer']).first().as_dict()
+						count = len(check_referer_count)
+						payload = {}
+						payload['user_id'] = referer_detail['id']
+						payload['ticket_id'] = 1 
+						if count == 10:
+							UserTicketService().create(payload)
+						
+
+				return response.set_error(False).set_data(data).set_message('User created successfully').build()
 			
 			except SQLAlchemyError as e:
 				data = e.orig.args
-				return {
-					'error': True,
-					'data': {'sql_error': True},
-					'message': data
-				}
+				return response.set_error(True).set_message('SQL error').set_data(data).build()
 
 
 		# try:
