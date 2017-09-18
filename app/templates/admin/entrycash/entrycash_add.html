@@ -9,6 +9,7 @@
             <div class="modal-body">
                 <div class="box box-primary">
                     <div class="box-body box-profile">
+                        <form action="#" id="add-form">
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
                                 <div class="form-group">
@@ -35,8 +36,8 @@
                                 </div>
                             </li>
                         </ul>
-                        <a href="#" class="btn btn-primary btn-block" id="btn-add-save"><b>Save</b></a>
-
+                        <input type="submit" class="btn btn-primary btn-block btn-save" id="-" value="Save">
+                    </form>
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -52,32 +53,32 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
-    $('#btn-add-save').click(function (event) {
-        var debit = $('#i-entry-cash-debit').val();
-        var credit = $('#i-entry-cash-credit').val();
-        var source_id = $('#i-entry-cash-source-id').val();
+    $(document).ready(function () {
+        $('#add-form').on('submit', function (e) {
+            e.preventDefault();
+            var target = $(this);
+            var credit = target.find('#i-entry-cash-credit').val();
+            var debit = target.find('#i-entry-cash-debit').val();
 
-        if(credit == 0){
-            credit = 0
-        }else if(debit == 0){
-            debit = 0
-        }
-
-        console.log(debit)
-        const payload = {
-            "description": $('#i-entry-cash-desc').val(),
-            "debit": debit,
-            "credit": credit,
-            "source_id": source_id
-        };
-        dsa.post('{{ globals["api_route"] }}', payload, function (result) {
-            if (result.meta.success) {
-                window.location = '/entrycashlogs';
-            }else{
-                console.log(result.meta)
-                console.log(payload)
+            if (credit == 0) {
+                credit = 0
+            } else if (debit == 0) {
+                debit = 0
             }
-        });
-    });
 
+            payload = {
+                "description": target.find('#i-entry-cash-desc').val(),
+                "debit": debit,
+                "credit": credit,
+                "source_id": target.find('#i-entry-cash-source-id').val()
+            };
+             dsa.post('{{ globals["api_route"] }}', payload, function (result) {
+                if (result.meta.success) {
+                    window.location = '/{{ globals["base_route"] }}';
+                } else {
+                    console.log(result)
+                }
+            });
+        })
+    })
 </script>
