@@ -19,7 +19,7 @@ class ScheduleService():
 			event = schedule.event
 			user = event.user
 			stage = schedule.stage
-			data['user'] = user.as_dict() if user else {}
+			data['user'] = user.include_photos().as_dict() if user else {}
 			data['event'] = event.as_dict() if event else {}
 			data['stage'] = stage.as_dict() if stage else {}
 			speaker = None
