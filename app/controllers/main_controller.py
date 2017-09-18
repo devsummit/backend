@@ -90,3 +90,6 @@ class MainController(BaseController):
         rundownlist = rundownlistservice.get(request)
         return render_template('admin/rundown/rundown_list.html', rundownlist=rundownlist['data'])
         # return render_template('admin/rundown/rundown_list.html')
+
+    def show_event_kanban():
+        return render_template('admin/events/kanbans/kanban.html')
