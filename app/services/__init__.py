@@ -24,6 +24,7 @@ from app.services.entry_cash_log_service import EntryCashLogService
 from app.services.sponsor_service import SponsorService
 from app.services.base_service import BaseService
 from app.services.rundown_list_service import RundownListService
+from app.services.source_service import SourceService
 
 # instantiate service
 userservice = UserService(10)  # number of item per page
@@ -51,3 +52,4 @@ entrycashlogservice = EntryCashLogService(10)
 sponsorservice = SponsorService(10)
 baseservice = BaseService()
 rundownlistservice = RundownListService()
+sourceservice = SourceService()
