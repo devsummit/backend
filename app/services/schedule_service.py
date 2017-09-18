@@ -22,13 +22,11 @@ class ScheduleService():
 			data['user'] = user.as_dict() if user else {}
 			data['event'] = event.as_dict() if event else {}
 			data['stage'] = stage.as_dict() if stage else {}
-
-			if data['user'] and data['user']['role_id'] == 3:
-				booth = db.session.query(Booth).filter_by(user_id=data['user']['id']).first()
-				data['booth'] = booth.as_dict() if booth else {}
-			elif data['user'] and data['user']['role_id'] == 4:
+			speaker = None
+			if data['user'] and data['user']['role_id'] == 4:
 				speaker = db.session.query(Speaker).filter_by(user_id=data['user']['id']).first()
-				data['speaker'] = speaker.as_dict() if speaker else {}
+			
+			data['speaker'] = speaker.as_dict() if speaker else {}
 
 			results.append(data)
 		return {
