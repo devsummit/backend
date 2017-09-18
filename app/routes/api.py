@@ -31,6 +31,7 @@ from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
 from app.controllers.feed_controller import FeedController
+from app.controllers.notification_controller import NotificationController
 from app.controllers.rundown_list_controller import RundownListController
 from app.configs.constants import ROLE
 
@@ -675,10 +676,6 @@ def rundown_id(id, *args, **kwargs):
 def feeds_id(id, *args, **kwargs):
     if(request.method == 'GET'):
         return FeedController.show(id)
-    # elif(request.method == 'PATCH' or request.method == 'PUT'):
-    #     return FeedController.update(id, request)
-    # else:
-    #     return FeedController.delete(id)
 
 
 @api.route('/feeds', methods=['GET', 'POST'])
@@ -690,3 +687,11 @@ def feeds(*args, **kwargs):
     else:
         return FeedController.create(request, user['id'])
 
+@api.route('/notifications', methods=['GET', 'POST'])
+@token_required
+def notifications(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'GET'):
+        return NotificationController.index(request)
+    else:
+        return NotificationController.create(request, user)
