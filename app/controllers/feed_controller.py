@@ -7,7 +7,7 @@ class FeedController(BaseController):
 	@staticmethod
 	def index(request):
 		feeds = feedservice.get(request)
-		return BaseController.send_response_api(feeds['data'], feeds['message'])
+		return BaseController.send_response_api(feeds['data'], feeds['message'], {}, feeds['links'])
 
 	@staticmethod
 	def create(request, user_id):
@@ -27,7 +27,7 @@ class FeedController(BaseController):
 		if result['error']:
 			return BaseController.send_error_api(result['data'], result['message'])
 		else:
-			return BaseController.send_response_api(result['data'], result['message'], {}. result['links'])
+			return BaseController.send_response_api(result['data'], result['message'])
 
 	@staticmethod
 	def show(id):
