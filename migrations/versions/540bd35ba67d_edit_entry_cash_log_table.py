@@ -28,4 +28,7 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    op.drop_column('entry_cash_log', 'credit')
+    op.drop_column('entry_cash_log', 'debit')
+    op.drop_column('entry_cash_log', 'source_id')
+    op.add_column('entry_cash_log', sa.Integer)
