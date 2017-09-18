@@ -111,7 +111,7 @@ class UserAuthorizationController(BaseController):
                     'email': email,
                     'referer': referer
                 }
-        elif firstname and email and username and role and password:
+        elif firstname and email and username and password:
             payloads = {
                 'first_name': firstname,
                 'last_name': lastname,
@@ -119,7 +119,7 @@ class UserAuthorizationController(BaseController):
                 'username': username,
                 'role': role,
                 'password': password,
-                'social_id': social_id
+                'social_id': social_id,
                 'referer': referer
             }
         else:
