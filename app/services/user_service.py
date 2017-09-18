@@ -22,7 +22,6 @@ from app.models.base_model import BaseModel
 from app.services.user_ticket_service import UserTicketService
 
 
-
 class UserService(BaseService):
 
 	def __init__(self, perpage):
@@ -45,13 +44,13 @@ class UserService(BaseService):
 		# check if user already exist
 		if(check_user is not None):
 			return response.set_data(None).set_message('User already registered').set_error(True).build()
-		
+
 		# check referal limit
 		check_referer = db.session.query(User).filter_by(
 				username=payloads['referer']).all()
 		if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
 			return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
-		
+
 		if payloads['email'] is not None:
 			try:
 				self.model_user = User()
@@ -69,23 +68,21 @@ class UserService(BaseService):
 
 				# checking referer add full day ticket if reach 10 counts
 				if payloads['referer'] is not None:
-					check_referer_count = db.session.query(User).filter_by(referer = payloads['referer']).all()
+					check_referer_count = db.session.query(User).filter_by(referer=payloads['referer']).all()
 					if check_referer_count is not None and len(check_referer_count) > 0:
-						referer_detail = db.session.query(User).filter_by(username = payloads['referer']).first().as_dict()
+						referer_detail = db.session.query(User).filter_by(username=payloads['referer']).first().as_dict()
 						count = len(check_referer_count)
 						payload = {}
 						payload['user_id'] = referer_detail['id']
 						payload['ticket_id'] = 1 
 						if count == 10:
 							UserTicketService().create(payload)
-						
 
 				return response.set_error(False).set_data(data).set_message('User created successfully').build()
-			
+
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return response.set_error(True).set_message('SQL error').set_data(data).build()
-
 
 		# try:
 		# 	db.session.commit()
