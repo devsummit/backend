@@ -26,23 +26,28 @@ class UserService(BaseService):
 		self.perpage = perpage
 
 	def register(self, payloads):
-		role = int(payloads['role'])
+		# role = int(payloads['role'])
 		# payloads validation
-		if (payloads is None) or (not isinstance(role, int)):
-			return {
-				'error': True,
-				'data': 'payload not valid'
-			}
+		# if (payloads is None) or (not isinstance(role, int)):
+		# 	return {
+		# 		'error': True,
+		# 		'data': 'payload not valid'
+		# 	}
 
-		# check if social or email
-		if payloads['social_id'] is not None:
-			check_user = db.session.query(User).filter_by(
-				social_id=payloads['social_id']).first()
-		else:
-			check_user = db.session.query(User).filter_by(
-				email=payloads['email']).first()
+		# # check if social or email
+		# if payloads['social_id'] is not None:
+		# 	check_user = db.session.query(User).filter_by(
+		# 		social_id=payloads['social_id']).first()
+		# else:
+		# 	check_user = db.session.query(User).filter_by(
+		# 		email=payloads['email']).first()
 
 		# check if user already exist
+		check_user = db.session.query(User).filter_by(
+				social_id=payloads['social_id']).first()
+		check_referer = db.session.query(User).filter_by(
+				username=payloads['referer']).first()
+
 		if(check_user is not None):
 			data = {
 				'registered': True
@@ -52,50 +57,68 @@ class UserService(BaseService):
 				'message': 'User already registered',
 				'error': True
 			}
-
-		self.model_user = User()
-		self.model_user.first_name = payloads['first_name']
-		self.model_user.last_name = payloads['last_name']
-		self.model_user.email = payloads['email']
-		self.model_user.username = payloads['username']
-		self.model_user.role_id = role
-		self.model_user.social_id = payloads['social_id']
-		self.model_user.hash_password(payloads['password'])
-		db.session.add(self.model_user)
-
-		try:
-			db.session.commit()
-			data = self.model_user.as_dict()
-
-			# insert role model
-			if(role == ROLE['attendee']):
-				attendee = Attendee()
-				attendee.user_id = data['id']
-				db.session.add(attendee)
+		if payloads ['email']:
+			try:
+				self.model_user = User()
+				self.model_user.first_name = payloads['first_name']
+				self.model_user.last_name = payloads['last_name']
+				self.model_user.email = payloads['email']
+				self.model_user.username = payloads['username']
+				self.model_user.role_id = payloads['role']
+				self.model_user.social_id = payloads['social_id']
+				self.model_user.referer = payloads['referer'] if check_referer else None
+				# self.model_user.hash_password(payloads['password'])
+				db.session.add(self.model_user)
 				db.session.commit()
-			elif(role == ROLE['booth']):
-				booth = Booth()
-				booth.user_id = data['id']
-				db.session.add(booth)
-				db.session.commit()
-			elif(role == ROLE['speaker']):
-				speaker = Speaker()
-				speaker.user_id = data['id']
-				db.session.add(speaker)
-				db.session.commit()
+				data = self.model_user.as_dict()
+				return {
+					'error': False,
+					'data': data,
+					'message': 'user registered successfully'
+				}
+			
+			except SQLAlchemyError as e:
+				data = e.orig.args
+				return {
+					'error': True,
+					'data': {'sql_error': True},
+					'message': data
+				}
 
-			return {
-				'error': False,
-				'data': data,
-				'message': 'user registered successfully'
-			}
-		except SQLAlchemyError as e:
-			data = e.orig.args
-			return {
-				'error': True,
-				'data': {'sql_error': True},
-				'message': data
-			}
+
+		# try:
+		# 	db.session.commit()
+		# 	data = self.model_user.as_dict()
+
+		# 	# insert role model
+		# 	if(role == ROLE['attendee']):
+		# 		attendee = Attendee()
+		# 		attendee.user_id = data['id']
+		# 		db.session.add(attendee)
+		# 		db.session.commit()
+		# 	elif(role == ROLE['booth']):
+		# 		booth = Booth()
+		# 		booth.user_id = data['id']
+		# 		db.session.add(booth)
+		# 		db.session.commit()
+		# 	elif(role == ROLE['speaker']):
+		# 		speaker = Speaker()
+		# 		speaker.user_id = data['id']
+		# 		db.session.add(speaker)
+		# 		db.session.commit()
+
+		# 	return {
+		# 		'error': False,
+		# 		'data': data,
+		# 		'message': 'user registered successfully'
+		# 	}
+		# except SQLAlchemyError as e:
+		# 	data = e.orig.args
+		# 	return {
+		# 		'error': True,
+		# 		'data': {'sql_error': True},
+		# 		'message': data
+		# 	}
 
 	def list_user(self, request, admin=False):
 		self.total_items = User.query.count()
@@ -122,7 +145,7 @@ class UserService(BaseService):
 		if user['role_id'] != 1:
 			for role, role_id in ROLE.items():
 				if role_id == user['role_id']:
-					includes = role.title()   
+					includes = role.title()
 		user = super().outer_include(user, [includes])
 		return response.set_data(user).build()
 
@@ -440,8 +463,8 @@ class UserService(BaseService):
 			data = e.args
 			return response.set_message(data).set_error(True).set_data(None).build()
 
-	def editIncludes(self, includes, payloads):		
-		user_id = self.model_user.first().as_dict()['id']				
+	def editIncludes(self, includes, payloads):
+		user_id = self.model_user.first().as_dict()['id']
 		Model = self.mapIncludesToModel(includes)
 		entityModel = db.session.query(Model).filter_by(user_id=user_id)
 		entity = entityModel.first()
