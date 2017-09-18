@@ -692,6 +692,6 @@ def feeds(*args, **kwargs):
 def notifications(*args, **kwargs):
     user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
-        return NotificationController.index(request)
+        return NotificationController.index(request, user['id'])
     else:
         return NotificationController.create(request, user)

@@ -15,8 +15,8 @@ class NotificationService(BaseService):
 	def __init__(self, perpage):
 		self.perpage = perpage
 
-	def get(self, request):
-		self.total_items = Notification.query.count()
+	def get(self, request, user_id):
+		self.total_items = Notification.query.filter_by(receiver_uid=user_id).count()
 		if request.args.get('page'):
 			self.page = request.args.get('page')
 		else:
@@ -24,7 +24,7 @@ class NotificationService(BaseService):
 			self.page = 1
 		self.base_url = request.base_url
         # paginate
-		paginate = super().paginate(db.session.query(Notification).order_by(Notification.created_at.desc()))
+		paginate = super().paginate(db.session.query(Notification).filter_by(receiver_uid=user_id).order_by(Notification.created_at.desc()))
 		paginate = super().include(['sender', 'receiver'])
 		response = ResponseBuilder()
 		return response.set_data(paginate['data']).set_links(paginate['links']).build()
@@ -37,22 +37,21 @@ class NotificationService(BaseService):
 	# 	data['user'] = feed.user.include_photos().as_dict()
 	# 	return response.set_data(data).build()
 
-	# def create(self, payloads):
-	# 	response = ResponseBuilder()
-	# 	feed = Feed()
-	# 	attachment = self.save_file(payloads['attachment']) if payloads['attachment'] is not None else None
-	# 	feed.message = payloads['message']
-	# 	feed.attachment = attachment
-	# 	feed.user_id = payloads['user_id']
-	# 	db.session.add(feed)
-	# 	try:
-	# 		db.session.commit()
-	# 		data = feed.as_dict()
-	# 		# data['user'] = feed.user.as_dict()
-	# 		return response.set_data(data).build()
-	# 	except SQLAlchemyError as e:
-	# 		data = e.orig.args
-	# 		return response.set_data(data).set_error(True).build()
+	def create(self, payloads):
+		response = ResponseBuilder()
+		notification = Notification()
+		notification.message = payloads['message']
+		notification.receiver_uid = payloads['receiver']
+		notification.type = payloads['type']
+		notification.sender_uid = payloads['user']['id']
+		db.session.add(notification)
+		try:
+			db.session.commit()
+			data = notification.as_dict()
+			return response.set_data(data).build()
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return response.set_data(data).set_error(True).build()
 
 	# def save_file(self, file, id=None):
 	# 	if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
