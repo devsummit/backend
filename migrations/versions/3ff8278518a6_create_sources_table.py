@@ -17,16 +17,16 @@ depends_on = None
 
 
 def upgrade():
-	op.create_table(
-		'sources',
-		sa.Column('id', sa.Integer, primary_key=True),
-		sa.Column('account_number', sa.String(40)),
-		sa.Column('bank', sa.String(40)),
-		sa.Column('alias', sa.String(60)),	   
-		sa.Column('created_at', sa.DateTime),
-		sa.Column('updated_at', sa.DateTime)
-	)
+    op.create_table(
+        'sources',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('account_number', sa.String(40)),
+        sa.Column('bank', sa.String(40)),
+        sa.Column('alias', sa.String(60)),
+        sa.Column('created_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime)
+    )
 
 
 def downgrade():
-	op.drop_table('sources')
+    op.drop_table('sources')

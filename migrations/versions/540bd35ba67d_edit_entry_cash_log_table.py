@@ -18,13 +18,12 @@ depends_on = None
 
 def upgrade():
     op.drop_column('entry_cash_log', 'amount')
-    op.add_column('entry_cash_log', 
-        sa.Column('source_id',sa.Integer, sa.ForeignKey('sources.id')))
     op.add_column('entry_cash_log',
-        sa.Column('debit', sa.Integer))
+                  sa.Column('source_id', sa.Integer, sa.ForeignKey('sources.id')))
     op.add_column('entry_cash_log',
-        sa.Column('credit', sa.Integer))
-
+                  sa.Column('debit', sa.Integer))
+    op.add_column('entry_cash_log',
+                  sa.Column('credit', sa.Integer))
 
 
 def downgrade():
