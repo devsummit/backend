@@ -3,25 +3,25 @@ from app.services import sourceservice
 
 
 class SourceController(BaseController):
-    
+
     @staticmethod
     def get(request):
         source = sourceservice.get(request)
         if source['error']:
             return BaseController.send_error(source['data'], source['message'])
         return BaseController.send_response_api(source['data'], source['message'], source['included'])
-    
+
     @staticmethod
     def create(request):
         account_number = request.json['account_number'] if 'account_number' in request.json else None
         bank = request.json['bank'] if 'bank' in request.json else None
-        alias = request.json['alias'] if 'alias' in request.json else None        
+        alias = request.json['alias'] if 'alias' in request.json else None
 
         if account_number and bank and alias:
             payloads = {
                 'account_number': account_number,
                 'bank': bank,
-                'alias': alias                
+                'alias': alias
             }
             result = sourceservice.create(payloads)
         else:
@@ -42,7 +42,7 @@ class SourceController(BaseController):
             payloads = {
                 'account_number': account_number,
                 'bank': bank,
-                'alias': alias                
+                'alias': alias
             }
             result = sourceservice.update(payloads, id)
         else:
