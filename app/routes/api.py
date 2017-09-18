@@ -30,6 +30,7 @@ from app.controllers.user_controller import UserController
 from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
+from app.controllers.feed_controller import FeedController
 from app.controllers.rundown_list_controller import RundownListController
 from app.configs.constants import ROLE
 
@@ -667,3 +668,25 @@ def rundown_id(id, *args, **kwargs):
         return RundownListController.update(request, id)
     elif (request.method == 'DELETE'):
         return RundownListController.delete(id)
+
+
+@api.route('/feeds/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def feeds_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return FeedController.show(id)
+    # elif(request.method == 'PATCH' or request.method == 'PUT'):
+    #     return FeedController.update(id, request)
+    # else:
+    #     return FeedController.delete(id)
+
+
+@api.route('/feeds', methods=['GET', 'POST'])
+@token_required
+def feeds(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'GET'):
+        return FeedController.index(request)
+    else:
+        return FeedController.create(request, user['id'])
+
