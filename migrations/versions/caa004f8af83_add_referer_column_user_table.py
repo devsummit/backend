@@ -21,4 +21,4 @@ def upgrade():
 
 
 def downgrade():
-    op.add_column('users', 'referer')
+    op.drop_column('users', 'referer')
