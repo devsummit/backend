@@ -29,7 +29,6 @@ def upgrade():
 		sa.Column('role_id', sa.Integer, sa.ForeignKey('roles.id')),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
-		sa.Column('referer', sa.String(40))
 		)
 
 
