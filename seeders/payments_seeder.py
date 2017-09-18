@@ -1,6 +1,8 @@
-from random import randint
+from random import randint, choice
 from app.models.payment import Payment
 from app.models import db
+from app.models.order import Order
+from app.models.base_model import BaseModel
 
 import datetime
 
@@ -24,10 +26,9 @@ class PaymentsSeeder():
         banks = ['bri', 'bni', 'permata', 'maybank', 'mandiri', 'bca', 'cimb']
         range_start = 10 ** (7 - 1)
         range_end = (10 ** 7) - 1
-        order_id_arr = [2, 1, 3, 4]
-
+        orders = BaseModel.as_list(db.session.query(Order).all())
         for i in range(0, 4):
-            order_id = order_id_arr[i]
+            order_id = choice(orders)['id']
             saved_token_id = randint(range_start, range_end)
             transaction_id = randint(range_start, range_end)
             gross_amount = randint(range_start, range_end)

@@ -81,6 +81,7 @@ class UserAuthorizationController(BaseController):
         role = request.json['role'] if 'role' in request.json else None
         password = request.json['password'] if 'password' in request.json else None
         social_id = request.json['social_id'] if 'social_id' in request.json else None
+        referer = request.json['referer'] if 'referer' in request.json else None
 
         # if social_id = None then normal registration
 
@@ -108,8 +109,9 @@ class UserAuthorizationController(BaseController):
                     'password': '',
                     'social_id': social_id,
                     'email': email,
+                    'referer': referer
                 }
-        elif firstname and email and username and role and password:
+        elif firstname and email and username and password:
             payloads = {
                 'first_name': firstname,
                 'last_name': lastname,
@@ -117,7 +119,8 @@ class UserAuthorizationController(BaseController):
                 'username': username,
                 'role': role,
                 'password': password,
-                'social_id': social_id
+                'social_id': social_id,
+                'referer': referer
             }
         else:
             return BaseController.send_response_api({'payload_invalid': True}, 'payloads not valid')

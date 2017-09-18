@@ -4,9 +4,10 @@ from app.models.user_ticket import UserTicket
 from app.models.check_in import CheckIn
 from app.models.base_model import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
+from app.builders.response_builder import ResponseBuilder
 
 
-class UserTicketService:
+class UserTicketService():
 
     def check_in(self, user_ticket_id):
         exist = db.session.query(UserTicket).filter_by(id=user_ticket_id).first()
@@ -85,6 +86,21 @@ class UserTicketService:
                 'error': True,
                 'data': data
             }   
+
+    @staticmethod
+    def create(payload):
+        response = ResponseBuilder()
+        new_user_ticket = UserTicket()
+        new_user_ticket.user_id = payload['user_id']
+        new_user_ticket.ticket_id = payload['ticket_id']
+        db.session.add(new_user_ticket)
+        try:
+            db.session.commit()
+            # return create success
+            return response.set_data({'created': True}).set_error(False).set_message('User ticket created successfully').build()
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return response.set_data(data).set_error(True).set_message('SQL error').build()
 
     def update(self, user_id, payloads):
         ticket_id = payloads['ticket_id']
