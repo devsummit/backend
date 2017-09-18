@@ -70,7 +70,6 @@
             "credit": credit,
             "source_id": source_id
         };
-        console.log(payloads)
         dsa.patch('{{ globals["api_route"] }}/' + id, payloads, function (result) {
             if (result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
