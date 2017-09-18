@@ -51,9 +51,9 @@ class BoothController(BaseController):
         result = boothservice.update(payloads, booth_id)
 
         if not result['error']:
-            return BaseController.send_response_api(result['data'], 'booth succesfully updated')
+            return BaseController.send_response_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_error_api(result['data'], result['message'])
 
     @staticmethod
     def create(request):
@@ -74,7 +74,7 @@ class BoothController(BaseController):
 
         result = boothservice.create(payloads)
 
-        if not result['error']:
-            return BaseController.send_response_api(result['data'], 'booth succesfully created')
+        if result['error']:
+            return BaseController.send_error_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_response_api(result['data'], result['message'])

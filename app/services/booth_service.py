@@ -26,26 +26,20 @@ class BoothService(BaseService):
 
     def show(self, id):
         # get the booth id
+        response = ResponseBuilder()
         booth = db.session.query(Booth).filter_by(id=id).first()
         if booth is None:
             data = {
                 'user_exist': True
             }
-            return {
-                'data': data,
-                'error': True,
-                'message': 'booth not found'
-            }
+            return response.set_data(data).set_error(True).set_message('booth not found').build()
         data = booth.as_dict()
         data['user'] = booth.user.include_photos().as_dict()
         data['stage'] = booth.stage.as_dict() if booth.stage else None
-        return {
-            'error': False,
-            'data': data,
-            'message': 'booth retrieved'
-        }
+        return response.set_data(data).build()
 
     def update(self, payloads, booth_id):
+        response = ResponseBuilder()
         try:
             self.model_booth = db.session.query(Booth).filter_by(id=booth_id)
             self.model_booth.update({
@@ -55,18 +49,13 @@ class BoothService(BaseService):
             })
             db.session.commit()
             data = self.model_booth.first().as_dict()
-            return {
-                'error': False,
-                'data': data
-            }
+            return response.set_data(data).build()
         except SQLAlchemyError as e:
             data = e.orig.args
-            return {
-                'error': True,
-                'data': data
-            }
+            return response.set_error(True).set_data(data).set_message('sql error').build()
 
     def create(self, payloads):
+        response = ResponseBuilder()
         self.model_booth = Booth()
         self.model_booth.user_id = payloads['user_id']
         self.model_booth.stage_id = payloads['stage_id']
@@ -76,29 +65,7 @@ class BoothService(BaseService):
         try:
             db.session.commit()
             data = self.model_booth.as_dict()
-            return {
-                'error': False,
-                'data': data
-            }
+            return response.set_data(data).build()
         except SQLAlchemyError as e:
             data = e.orig.args
-            return {
-                'error': True,
-                'data': data
-            }
-
-    def get_includes(self, booths):
-        included = []
-        if isinstance(booths, list):
-            for booth in booths:
-                temp = {}
-                temp['user'] = booth.user.as_dict()
-                temp['stage'] = booth.stage.as_dict()
-                included.append(temp)
-
-        else:
-            temp = {}
-            temp['user'] = booths.user.as_dict()
-            temp['stage'] = booths.stage.as_dict()
-            included.append(temp)
-        return included
+            return response.set_data(data).set_error(True).build()
