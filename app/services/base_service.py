@@ -38,6 +38,15 @@ class BaseService():
         self.paginated['data'] = _results
         return self.paginated
 
+    def include_user(self):
+        _results = []
+        for item in self.paginated['data']:
+            data = item.as_dict()
+            data['user'] = item.user.include_photos().as_dict()
+            _results.append(data)
+        self.paginated['data'] = _results
+        return self.paginated
+
     def outer_include(self, data, fields):
         entity_name = self.__class__.__name__.lower().replace('service', '')
         for field in fields:
