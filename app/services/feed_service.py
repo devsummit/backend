@@ -24,7 +24,7 @@ class FeedService(BaseService):
 			self.page = 1
 		self.base_url = request.base_url
         # paginate
-		paginate = super().paginate(db.session.query(Feed).order_by('created_at desc'))
+		paginate = super().paginate(db.session.query(Feed).order_by(Feed.created_at.desc()))
 		paginate = super().include_user()
 		response = ResponseBuilder()
 		return response.set_data(paginate['data']).set_links(paginate['links']).build()
