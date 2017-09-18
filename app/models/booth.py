@@ -25,7 +25,7 @@ class Booth(db.Model, BaseModel):
 		nullable=False
 	)
 	stage = db.relationship('Stage')
-	summary = db.Column(db.String)
+	summary = db.Column(db.Text)
 	points = db.Column(db.Integer)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
