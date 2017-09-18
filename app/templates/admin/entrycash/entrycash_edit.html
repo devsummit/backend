@@ -58,9 +58,9 @@
         var credit = $('#i-entry-cash-credit').val();
         var source_id = $('#i-entry-cash-source-id').val();
 
-        if (credit == 0) {
+        if (credit == 0 || credit == null) {
             credit = 0
-        } else if (debit == 0) {
+        } else if (debit == 0 || credit == null) {
             debit = 0
         }
 
@@ -75,9 +75,6 @@
         dsa.patch('{{ globals["api_route"] }}/' + id, payloads, function (result) {
             if (result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
-            }else{
-                console.log(payloads)
-                console.log(result.meta)
             }
         });
     })

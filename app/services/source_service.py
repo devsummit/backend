@@ -65,5 +65,4 @@ class SourceService(BaseService):
             db.session.commit()
             return response.set_message('data deleted').build()
         else:
-            data = 'data not found'
-            return response.set_data(None).set_message(data).set_error(True).build()
+            return response.set_data(None).set_message('data not found').set_error(True).build()
