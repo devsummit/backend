@@ -35,6 +35,7 @@ class BoothService(BaseService):
             return response.set_data(data).set_error(True).set_message('booth not found').build()
         data = booth.as_dict()
         data['user'] = booth.user.include_photos().as_dict()
+        print(data)
         data['stage'] = booth.stage.as_dict() if booth.stage else None
         return response.set_data(data).build()
 
@@ -49,6 +50,8 @@ class BoothService(BaseService):
             })
             db.session.commit()
             data = self.model_booth.first().as_dict()
+            data['user'] = self.model_booth.first().user.include_photos().as_dict()
+            data['stage'] = self.model_booth.first().stage.as_dict() if payloads['stage_id'] is not None else None
             return response.set_data(data).build()
         except SQLAlchemyError as e:
             data = e.orig.args
