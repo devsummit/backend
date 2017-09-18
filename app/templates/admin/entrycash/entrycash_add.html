@@ -60,9 +60,9 @@
             var credit = target.find('#i-entry-cash-credit').val();
             var debit = target.find('#i-entry-cash-debit').val();
 
-            if (credit == 0) {
+            if (credit == 0 || credit == null) {
                 credit = 0
-            } else if (debit == 0) {
+            } else if (debit == 0 || debit == null) {
                 debit = 0
             }
 
@@ -75,8 +75,6 @@
              dsa.post('{{ globals["api_route"] }}', payload, function (result) {
                 if (result.meta.success) {
                     window.location = '/{{ globals["base_route"] }}';
-                } else {
-                    console.log(result)
                 }
             });
         })

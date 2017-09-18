@@ -17,7 +17,7 @@ class SourceService(BaseService):
         response = ResponseBuilder()
         result = response.set_data(results).build()
         return result
-    
+
     def create(self, payloads):
         response = ResponseBuilder()
         source = Source()
@@ -32,7 +32,7 @@ class SourceService(BaseService):
         except SQLAlchemyError as e:
             data = e.orig.args
             return response.set_data(data).set_error(True).build()
-    
+
     def update(self, payloads, id):
         response = ResponseBuilder()
         try:
@@ -40,7 +40,7 @@ class SourceService(BaseService):
             source.update({
                 'account_number': payloads['account_number'],
                 'bank': payloads['bank'],
-                'alias': payloads['alias'],                
+                'alias': payloads['alias'],
                 'updated_at': datetime.datetime.now()
             })
             db.session.commit()
@@ -65,5 +65,4 @@ class SourceService(BaseService):
             db.session.commit()
             return response.set_message('data deleted').build()
         else:
-            data = 'data not found'
-            return response.set_data(None).set_message(data).set_error(True).build()
+            return response.set_data(None).set_message('data not found').set_error(True).build()

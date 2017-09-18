@@ -10,7 +10,7 @@ class EntryCashLogController(BaseController):
         result = entrycashlogservice.get(request)
         if result['error']:
             return BaseController.send_error_api(
-                result['data'], 
+                result['data'],
                 result['message']
             )
         return BaseController.send_response_api(
@@ -37,7 +37,7 @@ class EntryCashLogController(BaseController):
             payloads = {
                 'debit': debit,
                 'credit': credit,
-                'source_id' : source_id,
+                'source_id': source_id,
                 'description': description
             }
         else:
