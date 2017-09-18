@@ -37,7 +37,7 @@ class User(db.Model, BaseModel):
         db.Integer,
         db.ForeignKey('roles.id'),
         nullable=False,
-        default = 7
+        default=7
     )
     role = db.relationship('Role')
     referer = db.Column(db.String)
