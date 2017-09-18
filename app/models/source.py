@@ -13,7 +13,7 @@ class Source(db.Model, BaseModel):
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
-	account_number = db.Column(db.Integer)
+	account_number = db.Column(db.String(20))
 	bank = db.Column(db.String(40))
 	alias = db.Column(db.String(60))
 	created_at = db.Column(db.DateTime)

@@ -18,14 +18,20 @@
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="i-entry-cash-flow">Cash Flow:</label>
-                                    <select class="form-control" id="i-entry-cash-flow"></select>
+                                    <label for="i-entry-cash-amount">Source Id:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-source-id">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="i-entry-cash-amount">Amount:</label>
-                                    <input type="text" class="form-control" id="i-entry-cash-amount">
+                                    <label for="i-entry-cash-amount">Debit:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-debit">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-entry-cash-amount">Credit:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-credit">
                                 </div>
                             </li>
                         </ul>
@@ -46,25 +52,30 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
-    let cashFlow 
-    $('#i-entry-cash-flow').click(function() {
-        let selectedValue = $(this).val();
-        if (selectedValue == 'Expense') {
-            cashFlow = selectedValue;
-        } else {
-            cashFlow = selectedValue;
-        }
-    });
     $('#btn-add-save').click(function (event) {
-        let cash = $('#i-entry-cash-amount').val();
-        let amount = cashFlow == 'Expense' ? -cash : cash
+        var debit = $('#i-entry-cash-debit').val();
+        var credit = $('#i-entry-cash-credit').val();
+        var source_id = $('#i-entry-cash-source-id').val();
+
+        if(credit == 0){
+            credit = 0
+        }else if(debit == 0){
+            debit = 0
+        }
+
+        console.log(debit)
         const payload = {
             "description": $('#i-entry-cash-desc').val(),
-            "amount": amount
+            "debit": debit,
+            "credit": credit,
+            "source_id": source_id
         };
         dsa.post('{{ globals["api_route"] }}', payload, function (result) {
             if (result.meta.success) {
                 window.location = '/entrycashlogs';
+            }else{
+                console.log(result.meta)
+                console.log(payload)
             }
         });
     });

@@ -29,11 +29,15 @@ class EntryCashLogController(BaseController):
 
     @staticmethod
     def update(request, id):
-        amount = request.json['amount'] if 'amount' in request.json else None
+        debit = request.json['debit'] if 'debit' in request.json else None
+        credit = request.json['credit'] if 'credit' in request.json else None
         description = request.json['description'] if 'description' in request.json else None
-        if amount and description:
+        source_id = request.json['source_id'] if 'source_id' in request.json else None
+        if source_id and description:
             payloads = {
-                'amount': amount,
+                'debit': debit,
+                'credit': credit,
+                'source_id' : source_id,
                 'description': description
             }
         else:
@@ -48,11 +52,15 @@ class EntryCashLogController(BaseController):
 
     @staticmethod
     def create(request):
-        amount = request.json['amount'] if 'amount' in request.json else None
-        description = request.json['description'] if 'amount' in request.json else None
-        if amount and description:
+        debit = request.json['debit'] if 'debit' in request.json else None
+        credit = request.json['credit'] if 'credit' in request.json else None
+        description = request.json['description'] if 'description' in request.json else None
+        source_id = request.json['source_id'] if 'source_id' in request.json else None
+        if source_id and description:
             payloads = {
-                'amount': amount,
+                'source_id': source_id,
+                'debit': debit,
+                'credit': credit,
                 'description': description
             }
         else:
