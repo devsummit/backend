@@ -24,6 +24,8 @@ POST_PARTNER_PHOTO_DEST = 'app/static/images/partners/'
 SAVE_PARTNER_PHOTO_DEST = 'images/partners/'
 POST_USER_PHOTO_DEST = 'app/static/images/users/'
 SAVE_USER_PHOTO_DEST = 'images/users/'
+POST_FEED_PHOTO_DEST = 'app/static/images/feeds/'
+SAVE_FEED_PHOTO_DEST = 'images/feeds/'
 GET_DEST = 'static/'
 STATIC_DEST = 'app/static/'
 
