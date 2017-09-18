@@ -120,6 +120,7 @@ class UserAuthorizationController(BaseController):
                 'role': role,
                 'password': password,
                 'social_id': social_id
+                'referer': referer
             }
         else:
             return BaseController.send_response_api({'payload_invalid': True}, 'payloads not valid')
