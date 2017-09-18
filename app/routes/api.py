@@ -676,3 +676,13 @@ def sources(*args, **kwargs):
         return SourceController.get(request)
     elif (request.method == 'POST'):
         return SourceController.create(request)
+
+@api.route('/sources/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def sources_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SourceController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):                
+        return SourceController.update(request, id)
+    elif (request.method == 'DELETE'):
+        return SourceController.delete(id)
