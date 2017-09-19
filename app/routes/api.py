@@ -292,7 +292,9 @@ def booth(*args, **kwargs):
 def booth_id(booth_id, *args, **kwargs):
     if(request.method == 'GET'):
         return BoothController.show(booth_id)
-    return BoothController.update(request, None, booth_id)
+
+    user_id = kwargs['user'].id
+    return BoothController.update(request, user_id, booth_id)
 
 
 # Point endpoint

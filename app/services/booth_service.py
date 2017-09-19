@@ -1,6 +1,8 @@
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.booth import Booth
+from app.models.user_booth import UserBooth
+from app.models.user import User
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 
@@ -35,7 +37,16 @@ class BoothService(BaseService):
             return response.set_data(data).set_error(True).set_message('booth not found').build()
         data = booth.as_dict()
         data['user'] = booth.user.include_photos().as_dict()
-        print(data)
+
+        user_booth = db.session.query(UserBooth).filter_by(booth_id=id).all()
+
+        data['members'] = []
+
+        for user in user_booth:
+            user_id = user.as_dict()['user_id']
+            user = db.session.query(User).filter_by(id=user_id).first()
+            data['members'].append(user.include_photos().as_dict())
+
         data['stage'] = booth.stage.as_dict() if booth.stage else None
         return response.set_data(data).build()
 

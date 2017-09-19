@@ -18,6 +18,10 @@ class UserAuthorizationController(BaseController):
         return BaseController.send_error_api(None, 'refresh token required')
 
     @staticmethod
+    def get_booth_info(user):
+        booth = userservice.get_booth_by_uid(user['id'])
+
+    @staticmethod
     def login(request):
         provider = request.json['provider'] if 'provider' in request.json else None
 

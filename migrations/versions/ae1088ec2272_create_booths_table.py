@@ -23,6 +23,7 @@ def upgrade():
 		sa.Column('stage_id', sa.Integer, sa.ForeignKey('stages.id'), nullable=True),
 		sa.Column('points', sa.Integer),
 		sa.Column('summary', sa.Text),
+		sa.Column('logo_url', sa.String(255)),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime),
 		)

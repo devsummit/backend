@@ -8,6 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask import request
 from app.models.access_token import AccessToken
 from app.models.user import User
+from app.models.user_booth import UserBooth
 from app.models.user_photo import UserPhoto
 from app.models.booth import Booth  # noqa
 from app.models.attendee import Attendee  # noqa
@@ -26,6 +27,9 @@ class UserService(BaseService):
 
 	def __init__(self, perpage):
 		self.perpage = perpage
+
+	def get_booth_by_uid(self, user_id):
+		self.model_booth = db.session.query(Booth).filter_by(id=booth_id)
 
 	def register(self, payloads):
 		response = ResponseBuilder()
