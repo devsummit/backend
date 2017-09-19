@@ -13,7 +13,7 @@
     const ajaxObj = (url, methodType, payloads, onSuccess) => ({
         url : 'api/v1/'+url,
         type: methodType,
-        data: JSON.stringify(payloads),
+        data: payloads ? JSON.stringify(payloads) : '',
         contentType: "application/json; charset=utf-8",
         dataType   : "json",
         headers: {
@@ -107,7 +107,7 @@
         $.ajax({
             url : url,
             type: method,
-            data: JSON.stringify(payloads),
+            data: payloads ? JSON.stringify(payloads) : '',
             contentType: "application/json; charset=utf-8",
             dataType   : "json",
             headers: {

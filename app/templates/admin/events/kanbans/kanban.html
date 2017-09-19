@@ -18,12 +18,58 @@
     <script src="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.min.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/moment/moment.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/fullcalendar/dist/fullcalendar.js') }}"></script>
-    
+
+    <!-- Devsummit Auth Client -->
+    <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
+
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/AdminLTE.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/skins/skin-yellow.min.css') }}">
 </head>
 <body>
+
+    <script>
+        // check if user is login when enter this page
+        // use dsa client from auth.js
+        if (!dsa.isLogin()) {
+            window.location.href = '/login';
+        }
+
+        $('#logOutBtn').click((event) => {
+            dsa.logout();
+        });
+    </script>
+    
+    <!-- Main Header -->
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="index2.html" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini"><b>I</b>DS</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>Devsummit</b>Admin</span>
+        </a>
+
+        <!-- Header Navbar -->
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!-- Navbar Right Menu -->
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <!-- GOBACK Button Button -->
+                    <li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+        </nav>
+    </header>
     <div class="row">
         <div class="col-md-3">
-            <div class="box box-solid">
+            <div class="box box-solid box-primary">
                 <div class="box-header with-border">
                     <h4 class="box-title">Draggable Events</h4>
                 </div>
@@ -45,7 +91,7 @@
                 </div>
                 <!-- /.box-body -->
             </div>
-            <div class="box box-solid">
+            <div class="box box-solid box-default">
                 <div class="box-header with-border">
                     <h3 class="box-title">Create Event</h3>
                 </div>
@@ -121,12 +167,30 @@
 
             init_events($('#external-events div.external-event'));
 
+            // event color mapping function
+            const eventColor = function(type) {
+                types = {
+                    'speaker': '#0e4b7c',
+                    'panel': '#55a8ed',
+                    'booth': '#2ba039',
+                    'hackaton': '#bf1e1e',
+                    'break': '#e5b020',
+                    'other': '#9cb8d3'
+                }
+                if(!(type in types)){
+                    return '#000000'
+                }
+                return types[type];
+            }
+            
             // page is now ready, initialize the calendar...
             // date/schedule initialization here:
-            var date = new Date()
-            var d = date.getDate(),
-                m = date.getMonth(),
-                y = date.getFullYear()
+            var startDate = new Date(2017, 10, 21)
+            var d = startDate.getDate(),
+                m = startDate.getMonth(),
+                y = startDate.getFullYear()
+
+            // render the calendar
             $('#calendar').fullCalendar({
                 header: {
                     left: 'title',
@@ -134,9 +198,27 @@
                     right: 'prev,next today'
                 },
                 defaultView: 'agendaDay',
-                //Random default events
-                events: [
-                ],
+                
+                events: function(start, end, timezone, callback){
+                    // Load events from API
+                    var eventsData, schedulesData;
+                    dsa.request('/api/v1/schedules', 'GET', null, function(result) {
+                        schedulesData = result['data'];
+                        eventsData = schedulesData.map((schedule)=>{
+                            return {
+                                schedule_id: schedule.id,
+                                event_id: schedule.event.id,
+                                title: schedule.event.title,
+                                start: schedule.time_start,
+                                end: schedule.time_end,
+                                all_day: false,
+                                backgroundColor: eventColor(schedule.event.type),
+                                borderColor: eventColor(schedule.event.type)
+                            }
+                        });
+                        callback(eventsData);
+                    });
+                },
                 editable  : true,
                 droppable: true,
                 drop: function (date, allDay) { // this function is called when something is dropped
@@ -161,10 +243,32 @@
                             // if so, remove the element from the "Draggable Events" list
                             $(this).remove()
                         }
+                    },
+                eventDrop: function (event, delta, revertFunc) {
+                        if (!confirm(event.title + " schedule is changed, is this okay?")) {
+                            revertFunc();
+                        } else {
+                            var new_time = {
+                                start: event.start,
+                                end: event.end
+                            }
+                        }
+                    },
+                eventResize: function (event, delta, revertFunc) {
+                        console.log(event);
+                        if (!confirm(event.title + " schedule time is changed, is this okay?")) {
+                            revertFunc();
+                        } else {
+                            var new_time = {
+                                start: event.start,
+                                end: event.end
+                            }
+                        }
+
                     }
             });
 
-            
+            $('#calendar').fullCalendar('gotoDate', startDate);
         });
     </script>
 </body>
