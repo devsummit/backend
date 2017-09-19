@@ -49,6 +49,8 @@ class NotificationService(BaseService):
 		try:
 			db.session.commit()
 			data = notification.as_dict()
+			data['receiver'] = notification.receiver.include_photos().as_dict()
+			data['sender'] = notification.sender.include_photos().as_dict()
 			return response.set_data(data).build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
