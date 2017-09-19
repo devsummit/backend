@@ -7,6 +7,7 @@ from app.services.helper import Helper
 # import model class
 from app.models.speaker_document import SpeakerDocument
 from app.models.base_model import BaseModel
+from app.models.speaker import Speaker
 from app.models.user import User
 from app.builders.response_builder import ResponseBuilder
 
@@ -72,6 +73,7 @@ class SpeakerDocumentService():
     def create(self, payloads):
         response = ResponseBuilder()
         speaker_id = payloads['speaker_id']
+        speaker = db.session.query(Speaker).filter_by(id=speaker_id).first().as_dict()
         file = payloads['document_data']
         title = payloads['title']
         summary = payloads['summary']
@@ -92,6 +94,7 @@ class SpeakerDocumentService():
                 data = self.model_speaker_document.as_dict()
                 data['material'] = Helper().url_helper(
                     self.model_speaker_document.material, app.config['GET_SPEAKER_DOC_DEST'])
+                data['user'] = db.session.query(User).filter_by(id=speaker['user_id']).first().include_photos().as_dict()
                 return response.set_data(data).build()
             except SQLAlchemyError as e:
                 data = e.orig.args
