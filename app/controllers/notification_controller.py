@@ -33,12 +33,12 @@ class NotificationController(BaseController):
 		else:
 			return BaseController.send_response_api(result['data'], result['message'])
 
-	# @staticmethod
-	# def show(id):
-	# 	feed = feedservice.show(id)
-	# 	if feed['error']:
-	# 		return BaseController.send_error_api(feed['data'], feed['message'])
-	# 	return BaseController.send_response_api(feed['data'], feed['message'])
+	@staticmethod
+	def show(id):
+		notification = notificationservice.show(id)
+		if notification['error']:
+			return BaseController.send_error_api(notification['data'], notification['message'])
+		return BaseController.send_response_api(notification['data'], notification['message'])
 
 	# @staticmethod
 	# def update(id, request):
