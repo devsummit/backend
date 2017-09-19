@@ -10,7 +10,8 @@ class SpeakerDocumentController(BaseController):
 
     @staticmethod
     def show(user):
-        speaker = db.session.query(Speaker).filter_by(user_id=user['id']).first()
+        speaker = db.session.query(Speaker).filter_by(
+            user_id=user['id']).first()
         if speaker is None:
             return BaseController.send_error_api(None, 'speaker not found')
         speaker = speaker.as_dict()
@@ -35,16 +36,17 @@ class SpeakerDocumentController(BaseController):
 
     @staticmethod
     def create(request, user):
-        if(user['role_id'] == ROLE['speaker']):            
-            speaker = db.session.query(Speaker).filter_by(user_id=user['id']).first()
+        if(user['role_id'] == ROLE['speaker']):
+            speaker = db.session.query(Speaker).filter_by(
+                user_id=user['id']).first()
             if speaker is None:
                 return BaseController.send_error_api(None, 'speaker not found')
             speaker = speaker.as_dict()
             speaker_id = speaker['id']
-            document_data = request.files['document_data']            
+            document_data = request.files['document_data']
             summary = request.form['summary'] if 'summary' in request.form else ''
             title = request.form['title'] if 'title' in request.form else ''
-            is_used = request.form['is_used'] if 'is_used' in request.form else 0             
+            is_used = request.form['is_used'] if 'is_used' in request.form else 0
             if document_data and speaker_id:
                 payloads = {
                     'document_data': document_data,
@@ -62,19 +64,20 @@ class SpeakerDocumentController(BaseController):
                 return BaseController.send_error_api(result['data'], result['message'])
         else:
             return BaseController.send_error_api(None, 'Unauthorized user')
-    
+
     @staticmethod
     def update(request, user, id):
-        if(user['role_id'] == ROLE['speaker']):            
-            speaker = db.session.query(Speaker).filter_by(user_id=user['id']).first()
+        if(user['role_id'] == ROLE['speaker']):
+            speaker = db.session.query(Speaker).filter_by(
+                user_id=user['id']).first()
             if speaker is None:
                 return BaseController.send_error_api(None, 'speaker not found')
             speaker = speaker.as_dict()
             speaker_id = speaker['id']
-            document_data = request.files['document_data']            
+            document_data = request.files['document_data']
             summary = request.form['summary'] if 'summary' in request.form else ''
             title = request.form['title'] if 'title' in request.form else ''
-            is_used = request.form['is_used'] if 'is_used' in request.form else 0             
+            is_used = request.form['is_used'] if 'is_used' in request.form else 0
             if document_data and speaker_id:
                 payloads = {
                     'document_data': document_data,
@@ -95,9 +98,10 @@ class SpeakerDocumentController(BaseController):
 
     @staticmethod
     def admin_create(request, user):
-        if(user['role_id'] == ROLE['admin']):            
+        if(user['role_id'] == ROLE['admin']):
             speaker_id = request.form['speaker_id'] if 'speaker_id' in request.form else None
-            speaker = db.session.query(Speaker).filter_by(user_id=speaker_id).first()
+            speaker = db.session.query(Speaker).filter_by(
+                user_id=speaker_id).first()
             if speaker is None:
                 return BaseController.send_error_api(None, request.form.to_dict())
             speaker = speaker.as_dict()
@@ -124,8 +128,10 @@ class SpeakerDocumentController(BaseController):
 
     @staticmethod
     def delete(user, id):
-        speaker_document = db.session.query(SpeakerDocument).filter_by(id=id).first()
-        speaker = db.session.query(Speaker).filter_by(user_id=user['id']).first()
+        speaker_document = db.session.query(
+            SpeakerDocument).filter_by(id=id).first()
+        speaker = db.session.query(Speaker).filter_by(
+            user_id=user['id']).first()
         if speaker_document and speaker is not None:
             speaker_document = speaker_document.as_dict()
             speaker = speaker.as_dict()
