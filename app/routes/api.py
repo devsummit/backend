@@ -250,6 +250,7 @@ def schedule_id(id, *args, **kwargs):
     elif(request.method == 'DELETE'):
         return ScheduleController.delete(id)
 
+
 # Speakers endpoint
 
 
