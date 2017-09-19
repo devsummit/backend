@@ -35,13 +35,13 @@ class SpeakerDocumentController(BaseController):
 
     @staticmethod
     def create(request, user):
-        if(user['role_id'] == ROLE['speaker']):
+        if(user['role_id'] == ROLE['speaker']):            
             speaker = db.session.query(Speaker).filter_by(user_id=user['id']).first()
             if speaker is None:
                 return BaseController.send_error_api(None, 'speaker not found')
             speaker = speaker.as_dict()
             speaker_id = speaker['id']
-            document_data = request.files['document_data']
+            document_data = request.files['document_data']            
             summary = request.form['summary'] if 'summary' in request.form else ''
             title = request.form['title'] if 'title' in request.form else ''
             if document_data and speaker_id:
@@ -63,7 +63,7 @@ class SpeakerDocumentController(BaseController):
 
     @staticmethod
     def admin_create(request, user):
-        if(user['role_id'] == ROLE['admin']):
+        if(user['role_id'] == ROLE['admin']):            
             speaker_id = request.form['speaker_id'] if 'speaker_id' in request.form else None
             speaker = db.session.query(Speaker).filter_by(user_id=speaker_id).first()
             if speaker is None:
@@ -71,10 +71,14 @@ class SpeakerDocumentController(BaseController):
             speaker = speaker.as_dict()
             speaker_id = speaker['id']
             document_data = request.files['document_data']
+            summary = request.form['summary'] if 'summary' in request.form else ''
+            title = request.form['title'] if 'title' in request.form else ''
             if document_data and speaker_id:
                 payloads = {
                     'document_data': document_data,
-                    'speaker_id': speaker_id
+                    'speaker_id': speaker_id,
+                    'title': title,
+                    'summary': summary
                 }
             else:
                 return BaseController.send_error_api(None, 'field is not complete')

@@ -13,6 +13,10 @@
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <form id="upload-document" enctype="multipart/form-data">
+                                        <label for="speaker-document-summary">Title</label>
+                                        <input type="text" name="document_title" class="form-control" id="i-title">
+                                        <label for="speaker-document-summary">Summary</label>
+                                        <input type="text" name="document_summary" class="form-control" id="i-summary">
                                         <label for="speaker-document">Upload Document</label>
                                         <input type="file" name="document_data" class="form-control" id="document" accept=".ppt,.pptx,.pdf">
                                     </form>
@@ -38,13 +42,17 @@
     /* Save edited data */
     $('.btn-add').click(function (event) {
         const id = $(this).attr('id').split(' ');
+        const title = $('#i-title').val();
+        const summary = $('#i-summary').val();        
         var form = $('#upload-document')[0];
         var payloads = new FormData(form);
         payloads.append('document_data', $('#document')[0].files[0])
         payloads.append('speaker_id', id[1])
+        payloads.append('title', title)
+        payloads.append('summary', summary)        
         dsa.postForm('document_speaker_admin', payloads, function (result) {
             if (result.meta.success) {
-                window.location = "http://localhost:5000/speakers";
+                window.location = "/speakers";
             }
         });
     })

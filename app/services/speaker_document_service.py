@@ -65,9 +65,8 @@ class SpeakerDocumentService():
         response = ResponseBuilder()
         speaker_id = payloads['speaker_id']
         file = payloads['document_data']
-        summary = payloads['summary']
         title = payloads['title']
-
+        summary = payloads['summary'] 
         if file and Helper().allowed_file(file.filename, app.config['ALLOWED_SPEAKER_DOC_EXTENSIONS']):
             self.model_speaker_document = SpeakerDocument()
             db.session.add(self.model_speaker_document)
