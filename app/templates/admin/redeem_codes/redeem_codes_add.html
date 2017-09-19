@@ -64,7 +64,6 @@
             'count': $('.add-count').val()
         };
 
-        console.log(payload)
         dsa.post('redeemcodes', payload, function (result) {
             if (result.meta.success) {
                 location.reload()
@@ -83,7 +82,6 @@
             participant.find('option').remove();
             if (selected == 'booth'){                
                 dsa.get('booths', function (result) {
-                    console.log(result)
                     result.data.map(function (res) {
                         let option = document.createElement('option');
 
@@ -95,7 +93,6 @@
                 });
             } else if (selected == 'partner') {
                 dsa.get('partners', function (result) {
-                    console.log(result)
                     result.data.map(function (res) {
                         let option = document.createElement('option');
 
