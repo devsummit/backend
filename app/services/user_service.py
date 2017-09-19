@@ -16,6 +16,7 @@ from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
 from app.models.ambassador import Ambassador  # noqa
+from app.models.redeem_code import RedeemCode  # noqa
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
@@ -28,6 +29,54 @@ class UserService(BaseService):
 
 	def __init__(self, perpage):
 		self.perpage = perpage
+
+	
+	def redeemcode(self, code, user):
+		response = ResponseBuilder()
+		uid = user['id']
+		temp_user = db.session.query(User).filter_by(id=uid)
+		usable_code = db.session.query(RedeemCode).filter_by(code=code)
+		result = result.first().as_dict() if result.first() else None
+		# check if code is there
+		if result is None:
+			return response.set_data(None).set_error(True).set_message('code is not valid').build()
+		# if yes check the count
+		if result['count'] > 0:
+			if result['codeable_type'] == 'booth':
+				# grant booth role
+				booth = Booth()
+				booth.user_id = uid
+				db.session.add(booth)
+				temp_user.update({
+					'role_id': ROLE['booth']
+				})
+				usable_code.update({
+					'count': result['count'] - 1
+				})
+				try:
+					db.session.commit()
+					data = booth.as_dict()
+					data['user'] = booth.user.as_dict()
+					return response.set_data(data).build()
+				except SQLAlchemyError as e:
+					data = e.orig.args
+					return response.set_error(True).set_message('SQL error').set_data(data).build()
+			elif result['codeable_type'] == 'partner':
+				# grant attendee role
+				attendee = Attendee()
+				attendee.user_id = uid
+				db.session.add(attendee)
+				temp_user.update({
+					'role_id': ROLE['attendee']
+				})
+				try:
+					db.session.commit()
+					data = attendee.as_dict()
+					data['user'] = booth.user.as_dict()
+					return response.set_data(data).build()
+				except SQLAlchemyError as e:
+					data = e.orig.args
+					return response.set_error(True).set_message('SQL error').set_data(data).build()
 
 	def get_booth_by_uid(self, user_id):
 		response = ResponseBuilder()
