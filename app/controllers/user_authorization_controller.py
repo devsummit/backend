@@ -117,7 +117,8 @@ class UserAuthorizationController(BaseController):
                     'password': '',
                     'social_id': social_id,
                     'email': email,
-                    'referer': referer
+                    'referer': referer,
+                    'provider': 'mobile'
                 }
         elif firstname and email and username and password:
             payloads = {
@@ -128,7 +129,8 @@ class UserAuthorizationController(BaseController):
                 'role': role,
                 'password': password,
                 'social_id': social_id,
-                'referer': referer
+                'referer': referer,
+                'provider': 'email'
             }
         else:
             return BaseController.send_response_api({'payload_invalid': True}, 'payloads not valid')

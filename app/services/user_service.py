@@ -5,6 +5,7 @@ import datetime
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import or_
 from flask import request
 from app.models.access_token import AccessToken
 from app.models.user import User
@@ -75,7 +76,8 @@ class UserService(BaseService):
 				self.model_user.role_id = payloads['role']
 				self.model_user.social_id = payloads['social_id']
 				self.model_user.referer = payloads['referer'] if check_referer else None
-				# self.model_user.hash_password(payloads['password'])
+				if payloads['provider'] == 'email': 
+					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
 				db.session.commit()
 				data = self.model_user.as_dict()
@@ -161,9 +163,10 @@ class UserService(BaseService):
 		user = super().outer_include(user, [includes])
 		return response.set_data(user).build()
 
-	def get_user(self, username):
+	def get_user(self, param):
 		self.model_user = db.session.query(
-			User).filter_by(username=username).first()
+			User).filter(or_(User.username.like(param), User.email.like(param))).first()
+		
 		return self.model_user
 
 	def get_user_photo(self, id):

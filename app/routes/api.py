@@ -31,6 +31,7 @@ from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
 from app.controllers.rundown_list_controller import RundownListController
+from app.controllers.source_controller import SourceController
 from app.configs.constants import ROLE
 
 
@@ -673,3 +674,21 @@ def rundown_id(id, *args, **kwargs):
         return RundownListController.update(request, id)
     elif (request.method == 'DELETE'):
         return RundownListController.delete(id)
+
+@api.route('/sources', methods=['GET', 'POST'])
+@token_required
+def sources(*args, **kwargs):
+    if (request.method == 'GET'):
+        return SourceController.get(request)
+    elif (request.method == 'POST'):
+        return SourceController.create(request)
+
+@api.route('/sources/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def sources_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SourceController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):                
+        return SourceController.update(request, id)
+    elif (request.method == 'DELETE'):
+        return SourceController.delete(id)

@@ -21,7 +21,9 @@
 
                 <tr>
                     <th>Description</th>
-                    <th>Amount</th>
+                    <th>Source Id</th>
+                    <th>Debit</th>
+                    <th>Credit</th>
                     <th>Action</th>                    
                 </tr>
             </thead>
@@ -32,7 +34,13 @@
                         <a href="" id='atd-{{ entry.id }}' class="entry-description">{{ entry['description']|e }}</a>
                     </td>
                     <td>
-                        <a href="" id='atd-{{ entry.amount }}' class="entry-amount">{{ entry['amount']|e }}</a>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['source_id']|e }}</a>
+                    </td>
+                    <td>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['debit']|e }}</a>
+                    </td>
+                    <td>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['credit']|e }}</a>
                     </td>
                     <td>
                         <button id='entry-{{ entry.id }}' type="button" class="btn btn-sm btn-info btn-entry-edit" data-toggle="modal" data-target="#modal-edit">
@@ -76,10 +84,12 @@
             dsa.get(url, function (result) {
                 // bind result value in to modal-detail page 
                 const data = result['data']
-                $('#entrycashlog-desc').val(data['description']);
-                $('#entrycashlog-amount').val(data['amount']);
+                $('#i-entry-cash-desc').val(data['description']);
+                $('#i-entry-cash-debit').val(data['debit']);
+                $('#i-entry-cash-credit').val(data['credit']);
+                $('#i-entry-cash-source-id').val(data['source_id']);
             });
-            $('.btn-edit-save').attr("id", id);
+            $('#btn-edit-save').attr("id", id);
         });
 
         $('.btn-entry-add').click(function (event) {
