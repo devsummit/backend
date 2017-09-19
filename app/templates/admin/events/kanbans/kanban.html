@@ -188,11 +188,13 @@
                             revertFunc();
                         } else {
                             var schedule_id = event.schedule_id;
+                            start_time =  event.start.format("YYYY-MM-DD HH:mm:ss.000000");
+                            end_time = event.end.format("YYYY-MM-DD HH:mm:ss.000000");
                             var new_schedule = {
                                 stage_id: event.stage_id,
                                 event_id: event.event_id,                                
-                                time_start: event.start.format("YYYY-MM-DD HH:mm:ss"),
-                                time_end: event.end.format("YYYY-MM-DD HH:mm:ss"),
+                                time_start: start_time,
+                                time_end: end_time,
                             }
                             console.log(new_schedule);
                             dsa.request('/api/v1/schedules/'+schedule_id, 'PATCH', new_schedule, function(result) {
@@ -205,11 +207,13 @@
                             revertFunc();
                         } else {
                             var schedule_id = event.schedule_id;
+                            start_time =  event.start.format("YYYY-MM-DD HH:mm:ss.000000");
+                            end_time = event.end.format("YYYY-MM-DD HH:mm:ss.000000");
                             var new_schedule = {
                                 stage_id: event.stage_id,
                                 event_id: event.event_id,                                
-                                time_start: event.start.format("YYYY-MM-DD HH:mm:ss"),
-                                time_end: event.end.format("YYYY-MM-DD HH:mm:ss"),
+                                time_start: start_time,
+                                time_end: end_time,
                             }
                             console.log(new_schedule);
                             dsa.request('/api/v1/schedules/'+schedule_id, 'PATCH', new_schedule, function(result) {
