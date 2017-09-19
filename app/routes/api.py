@@ -292,10 +292,14 @@ def booth(*args, **kwargs):
 def booth_id(booth_id, *args, **kwargs):
     if(request.method == 'GET'):
         return BoothController.show(booth_id)
+    return BoothController.update(request, None, booth_id)
 
-    user_id = kwargs['user'].id
-    return BoothController.update(request, user_id, booth_id)
 
+@api.route('/booths/updatelogo', methods=['PUT', 'PATCH'])
+@token_required
+def update_booth_logo(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    return BoothController.update_logo(request, user)
 
 # Point endpoint
 
