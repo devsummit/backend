@@ -1,5 +1,4 @@
 from app.controllers.base_controller import BaseController
-from app.models.base_model import BaseModel
 from app.services import redeemcodeservice
 
 
@@ -8,14 +7,14 @@ class RedeemCodeController(BaseController):
     @staticmethod
     def index():
         redeem_codes = redeemcodeservice.get()
-        return BaseController.send_response_api(BaseModel.as_list(redeem_codes), 'Redeem codes retrieved successfully')
+        return BaseController.send_response_api(redeem_codes['data'], redeem_codes['message'])
 
     @staticmethod
     def show(id):
         redeem_code = redeemcodeservice.show(id)
         if redeem_code is None:
             return BaseController.send_error_api(None, 'redeem code not found')
-        return BaseController.send_response_api(redeem_code.as_dict(), 'redeem code retrieved successfully')
+        return BaseController.send_response_api(redeem_code['data'], redeem_code['message'])
 
     @staticmethod
     def create(request):
