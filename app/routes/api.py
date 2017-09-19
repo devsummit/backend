@@ -689,4 +689,3 @@ def redeem_id(id, *args, **kwargs):
         return RedeemCodeController.show(id)
     if (request.method == 'DELETE'):
         return RedeemCodeController.delete(id)
-
