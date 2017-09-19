@@ -28,3 +28,9 @@ const EVENT_TYPES = [
 	'hackaton',
 	'other'
 ]
+
+const ROLES = [
+	'booth',
+	'partner',
+	''
+]
