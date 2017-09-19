@@ -85,7 +85,7 @@
                     result.data.map(function (res) {
                         let option = document.createElement('option');
 
-                        option.innerHTML = capitalizeFirstLetter(res.user.first_name) + ' ' + capitalizeFirstLetter(res.user.last_name)+ '(' + res.user.username + ')';
+                        option.innerHTML = capitalizeFirstLetter(res.user.first_name) + ' ' + capitalizeFirstLetter(res.user.last_name)+ ' ( ' + res.user.username + ' ) ';
                         option.value = res.id;
     
                         participant.append(option);
