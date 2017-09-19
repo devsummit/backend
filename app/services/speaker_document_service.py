@@ -1,3 +1,4 @@
+import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from flask import Flask, request  # noqa
@@ -66,7 +67,8 @@ class SpeakerDocumentService():
         speaker_id = payloads['speaker_id']
         file = payloads['document_data']
         title = payloads['title']
-        summary = payloads['summary'] 
+        summary = payloads['summary']
+        is_used = int(payloads['is_used'])        
         if file and Helper().allowed_file(file.filename, app.config['ALLOWED_SPEAKER_DOC_EXTENSIONS']):
             self.model_speaker_document = SpeakerDocument()
             db.session.add(self.model_speaker_document)
@@ -77,9 +79,37 @@ class SpeakerDocumentService():
                 self.model_speaker_document.speaker_id = speaker_id
                 self.model_speaker_document.summary = summary
                 self.model_speaker_document.title = title
+                self.model_speaker_document.is_used = is_used                
                 db.session.commit()
                 data = self.model_speaker_document.as_dict()
+                print ("post", data)
                 data['material'] = Helper().url_helper(self.model_speaker_document.material, app.config['GET_SPEAKER_DOC_DEST'])
+                return response.set_data(data).build()
+            except SQLAlchemyError as e:
+                data = e.orig.args
+                return response.set_error(True).set_message(data).build()
+    
+    def update(self, payloads, id):
+        response = ResponseBuilder()
+        file = payloads['document_data']       
+        if file and Helper().allowed_file(file.filename, app.config['ALLOWED_SPEAKER_DOC_EXTENSIONS']):            
+            try:
+                file_name = Helper().time_string() + "_" + file.filename
+                file.save(os.path.join(app.config['POST_SPEAKER_DOC_DEST'], file_name))
+                material = app.config['SAVE_SPEAKER_DOC_DEST'] + file_name
+                is_used = int(payloads['is_used'])
+                self.model_speaker_document = db.session.query(SpeakerDocument).filter_by(id=id)                
+                self.model_speaker_document.update({
+                'material': material,
+                'speaker_id': payloads['speaker_id'],
+                'title': payloads['title'],
+                'summary': payloads['summary'],
+                'is_used': is_used,
+                'updated_at': datetime.datetime.now()
+                })                               
+                db.session.commit()
+                data = data = self.model_speaker_document.first().as_dict()
+                data['material'] = Helper().url_helper(material, app.config['GET_SPEAKER_DOC_DEST'])
                 return response.set_data(data).build()
             except SQLAlchemyError as e:
                 data = e.orig.args
