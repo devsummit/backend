@@ -79,6 +79,9 @@ class BoothService(BaseService):
 
         if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
             try:
+                if not os.path.exists(current_app.config['POST_BOOTH_PHOTO_DEST']):
+                    os.makedirs(current_app.config['POST_BOOTH_PHOTO_DEST'])
+
                 filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
                 file.save(os.path.join(current_app.config['POST_BOOTH_PHOTO_DEST'], filename))
                 newUrl = current_app.config['SAVE_BOOTH_PHOTO_DEST'] + filename
