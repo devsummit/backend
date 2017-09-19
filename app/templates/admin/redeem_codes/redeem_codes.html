@@ -37,7 +37,7 @@
                     </td>
                     <td>
                         {% if redeemcode['codeable_type'] == 'booth' and redeemcode['user'] %} {{ redeemcode['user']['first_name']|e + ' ' + redeemcode['user']['last_name']|e
-                        + '(' + redeemcode['user']['username']|e + ')' }} {% elif redeemcode['codeable_type'] == 'partner'
+                        + ' ( ' + redeemcode['user']['username']|e + ' ) ' }} {% elif redeemcode['codeable_type'] == 'partner'
                         and redeemcode['partner'] %} {{ redeemcode['partner']['name']|e }} {% endif %}
                     </td>
                     <td>
