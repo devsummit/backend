@@ -1,8 +1,14 @@
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.booth import Booth
+from app.models.user_booth import UserBooth
+from app.models.user import User
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
+from flask import request, current_app
+from app.services.helper import Helper 
+import os
+import datetime
 
 
 class BoothService(BaseService):
@@ -35,7 +41,16 @@ class BoothService(BaseService):
             return response.set_data(data).set_error(True).set_message('booth not found').build()
         data = booth.as_dict()
         data['user'] = booth.user.include_photos().as_dict()
-        print(data)
+
+        user_booth = db.session.query(UserBooth).filter_by(booth_id=id).all()
+
+        data['members'] = []
+
+        for user in user_booth:
+            user_id = user.as_dict()['user_id']
+            user = db.session.query(User).filter_by(id=user_id).first()
+            data['members'].append(user.include_photos().as_dict())
+
         data['stage'] = booth.stage.as_dict() if booth.stage else None
         return response.set_data(data).build()
 
@@ -56,6 +71,36 @@ class BoothService(BaseService):
         except SQLAlchemyError as e:
             data = e.orig.args
             return response.set_error(True).set_data(data).set_message('sql error').build()
+
+    def update_logo(self, payloads, booth_id):
+        response = ResponseBuilder()
+
+        file = request.files['image_data']
+
+        if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
+            try:
+                if not os.path.exists(current_app.config['POST_BOOTH_PHOTO_DEST']):
+                    os.makedirs(current_app.config['POST_BOOTH_PHOTO_DEST'])
+
+                filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
+                file.save(os.path.join(current_app.config['POST_BOOTH_PHOTO_DEST'], filename))
+                newUrl = current_app.config['SAVE_BOOTH_PHOTO_DEST'] + filename
+                self.model_booth = db.session.query(Booth).filter_by(id=booth_id)
+                self.booth_logo = db.session.query(Booth).filter_by(id=booth_id).first()
+                os.remove(current_app.config['STATIC_DEST'] + self.booth_logo.as_dict()['logo_url'])
+
+                self.model_booth.update({
+                    'logo_url': newUrl,
+                    'updated_at': datetime.datetime.now()
+                })
+
+                db.session.commit()
+                data = self.model_booth.first().as_dict()
+
+                return response.set_data(data).set_message('Booth logo updated successfully').build()
+            except SQLAlchemyError as e:
+                data = e.orig.args
+                return response.set_error(True).set_data(None).set_message(data).build()
 
     def create(self, payloads):
         response = ResponseBuilder()

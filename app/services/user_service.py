@@ -9,6 +9,7 @@ from sqlalchemy import or_
 from flask import request
 from app.models.access_token import AccessToken
 from app.models.user import User
+from app.models.user_booth import UserBooth
 from app.models.user_photo import UserPhoto
 from app.models.booth import Booth  # noqa
 from app.models.attendee import Attendee  # noqa
@@ -27,6 +28,19 @@ class UserService(BaseService):
 
 	def __init__(self, perpage):
 		self.perpage = perpage
+
+	def get_booth_by_uid(self, user_id):
+		response = ResponseBuilder()
+
+		user_booth = db.session.query(UserBooth).filter_by(user_id=user_id).first()
+		data = user_booth.booth.as_dict()
+		members = db.session.query(UserBooth).filter_by(booth_id=data['id']).all()
+		data['members'] = []
+
+		for member in members:
+			data['members'].append(member.user.include_photos().as_dict())
+
+		return response.set_data(data).build()
 
 	def register(self, payloads):
 		response = ResponseBuilder()
