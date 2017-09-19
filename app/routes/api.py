@@ -30,6 +30,8 @@ from app.controllers.user_controller import UserController
 from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
+from app.controllers.feed_controller import FeedController
+from app.controllers.notification_controller import NotificationController
 from app.controllers.rundown_list_controller import RundownListController
 from app.controllers.redeem_code_controller import RedeemCodeController
 from app.controllers.Grantrole_controller import GrantroleController
@@ -715,6 +717,38 @@ def rundown_id(id, *args, **kwargs):
         return RundownListController.delete(id)
 
 
+@api.route('/feeds/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def feeds_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return FeedController.show(id)
+
+
+@api.route('/feeds', methods=['GET', 'POST'])
+@token_required
+def feeds(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'GET'):
+        return FeedController.index(request)
+    else:
+        return FeedController.create(request, user['id'])
+
+@api.route('/notifications', methods=['GET', 'POST'])
+@token_required
+def notifications(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'GET'):
+        return NotificationController.index(request, user['id'])
+    else:
+        return NotificationController.create(request, user)
+
+@api.route('/notifications/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def notification_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return NotificationController.show(id)
+
+
 # Add redeem code API
 @api.route('/redeemcodes', methods=['GET', 'POST'])
 @token_required
@@ -761,4 +795,3 @@ def sources_id(id, *args, **kwargs):
         return SourceController.update(request, id)
     elif (request.method == 'DELETE'):
         return SourceController.delete(id)
-
