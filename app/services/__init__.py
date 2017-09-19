@@ -25,6 +25,8 @@ from app.services.sponsor_service import SponsorService
 from app.services.base_service import BaseService
 from app.services.rundown_list_service import RundownListService
 from app.services.source_service import SourceService
+from app.services.booth_gallery_service import BoothGalleryService
+
 
 # instantiate service
 userservice = UserService(10)  # number of item per page
@@ -53,3 +55,4 @@ sponsorservice = SponsorService(10)
 baseservice = BaseService()
 rundownlistservice = RundownListService()
 sourceservice = SourceService()
+boothgalleryservice = BoothGalleryService()
