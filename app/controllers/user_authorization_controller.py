@@ -19,8 +19,11 @@ class UserAuthorizationController(BaseController):
 
     @staticmethod
     def get_booth_info(user):
-        booth = userservice.get_booth_by_uid(user['id'])
-        return 'Halo'
+        result = userservice.get_booth_by_uid(user['id'])
+        if result['error']:
+            return BaseController.send_error_api(result['data'], result['message'])
+        else:
+            return BaseController.send_response_api(result['data'], result['message'])
 
     @staticmethod
     def login(request):
