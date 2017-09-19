@@ -29,8 +29,17 @@ class UserService(BaseService):
 		self.perpage = perpage
 
 	def get_booth_by_uid(self, user_id):
-		model_booth = db.session.query(UserBooth).filter_by(user_id=user_id).first()
-		print(model_booth.booth.as_dict())
+		response = ResponseBuilder()
+
+		user_booth = db.session.query(UserBooth).filter_by(user_id=user_id).first()
+		data = user_booth.booth.as_dict()
+		members = db.session.query(UserBooth).filter_by(booth_id=data['id']).all()
+		data['members'] = []
+
+		for member in members:
+			data['members'].append(member.user.include_photos().as_dict())
+
+		return response.set_data(data).build()
 
 	def register(self, payloads):
 		response = ResponseBuilder()
