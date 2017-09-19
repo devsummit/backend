@@ -72,14 +72,11 @@ class SpeakerDocumentController(BaseController):
                 user_id=user['id']).first()
             if speaker is None:
                 return BaseController.send_error_api(None, 'speaker not found')
-            speaker = speaker.as_dict()
-            speaker_id = speaker['id']            
             summary = request.form['summary'] if 'summary' in request.form else ''
             title = request.form['title'] if 'title' in request.form else ''
             is_used = request.form['is_used'] if 'is_used' in request.form else 0
             if speaker_id:
                 payloads = {
-                    'speaker_id': speaker_id,
                     'title': title,
                     'summary': summary,
                     'is_used': is_used
