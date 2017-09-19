@@ -29,7 +29,8 @@ class UserService(BaseService):
 		self.perpage = perpage
 
 	def get_booth_by_uid(self, user_id):
-		self.model_booth = db.session.query(Booth).filter_by(id=booth_id)
+		model_booth = db.session.query(UserBooth).filter_by(user_id=user_id).first()
+		print(model_booth.booth.as_dict())
 
 	def register(self, payloads):
 		response = ResponseBuilder()

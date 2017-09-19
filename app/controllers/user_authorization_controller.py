@@ -20,6 +20,7 @@ class UserAuthorizationController(BaseController):
     @staticmethod
     def get_booth_info(user):
         booth = userservice.get_booth_by_uid(user['id'])
+        return 'Halo'
 
     @staticmethod
     def login(request):
