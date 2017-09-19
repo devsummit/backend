@@ -64,8 +64,61 @@
             </a>
         </nav>
     </header>
+
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-3">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Unscheduled Events</h4>
+                </div>
+                <div class="box-body">
+                    <!-- the unscheduled events -->
+                    <div id="external-events">
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /. box -->
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Create Event</h3>
+                </div>
+                <div class="box-body">
+                    <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
+                        <!--<button type="button" id="color-chooser-btn" class="btn btn-info btn-block dropdown-toggle" data-toggle="dropdown">Color <span class="caret"></span></button>-->
+                        <ul class="fc-color-picker" id="color-chooser">
+                            <li><a class="text-aqua" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-blue" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-light-blue" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-teal" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-yellow" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-orange" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-green" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-lime" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-red" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-purple" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-fuchsia" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-muted" href="#"><i class="fa fa-square"></i></a></li>
+                            <li><a class="text-navy" href="#"><i class="fa fa-square"></i></a></li>
+                        </ul>
+                    </div>
+                    <!-- /btn-group -->
+                    <div class="input-group">
+                        <input id="new-event" type="text" class="form-control" placeholder="Event Title">
+
+                        <div class="input-group-btn">
+                            <button id="add-new-event" type="button" class="btn btn-primary btn-flat">Add</button>
+                        </div>
+                        <!-- /btn-group -->
+                    </div>
+                    <!-- /input-group -->
+                </div>
+            </div>
+            <button type="button" class="btn btn-warning" id="btn-show-modal" data-toggle="modal" data-target="#modal-event" style="display: none">
+                Launch Warning Modal
+            </button>
+        </div>
+        <div class="col-md-9">
             <div class="box box-primary">
                 <div class="box-body no-padding">
                     <!-- THE CALENDAR -->
@@ -76,10 +129,40 @@
             <!-- /. box -->
         </div>
     </div>
+
+    <div class="modal modal-warning fade" id="modal-event">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Warning Modal</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Move Event To:</p>
+                    <select class="form-control" id ="modal-select1">
+                        <option id="day-1" value="1">First Day</option>
+                        <option id="day-2" value="2">Second Day</option>
+                        <option id="day-3" value="3">Third Day</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline pull-left" id="btn-modal-close1" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline" id="btn-modal-save1">Save changes</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    <!-- Bootstrap 3.3.7 -->
+    <script src="{{ url_for('static', filename='assets/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    
     <script>
         $(function () {
 
-            /* initialize the external events
+            /* function to initialize the external events/ unscheduled events
             -----------------------------------------------------------------*/
             function init_events(ele) {
                 ele.each(function () {
@@ -103,16 +186,14 @@
                 })
             }
 
-            init_events($('#external-events div.external-event'));
-
             // event color mapping function
             const eventColor = function(type) {
                 types = {
-                    'speaker': '#0e4b7c',
-                    'panel': '#55a8ed',
-                    'booth': '#2ba039',
-                    'hackaton': '#bf1e1e',
-                    'break': '#e5b020',
+                    'speaker': '#0b1e2d', // dark blue
+                    'panel': '#00c0ef', // aqua
+                    'booth': '#2ba039', // green
+                    'hackaton': '#c90c0c', // dark red
+                    'break': '#f39c12', // yellow
                     'other': '#9cb8d3'
                 }
                 if(!(type in types)){
@@ -120,111 +201,168 @@
                 }
                 return types[type];
             }
-            
+
+            // render unscheduled event
+            const renderUnscheduled = function() {
+                $('#external-events').empty();
+                unscheduled.map((item)=>{
+                    var eventItem = `<div class="external-event bg-green" id="event-${item.id}">${item.title}</div>`;
+                    $('#external-events').append(eventItem);
+                });
+                init_events($('#external-events div.external-event'));
+            }
+
+            // render modal/ event detail
+            const renderEventModal = function(event) {
+                var currentDay = new Date(event['start']);
+                var dayIndex = currentDay.getDate()-d+1;
+                $('#modal-select1').find('*').removeAttr('selected');
+                $('#day-'+dayIndex).attr('selected', 'selected');
+                $('.modal-title').html(event['title']);
+            }
+
             // page is now ready, initialize the calendar...
             // date/schedule initialization here:
             var startDate = new Date(2017, 10, 21)
             var d = startDate.getDate(),
                 m = startDate.getMonth(),
-                y = startDate.getFullYear()
-
-            // render the calendar
-            $('#calendar').fullCalendar({
-                header: {
-                    left: 'title',
-                    center: '',
-                    right: 'prev,next today'
-                },
-                defaultView: 'agendaDay',
-                
-                events: function(start, end, timezone, callback){
-                    // Load events from API
-                    var eventsData, schedulesData;
-                    dsa.request('/api/v1/schedules', 'GET', null, function(result) {
-                        schedulesData = result['data'];
-                        eventsData = schedulesData.map((schedule)=>{
-                            return {
-                                schedule_id: schedule.id,
-                                stage_id: schedule.stage_id,
-                                event_id: schedule.event.id,
-                                title: schedule.event.title,
-                                start: schedule.time_start,
-                                end: schedule.time_end,
-                                all_day: false,
-                                backgroundColor: eventColor(schedule.event.type),
-                                borderColor: eventColor(schedule.event.type)
-                            }
-                        });
-                        callback(eventsData);
-                    });
-                },
-                editable  : true,
-                droppable: true,
-                drop: function (date, allDay) { // this function is called when something is dropped
-                        // retrieve the dropped element's stored Event Object
-                        var originalEventObject = $(this).data('eventObject')
-
-                        // we need to copy it, so that multiple events don't have a reference to the same object
-                        var copiedEventObject = $.extend({}, originalEventObject)
-
-                        // assign it the date that was reported
-                        copiedEventObject.start = date
-                        copiedEventObject.allDay = allDay
-                        copiedEventObject.backgroundColor = $(this).css('background-color')
-                        copiedEventObject.borderColor = $(this).css('border-color')
-
-                        // render the event on the calendar
-                        // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
-                        $('#calendar').fullCalendar('renderEvent', copiedEventObject, true)
-
-                        // is the "remove after drop" checkbox checked?
-                        if ($('#drop-remove').is(':checked')) {
-                            // if so, remove the element from the "Draggable Events" list
-                            $(this).remove()
-                        }
-                    },
-                eventDrop: function (event, delta, revertFunc) {
-                        if (!confirm(event.title + " schedule is changed, is this okay?")) {
-                            revertFunc();
-                        } else {
-                            var schedule_id = event.schedule_id;
-                            start_time =  event.start.format("YYYY-MM-DD HH:mm:ss.000000");
-                            end_time = event.end.format("YYYY-MM-DD HH:mm:ss.000000");
-                            var new_schedule = {
-                                stage_id: event.stage_id,
-                                event_id: event.event_id,                                
-                                time_start: start_time,
-                                time_end: end_time,
-                            }
-                            console.log(new_schedule);
-                            dsa.request('/api/v1/schedules/'+schedule_id, 'PATCH', new_schedule, function(result) {
-                                console.log(result);
-                            });
-                        }
-                    },
-                eventResize: function (event, delta, revertFunc) {
-                        if (!confirm(event.title + " schedule time is changed, is this okay?")) {
-                            revertFunc();
-                        } else {
-                            var schedule_id = event.schedule_id;
-                            start_time =  event.start.format("YYYY-MM-DD HH:mm:ss.000000");
-                            end_time = event.end.format("YYYY-MM-DD HH:mm:ss.000000");
-                            var new_schedule = {
-                                stage_id: event.stage_id,
-                                event_id: event.event_id,                                
-                                time_start: start_time,
-                                time_end: end_time,
-                            }
-                            console.log(new_schedule);
-                            dsa.request('/api/v1/schedules/'+schedule_id, 'PATCH', new_schedule, function(result) {
-                                console.log(result);
-                            });
-                        }
-
+                y = startDate.getFullYear();
+            
+            // load all schedules
+            var schedulesData,
+                unscheduled = [], 
+                eventsData = [];
+            
+            dsa.request('/api/v1/schedules', 'GET', null, function(result) {
+                schedulesData = result['data'];
+                schedulesData.map((schedule)=>{
+                    var event = {
+                        schedule_id: schedule.id,
+                        stage_id: schedule.stage_id,
+                        event_id: schedule.event.id,
+                        title: schedule.event.title,
+                        start: schedule.time_start,
+                        end: schedule.time_end,
+                        all_day: false,
+                        backgroundColor: eventColor(schedule.event.type),
+                        borderColor: eventColor(schedule.event.type)
                     }
+                    console.log(event);
+                    if(event.start) {
+                        eventsData.push(event)
+                    } else {
+                        unscheduled.push(event)
+                    }
+                });
+
+                // render unscheduled
+                renderUnscheduled();    
+
+                // render the calendar
+                $('#calendar').fullCalendar({
+                    header: {
+                        left: 'title',
+                        center: '',
+                        right: 'prev,next today'
+                    },
+                    defaultView: 'agendaDay',
+                    events: eventsData,
+                    editable  : true,
+                    droppable: true,
+                    drop: function (date, allDay) { // this function is called when something is dropped
+                            // retrieve the dropped element's stored Event Object
+                            var originalEventObject = $(this).data('eventObject')
+    
+                            // we need to copy it, so that multiple events don't have a reference to the same object
+                            var copiedEventObject = $.extend({}, originalEventObject)
+    
+                            // assign it the date that was reported
+                            copiedEventObject.start = date
+                            copiedEventObject.allDay = allDay
+                            copiedEventObject.backgroundColor = $(this).css('background-color')
+                            copiedEventObject.borderColor = $(this).css('border-color')
+    
+                            // render the event on the calendar
+                            // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
+                            $('#calendar').fullCalendar('renderEvent', copiedEventObject, true)
+    
+                            // is the "remove after drop" checkbox checked?
+                            if ($('#drop-remove').is(':checked')) {
+                                // if so, remove the element from the "Draggable Events" list
+                                $(this).remove()
+                            }
+                        },
+                    eventDrop: function (event, delta, revertFunc) {
+                            if (!confirm(event.title + " schedule is changed, is this okay?")) {
+                                revertFunc();
+                            } else {
+                                var schedule_id = event.schedule_id;
+                                start_time =  event.start.format("YYYY-MM-DD HH:mm:ss.000000");
+                                end_time = event.end.format("YYYY-MM-DD HH:mm:ss.000000");
+                                var new_schedule = {
+                                    stage_id: event.stage_id,
+                                    event_id: event.event_id,                                
+                                    time_start: start_time,
+                                    time_end: end_time,
+                                }
+                                console.log(new_schedule);
+                                dsa.request('/api/v1/schedules/'+schedule_id, 'PATCH', new_schedule, function(result) {
+                                    console.log(result);
+                                });
+                            }
+                        },
+                    eventResize: function (event, delta, revertFunc) {
+                            if (!confirm(event.title + " schedule time is changed, is this okay?")) {
+                                revertFunc();
+                            } else {
+                                var schedule_id = event.schedule_id;
+                                start_time =  event.start.format("YYYY-MM-DD HH:mm:ss.000000");
+                                end_time = event.end.format("YYYY-MM-DD HH:mm:ss.000000");
+                                var new_schedule = {
+                                    stage_id: event.stage_id,
+                                    event_id: event.event_id,                                
+                                    time_start: start_time,
+                                    time_end: end_time,
+                                }
+                                console.log(new_schedule);
+                                dsa.request('/api/v1/schedules/'+schedule_id, 'PATCH', new_schedule, function(result) {
+                                    console.log(result);
+                                });
+                            }
+    
+                        },
+                    eventClick: function(event) {
+                        window.currentEvent = event;
+                        renderEventModal(event);
+                        $('#btn-show-modal').click();
+                    }
+                });
+
+                // goto and display startDate
+                $('#calendar').fullCalendar('gotoDate', startDate);
             });
 
-            $('#calendar').fullCalendar('gotoDate', startDate);
+            $('#btn-modal-save1').click(function(event) {
+                var newEvent = window.currentEvent,
+                    dayIndex = $('#modal-select1').find(":selected").val(),
+                    newDate = d + (dayIndex-1),
+                    newDateStart = new Date(newEvent['start'].format()),
+                    newDateEnd = new Date(newEvent['end'].format());
+                newDateStart.setDate(newDate);
+                newDateEnd.setDate(newDate);
+                var new_schedule = {
+                        stage_id: newEvent.stage_id,
+                        event_id: newEvent.event_id,
+                        time_start: moment(newDateStart).format("YYYY-MM-DD HH:mm:ss.000000"),
+                        time_end: moment(newDateEnd).format("YYYY-MM-DD HH:mm:ss.000000")
+                    }
+                dsa.request('/api/v1/schedules/' + newEvent.schedule_id, 'PATCH', new_schedule, function (result) {
+                        console.log(result);
+                        $('#btn-modal-close1').click();
+                        location.reload("/");
+                    });
+            });
+            
         });
     </script>
 </body>
