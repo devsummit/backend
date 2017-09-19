@@ -1,0 +1,114 @@
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="event-title">Select Type:</label>
+                                    <select class="add-codeable-type form-control">
+                                        </select>
+                                </div>
+                            </li>
+                            <li class="list-group-item" id="add-codeable-id">
+                                <div class="form-group">
+                                    <label for="event-title">Select Entry:</label>
+                                    <select class="add-codeable-id form-control" id="add-codeable-id">
+                                        </select>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="event-information--control bfh-number" value="5">
+                                    <form class="example form-inline">
+                                        <p>Quota</p>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control add-count" value="5">
+                                        </div>
+                                    </form>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-save-add" id="-"><b>Generate Redeem Code</b></a>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<!-- <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script> -->
+
+
+<script>
+    /* Display Attendee Detail */
+    $('.btn-save-add').click(function (event) {
+        payload = {
+            'codeable_type': $('.add-codeable-type').val(),
+            'codeable_id': $('.add-codeable-id').val(),
+            'count': $('.add-count').val()
+        };
+
+        dsa.post('redeemcodes', payload, function (result) {
+            if (result.meta.success) {
+                location.reload()
+            }
+        });
+    })
+
+    // Change participants based on event type
+    $('.add-codeable-type').on('change', function () {
+        const selected = this.value
+        if (selected == '') {
+            $('#add-codeable-id').hide();
+        } else {
+            $('#add-codeable-id').show();
+            let participant = $(".add-codeable-id");
+            participant.find('option').remove();
+            if (selected == 'booth'){                
+                dsa.get('booths', function (result) {
+                    result.data.map(function (res) {
+                        let option = document.createElement('option');
+
+                        option.innerHTML = capitalizeFirstLetter(res.user.first_name) + ' ' + capitalizeFirstLetter(res.user.last_name)+ '(' + res.user.username + ')';
+                        option.value = res.id;
+    
+                        participant.append(option);
+                    })
+                });
+            } else if (selected == 'partner') {
+                dsa.get('partners', function (result) {
+                    result.data.map(function (res) {
+                        let option = document.createElement('option');
+
+                        option.innerHTML = capitalizeFirstLetter(res.name);
+                        option.value = res.id;
+    
+                        participant.append(option);
+                    })
+                });
+            }
+        }
+    })
+
+    // Used for capitalize words
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+</script>

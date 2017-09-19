@@ -8,7 +8,7 @@ class RedeemCode(db.Model, BaseModel):
     # table name
     __tablename__ = 'redeem_codes'
     # displayed fields
-    visible = ['id', 'codeable_type', 'codeable_id', 'code', 'count']
+    visible = ['id', 'codeable_type', 'codeable_id', 'code', 'count', 'created_at', 'updated_at']
 
     # columns definitions
     id = db.Column(
@@ -28,6 +28,8 @@ class RedeemCode(db.Model, BaseModel):
         nullable=False
     )
     count = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
 
     def __init__(self):
         self.created_at = datetime.datetime.now()

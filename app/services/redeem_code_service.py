@@ -6,17 +6,41 @@ from app.builders.response_builder import ResponseBuilder
 
 from app.models.redeem_code import RedeemCode
 from app.models.base_model import BaseModel
+from app.models.booth import Booth
+from app.models.partners import Partner
+from app.models.user import User
 
 
 class RedeemCodeService():
 
     def get(self):
+        response = ResponseBuilder()
         redeem_codes = db.session.query(RedeemCode).all()
-        return redeem_codes
+        results = []
+        for redeem_code in redeem_codes:
+            data = redeem_code.as_dict()
+            if data['codeable_type'] == 'booth':
+                booth = db.session.query(Booth).filter_by(id=data['codeable_id']).first()
+                if booth is not None:
+                    booth = booth.as_dict()
+                    data['booth'] = booth
+                    user = db.session.query(User).filter_by(id=data['booth']['user_id']).first()
+                    if user is not None:
+                        user = user.as_dict()
+                        data['user'] = user
+            elif data['codeable_type'] == 'partner':
+                partner = db.session.query(Partner).filter_by(id=data['codeable_id']).first()
+                if partner is not None:
+                    partner = partner.as_dict()
+                    data['partner'] = partner
+            results.append(data)
+
+        return response.set_data(results).set_message("Redeem codes retrieved successfully").build()
 
     def show(self, id):
+        response = ResponseBuilder()
         redeem_code = db.session.query(RedeemCode).filter_by(id=id).first()
-        return redeem_code
+        return response.set_data(redeem_code.as_dict()).set_message('Data retrieved successfully').build()
 
     def create(self, payloads):
         response = ResponseBuilder()
@@ -47,7 +71,6 @@ class RedeemCodeService():
             self.model_redeem_code.update({
                 'codeable_type': payloads['codeable_type'],
                 'codeable_id': payloads['codeable_id'],
-                'code': payloads['code'],
                 'count': payloads['count'],
                 'updated_at': datetime.datetime.now()
             })
