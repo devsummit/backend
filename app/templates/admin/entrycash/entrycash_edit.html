@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Entry Cash Edit</h4>
+                <h4 class="modal-title">Entry Cash Logs</h4>
             </div>
             <div class="modal-body">
                 <div class="box box-primary">
@@ -12,24 +12,30 @@
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="entrycashlog-desc">Entry Cash Description:</label>
-                                    <input type="text" class="form-control" id="entrycashlog-desc">
+                                    <label for="i-entry-cash-desc">Description:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-desc">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="entry-cash-flow">Cash Flow:</label>
-                                    <select class="form-control" id="entry-cash-flow"></select>
+                                    <label for="i-entry-cash-amount">Source Id:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-source-id">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="entrycashlog-amount">Entry Cash Amount:</label>
-                                    <input type="text" class="form-control" id="entrycashlog-amount">
+                                    <label for="i-entry-cash-amount">Debit:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-debit">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-entry-cash-amount">Credit:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-credit">
                                 </div>
                             </li>
                         </ul>
-                        <a href="#" class="btn btn-primary btn-block btn-edit-save" id="-"><b>Save</b></a>
+                        <a href="#" class="btn btn-primary btn-block" id="btn-edit-save"><b>Save</b></a>
 
                     </div>
                     <!-- /.box-body -->
@@ -46,24 +52,25 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
-    let selectedCash
-    $('#entry-cash-flow').click(function () {
-        let selectedValue = $(this).val();
-        if (selectedValue == 'Expense') {
-            selectedCash = selectedValue;
-        } else {
-            selectedCash = selectedValue;
-        }
-    });    
-    $('.btn-edit-save').click(function (event) {
+    $('#btn-edit-save').click(function (event) {
         var id = $(this).attr('id');
-        let cash = $('#entrycashlog-amount').val();
-        let amount = selectedCash == 'Expense' ? -cash : cash
-        const data = {
-            "description": $('#entrycashlog-desc').val(),
-            "amount": amount,
+        var debit = $('#i-entry-cash-debit').val();
+        var credit = $('#i-entry-cash-credit').val();
+        var source_id = $('#i-entry-cash-source-id').val();
+
+        if (credit == 0 || credit == null) {
+            credit = 0
+        } else if (debit == 0 || debit == null) {
+            debit = 0
+        }
+
+        const payloads = {
+            "description": $('#i-entry-cash-desc').val(),
+            "debit": debit,
+            "credit": credit,
+            "source_id": source_id
         };
-        dsa.patch('{{ globals["api_route"] }}/' + id, data, function (result) {
+        dsa.patch('{{ globals["api_route"] }}/' + id, payloads, function (result) {
             if (result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
             }

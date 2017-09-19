@@ -62,16 +62,18 @@
                             <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
+                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-grant" data-toggle="modal" data-target="#modal-grant">
+                                Grant
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-
-
         {% include "admin/base/modal_delete.html" %}
         {% include "admin/accounts/account_input.html" %}
+        {% include "admin/accounts/account_grant.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -81,6 +83,9 @@
 
 <!-- page script -->
 <script>
+    $(document).ready(function(){
+        
+    })
     /* account storage */
     this.current_account= {}
 
@@ -116,7 +121,6 @@
 
         dsa.get('users/' + id, function(result) {
             // bind result value in to account_detail.html 
-            console.log(result);
             const data = result['data'];
             this.current_account = data;
             $('#account-firstname').val(data['first_name']);
@@ -166,7 +170,23 @@
         const btd_id = $(this).attr('id');
         const id = btd_id.substring(4, btd_id.length);
         $('.btn-yes').attr("id", id);
-    });    
+    });
+
+    $('.btn-grant').click(function(event){
+        $('#account-grant-select-role').prop('disabled', false);
+        $('.modal-title').html('GRANT')
+        $('#account-grant-select-role').find('*').removeAttr('selected');
+        $('#input-role1').attr('selected', 'selected');
+        setTabContent(0);
+        const bte_id = $(this).attr('id');
+        const id = bte_id.substring(4, bte_id.length);
+
+        dsa.get('users/' + id, function(result){
+            var data = result['data'];
+            $('#account-role_id').val(data['role_id']);
+            $('.btn-input-save').attr("id", `${data['id']}`);
+        })
+    })
     
     $(function (){
         $('#account-list1').DataTable();

@@ -18,6 +18,14 @@ class UserAuthorizationController(BaseController):
         return BaseController.send_error_api(None, 'refresh token required')
 
     @staticmethod
+    def get_booth_info(user):
+        result = userservice.get_booth_by_uid(user['id'])
+        if result['error']:
+            return BaseController.send_error_api(result['data'], result['message'])
+        else:
+            return BaseController.send_response_api(result['data'], result['message'])
+
+    @staticmethod
     def login(request):
         provider = request.json['provider'] if 'provider' in request.json else None
 
@@ -109,7 +117,8 @@ class UserAuthorizationController(BaseController):
                     'password': '',
                     'social_id': social_id,
                     'email': email,
-                    'referer': referer
+                    'referer': referer,
+                    'provider': 'mobile'
                 }
         elif firstname and email and username and password:
             payloads = {
@@ -120,7 +129,8 @@ class UserAuthorizationController(BaseController):
                 'role': role,
                 'password': password,
                 'social_id': social_id,
-                'referer': referer
+                'referer': referer,
+                'provider': 'email'
             }
         else:
             return BaseController.send_response_api({'payload_invalid': True}, 'payloads not valid')

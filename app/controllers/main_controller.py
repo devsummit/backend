@@ -14,6 +14,7 @@ from app.services import partnerservice
 from app.services import entrycashlogservice
 from app.services import sponsorservice
 from app.services import rundownlistservice
+from app.services import redeemcodeservice
 
 
 class MainController(BaseController):
@@ -90,3 +91,7 @@ class MainController(BaseController):
         rundownlist = rundownlistservice.get(request)
         return render_template('admin/rundown/rundown_list.html', rundownlist=rundownlist['data'])
         # return render_template('admin/rundown/rundown_list.html')
+
+    def getRedeemCodes():
+        redeemcodes = redeemcodeservice.get()
+        return render_template('admin/redeem_codes/redeem_codes.html', redeemcodes=redeemcodes['data'])

@@ -99,3 +99,8 @@ def changepassword():
 @main.route('/rundownlist')
 def rundownlist():
     return MainController.getRundownList()
+
+
+@main.route('/redeemcodes')
+def redeemcodes():
+    return MainController.getRedeemCodes()
