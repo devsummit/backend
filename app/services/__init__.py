@@ -26,6 +26,9 @@ from app.services.base_service import BaseService
 from app.services.rundown_list_service import RundownListService
 from app.services.redeem_code_service import RedeemCodeService
 from app.services.grantrole_service import GrantroleService
+from app.services.source_service import SourceService
+from app.services.booth_gallery_service import BoothGalleryService
+
 
 # instantiate service
 userservice = UserService(10)  # number of item per page
@@ -55,3 +58,5 @@ baseservice = BaseService()
 rundownlistservice = RundownListService()
 redeemcodeservice = RedeemCodeService()
 grantroleservice = GrantroleService()
+sourceservice = SourceService()
+boothgalleryservice = BoothGalleryService()

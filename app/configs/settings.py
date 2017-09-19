@@ -24,6 +24,12 @@ POST_PARTNER_PHOTO_DEST = 'app/static/images/partners/'
 SAVE_PARTNER_PHOTO_DEST = 'images/partners/'
 POST_USER_PHOTO_DEST = 'app/static/images/users/'
 SAVE_USER_PHOTO_DEST = 'images/users/'
+POST_BOOTH_PHOTO_DEST = 'app/static/images/booths/'
+SAVE_BOOTH_PHOTO_DEST = 'images/booths/'
+# booth gallery
+POST_BOOTH_GALL_DEST = 'app/static/images/booths/galleries'
+SAVE_BOOTH_GALL_DEST = 'images/booths/galleries'
+
 GET_DEST = 'static/'
 STATIC_DEST = 'app/static/'
 
