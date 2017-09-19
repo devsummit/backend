@@ -695,3 +695,9 @@ def notifications(*args, **kwargs):
         return NotificationController.index(request, user['id'])
     else:
         return NotificationController.create(request, user)
+
+@api.route('/notifications/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def notification_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return NotificationController.show(id)
