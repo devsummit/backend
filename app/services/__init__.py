@@ -24,6 +24,8 @@ from app.services.entry_cash_log_service import EntryCashLogService
 from app.services.sponsor_service import SponsorService
 from app.services.base_service import BaseService
 from app.services.rundown_list_service import RundownListService
+from app.services.redeem_code_service import RedeemCodeService
+from app.services.grantrole_service import GrantroleService
 from app.services.source_service import SourceService
 from app.services.booth_gallery_service import BoothGalleryService
 
@@ -54,5 +56,7 @@ entrycashlogservice = EntryCashLogService(10)
 sponsorservice = SponsorService(10)
 baseservice = BaseService()
 rundownlistservice = RundownListService()
+redeemcodeservice = RedeemCodeService()
+grantroleservice = GrantroleService()
 sourceservice = SourceService()
 boothgalleryservice = BoothGalleryService()

@@ -31,8 +31,13 @@ from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
 from app.controllers.rundown_list_controller import RundownListController
+<<<<<<< HEAD
+from app.controllers.redeem_code_controller import RedeemCodeController
+from app.controllers.Grantrole_controller import GrantroleController
+=======
 from app.controllers.source_controller import SourceController
 from app.controllers.booth_gallery_controller import BoothGalleryController
+>>>>>>> 6ea4ad34c39f8b536726fd9237c4858ce6f23b7b
 from app.configs.constants import ROLE
 
 
@@ -712,6 +717,36 @@ def rundown_id(id, *args, **kwargs):
     elif (request.method == 'DELETE'):
         return RundownListController.delete(id)
 
+
+# Add redeem code API
+@api.route('/redeemcodes', methods=['GET', 'POST'])
+@token_required
+def redeem(*args, **kwargs):
+    if (request.method == 'POST'):
+        return RedeemCodeController.create(request)
+    if (request.method == 'GET'):
+        return RedeemCodeController.index()
+
+
+@api.route('/redeemcodes/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def redeem_id(id, *args, **kwargs):
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        return RedeemCodeController.update(request, id)
+    if (request.method == 'GET'):
+        return RedeemCodeController.show(id)
+    if (request.method == 'DELETE'):
+        return RedeemCodeController.delete(id)
+
+
+@api.route('/grantrole/<id>', methods=['PUT', 'PATCH'])
+@token_required
+def grantrole(id, *args, **kwargs):
+    print (request)
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        return GrantroleController.update(request, id)
+
+
 @api.route('/sources', methods=['GET', 'POST'])
 @token_required
 def sources(*args, **kwargs):
@@ -719,6 +754,7 @@ def sources(*args, **kwargs):
         return SourceController.get(request)
     elif (request.method == 'POST'):
         return SourceController.create(request)
+
 
 @api.route('/sources/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
 @token_required
