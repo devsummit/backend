@@ -56,8 +56,6 @@
                 'count': $('.edit-count').val()
             };
 
-            console.log(payload, id)
-
             dsa.patch('redeemcodes/' + id, payload, function (result) {
                 if (result.meta.success) {
                     location.reload()
