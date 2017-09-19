@@ -32,6 +32,7 @@ from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
 from app.controllers.rundown_list_controller import RundownListController
 from app.controllers.source_controller import SourceController
+from app.controllers.booth_gallery_controller import BoothGalleryController
 from app.configs.constants import ROLE
 
 
@@ -304,6 +305,40 @@ def update_booth_logo(*args, **kwargs):
 
 # Point endpoint
 
+
+# booth images
+
+
+@api.route('/booths/galleries', methods=['GET', 'POST'])
+@token_required
+def booth_gallery(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'POST'):
+        return BoothGalleryController.create(request, user)
+    if(request.method == 'GET'):
+        return BoothGalleryController.index()
+
+@api.route('/booths/galleries/<id>', methods=['GET', 'DELETE'])
+@token_required
+def booth_gallery_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return BoothGalleryController.show(id)
+    if(request.method == 'DELETE'):
+        return BoothGalleryController.delete(id)
+
+@api.route('/booths/galleries/show/<booth_id>', methods=['GET'])
+@token_required
+def booth_gallery_booth_id(booth_id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return BoothGalleryController.booth_gallery(booth_id)
+
+@api.route('/booths/galleries/self', methods=['GET'])
+@token_required
+def booth_gallery_self(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'GET'):
+        return BoothGalleryController.self_gallery(user)
+    
 
 @api.route('/points/transfer', methods=['POST'])
 @token_required
