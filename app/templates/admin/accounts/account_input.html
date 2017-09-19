@@ -171,6 +171,7 @@
         }
         if($('.modal-title').html() === 'EDIT') {
             const id = $(this).attr('id');
+            console.log(id)
             saveEdit(id);
         } else {
             saveAdd();

@@ -32,6 +32,7 @@ from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
 from app.controllers.rundown_list_controller import RundownListController
 from app.controllers.redeem_code_controller import RedeemCodeController
+from app.controllers.Grantrole_controller import GrantroleController
 from app.configs.constants import ROLE
 
 
@@ -690,3 +691,10 @@ def redeem_id(id, *args, **kwargs):
     if (request.method == 'DELETE'):
         return RedeemCodeController.delete(id)
 
+
+@api.route('/grantrole/<id>', methods=['PUT', 'PATCH'])
+@token_required
+def grantrole(id, *args, **kwargs):
+    print (request)
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        return GrantroleController.update(request, id)

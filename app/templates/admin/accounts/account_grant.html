@@ -36,10 +36,10 @@
                         </ul>
                     </div>
                     <div class="tab-pane tab2-grant" id="tab2-grant">
-                        {% include "admin/accounts/ambassador.html" %} 
-                        {% include "admin/accounts/attendee.html" %} 
-                        {% include "admin/accounts/speaker.html"%} 
-                        {% include "admin/accounts/booth.html" %}
+                        {% include "admin/accounts/grant/ambassador_grant.html" %} 
+                        {% include "admin/accounts/grant/attendee_grant.html" %} 
+                        {% include "admin/accounts/grant/speaker_grant.html"%} 
+                        {% include "admin/accounts/grant/booth_grant.html" %}
                     </div>
                 </div>
             </div>
@@ -59,34 +59,34 @@
     const buildIncludesGrantPayload = function (role) {
         switch (role) {
             case 'attendee':
-                var points = $('#attendee-points').val();
+                var points = $('#grant_attendee-points').val();
                 payload = {
                     name: 'Attendee',
                     points: points ? points : 0
                 }
                 break;
             case 'booth':
-                var points = $('#booth-points').val();
+                var points = $('#grant_booth-points').val();
                 payload = {
                     name: 'Booth',
-                    stage_id: $('#booth-stageid').val(),
+                    stage_id: $('#grant_booth-stageid').val(),
                     points: points ? points : 0,
-                    summary: $('#booth-summary').val()
+                    summary: $('#grant_booth-summary').val()
                 }
                 break;
             case 'speaker':
                 payload = {
                     name: 'Speaker',
-                    job: $('#speaker-job').val(),
-                    summary: $('#speaker-summary').val(),
-                    information: $('#speaker-information').val()
+                    job: $('#grant_speaker-job').val(),
+                    summary: $('#grant_speaker-summary').val(),
+                    information: $('#grant_speaker-information').val()
                 }
                 break;
             case 'ambassador':
                 payload = {
                     name: 'Ambassador',
-                    informations: $('#ambassador-informations').val(),
-                    institution: $('#ambassador-institution').val()
+                    informations: $('#grant_ambassador-informations').val(),
+                    institution: $('#grant_ambassador-institution').val()
                 }
                 break;
             default:
@@ -95,44 +95,19 @@
         return payload
     }
 
-    var saveEdit = function (id) {
+    var saveGrant = function (id) {
         const role = $('#account-grant-select-role').find(":selected").text();
         const role_id = $('#account-grant-select-role').find(":selected").val();
         var payload = {
-            "first_name": $('.account-firstname').val(),
-            "last_name": $('.account-lastname').val(),
-            "email": $('.account-email').val(),
-            "username": $('.account-username').val(),
-            "role_id": role_id
-        };
-        if (role !== 'admin') {
-            payload['includes'] = buildIncludesGrantPayload(role);
-
-        };
-        dsa.patch('{{ globals["api_route"] }}/' + id, payload, function (result) {
-            if (result.meta.success) {
-                window.location = '/{{ globals["base_route"] }}';
-            }
-        });
-    }
-
-    var saveAdd = function () {
-        const role = $('#account-grant-select-role').find(":selected").text();
-        const role_id = $('#account-grant-select-role').find(":selected").val();
-        var payload = {
-            "first_name": $('.account-firstname').val(),
-            "last_name": $('.account-lastname').val(),
-            "email": $('.account-email').val(),
-            "username": $('.account-username').val(),
             "role_id": $('#account-grant-select-role').find(":selected").val()
         };
-
         if (role !== 'admin') {
             payload['includes'] = buildIncludesGrantPayload(role);
         };
-        dsa.post('{{ globals["api_route"] }}', payload, function (result) {
+        console.log(payload['includes'])
+        dsa.patch('grantrole/' + id, payload, function (result) {
             if (result.meta.success) {
-                window.location = '/{{ globals["base_route"] }}';
+                window.location = '/accounts';
             }
         });
     }
@@ -145,11 +120,10 @@
             $('.btn-input-save').html('SAVE');
             return
         }
-        if ($('.modal-title').html() === 'EDIT') {
+        if ($('.modal-title').html() === 'GRANT') {
             const id = $(this).attr('id');
-            saveEdit(id);
-        } else {
-            saveAdd();
+            console.log(id)
+            saveGrant(id);
         }
     });
 
