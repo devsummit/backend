@@ -106,14 +106,13 @@
         });
 
 
-        /* Edit specific schedule*/
+        /* Edit specific redeem code*/
         $('.btn-redeemcode-edit').click(function (event) {
             $('.modal-title').html('Edit');
             var selected_stage_id;
             const btd_id = $(this).attr('id');
             const id = btd_id.substring(4, btd_id.length);
             dsa.get('redeemcodes/' + id, function (result) {
-                // bind result value in to attendee_detail.html 
                 const data = result['data'];
                 $('.edit-count').val((data['count']));
                 $('.edit-codeable-type').val((data['codeable_type']));
