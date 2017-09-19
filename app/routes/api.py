@@ -375,12 +375,14 @@ def speaker_document_admin(*args, **kwargs):
 # GET SPECIFIC FILE UPLOADED BY THE SPEAKER || DELETE SPECIFIC FILE
 
 
-@api.route('/documents/<id>', methods=['DELETE', 'GET'])
+@api.route('/documents/<id>', methods=['DELETE', 'GET', 'PUT', 'PATCH'])
 @token_required
 def _speaker_document(id, *args, **kwargs):
     user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
         return SpeakerDocumentController.view(id)
+    elif(request.method == 'PUT' or request.method == 'PATCH'):
+        return SpeakerDocumentController.update(request, user, id)
     elif(request.method == 'DELETE'):
         return SpeakerDocumentController.delete(user, id)
 
