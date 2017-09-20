@@ -7,6 +7,7 @@ from app.services.helper import Helper
 # import model class
 from app.models.speaker_document import SpeakerDocument
 from app.models.base_model import BaseModel
+from app.models.speaker import Speaker
 from app.models.user import User
 from app.builders.response_builder import ResponseBuilder
 
@@ -26,7 +27,7 @@ class SpeakerDocumentService():
     def show(self, speaker):
         response = ResponseBuilder()
         speaker_document = db.session.query(
-            SpeakerDocument).filter_by(speaker_id=speaker['id']).all()
+            SpeakerDocument).filter_by(speaker_id=speaker['id']).order_by(SpeakerDocument.created_at.desc()).all()
         if speaker_document is not None:
             speaker_document = BaseModel.as_list(speaker_document)
             for _speaker_document in speaker_document:
@@ -42,36 +43,41 @@ class SpeakerDocumentService():
 
     def shows(self, speaker_id):
         response = ResponseBuilder()
+        speaker = db.session.query(Speaker).filter_by(id=speaker_id).first()
         speaker_document = db.session.query(
-            SpeakerDocument).filter_by(speaker_id=speaker_id).all()
+            SpeakerDocument).filter_by(speaker_id=speaker_id).order_by(SpeakerDocument.created_at.desc()).all()
+        _results = []
         if speaker_document is not None:
             speaker_document = BaseModel.as_list(speaker_document)
             for _speaker_document in speaker_document:
                 _speaker_document['material'] = Helper().url_helper(
                     _speaker_document['material'], app.config['GET_SPEAKER_DOC_DEST'])
-            return response.set_data(_speaker_document).build()
+                _speaker_document['user'] = speaker.user.include_photos().as_dict()
+                _results.append(_speaker_document)
+            return response.set_data(_results).build()
         else:
             data = 'data not found'
             return response.set_data(None).set_message(data).build()
 
     def view(self, id):
+        response = ResponseBuilder()
         speaker_document = db.session.query(
             SpeakerDocument).filter_by(id=id).first()
+        speaker = speaker_document.speaker
+        user = speaker.user.include_photos().as_dict()
         if speaker_document is not None:
             speaker_document = speaker_document.as_dict()
             speaker_document['material'] = Helper().url_helper(
                 speaker_document['material'], app.config['GET_SPEAKER_DOC_DEST'])
+            speaker_document['user'] = user
             return speaker_document
         else:
-            data = 'data not found'
-            return {
-                'error': True,
-                'data': data
-            }
+            return response.set_data('data not found').set_error(True).build()
 
     def create(self, payloads):
         response = ResponseBuilder()
         speaker_id = payloads['speaker_id']
+        speaker = db.session.query(Speaker).filter_by(id=speaker_id).first().as_dict()
         file = payloads['document_data']
         title = payloads['title']
         summary = payloads['summary']
@@ -92,6 +98,7 @@ class SpeakerDocumentService():
                 data = self.model_speaker_document.as_dict()
                 data['material'] = Helper().url_helper(
                     self.model_speaker_document.material, app.config['GET_SPEAKER_DOC_DEST'])
+                data['user'] = db.session.query(User).filter_by(id=speaker['user_id']).first().include_photos().as_dict()
                 return response.set_data(data).build()
             except SQLAlchemyError as e:
                 data = e.orig.args
