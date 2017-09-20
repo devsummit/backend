@@ -27,6 +27,9 @@ class FeedService(BaseService):
 		paginate = super().paginate(db.session.query(Feed).order_by(Feed.created_at.desc()))
 		paginate = super().include_user()
 		response = ResponseBuilder()
+		for row in paginate['data']:
+			if row['attachment'] is not None:
+				row['attachment'] = Helper().url_helper(row['attachment'], current_app.config['GET_DEST'])
 		return response.set_data(paginate['data']).set_links(paginate['links']).build()
 
 	def show(self, id):
@@ -35,6 +38,7 @@ class FeedService(BaseService):
 		data = {}
 		data = feed.as_dict() if feed else None
 		data['user'] = feed.user.include_photos().as_dict()
+		data['attachment'] = Helper().url_helper(data['attachment'], current_app.config['GET_DEST']) if data['attachment'] is not None else None
 		return response.set_data(data).build()
 
 	def create(self, payloads):
@@ -48,6 +52,7 @@ class FeedService(BaseService):
 		try:
 			db.session.commit()
 			data = feed.as_dict()
+			data['attachment'] = Helper().url_helper(data['attachment'], current_app.config['GET_DEST']) if data['attachment'] is not None else None
 			# data['user'] = feed.user.as_dict()
 			return response.set_data(data).build()
 		except SQLAlchemyError as e:
@@ -62,37 +67,3 @@ class FeedService(BaseService):
 				return current_app.config['SAVE_FEED_PHOTO_DEST'] + filename
 		else:
 			return None
-
-	# def update(self, payloads, id):
-	# 	response = ResponseBuilder()
-	# 	try:
-	# 		partner = db.session.query(Partner).filter_by(id=id)
-	# 		file = payloads['photo']
-	# 		photo = None
-	# 		photo = self.save_file(file, id)
-	# 		partner.update({
-	# 			'name': payloads['name'],
-	# 			'email': payloads['email'],
-	# 			'website': payloads['website'],
-	# 			'photo': photo,
-	# 			'type': payloads['type'],
-	# 			'updated_at': datetime.datetime.now()
-	# 		})
-	# 		db.session.commit()
-	# 		data = partner.first().as_dict()
-	# 		return response.set_data(data).build()
-	# 	except SQLAlchemyError as e:
-	# 		data = e.orig.args
-	# 		return response.set_error(True).set_data(data).build()
-
-	# def delete(self, id):
-	# 	response = ResponseBuilder()
-	# 	partner = db.session.query(Partner).filter_by(id=id)
-	# 	if partner.first() is not None:
-	# 		# delete row
-	# 		partner.delete()
-	# 		db.session.commit()
-	# 		return response.set_message('data deleted').build()
-	# 	else:
-	# 		data = 'data not found'
-	# 		return response.set_data(None).set_message(data).set_error(True).build()
