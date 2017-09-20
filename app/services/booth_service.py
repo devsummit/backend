@@ -25,7 +25,9 @@ class BoothService(BaseService):
             self.page = 1
         self.base_url = request.base_url
         paginate = super().paginate(db.session.query(Booth))
-        paginate = super().include(['user', 'stage'])
+        paginate = super().include(['user', 'stage']) 
+        for row in paginate['data']:
+            row['logo_url'] = Helper().url_helper(row['logo_url'], current_app.config['GET_DEST'])
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
         return result
@@ -41,6 +43,7 @@ class BoothService(BaseService):
             return response.set_data(data).set_error(True).set_message('booth not found').build()
         data = booth.as_dict()
         data['user'] = booth.user.include_photos().as_dict()
+        data['logo_url'] = Helper().url_helper(data['logo_url'], current_app.config['GET_DEST'])
 
         user_booth = db.session.query(UserBooth).filter_by(booth_id=id).all()
 
@@ -87,7 +90,9 @@ class BoothService(BaseService):
                 newUrl = current_app.config['SAVE_BOOTH_PHOTO_DEST'] + filename
                 self.model_booth = db.session.query(Booth).filter_by(id=booth_id)
                 self.booth_logo = db.session.query(Booth).filter_by(id=booth_id).first()
-                os.remove(current_app.config['STATIC_DEST'] + self.booth_logo.as_dict()['logo_url'])
+                #check in case current profile don't have any logo picture, so need to remove
+                if (self.booth_logo.as_dict()['logo_url'] is not None):
+                    os.remove(current_app.config['STATIC_DEST'] + self.booth_logo.as_dict()['logo_url'])
 
                 self.model_booth.update({
                     'logo_url': newUrl,
