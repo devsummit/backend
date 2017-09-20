@@ -30,53 +30,6 @@ class UserService(BaseService):
 	def __init__(self, perpage):
 		self.perpage = perpage
 
-	
-	def redeemcode(self, code, user):
-		response = ResponseBuilder()
-		uid = user['id']
-		temp_user = db.session.query(User).filter_by(id=uid)
-		usable_code = db.session.query(RedeemCode).filter_by(code=code)
-		result = result.first().as_dict() if result.first() else None
-		# check if code is there
-		if result is None:
-			return response.set_data(None).set_error(True).set_message('code is not valid').build()
-		# if yes check the count
-		if result['count'] > 0:
-			if result['codeable_type'] == 'booth':
-				# grant booth role
-				booth = Booth()
-				booth.user_id = uid
-				db.session.add(booth)
-				temp_user.update({
-					'role_id': ROLE['booth']
-				})
-				usable_code.update({
-					'count': result['count'] - 1
-				})
-				try:
-					db.session.commit()
-					data = booth.as_dict()
-					data['user'] = booth.user.as_dict()
-					return response.set_data(data).build()
-				except SQLAlchemyError as e:
-					data = e.orig.args
-					return response.set_error(True).set_message('SQL error').set_data(data).build()
-			elif result['codeable_type'] == 'partner':
-				# grant attendee role
-				attendee = Attendee()
-				attendee.user_id = uid
-				db.session.add(attendee)
-				temp_user.update({
-					'role_id': ROLE['attendee']
-				})
-				try:
-					db.session.commit()
-					data = attendee.as_dict()
-					data['user'] = booth.user.as_dict()
-					return response.set_data(data).build()
-				except SQLAlchemyError as e:
-					data = e.orig.args
-					return response.set_error(True).set_message('SQL error').set_data(data).build()
 
 	def get_booth_by_uid(self, user_id):
 		response = ResponseBuilder()
@@ -148,40 +101,6 @@ class UserService(BaseService):
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return response.set_error(True).set_message('SQL error').set_data(data).build()
-
-		# try:
-		# 	db.session.commit()
-		# 	data = self.model_user.as_dict()
-
-		# 	# insert role model
-		# 	if(role == ROLE['attendee']):
-		# 		attendee = Attendee()
-		# 		attendee.user_id = data['id']
-		# 		db.session.add(attendee)
-		# 		db.session.commit()
-		# 	elif(role == ROLE['booth']):
-		# 		booth = Booth()
-		# 		booth.user_id = data['id']
-		# 		db.session.add(booth)
-		# 		db.session.commit()
-		# 	elif(role == ROLE['speaker']):
-		# 		speaker = Speaker()
-		# 		speaker.user_id = data['id']
-		# 		db.session.add(speaker)
-		# 		db.session.commit()
-
-		# 	return {
-		# 		'error': False,
-		# 		'data': data,
-		# 		'message': 'user registered successfully'
-		# 	}
-		# except SQLAlchemyError as e:
-		# 	data = e.orig.args
-		# 	return {
-		# 		'error': True,
-		# 		'data': {'sql_error': True},
-		# 		'message': data
-		# 	}
 
 	def list_user(self, request, admin=False):
 		self.total_items = User.query.count()

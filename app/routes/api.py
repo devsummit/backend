@@ -750,22 +750,21 @@ def notification_id(id, *args, **kwargs):
 
 
 # Add redeem code API
-@api.route('/redeemcodes', methods=['GET', 'POST'])
+@api.route('/redeemcodes', methods=['GET', 'PUT', 'PATCH', 'POST'])
 @token_required
 def redeem(*args, **kwargs):
+    user = kwargs['user'].include_photos().as_dict()
     if (request.method == 'POST'):
         return RedeemCodeController.create(request)
     if (request.method == 'GET'):
         return RedeemCodeController.index()
+    if (request.method in ['PUT', 'PATCH']):
+        return RedeemCodeController.update(request, user)
 
 
-@api.route('/redeemcodes/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@api.route('/redeemcodes/<id>', methods=['DELETE'])
 @token_required
 def redeem_id(id, *args, **kwargs):
-    if (request.method == 'PUT' or request.method == 'PATCH'):
-        return RedeemCodeController.update(request, id)
-    if (request.method == 'GET'):
-        return RedeemCodeController.show(id)
     if (request.method == 'DELETE'):
         return RedeemCodeController.delete(id)
 
@@ -795,10 +794,3 @@ def sources_id(id, *args, **kwargs):
         return SourceController.update(request, id)
     elif (request.method == 'DELETE'):
         return SourceController.delete(id)
-
-
-@api.route('/redeem', methods=['POST'])
-@token_required
-def redeem_code(*args, **kwargs):
-    user = kwargs['user'].as_dict()
-    return UserController.redeemcode(request, user)
