@@ -17,7 +17,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql://' + os.environ.get("DB_USERNAME") + ':' + os.
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # default saving, database saving & domain based url
-
+MAX_CONTENT_LENGTH = 5 * 1024 * 1024
 POST_STAGE_PHOTO_DEST = 'app/static/images/stages/'
 SAVE_STAGE_PHOTO_DEST = 'images/stages/'
 POST_PARTNER_PHOTO_DEST = 'app/static/images/partners/'
