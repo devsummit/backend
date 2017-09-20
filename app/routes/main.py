@@ -109,3 +109,7 @@ def rundownlist():
 @main.route('/redeemcodes')
 def redeemcodes():
     return MainController.getRedeemCodes()
+
+@main.route('/entrycashlogsfilter')
+def report_finance_source():
+    return MainController.getReportFinance(request)

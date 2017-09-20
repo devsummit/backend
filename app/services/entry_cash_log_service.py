@@ -29,7 +29,7 @@ class EntryCashLogService(BaseService):
         data = []
         included = {}
 
-        if 'filter' in request.args and request.args.get('filter') == 'source':
+        if ('filter' in request.args and request.args.get('filter') == 'source') or ('filter' not in request.args):
             cash_logs = db.session.query(EntryCashLog).all()
 
             for cash_log in cash_logs:
@@ -40,9 +40,9 @@ class EntryCashLogService(BaseService):
             total_debit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.debit)).scalar())
             total_credit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.credit)).scalar())
             total = total_debit + total_credit
-        elif 'filter' in request.args and request.args.get('filter') == 'date':
-            date_from = request.json['date_from'] if 'date_from' in request.json else None
-            date_to = request.json['date_to'] if 'date_to' in request.json else None
+        elif 'filter' in request.args and 'date_from' in request.args and 'date_to' in request.args and request.args.get('filter') == 'date':
+            date_from = request.args.get('date_from') if 'date_from' in request.args else None
+            date_to = request.args.get('date_to') if 'date_to' in request.args else None
             total_debit = 0
             total_credit = 0
 
