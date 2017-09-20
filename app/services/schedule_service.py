@@ -12,7 +12,7 @@ from app.builders.response_builder import ResponseBuilder
 class ScheduleService():
 
 	def get(self):
-		schedules = db.session.query(Schedule).all()
+		schedules = db.session.query(Schedule).order_by(Schedule.time_start.asc()).all()
 		results = []
 		for schedule in schedules:
 			data = schedule.as_dict()
