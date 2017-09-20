@@ -22,5 +22,29 @@ class SpeakerCandidateService():
         pass
 
     def update(self, payloads, id):
-        pass
+        self.model_candidate = db.session.query(
+            SpeakerCandidate).filter_by(id=id)
+        if self.model_candidate:
+            new_data = payloads
+            new_data['updated_at'] = datetime.datetime.now()
+            self.model_candidate.update(new_data)
+        else:
+            return {
+                'error': True,
+                'data': "candidate not found"
+            }
 
+        try:
+            db.session.commit()
+
+            data = self.model_candidate.first()
+            return {
+                'error': False,
+                'data': data.as_dict(),
+                'included': []
+            }
+        except SQLAlchemyError as e:
+            return {
+                'error': True,
+                'data': e.orig.args
+            }
