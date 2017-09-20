@@ -96,6 +96,7 @@ class BoothService(BaseService):
 
                 db.session.commit()
                 data = self.model_booth.first().as_dict()
+                data['logo_url'] = Helper().url_helper(data['logo_url'], current_app.config['GET_DEST'])
 
                 return response.set_data(data).set_message('Booth logo updated successfully').build()
             except SQLAlchemyError as e:
