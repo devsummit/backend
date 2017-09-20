@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/SpeakerCandidateKanban.css') }}">
+    
+    <title>Speaker Candidates</title>
+</head>
+<body>
+    <div id='kanban-board'>
+        <div class='sortable-wrapper'>
+            <div>PROSPECTS</div>
+            <div class='sortable' style="border:1px solid gray; min-height: 350px; max-height: 100%">
+                {% for candidate in candidates %}
+                {% if(candidate['stage']=="prospect") %}
+                    <div class='ui-state-default'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class='sortable-wrapper'>
+            <div>LEADS</div>
+            <div class='sortable' style="border:1px solid gray; min-height: 350px; max-height: 100%">
+                {% for candidate in candidates %}
+                {% if(candidate['stage']=="lead") %}
+                    <div class='ui-state-default'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class='sortable-wrapper'>
+            <div>OFFICIALS</div>
+            <div class='sortable' style="border:1px solid gray; min-height: 350px; max-height: 100%">
+                {% for candidate in candidates %}
+                {% if(candidate['stage']=="official") %}
+                    <div class='ui-state-default'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function() {
+            var boardWidth = $('#kanban-board').width();
+            var $columns = $('.sortable-wrapper');
+            var columnCount = $columns.length;
+            var columnMargin = 10;
+            $columns.width(Math.floor((boardWidth - (columnMargin*(columnCount + 1))) / columnCount));
+            $( ".sortable" ).sortable({
+                revert: true,
+                placeholder: 'drag-place-holder',
+                forcePlaceholderSize: true, 
+                connectWith: ".sortable",
+                helper:function(event, element){return $(element).clone().addClass('dragging');},
+                start: function (e, ui) {ui.item.show().addClass('ghost')},
+                stop: function (e, ui) { ui.item.show().removeClass('ghost')},      
+                cursor:'move'
+            })
+            .disableSelection();;
+        });
+    </script>
+</body>
+</html>

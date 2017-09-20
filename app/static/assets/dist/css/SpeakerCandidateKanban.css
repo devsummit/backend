@@ -1,0 +1,43 @@
+body {
+    padding: 10px;
+}
+
+.ui-state-default {
+    min-height: 45px;
+}
+
+.sortable div {
+    margin-bottom: 5px;
+    padding: 3px;
+}
+
+#kanban-board {
+    width: 100%;
+}
+
+.sortable-wrapper {
+    float: left;
+    margin-left: 10px;
+}
+
+.ghost {
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+    opacity: 0.4;
+    border-style: dashed;
+}
+
+.dragging {
+    -moz-transform: rotate(-5deg);
+    -ms-transform: rotate(-5deg);
+    -webkit-transform: rotate(-5deg);
+    transform: rotate(-5deg);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+    opacity: 0.8;
+}
+
+.drag-place-holder {
+    height: 0px !important;
+    margin-top: -5px;
+    overflow: hidden;
+    border-bottom: 2px dashed blue;
+}
