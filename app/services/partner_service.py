@@ -31,9 +31,7 @@ class PartnerService(BaseService):
 				continue
 			else:
 				item['photo']='images/partners/empty-profile-grey.jpg'
-				continue
-		for item in paginate['data']:
-			print (item)		 	
+				continue		 	
 		response = ResponseBuilder()
 		return response.set_data(paginate['data']).set_links(paginate['links']).build()
 
