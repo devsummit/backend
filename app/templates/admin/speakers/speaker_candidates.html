@@ -120,6 +120,7 @@
 
         const clearModalInput = function() {
             $('.input-active').val("");
+            $('#log-message').val("");
         }
 
         const getPayloadFromInputModal = function() {
@@ -128,6 +129,12 @@
                 payloads[$(this).attr("name")] = $(this).val();
             });
             return payloads
+        }
+
+        const defineNewLog = function(from, to) {
+            var user = dsa.getUser();
+            var new_log = "@" + user['username'] + " changed this candidate stage from " + from + " to " + to;
+            return new_log;
         }
         
         $(function() {
@@ -152,20 +159,30 @@
                 drop: function(event, ui) {
                     var stageName = $(this)[0].getAttribute("id").replace('div-', '');
                     var candidateID = ui["draggable"][0].getAttribute("id").replace('cnd-', '');
+                    sessionStorage.setItem('candidate_id', candidateID);
                     var payload = {
                         stage: stageName
                     }
-                    updateCandidate(candidateID, payload, function(result){
-                        console.log(result);
-                    });
-                    //display logs tab
-                    showModalTab('tab2-input');
+                    showCandidate(candidateID, function(result){
+                        if(result['meta']['success']) {
+                            var candidate = result['data'];
+                            var fromStage = result['data']['stage'];
+                            updateCandidate(candidateID, payload, function(result){
+                                console.log(result);
+                                //display logs tab
+                                var new_log = defineNewLog(fromStage, stageName);
+                                $('#log-message').val(new_log);
+                                bindDataToModal('info', candidate);
+                                showModalTab('tab2-input');
+                            });
+                        }
+                    })
                 }
             });
-            
+
             /* Candidate Click */
             $(".candidate-item").click(function(event) {
-                candidateID = event.currentTarget.id.replace('cnd-', '');
+                var candidateID = event.currentTarget.id.replace('cnd-', '');
                 sessionStorage.setItem('candidate_id', candidateID);
                 // get the candidate infos
                 var candidate = {}
@@ -174,6 +191,7 @@
                     for (var key in result) {
                         candidate[key] = result[key]
                     }
+                    clearModalInput();
                     bindDataToModal('info', candidate);
                     // display information tab
                     showModalTab('tab1-input');
