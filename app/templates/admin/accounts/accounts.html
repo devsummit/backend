@@ -1,196 +1,212 @@
-{% extends "admin/base/index.html" %}
+{% extends "admin/base/index.html" %} 
 
 {% block title %} <title> Accounts list </title>  {% endblock %}
 
-{% set globals={'base_route': 'accounts', 'api_route': 'users'} %}
+{% set globals={'base_route': 'accounts', 'api_route': 'users'} %} 
 
 
 {% block header_link %}
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
 {% endblock %}
 
-{% block page_header %}
-    {{ super() }}
-    <h1>
-        Accounts
-        <small>List of accounts</small>
-        
-    </h1>
+{% block page_header %} 
+{{ super() }}
+<h1>
+    Accounts
+    <small>List of accounts</small>
+
+</h1>
 {% endblock %}
 
 {% block breadcrumb %}
-    <li class="active">Accounts</li>
+<li class="active">Accounts</li>
 {% endblock %}
 
 {% block content %}
-    <div class="box">
-        <!-- /.box-header -->
-        <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-input" id="-"><b>Add New</b></a>
-        
-        <div class="box-body">
-            <table id="account-list1" class="table table-bordered table-striped">
-                <thead>
-        
-                    <tr>
-                        <th>Attendee Name</th>
-                        <th>Email</th>
-                        <th>Username</th>
-                        <th>Role</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for account in accounts %}
-                    <tr>
-                        <td>
-                            {{ account['last_name']|e + ', ' + account['first_name']|e }} 
-                        </td>
-                        <td>
-                            {{ account.email|e }}
-                        </td>
-                        <td>
-                            {{ account.username|e }}
-                        </td>
-                        <td>
-                            {{ account.role['name']|e }}
-                        </td>
-                        <td>
-                            <button id='bte-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-input">
-                                Edit
-                            </button>
-                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
-                                Delete
-                            </button>
-                            <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-grant" data-toggle="modal" data-target="#modal-grant">
-                                Grant
-                            </button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% include "admin/base/modal_delete.html" %}
-        {% include "admin/accounts/account_input.html" %}
-        {% include "admin/accounts/account_grant.html" %}
-{% endblock %}
+<div class="box">
+    <!-- /.box-header -->
+    <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-input" id="-"><b>Add New</b></a>
 
-{% block footer_link %}
-<!-- DataTables -->
-<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <div class="box-body">
+        <table id="account-list1" class="table table-bordered table-striped">
+            <thead>
 
-<!-- page script -->
-<script>
-    $(document).ready(function(){
-        
-    })
-    /* account storage */
-    this.current_account= {}
-
-    /* Uppercase first letter */
-    function UCFL(string) 
-    {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    /* Function to set tab content to display */
-    const setTabContent = function(id) {
-        /* Set default tab2 fields based on role name */
-        // change tab2 caption
-        const role = $('#account-input-select-role').find(":selected").text();
-        $("#a-tab2-input").html(UCFL(role) + ' Informations');
-
-        $('.tab2-fields').css('display', 'none');
-        $('#tab-'+ role +'-fields').css('display', 'block');
-        
-        $('.btn-input-save').attr("id", id || '-');
-        //set default tab
-        $('.tab1-input').addClass('active');
-        $('.tab2-input').removeClass('active');
-        $('.btn-input-save').html("NEXT");
-    }
-
-    $('.btn-edit').click(function(event){
-        $('.modal-title').html('EDIT');
-        $('#account-input-select-role').prop('disabled', true);
-
-        const bte_id = $(this).attr('id');
-        const id = bte_id.substring(4, bte_id.length);
-
-        dsa.get('users/' + id, function(result) {
-            // bind result value in to account_detail.html 
-            const data = result['data'];
-            this.current_account = data;
-            $('#account-firstname').val(data['first_name']);
-            $('#account-lastname').val(data['last_name']);
-            $('#account-email').val(data['email']);
-            $('#account-username').val(data['username']);
-            $('#account-role_id').val(data['role_id']);
-            $('#account-input-select-role').find('*').removeAttr('selected');
-            $('#input-role'+data['role_id']).attr('selected', 'selected');
-            
-            switch(data['role_id']) {
-                case 2:
-                    $('#attendee-points').val(current_account['attendee']['points']);
-                    break;
-                case 3:
-                    $('#booth-stageid').val(current_account['booth']['stage_id']);
-                    $('#booth-points').val(current_account['booth']['points']);
-                    $('#booth-summary').val(current_account['booth']['summary']);
-                    break;
-                case 4:
-                    $('#speaker-job').val(current_account['speaker']['job']);
-                    $('#speaker-summary').val(current_account['speaker']['summary']);
-                    $('#speaker-information').val(current_account['speaker']['information']);
-                    break;
-                case 5:
-                    $('#ambassador-informations').val(current_account['ambassador']['informations']);
-                    $('#ambassador-institution').val(current_account['ambassador']['institution']);
-                    break;
-                default:
-                    break;
-            }
-            setTabContent(data['id']);
-        });
-    });
-
-    $('.btn-add').click(function(event){
-        $('#account-input-select-role').prop('disabled', false);
-        $('.modal-title').html('ADD');
-        $('#account-input-select-role').find('*').removeAttr('selected');
-        $('#input-role1').attr('selected', 'selected');
-        setTabContent(0);
-    });
-
-    $('.btn-delete').click(function(event){
-        $('.modal-title').html('Are you sure want to delete this account?');
-
-        const btd_id = $(this).attr('id');
-        const id = btd_id.substring(4, btd_id.length);
-        $('.btn-yes').attr("id", id);
-    });
-
-    $('.btn-grant').click(function(event){
-        $('#account-grant-select-role').prop('disabled', false);
-        $('.modal-title').html('GRANT')
-        $('#account-grant-select-role').find('*').removeAttr('selected');
-        $('#input-role1').attr('selected', 'selected');
-        setTabContent(0);
-        const bte_id = $(this).attr('id');
-        const id = bte_id.substring(4, bte_id.length);
-
-        dsa.get('users/' + id, function(result){
-            var data = result['data'];
-            $('#account-role_id').val(data['role_id']);
-            $('.btn-input-save').attr("id", `${data['id']}`);
-        })
-    })
+                <tr>
+                    <th>Attendee Name</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td>
+                        {{ account['last_name']|e + ', ' + account['first_name']|e }}
+                    </td>
+                    <td>
+                        {{ account.email|e }}
+                    </td>
+                    <td>
+                        {{ account.username|e }}
+                    </td>
+                    <td>
+                        {{ account.role['name']|e }}
+                    </td>
+                    <td>
+                        <button id='bte-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-input">
+                            Edit
+                        </button>
+                        <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                            Delete
+                        </button>
+                            {% if account.role['id'] == 7 %}
+                        <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-grant" data-toggle="modal" data-target="#modal-grant">
+                            Grant
+                        </button>
+                            {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include "admin/base/modal_delete.html" %} 
+    {% include "admin/accounts/account_input.html" %} 
+    {% include "admin/accounts/account_grant.html" %} 
+    {% endblock %}
     
-    $(function (){
-        $('#account-list1').DataTable();
-    });
-</script>
+    {% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+    
+    <!-- page script -->
+    <script>
+        $(document).ready(function(){
 
-{% endblock %}
+        })
+        /* account storage */
+        this.current_account= {}
+
+        /* Uppercase first letter */
+        function UCFL(string)
+        {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        /* Function to set tab content to display */
+        const setTabContent = function(id) {
+            /* Set default tab2 fields based on role name */
+            // change tab2 caption
+            const role = $('#account-input-select-role').find(":selected").text();
+            $("#a-tab2-input").html(UCFL(role) + ' Informations');
+
+            $('.tab2-fields').css('display', 'none');
+            $('#tab-'+ role +'-fields').css('display', 'block');
+
+            $('.btn-input-save').attr("id", id || '-');
+            //set default tab
+            $('.tab1-input').addClass('active');
+            $('.tab2-input').removeClass('active');
+            $('.btn-input-save').html("NEXT");
+        }
+
+        $('.btn-edit').click(function(event){
+            $('.modal-title').html('EDIT');
+            $('#account-input-select-role').prop('disabled', true);
+
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+
+            dsa.get('users/' + id, function(result) {
+                // bind result value in to account_detail.html 
+                const data = result['data'];
+                this.current_account = data;
+                $('#account-firstname').val(data['first_name']);
+                $('#account-lastname').val(data['last_name']);
+                $('#account-email').val(data['email']);
+                $('#account-username').val(data['username']);
+                $('#account-role_id').val(data['role_id']);
+                $('#account-input-select-role').find('*').removeAttr('selected');
+                $('#input-role'+data['role_id']).attr('selected', 'selected');
+
+                switch(data['role_id']) {
+                    case 2:
+                        $('#attendee-points').val(current_account['attendee']['points']);
+                        break;
+                    case 3:
+                        $('#booth-stageid').val(current_account['booth']['stage_id']);
+                        $('#booth-points').val(current_account['booth']['points']);
+                        $('#booth-summary').val(current_account['booth']['summary']);
+                        break;
+                    case 4:
+                        $('#speaker-job').val(current_account['speaker']['job']);
+                        $('#speaker-summary').val(current_account['speaker']['summary']);
+                        $('#speaker-information').val(current_account['speaker']['information']);
+                        let select = $(".speaker-types-edit");
+                        select.find('option').remove();
+                        SPEAKER_TYPES.map(function (type) {
+                            // add to select
+                            let option = document.createElement('option');
+                            option.innerHTML = capitalizeFirstLetter(type);
+                            option.value = type;
+                            if (type === current_account['speaker']['type']) {
+                                option.selected = true;
+                            }
+                            $(".speaker-types-edit").append(option);
+                        });
+
+                        break;
+                    case 5:
+                        $('#ambassador-informations').val(current_account['ambassador']['informations']);
+                        $('#ambassador-institution').val(current_account['ambassador']['institution']);
+                        break;
+                    default:
+                        break;
+                }
+                setTabContent(data['id']);
+            });
+        });
+
+        $('.btn-add').click(function(event){
+            $('#account-input-select-role').prop('disabled', false);
+            $('.modal-title').html('ADD');
+            $('#account-input-select-role').find('*').removeAttr('selected');
+            $('#input-role1').attr('selected', 'selected');
+            setTabContent(0);
+        });
+
+        $('.btn-delete').click(function(event){
+            $('.modal-title').html('Are you sure want to delete this account?');
+
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            $('.btn-yes').attr("id", id);
+        });
+
+        $('.btn-grant').click(function(event){
+            $('#account-grant-select-role').prop('disabled', false);
+            $('.modal-title').html('GRANT')
+            $('#account-grant-select-role').find('*').removeAttr('selected');
+            $('#input-role1').attr('selected', 'selected');
+            setTabContent(0);
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+
+            dsa.get('users/' + id, function(result){
+                var data = result['data'];
+                $('#account-role_id').val(data['role_id']);
+                $('.btn-input-save').attr("id", `${data['id']}`);
+            })
+        })
+
+        $(function (){
+            $('#account-list1').DataTable();
+        });
+    </script>
+
+    {% endblock %}
