@@ -77,6 +77,11 @@
             $(".tab1-input").removeClass('active');
             $(".tab2-input").removeClass('active');
             $("."+tabClass).addClass('active');
+            if(tabClass=="tab2-input") {
+                $("#btn-modal-save1").css('display', 'none');
+            } else {
+                $("#btn-modal-save1").css('display', '');
+            }
             $("#btn-show-modal").click();
         }
         $(function() {
@@ -112,9 +117,20 @@
                     showModalTab('tab2-input');
                 }
             });
+            /* Candidate Click */
             $(".candidate-item").click(function(event) {
                 // display information tab
                 showModalTab('tab1-input');
+            });
+            /* Tab change event */
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).attr("href") // activated tab
+                console.log(target);
+                if(target=="#tab2-input") {
+                    $("#btn-modal-save1").css('display', 'none');
+                } else {
+                    $("#btn-modal-save1").css('display', '');
+                }
             });
         });
 
