@@ -79,13 +79,6 @@ header_link %}
 
     <!-- page script -->
     <script>
-        $('.btn-entry-delete').click(function (event) {
-            $('.modal-title').html('Are you sure want to delete this entry cash?');
-            const btd_id = $(this).attr('id');
-            const id = btd_id.substring(6, btd_id.length);
-            $('.btn-yes').attr("id", id);
-        });
-
         $('.btn-send-date').click(function (event){
             var date_from = $('.date-from').val();
             let date_to = moment($('.date-to').val());
@@ -109,7 +102,7 @@ header_link %}
                 const currentDateFrom = getDateFrom(window.location.pathname)
                 const currentDateTo = getDateTo(window.location.pathname)
                 var date_to = moment(currentDateTo)
-                var date_to_subtract = date_to.subtract(1, 'days').format("YYY-MM-DD")
+                var date_to_subtract = date_to.subtract(1, 'days').format("YYYY-MM-DD")
                 $('.date-from').val(currentDateFrom)
                 $('.date-to').val(date_to_subtract)
             }
