@@ -16,6 +16,7 @@ from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
 from app.models.ambassador import Ambassador  # noqa
+from app.models.redeem_code import RedeemCode  # noqa
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
@@ -28,6 +29,7 @@ class UserService(BaseService):
 
 	def __init__(self, perpage):
 		self.perpage = perpage
+
 
 	def get_booth_by_uid(self, user_id):
 		response = ResponseBuilder()
@@ -99,40 +101,6 @@ class UserService(BaseService):
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return response.set_error(True).set_message('SQL error').set_data(data).build()
-
-		# try:
-		# 	db.session.commit()
-		# 	data = self.model_user.as_dict()
-
-		# 	# insert role model
-		# 	if(role == ROLE['attendee']):
-		# 		attendee = Attendee()
-		# 		attendee.user_id = data['id']
-		# 		db.session.add(attendee)
-		# 		db.session.commit()
-		# 	elif(role == ROLE['booth']):
-		# 		booth = Booth()
-		# 		booth.user_id = data['id']
-		# 		db.session.add(booth)
-		# 		db.session.commit()
-		# 	elif(role == ROLE['speaker']):
-		# 		speaker = Speaker()
-		# 		speaker.user_id = data['id']
-		# 		db.session.add(speaker)
-		# 		db.session.commit()
-
-		# 	return {
-		# 		'error': False,
-		# 		'data': data,
-		# 		'message': 'user registered successfully'
-		# 	}
-		# except SQLAlchemyError as e:
-		# 	data = e.orig.args
-		# 	return {
-		# 		'error': True,
-		# 		'data': {'sql_error': True},
-		# 		'message': data
-		# 	}
 
 	def list_user(self, request, admin=False):
 		self.total_items = User.query.count()
@@ -308,7 +276,7 @@ class UserService(BaseService):
 				if payloads['speaker_job'] is not None and payloads['speaker_summary'] is not None:
 					speaker.update({
 						'job': payloads['speaker_job'],
-						'summary': payloads['speaker_summary']
+						'summary': payloads['speaker_summary']	
 					})
 					db.session.commit()
 				data['speaker'] = speaker.first().as_dict()
@@ -417,8 +385,7 @@ class UserService(BaseService):
 			# apply includes data
 			if 'admin' not in payloads.values():
 				includes = payloads['includes']
-				includes_data = payloads[includes]
-				self.postIncludes(includes, includes_data)
+				self.editIncludes(includes)
 
 			return {
 				'error': False,
@@ -464,7 +431,7 @@ class UserService(BaseService):
 	def postIncludes(self, includes):
 		response = ResponseBuilder()
 		user_id = self.model_user.as_dict()['id']
-
+	
 		entityModel = eval(includes['name'])()
 		entityModel.user_id = user_id
 		for key in includes:
@@ -478,18 +445,18 @@ class UserService(BaseService):
 			data = e.args
 			return response.set_message(data).set_error(True).set_data(None).build()
 
-	def editIncludes(self, includes, payloads):
+	def editIncludes(self, includes):
 		user_id = self.model_user.first().as_dict()['id']
-		Model = self.mapIncludesToModel(includes)
-		entityModel = db.session.query(Model).filter_by(user_id=user_id)
+		entityModel = db.session.query(eval(includes['name'])).filter_by(user_id=user_id)
+		del includes['name']
 		entity = entityModel.first()
 
 		if (entity):
-			entityModel.update(payloads)
+			entityModel.update(includes)
 		else:
 			entityModel = Model()
 			entityModel.user_id = user_id
-			for key in payloads:
-				setattr(entityModel, key, payloads[key])
+			for key in includes:
+				setattr(entityModel, key, includes[key])
 			db.session.add(entityModel)
 		db.session.commit()

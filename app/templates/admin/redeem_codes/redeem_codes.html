@@ -24,7 +24,7 @@
                     <th>Type</th>
                     <th>Name</th>
                     <th>Code</th>
-                    <th>Count</th>
+                    <th>Used</th>
                     <th>Last Update</th>
                     <th>Action</th>
                 </tr>
@@ -44,15 +44,15 @@
                         {{ redeemcode['code']|e }}
                     </td>
                     <td>
-                        {{ redeemcode['count']|e }}
+                        {{ redeemcode['used']|e }}
                     </td>
                     <td>
                         {{ redeemcode['updated_at']|e }}
                     </td>
                     <td>
-                        <button id='bte-{{ redeemcode["id"] }}' type="button" class="btn btn-sm btn-info btn-redeemcode-edit" data-toggle="modal" data-target="#modal-edit">
+                        <!-- <button id='bte-{{ redeemcode["id"] }}' type="button" class="btn btn-sm btn-info btn-redeemcode-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
-                        </button>
+                        </button> -->
                         <button id='btd-{{ redeemcode["id"] }}' type="button" class="btn btn-sm btn-info btn-redeemcode-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                         </button>

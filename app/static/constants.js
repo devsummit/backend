@@ -34,3 +34,8 @@ const ROLES = [
 	'partner',
 	''
 ]
+
+const SPEAKER_TYPES = [
+	'keynote',
+	'panel'
+]

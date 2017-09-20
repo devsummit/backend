@@ -668,6 +668,12 @@ def entry_cash_log_id(id, *args, **kwargs):
         return EntryCashLogController.show(id)
 
 
+@api.route('/entrycashlogsfilter', methods=['GET', 'POST'])
+@token_required
+def get_entry_cash_log_filter(*args, **kwargs):
+    return EntryCashLogController.get_by_filter(request)
+
+
 @api.route('/sponsors', methods=['GET', 'POST'])
 @token_required
 def get_sponsors(*args, **kwargs):
@@ -751,22 +757,21 @@ def notification_id(id, *args, **kwargs):
 
 
 # Add redeem code API
-@api.route('/redeemcodes', methods=['GET', 'POST'])
+@api.route('/redeemcodes', methods=['GET', 'PUT', 'PATCH', 'POST'])
 @token_required
 def redeem(*args, **kwargs):
+    user = kwargs['user'].include_photos().as_dict()
     if (request.method == 'POST'):
         return RedeemCodeController.create(request)
     if (request.method == 'GET'):
         return RedeemCodeController.index()
+    if (request.method in ['PUT', 'PATCH']):
+        return RedeemCodeController.update(request, user)
 
 
-@api.route('/redeemcodes/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@api.route('/redeemcodes/<id>', methods=['DELETE'])
 @token_required
 def redeem_id(id, *args, **kwargs):
-    if (request.method == 'PUT' or request.method == 'PATCH'):
-        return RedeemCodeController.update(request, id)
-    if (request.method == 'GET'):
-        return RedeemCodeController.show(id)
     if (request.method == 'DELETE'):
         return RedeemCodeController.delete(id)
 
