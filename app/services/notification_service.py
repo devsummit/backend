@@ -5,6 +5,7 @@ from app.models import db
 from app.services.helper import Helper 
 from werkzeug import secure_filename
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import or_
 from app.models.notification import Notification
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
@@ -16,7 +17,7 @@ class NotificationService(BaseService):
 		self.perpage = perpage
 
 	def get(self, request, user_id):
-		self.total_items = Notification.query.filter_by(receiver_uid=user_id).count()
+		self.total_items = Notification.query.filter(or_(Notification.receiver_uid == user_id, Notification.receiver_uid == None)).count()
 		if request.args.get('page'):
 			self.page = request.args.get('page')
 		else:
@@ -24,7 +25,7 @@ class NotificationService(BaseService):
 			self.page = 1
 		self.base_url = request.base_url
         # paginate
-		paginate = super().paginate(db.session.query(Notification).filter_by(receiver_uid=user_id).order_by(Notification.created_at.desc()))
+		paginate = super().paginate(db.session.query(Notification).filter(or_(Notification.receiver_uid == user_id, Notification.receiver_uid == None)).order_by(Notification.created_at.desc()))
 		paginate = super().include(['sender', 'receiver'])
 		response = ResponseBuilder()
 		return response.set_data(paginate['data']).set_links(paginate['links']).build()

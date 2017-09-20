@@ -47,12 +47,12 @@ def login():
 
 @main.route('/accounts')
 def get_accounts():
-    return MainController.getAccounts()  
+    return MainController.getAccounts()
 
 
 @main.route('/speakers')
 def get_speakers():
-	return MainController.getSpeakers()
+    return MainController.getSpeakers()
 
 
 @main.route('/events')
@@ -67,7 +67,7 @@ def event_kanban():
 
 @main.route('/stages')
 def get_stages():
-	return MainController.getStages()
+    return MainController.getStages()
 
 
 @main.route('/schedules')
@@ -83,7 +83,7 @@ def adduserphoto():
 @main.route('/partners', methods=['GET', 'POST'])
 def partners():
     if(request.method == 'GET'):
-        return MainController.getPartners()    
+        return MainController.getPartners()
 
 
 @main.route('/entrycashlogs')
@@ -110,6 +110,12 @@ def rundownlist():
 def redeemcodes():
     return MainController.getRedeemCodes()
 
+
 @main.route('/speaker-candidates')
 def speaker_candidates():
     return MainController.showSpeakerCandidates()
+
+
+@main.route('/entrycashlogsfilter')
+def report_finance_source():
+    return MainController.getReportFinance(request)

@@ -8,9 +8,11 @@ class GrantroleController(BaseController):
     @staticmethod
     def update(request, id):
         role_id = request.json['role_id'] if 'role_id' in request.json else None
+        payload = request.json['includes'] if 'includes' in request.json else None
         if role_id:
             payload = {
-                'role_id': role_id
+                'role_id': role_id,
+                'includes': payload
             }
             result = grantroleservice.update(payload, id)
         else:

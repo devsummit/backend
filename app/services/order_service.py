@@ -11,7 +11,7 @@ from app.models.order_details import OrderDetails
 class OrderService():
 
 	def get(self, user_id):
-		orders = db.session.query(Order).filter_by(user_id=user_id).all()
+		orders = db.session.query(Order).filter_by(user_id=user_id).order_by(Order.created_at.desc()).all()
 		results = []
 		for order in orders:
 			items = db.session.query(OrderDetails).filter_by(order_id=order.id).all()

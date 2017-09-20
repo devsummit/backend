@@ -103,3 +103,11 @@ class MainController(BaseController):
     def showSpeakerCandidates():
         candidates = speakercandidateservice.get()
         return render_template('admin/speakers/speaker_candidates.html', candidates=candidates['data'])
+
+    def getReportFinance(request):
+        # if request.args.get('filter') is not None:
+        #     reportfinance = entrycashlogservice.get_by_filter(request)
+        # else:
+        #     # filter = request.args.get('filter') = 'source'
+        reportfinances = entrycashlogservice.get_by_filter(request)
+        return render_template('admin/report_finance/report_finance.html', reportfinances=reportfinances['data'], total=reportfinances['included'])

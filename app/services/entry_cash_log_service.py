@@ -3,6 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.entry_cash_log import EntryCashLog
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
+from sqlalchemy.sql import func
 
 
 class EntryCashLogService(BaseService):
@@ -21,6 +22,51 @@ class EntryCashLogService(BaseService):
         paginate = super().paginate(db.session.query(EntryCashLog))
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
+        return result
+
+    def get_by_filter(self, request):
+        response = ResponseBuilder()
+        data = []
+        included = {}
+
+        if ('filter' in request.args and request.args.get('filter') == 'source') or ('filter' not in request.args):
+            cash_logs = db.session.query(EntryCashLog).all()
+
+            for cash_log in cash_logs:
+                cash_log_data = cash_log.as_dict()
+                cash_log_data['source'] = cash_log.source.as_dict()
+                data.append(cash_log_data)
+
+            total_debit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.debit)).scalar())
+            total_credit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.credit)).scalar())
+            total = total_debit + total_credit
+        elif 'filter' in request.args and 'date_from' in request.args and 'date_to' in request.args and request.args.get('filter') == 'date':
+            date_from = request.args.get('date_from') if 'date_from' in request.args else None
+            date_to = request.args.get('date_to') if 'date_to' in request.args else None
+            total_debit = 0
+            total_credit = 0
+
+            cash_logs = db.session.query(EntryCashLog).filter(EntryCashLog.created_at.between(date_from, date_to)).all()
+
+            for cash_log in cash_logs:
+                cash_log_data = cash_log.as_dict()
+                cash_log_data['source'] = cash_log.source.as_dict()
+                data.append(cash_log_data)
+
+                total_debit += cash_log_data['debit']
+                total_credit += cash_log_data['credit']
+
+            total = total_debit + total_credit
+        else:
+            return response.set_error(True).set_status_code(400).set_message('You need to specify filter').build()
+
+        if data:
+            included['total_debit'] = total_debit
+            included['total_credit'] = total_credit
+            included['total'] = total
+        
+        result = response.set_data(data).set_included(included).build()
+
         return result
 
     def show(self, id):

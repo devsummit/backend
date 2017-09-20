@@ -36,6 +36,7 @@ from app.controllers.rundown_list_controller import RundownListController
 from app.controllers.redeem_code_controller import RedeemCodeController
 from app.controllers.Grantrole_controller import GrantroleController
 from app.controllers.source_controller import SourceController
+from app.controllers.admin_controller import AdminController
 from app.controllers.booth_gallery_controller import BoothGalleryController
 from app.controllers.speaker_candidate_controller import SpeakerCandidateController
 from app.configs.constants import ROLE
@@ -672,6 +673,12 @@ def entry_cash_log_id(id, *args, **kwargs):
         return EntryCashLogController.show(id)
 
 
+@api.route('/entrycashlogsfilter', methods=['GET'])
+@token_required
+def get_entry_cash_log_filter(*args, **kwargs):
+    return EntryCashLogController.get_by_filter(request)
+
+
 @api.route('/sponsors', methods=['GET', 'POST'])
 @token_required
 def get_sponsors(*args, **kwargs):
@@ -757,22 +764,21 @@ def notification_id(id, *args, **kwargs):
 
 
 # Add redeem code API
-@api.route('/redeemcodes', methods=['GET', 'POST'])
+@api.route('/redeemcodes', methods=['GET', 'PUT', 'PATCH', 'POST'])
 @token_required
 def redeem(*args, **kwargs):
+    user = kwargs['user'].include_photos().as_dict()
     if (request.method == 'POST'):
         return RedeemCodeController.create(request)
     if (request.method == 'GET'):
         return RedeemCodeController.index()
+    if (request.method in ['PUT', 'PATCH']):
+        return RedeemCodeController.update(request, user)
 
 
-@api.route('/redeemcodes/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@api.route('/redeemcodes/<id>', methods=['DELETE'])
 @token_required
 def redeem_id(id, *args, **kwargs):
-    if (request.method == 'PUT' or request.method == 'PATCH'):
-        return RedeemCodeController.update(request, id)
-    if (request.method == 'GET'):
-        return RedeemCodeController.show(id)
     if (request.method == 'DELETE'):
         return RedeemCodeController.delete(id)
 
@@ -830,3 +836,23 @@ def speaker_candidate_show_logs(id, *args, **kwargs):
 def speaker_candidate_logs(*args, **kwargs):
     if(request.method == 'POST'):
         return SpeakerCandidateController.create_log(request)
+
+
+@api.route('/admin/sendnotification', methods=['POST'])
+@token_required
+def send_notification(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (user['role_id'] != ROLE['admin']):
+        return 'unauthorized'
+    else:
+        return AdminController.send_single_notification(request, user)
+
+
+@api.route('/admin/broadcastnotification', methods=['POST'])
+@token_required
+def broadcast_notification(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (user['role_id'] != ROLE['admin']):
+        return 'unauthorized'
+    else:
+        return AdminController.broadcast_notification(request, user)
