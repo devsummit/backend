@@ -29,6 +29,12 @@ def change_setting(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return UserAuthorizationController.change_name(request, user)
 
+@auth.route('/me/updatefcmtoken', methods=['PUT', 'PATCH'])
+@token_required
+def update_fcm_token(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return UserAuthorizationController.updatefcmtoken(request, user)
+
 
 @auth.route('/me/booth', methods=['GET'])
 @token_required

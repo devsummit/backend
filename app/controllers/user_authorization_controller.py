@@ -184,3 +184,14 @@ class UserAuthorizationController(BaseController):
             return BaseController.send_response_api(result['data'], 'password succesfully changed')
         else:
             return BaseController.send_error_api(None, result['data'])
+
+    @staticmethod
+    def updatefcmtoken(request, user):
+        token = request.json['token'] if 'token' in request.json else None
+
+        if token is None:
+            return BaseController.send_error_api(None, 'token not provided')
+        result = userservice.updatefcmtoken(token, user)
+        if result['error']:
+            return BaseController.send_error_api(result['message'], result['message'])
+        return BaseController.send_response_api(result['data'], result['message'])
