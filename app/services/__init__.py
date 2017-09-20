@@ -29,6 +29,7 @@ from app.services.rundown_list_service import RundownListService
 from app.services.redeem_code_service import RedeemCodeService
 from app.services.grantrole_service import GrantroleService
 from app.services.source_service import SourceService
+from app.services.fcm_service import FCMService
 from app.services.booth_gallery_service import BoothGalleryService
 
 
@@ -64,3 +65,4 @@ redeemcodeservice = RedeemCodeService()
 grantroleservice = GrantroleService()
 sourceservice = SourceService()
 boothgalleryservice = BoothGalleryService()
+fcmservice = FCMService()
