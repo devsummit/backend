@@ -37,3 +37,19 @@ class SpeakerCandidateController(BaseController):
             )
         else:
             return BaseController.send_error_api(None, result['data'])
+
+    @staticmethod
+    def show_logs(id):
+        result = speakercandidateservice.show_logs(id)
+        if not result['error']:
+            return BaseController.send_response_api(result['data'], result['message'], [])
+        else:
+            return BaseController.send_error_api(None, result['data'])
+
+    @staticmethod
+    def create_log(request):
+        result = speakercandidateservice.create_log(request.json)
+        if not result['error']:
+            return BaseController.send_response_api(result['data'], result['message'], [])
+        else:
+            return BaseController.send_error_api(None, result['data'])

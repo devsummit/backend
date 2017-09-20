@@ -817,3 +817,16 @@ def speaker_candidate_update(id, *args, **kwargs):
 @token_required
 def speaker_candidate_create(*args, **kwargs):
     return SpeakerCandidateController.create(request)
+
+
+@api.route('/speaker-candidate-logs/<id>', methods=['GET'])
+@token_required
+def speaker_candidate_show_logs(id, *args, **kwargs):
+    return SpeakerCandidateController.show_logs(id)
+
+
+@api.route('/speaker-candidate-logs', methods=['POST'])
+@token_required
+def speaker_candidate_logs(*args, **kwargs):
+    if(request.method == 'POST'):
+        return SpeakerCandidateController.create_log(request)
