@@ -79,3 +79,18 @@ class EntryCashLogController(BaseController):
         if entry_cash['error']:
             return BaseController.send_response_api(None, 'entry cash log not found')
         return BaseController.send_response_api(None, 'entry with id: ' + id + ' has been deleted succesfully')
+
+    @staticmethod
+    def get_by_filter(request):
+        result = entrycashlogservice.get_by_filter(request)
+
+        if result['error']:
+            return BaseController.send_error_api(
+                result['data'],
+                result['message']
+            )
+        return BaseController.send_response_api(
+            result['data'],
+            result['message'],
+            result['included']
+        )
