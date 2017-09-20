@@ -92,6 +92,9 @@ class MainController(BaseController):
         return render_template('admin/rundown/rundown_list.html', rundownlist=rundownlist['data'])
         # return render_template('admin/rundown/rundown_list.html')
 
+    def show_event_kanban():
+        return render_template('admin/events/kanbans/kanban.html')
+
     def getRedeemCodes():
         redeemcodes = redeemcodeservice.get()
         return render_template('admin/redeem_codes/redeem_codes.html', redeemcodes=redeemcodes['data'])

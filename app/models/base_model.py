@@ -14,14 +14,14 @@ class BaseModel:
 			result = {}
 			for c in self.visible:
 				if c in ['created_at', 'updated_at', 'time_start', 'time_end']:
-					result[c] = datetime.datetime.strftime(getattr(self, c), '%Y-%m-%d %H:%M:%S')
+					result[c] = datetime.datetime.strftime(getattr(self, c), '%Y-%m-%d %H:%M:%S') if getattr(self, c) else None
 					continue
 				result[c] = getattr(self, c)
 			return result
 		else:
 			for c in self.__table__.columns:
 				if c in ['created_at', 'updated_at', 'time_start', 'time_end']:
-					result[c] = datetime.datetime.strftime(getattr(self, c), '%Y-%m-%d %H:%M:%S')
+					result[c] = datetime.datetime.strftime(getattr(self, c), '%Y-%m-%d %H:%M:%S') if getattr(self, c) else None
 					continue
 				result[c] = getattr(self, c)
 			return result

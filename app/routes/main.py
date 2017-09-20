@@ -60,6 +60,11 @@ def get_events():
     return MainController.getEvents()
 
 
+@main.route('/events/kanban')
+def event_kanban():
+    return MainController.show_event_kanban()
+
+
 @main.route('/stages')
 def get_stages():
 	return MainController.getStages()
