@@ -139,9 +139,9 @@
     /* Role dropdown select change */
     $("#account-grant-select-role").change(function (event) {
         role = $('#account-grant-select-role').find(":selected").text();
-        let select = $(".speaker-types-add");
-        select.find('option').remove();
         if (role == 'speaker') {
+            let select = $(".speaker-types-add");
+            select.find('option').remove();
             SPEAKER_TYPES.map(function (type) {
                 // add to select
                 let option = document.createElement('option');
