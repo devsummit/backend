@@ -95,6 +95,17 @@
                 callback(result);
             })
         }
+
+        const showLogs = function(id, callback) {
+            dsa.request('api/v1/speaker-candidate-logs/'+id, 'GET', null, function(result) {
+                callback(result);
+            })
+        }
+        const postNewLog = function(method, payload, callback) {
+            dsa.request('api/v1/speaker-candidate-logs', method, payload, function(result) {
+                callback(result);
+            })
+        }
         
         const showModalTab =  function(tabClass) {
             $(".tab1-input").removeClass('active');
@@ -136,6 +147,15 @@
             var new_log = "@" + user['username'] + " changed this candidate stage from " + from + " to " + to;
             return new_log;
         }
+
+        const renderLogs = function(logs) {
+            $('.div-logs').empty();
+            logs.map((log) => {
+                var log_item = '<h4><span class="label label-success">'+ log['created_at'] +'</span>';
+                log_item += '<span class="label label-dafault text-black">'+ log['message'] +'</span></h4>';
+                $('.div-logs').append(log_item);
+            })
+        }
         
         $(function() {
             var boardWidth = $('#kanban-board').width();
@@ -173,6 +193,9 @@
                                 var new_log = defineNewLog(fromStage, stageName);
                                 $('#log-message').val(new_log);
                                 bindDataToModal('info', candidate);
+                                showLogs(candidateID, function(result) {
+                                    renderLogs(result['data']);
+                                });
                                 showModalTab('tab2-input');
                             });
                         }
@@ -193,6 +216,9 @@
                     }
                     clearModalInput();
                     bindDataToModal('info', candidate);
+                    showLogs(candidateID, function(result) {
+                        renderLogs(result['data']);
+                    })
                     // display information tab
                     showModalTab('tab1-input');
                 });
@@ -237,6 +263,22 @@
                 clearModalInput();
                 $('#data-stage').val('prospect');
                 showModalTab('tab1-input');
+            });
+
+            /* btn-submit-log click */
+            $('#btn-submit-log').click(function() {
+                var candidateID = sessionStorage.getItem('candidate_id');
+                var new_log = {
+                    candidate_id: candidateID,
+                    message: $('#log-message').val()
+                };
+                postNewLog('POST', new_log, function(result){
+                    showLogs(candidateID, function(result) {
+                        if (result['meta']['success']) {
+                            renderLogs(result['data']);
+                        }
+                    })
+                })
             })
         });
 
