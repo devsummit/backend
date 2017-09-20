@@ -1,15 +1,15 @@
 {% extends "admin/base/index.html" %} {% block title %}
-<title> Report Finance </title> {% endblock %} {% set globals={'base_route': 'reportfinance', 'api_route': 'reportfinances'} %} {% block
+<title> Finance Report </title> {% endblock %} {% set globals={'base_route': 'reportfinance', 'api_route': 'reportfinances'} %} {% block
 header_link %}
 <!-- DataTables -->
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
 <h1>
-    Report Finance
+    Finance Report
     <small>List of Report finance</small>
 
 </h1>
 {% endblock %} {% block breadcrumb %}
-<li class="active">Report Finance</li>
+<li class="active">Finance Report</li>
 {% endblock %} {% block content %}
 <div class="box">
     <!-- /.box-header -->
@@ -53,7 +53,13 @@ header_link %}
             </tbody>
             <tfoot>
                 <tr>
-                    <th><h4 id="total">Total = {{ total['total']}}</h4></th>
+                    <th colspan="2">Total debit and credit</th>
+                    <th>{{ total['total_debit']}}</th>
+                    <th>{{ total['total_credit'] }} </th>
+                </tr>
+                <tr>
+                    <th colspan="3">Total</th>
+                    <th>{{ total['total']}}</th>
                 </tr>
             </tfoot>
         </table>
@@ -75,7 +81,6 @@ header_link %}
     <script>
         $('.btn-entry-delete').click(function (event) {
             $('.modal-title').html('Are you sure want to delete this entry cash?');
-
             const btd_id = $(this).attr('id');
             const id = btd_id.substring(6, btd_id.length);
             $('.btn-yes').attr("id", id);
@@ -85,15 +90,10 @@ header_link %}
             var date_from = $('.date-from').val();
             let date_to = moment($('.date-to').val());
             var date_to_plus = date_to.add(1, 'days').format("YYYY-MM-DD")
-
             window.location = "entrycashlogsfilter?filter=date&date_from=" + date_from + '&date_to=' + date_to_plus 
-            
         })
 
         $(function () {
-            /* when this page loaded set source */
-
-            
             /* dropdown for filter */
             $('#finance-list1').DataTable({
                 dom: 'l<"#add">frtip'
@@ -104,16 +104,15 @@ header_link %}
             $('<option/>').val('Date').text('Date').appendTo($select);
 
             const current = (getUrlVars(window.location.pathname))
-            //console.log(current)
             if(current){
-                //console.log(current.replace("#", ""))
                 $('#finance-report-filter').val('Date')
-                //$('#finance-report-filter').val('Date')
+                const currentDateFrom = getDateFrom(window.location.pathname)
+                const currentDateTo = getDateTo(window.location.pathname)
+                var date_to = moment(currentDateTo)
+                var date_to_subtract = date_to.subtract(1, 'days').format("YYY-MM-DD")
+                $('.date-from').val(currentDateFrom)
+                $('.date-to').val(date_to_subtract)
             }
-
-            const currentDateFrom = getDateFrom(window.location.pathname)
-            const currentDateTo = getDateTo(window.location.pathname)
-
 
             /* when dropdown clicked*/
             $('#finance-report-filter').change(function (e) {
@@ -135,8 +134,7 @@ header_link %}
                 $('#date-time').hide()
                 $('#total').text()
             } else if (selected == 'Date'){
-                $('.date-from').val(currentDateFrom)
-                $('.date-to').val(currentDateTo)
+
             }
         })
 
