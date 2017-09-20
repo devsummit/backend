@@ -83,8 +83,8 @@
         dsa.get('attendees/' + id, function(result) {
             // bind result value in to attendee_detail.html 
             const data = result['data'];
-            if (data['user']['url']) {
-                $('.attendee-picture').attr('src', data['user']['url']);
+            if (data['user']['photos']) {
+                $('.attendee-picture').attr('src', data['user']['photos'][0]['url']);
             }
             $('.attendee-name').html(data['user']['first_name'] + ' ' + data['user']['last_name']);
             $('.attendee-email').html(data['user']['email']);
