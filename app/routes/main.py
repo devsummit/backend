@@ -110,6 +110,6 @@ def rundownlist():
 def redeemcodes():
     return MainController.getRedeemCodes()
 
-@main.route('/report_finance')
+@main.route('/entrycashlogsfilter')
 def report_finance_source():
-    return MainController.getReportFinance()
+    return MainController.getReportFinance(request)
