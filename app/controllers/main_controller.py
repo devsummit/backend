@@ -98,3 +98,6 @@ class MainController(BaseController):
     def getRedeemCodes():
         redeemcodes = redeemcodeservice.get()
         return render_template('admin/redeem_codes/redeem_codes.html', redeemcodes=redeemcodes['data'])
+
+    def getReportFinance():
+        return render_template('admin/report_finance/report_finance.html')

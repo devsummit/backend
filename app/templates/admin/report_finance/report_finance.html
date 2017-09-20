@@ -1,0 +1,141 @@
+{% extends "admin/base/index.html" %} {% block title %}
+<title> Report Finance </title> {% endblock %} {% set globals={'base_route': 'entrycashlogs', 'api_route': 'entrycashlogs'} %} {% block
+header_link %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Report Finance
+    <small>List of Report finance</small>
+
+</h1>
+{% endblock %} {% block breadcrumb %}
+<li class="active">Report Finance</li>
+{% endblock %} {% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <a href="#" class="btn btn-primary btn-entry-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+    <div class="box-body">
+        <!-- date-time -->
+        <p id="date-time">
+            <from action="#" id="date-form">
+                From : <input type="text" class="date-from date" /></th>
+                To : <input type="text" class="date-to date" /></th>
+                <input type="submit" class="btn btn-primary" value="send">
+            </from>
+        </p>
+
+        <table id="finance-list1" class="table table-bordered table-striped">
+            <thead>
+
+                <tr>
+                    <th>Bank</th>
+                    <th>Username</th>
+                    <th id="date-from">From</th>
+                    <th id="date-to">To</th>
+                    <th id="debit">Debit</th>
+                    <th id="credit">Credit</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entrycashlogs %}
+                <tr>
+                    <td>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-description">{{ entry['description']|e }}</a>
+                    </td>
+                    <td>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['source_id']|e }}</a>
+                    </td>
+                    <td>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['debit']|e }}</a>
+                    </td>
+                    <td>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['credit']|e }}</a>
+                    </td>
+                    <td>
+                        <button id='entry-{{ entry.id }}' type="button" class="btn btn-sm btn-info btn-entry-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                        </button>
+                        <button id='entry-{{ entry.id }}' type="button" class="btn btn-sm btn-info btn-entry-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th><h3>Total = $1.000.000</h3></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    {% include "admin/base/modal_delete.html" %} {% include "admin/entrycash/entrycash_edit.html" %} {% include "admin/entrycash/entrycash_add.html"
+    %} {% endblock %} {% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='constants.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/jquery.timepicker.css" />
+    <link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/bootstrap-datepicker.css" />
+    <script type="text/javascript" src="static/assets/datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="static/assets/datepicker/js/jquery.timepicker.js"></script>
+    <script type="text/javascript" src="static/assets/datepicker/js/datepair.js"></script>
+
+    <!-- page script -->
+    <script>
+        $('.btn-entry-delete').click(function (event) {
+            $('.modal-title').html('Are you sure want to delete this entry cash?');
+
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(6, btd_id.length);
+            $('.btn-yes').attr("id", id);
+        });
+        $(function () {
+            /* when this page loaded set source */
+            $('#date-from').hide();
+            $('#date-to').hide();
+            $('#date-time').hide();
+
+            /* dropdown for filter */
+            $('#finance-list1').DataTable({
+                dom: 'l<"#add">frtip'
+            });
+            $('<label/>').text('Filter').appendTo('#add')
+            $select = $('<select class="form-control input-sm filter-finance-report" id="finance-report-filter" />').appendTo('#add')
+            $('<option/>').val('Source').text('Source').appendTo($select);
+            $('<option/>').val('Date').text('Date').appendTo($select);
+
+            /* when dropdown clicked*/
+            $('#finance-report-filter').on('change', function (e) {
+                var selected = $(this).val()
+                if (selected == 'Date') {
+                    $('#debit').hide()
+                    $('#credit').hide()
+                    $('#date-from').show()
+                    $('#date-to').show()
+                    $('#date-time').show()
+                } else if (selected == 'Source') {
+                    $('#date-from').hide()
+                    $('#date-to').hide()
+                    $('#date-time').hide()
+                    $('#debit').show()
+                    $('#credit').show()
+                }
+            })
+        })
+
+
+        // initialize input widgets first
+        $('#date-time .date').datepicker({
+            'format': 'yyyy-mm-dd',
+            'autoclose': true
+        });
+
+        // initialize datepair
+        var dateTimeElement = document.getElementById('date-time');
+        var datepair = new Datepair(dateTimeElement);
+    </script>
+
+    {% endblock %}
