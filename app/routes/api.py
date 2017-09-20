@@ -668,6 +668,12 @@ def entry_cash_log_id(id, *args, **kwargs):
         return EntryCashLogController.show(id)
 
 
+@api.route('/entrycashlogsfilter', methods=['GET', 'POST'])
+@token_required
+def get_entry_cash_log_filter(*args, **kwargs):
+    return EntryCashLogController.get_by_filter(request)
+
+
 @api.route('/sponsors', methods=['GET', 'POST'])
 @token_required
 def get_sponsors(*args, **kwargs):
