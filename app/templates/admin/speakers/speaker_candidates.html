@@ -5,12 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/font-awesome/css/font-awesome.min.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/SpeakerCandidateKanban.css') }}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/AdminLTE.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/skins/skin-yellow.min.css') }}">
+
     <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/SpeakerCandidateKanban.css') }}">
     
     <title>Speaker Candidates</title>
 </head>
@@ -21,7 +28,7 @@
             <div class='sortable' id="div-prospect" style="border:1px solid gray; min-height: 600px; max-height: 100%">
                 {% for candidate in candidates %}
                 {% if(candidate['stage']=="prospect") %}
-                    <div class='ui-state-default' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
+                    <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
                 {% endif %}
                 {% endfor %}
             </div>
@@ -31,7 +38,7 @@
             <div class='sortable' id="div-lead" style="border:1px solid gray; min-height: 600px; max-height: 100%">
                 {% for candidate in candidates %}
                 {% if(candidate['stage']=="lead") %}
-                    <div class='ui-state-default' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
+                    <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
                 {% endif %}
                 {% endfor %}
             </div>
@@ -41,12 +48,20 @@
             <div class='sortable' id="div-official" style="border:1px solid gray; min-height: 600px; max-height: 100%">
                 {% for candidate in candidates %}
                 {% if(candidate['stage']=="official") %}
-                    <div class='ui-state-default' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
+                    <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
                 {% endif %}
                 {% endfor %}
             </div>
         </div>
+        <button type="button" class="btn btn-warning" id="btn-show-modal" data-toggle="modal" data-target="#modal-candidate" style="display: none">
+                Launch Modal
+        </button>
     </div>
+
+    {% include "admin/speakers/speaker_candidate_modal.html" ignore missing %}
+
+    <!-- Bootstrap 3.3.7 -->
+    <script src="{{ url_for('static', filename='assets/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
     <script>
         const updateCandidate = function(id, payload, callback) {
@@ -58,12 +73,19 @@
                 }
             });
         }
+        const showModalTab =  function(tabClass) {
+            $(".tab1-input").removeClass('active');
+            $(".tab2-input").removeClass('active');
+            $("."+tabClass).addClass('active');
+            $("#btn-show-modal").click();
+        }
         $(function() {
             var boardWidth = $('#kanban-board').width();
             var $columns = $('.sortable-wrapper');
             var columnCount = $columns.length;
             var columnMargin = 10;
             $columns.width(Math.floor((boardWidth - (columnMargin*(columnCount + 1))) / columnCount));
+            
             $( ".sortable" ).sortable({
                 revert: true,
                 placeholder: 'drag-place-holder',
@@ -77,6 +99,7 @@
                 .disableSelection();
             $(".sortable").droppable({
                 drop: function(event, ui) {
+                    console.log(event["type"]);
                     var stageName = $(this)[0].getAttribute("id").replace('div-', '');
                     var candidateID = ui["draggable"][0].getAttribute("id").replace('cnd-', '');
                     var payload = {
@@ -84,9 +107,15 @@
                     }
                     updateCandidate(candidateID, payload, function(result){
                         console.log(result);
-                    })
+                    });
+                    //display logs tab
+                    showModalTab('tab2-input');
                 }
-            })
+            });
+            $(".candidate-item").click(function(event) {
+                // display information tab
+                showModalTab('tab1-input');
+            });
         });
 
     </script>
