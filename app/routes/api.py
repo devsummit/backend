@@ -5,6 +5,7 @@ from flask import Blueprint, request
 
 # import middlewares
 from app.middlewares.authentication import token_required
+from app.models import socketio
 
 # controllers import
 from app.controllers.ticket_controller import TicketController
@@ -732,7 +733,7 @@ def feeds_id(id, *args, **kwargs):
         return FeedController.show(id)
 
 
-@api.route('/feeds', methods=['GET', 'POST'])
+@api.route('/feeds', methods=['GET'])
 @token_required
 def feeds(*args, **kwargs):
     user = kwargs['user'].as_dict()
@@ -740,6 +741,13 @@ def feeds(*args, **kwargs):
         return FeedController.index(request)
     else:
         return FeedController.create(request, user['id'])
+
+
+@api.route('/feeds', methods=['POST'])
+@socketio.on('send_message')
+def handle_post(json_data):
+    socketio.emit(FeedController.create(request, user['id']))
+
 
 @api.route('/notifications', methods=['GET', 'POST'])
 @token_required
