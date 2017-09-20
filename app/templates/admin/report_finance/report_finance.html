@@ -13,14 +13,14 @@ header_link %}
 {% endblock %} {% block content %}
 <div class="box">
     <!-- /.box-header -->
-    <a href="#" class="btn btn-primary btn-entry-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+    <!-- <a href="#" class="btn btn-primary btn-entry-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a> -->
     <div class="box-body">
         <!-- date-time -->
         <p id="date-time">
             <from action="#" id="date-form">
-                From : <input type="text" class="date-from date" /></th>
-                To : <input type="text" class="date-to date" /></th>
-                <input type="submit" class="btn btn-primary" value="send">
+                From : <input type="text" class="date-from date" />
+                To : <input type="text" class="date-to date" />
+                <input type="submit" class="btn btn-primary btn-send-date" value="send">
             </from>
         </p>
 
@@ -42,23 +42,37 @@ header_link %}
                 <tr>
                     <td>
                         <a href="" id='atd-{{ entry.id }}' class="entry-description">{{ entry['description']|e }}</a>
+                        <p id="bank"></p>
                     </td>
                     <td>
                         <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['source_id']|e }}</a>
+                        <p id="username"></p>
                     </td>
-                    <td>
+                    <td id="data-date-from">
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['source_id']|e }}</a>
+                        <p id="date-from"></p>
+                    </td>
+                    <td id="data-date-to">
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['source_id']|e }}</a>
+                        <p id="date-to"></p>
+                    </td>
+                    <td id="data-debit">
                         <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['debit']|e }}</a>
+                        <p id="debit"></p>
                     </td>
-                    <td>
+                    <td id="data-credit">
                         <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['credit']|e }}</a>
+                        <p id="credit"></p>
                     </td>
                     <td>
+                    <!--    
                         <button id='entry-{{ entry.id }}' type="button" class="btn btn-sm btn-info btn-entry-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
+                                <button id='entry-{{ entry.id }}' type="button" class="btn btn-sm btn-info btn-entry-delete" data-toggle="modal" data-target="#modal-delete">
                         </button>
-                        <button id='entry-{{ entry.id }}' type="button" class="btn btn-sm btn-info btn-entry-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                         </button>
+                    -->
                     </td>
                 </tr>
                 {% endfor %}
@@ -74,14 +88,14 @@ header_link %}
     {% include "admin/base/modal_delete.html" %} {% include "admin/entrycash/entrycash_edit.html" %} {% include "admin/entrycash/entrycash_add.html"
     %} {% endblock %} {% block footer_link %}
     <!-- DataTables -->
-    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='constants.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/jquery.timepicker.css" />
-    <link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/bootstrap-datepicker.css" />
-    <script type="text/javascript" src="static/assets/datepicker/js/bootstrap-datepicker.js"></script>
-    <script type="text/javascript" src="static/assets/datepicker/js/jquery.timepicker.js"></script>
-    <script type="text/javascript" src="static/assets/datepicker/js/datepair.js"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/moment/moment.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/jquery.timepicker.css" />
+<link rel="stylesheet" type="text/css" href="static/assets/datepicker/css/bootstrap-datepicker.css" />
+<script type="text/javascript" src="static/assets/datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="static/assets/datepicker/js/jquery.timepicker.js"></script>
+<script type="text/javascript" src="static/assets/datepicker/js/datepair.js"></script>
 
     <!-- page script -->
     <script>
@@ -92,27 +106,43 @@ header_link %}
             const id = btd_id.substring(6, btd_id.length);
             $('.btn-yes').attr("id", id);
         });
+
+        $('.btn-send-date').click(function (event){
+            let ok = moment($('.date-to').val());
+            var new_date = ok.add(1, 'days').format("YYYY-MM-DD")
+            $('.test').val(new_date)
+        })
+
         $(function () {
             /* when this page loaded set source */
             $('#date-from').hide();
             $('#date-to').hide();
             $('#date-time').hide();
+            $('#data-date-from').hide()
+            $('#data-date-to').hide()
+            $('#bank').text('cok')
 
+            dsa.get('filter', function(result){
+
+            })
+            
             /* dropdown for filter */
             $('#finance-list1').DataTable({
                 dom: 'l<"#add">frtip'
             });
-            $('<label/>').text('Filter').appendTo('#add')
+            $('<label/>').text('Filter').appendTo('#add');
             $select = $('<select class="form-control input-sm filter-finance-report" id="finance-report-filter" />').appendTo('#add')
             $('<option/>').val('Source').text('Source').appendTo($select);
             $('<option/>').val('Date').text('Date').appendTo($select);
 
             /* when dropdown clicked*/
-            $('#finance-report-filter').on('change', function (e) {
+            $('#finance-report-filter').change(function (e) {
                 var selected = $(this).val()
                 if (selected == 'Date') {
                     $('#debit').hide()
                     $('#credit').hide()
+                    $('#data-debit').hide()
+                    $('#data-credit').hide()
                     $('#date-from').show()
                     $('#date-to').show()
                     $('#date-time').show()
@@ -120,12 +150,15 @@ header_link %}
                     $('#date-from').hide()
                     $('#date-to').hide()
                     $('#date-time').hide()
+                    $('#data-date-from').hide()
+                    $('#data-date-to').hide()
+                    $('#data-debit').show()
+                    $('#data-credit').show()
                     $('#debit').show()
                     $('#credit').show()
                 }
             })
         })
-
 
         // initialize input widgets first
         $('#date-time .date').datepicker({
