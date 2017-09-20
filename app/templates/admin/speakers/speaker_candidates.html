@@ -32,6 +32,11 @@
                 {% endif %}
                 {% endfor %}
             </div>
+            <div>
+                <a class="btn btn-success btn-block" id="btn-new-propect">
+                    <i class="fa fa-plus-square"></i> New Prospect
+                </a>
+            </div>
         </div>
         <div class='sortable-wrapper'>
             <div>LEADS</div>
@@ -64,6 +69,7 @@
     <script src="{{ url_for('static', filename='assets/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
     <script>
+
         const updateCandidate = function(id, payload, callback) {
             dsa.request('/api/v1/speaker-candidates/'+id, 'PATCH', payload, function(result) {
                 if(!id){
@@ -73,6 +79,23 @@
                 }
             });
         }
+        
+        const showCandidate = function(id, callback) {
+            dsa.request('/api/v1/speaker-candidates/'+id, 'GET', null, function(result) {
+                if(!id){
+                    callback('id not define, check the ui');
+                } else {
+                    callback(result);
+                }
+            })
+        }
+
+        const createCandidate = function(payload, callback) {
+            dsa.request('/api/v1/speaker-candidates', 'POST', payload, function(result) {
+                callback(result);
+            })
+        }
+        
         const showModalTab =  function(tabClass) {
             $(".tab1-input").removeClass('active');
             $(".tab2-input").removeClass('active');
@@ -84,6 +107,29 @@
             }
             $("#btn-show-modal").click();
         }
+        
+        const bindDataToModal = function(type, data) {
+            if (type=='info') {
+                for (var key in data) {
+                    $('#data-'+key).val(data[key]);
+                }
+            } else {
+
+            }
+        }
+
+        const clearModalInput = function() {
+            $('.input-active').val("");
+        }
+
+        const getPayloadFromInputModal = function() {
+            var payloads = {};
+            $(".input-active").each(function() {
+                payloads[$(this).attr("name")] = $(this).val();
+            });
+            return payloads
+        }
+        
         $(function() {
             var boardWidth = $('#kanban-board').width();
             var $columns = $('.sortable-wrapper');
@@ -104,7 +150,6 @@
                 .disableSelection();
             $(".sortable").droppable({
                 drop: function(event, ui) {
-                    console.log(event["type"]);
                     var stageName = $(this)[0].getAttribute("id").replace('div-', '');
                     var candidateID = ui["draggable"][0].getAttribute("id").replace('cnd-', '');
                     var payload = {
@@ -117,21 +162,64 @@
                     showModalTab('tab2-input');
                 }
             });
+            
             /* Candidate Click */
             $(".candidate-item").click(function(event) {
-                // display information tab
-                showModalTab('tab1-input');
+                candidateID = event.currentTarget.id.replace('cnd-', '');
+                sessionStorage.setItem('candidate_id', candidateID);
+                // get the candidate infos
+                var candidate = {}
+                showCandidate(candidateID, function(result) {
+                    var result = result['data'];
+                    for (var key in result) {
+                        candidate[key] = result[key]
+                    }
+                    bindDataToModal('info', candidate);
+                    // display information tab
+                    showModalTab('tab1-input');
+                });
             });
+            
             /* Tab change event */
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 var target = $(e.target).attr("href") // activated tab
-                console.log(target);
                 if(target=="#tab2-input") {
                     $("#btn-modal-save1").css('display', 'none');
                 } else {
                     $("#btn-modal-save1").css('display', '');
                 }
             });
+            
+            /* btn-modal-save1 click */
+            $('#btn-modal-save1').click(function() {
+                var data = getPayloadFromInputModal();
+                var candidateID = sessionStorage.getItem('candidate_id');
+                if (candidateID) {
+                    updateCandidate(candidateID, data, function(result) {
+                        var new_name = [result['data']['first_name'], result['data']['last_name']].join(' ');
+                        $('#cnd-'+candidateID).html(new_name);
+                    })
+                } else {
+                    data['stage'] = "prospect";
+                    createCandidate(data, function(result) {
+                        if(result['meta']['success']) {
+                            var new_name = [result['data']['first_name'], result['data']['last_name']].join(' ');
+                            var new_id =  result['data']['id'];
+                            var new_candidate_item = `<div class='ui-state-default candidate-item' id='cnd-${new_id}'> ${new_name} </div>`
+                            $('#div-prospect').append(new_candidate_item);
+                        }
+                    })
+                }
+            });
+
+            /* btn-new-propect click */
+            $('#btn-new-propect').click(function() {
+                // delete candidateID from storage, ad this is  new candidate
+                sessionStorage.removeItem('candidate_id');
+                clearModalInput();
+                $('#data-stage').val('prospect');
+                showModalTab('tab1-input');
+            })
         });
 
     </script>
