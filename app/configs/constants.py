@@ -37,6 +37,10 @@ SPONSOR_TYPES = {
     '4': 'silver'
 }
 
+REFERAL_EXPIRE = {
+    'expired_date': '2017-11-21'
+}
+
 VA_NUMBER = {
     'bca': '877800',
     'permata': '431800',

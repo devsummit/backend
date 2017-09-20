@@ -37,6 +37,7 @@ from app.controllers.redeem_code_controller import RedeemCodeController
 from app.controllers.Grantrole_controller import GrantroleController
 from app.controllers.source_controller import SourceController
 from app.controllers.booth_gallery_controller import BoothGalleryController
+from app.controllers.user_authorization_controller import UserAuthorizationController
 from app.configs.constants import ROLE
 
 
@@ -801,3 +802,10 @@ def sources_id(id, *args, **kwargs):
         return SourceController.update(request, id)
     elif (request.method == 'DELETE'):
         return SourceController.delete(id)
+
+
+# register new account with/without referal
+@api.route('/addnewuser', methods=['POST'])
+@token_required
+def addnewuser(*args, **kwargs):
+    return UserAuthorizationController.register(request)
