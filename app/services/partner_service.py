@@ -26,6 +26,14 @@ class PartnerService(BaseService):
         # paginate
 		paginate = super().paginate(db.session.query(Partner))
 		paginate = super().transform()
+		for item in paginate['data']:
+			if item['photo']:
+				continue
+			else:
+				item['photo']='images/partners/empty-profile-grey.jpg'
+				continue
+		for item in paginate['data']:
+			print (item)		 	
 		response = ResponseBuilder()
 		return response.set_data(paginate['data']).set_links(paginate['links']).build()
 
