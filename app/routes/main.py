@@ -109,3 +109,7 @@ def rundownlist():
 @main.route('/redeemcodes')
 def redeemcodes():
     return MainController.getRedeemCodes()
+
+@main.route('/speaker-candidates')
+def speaker_candidates():
+    return MainController.showSpeakerCandidates()
