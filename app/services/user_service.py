@@ -16,6 +16,7 @@ from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
 from app.models.ambassador import Ambassador  # noqa
+from app.models.redeem_code import RedeemCode  # noqa
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
@@ -28,6 +29,7 @@ class UserService(BaseService):
 
 	def __init__(self, perpage):
 		self.perpage = perpage
+
 
 	def get_booth_by_uid(self, user_id):
 		response = ResponseBuilder()
@@ -99,40 +101,6 @@ class UserService(BaseService):
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return response.set_error(True).set_message('SQL error').set_data(data).build()
-
-		# try:
-		# 	db.session.commit()
-		# 	data = self.model_user.as_dict()
-
-		# 	# insert role model
-		# 	if(role == ROLE['attendee']):
-		# 		attendee = Attendee()
-		# 		attendee.user_id = data['id']
-		# 		db.session.add(attendee)
-		# 		db.session.commit()
-		# 	elif(role == ROLE['booth']):
-		# 		booth = Booth()
-		# 		booth.user_id = data['id']
-		# 		db.session.add(booth)
-		# 		db.session.commit()
-		# 	elif(role == ROLE['speaker']):
-		# 		speaker = Speaker()
-		# 		speaker.user_id = data['id']
-		# 		db.session.add(speaker)
-		# 		db.session.commit()
-
-		# 	return {
-		# 		'error': False,
-		# 		'data': data,
-		# 		'message': 'user registered successfully'
-		# 	}
-		# except SQLAlchemyError as e:
-		# 	data = e.orig.args
-		# 	return {
-		# 		'error': True,
-		# 		'data': {'sql_error': True},
-		# 		'message': data
-		# 	}
 
 	def list_user(self, request, admin=False):
 		self.total_items = User.query.count()
