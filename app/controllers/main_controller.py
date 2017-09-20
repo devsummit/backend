@@ -14,6 +14,7 @@ from app.services import partnerservice
 from app.services import entrycashlogservice
 from app.services import sponsorservice
 from app.services import rundownlistservice
+from app.services import redeemcodeservice
 
 
 class MainController(BaseController):
@@ -93,3 +94,7 @@ class MainController(BaseController):
 
     def show_event_kanban():
         return render_template('admin/events/kanbans/kanban.html')
+
+    def getRedeemCodes():
+        redeemcodes = redeemcodeservice.get()
+        return render_template('admin/redeem_codes/redeem_codes.html', redeemcodes=redeemcodes['data'])

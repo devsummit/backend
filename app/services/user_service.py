@@ -5,9 +5,11 @@ import datetime
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import or_
 from flask import request
 from app.models.access_token import AccessToken
 from app.models.user import User
+from app.models.user_booth import UserBooth
 from app.models.user_photo import UserPhoto
 from app.models.booth import Booth  # noqa
 from app.models.attendee import Attendee  # noqa
@@ -18,6 +20,8 @@ from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
+from app.models.base_model import BaseModel
+from app.services.user_ticket_service import UserTicketService
 
 
 class UserService(BaseService):
@@ -25,14 +29,24 @@ class UserService(BaseService):
 	def __init__(self, perpage):
 		self.perpage = perpage
 
+	def get_booth_by_uid(self, user_id):
+		response = ResponseBuilder()
+
+		user_booth = db.session.query(UserBooth).filter_by(user_id=user_id).first()
+		data = user_booth.booth.as_dict()
+		members = db.session.query(UserBooth).filter_by(booth_id=data['id']).all()
+		data['members'] = []
+
+		for member in members:
+			data['members'].append(member.user.include_photos().as_dict())
+
+		return response.set_data(data).build()
+
 	def register(self, payloads):
-		role = int(payloads['role'])
+		response = ResponseBuilder()
 		# payloads validation
-		if (payloads is None) or (not isinstance(role, int)):
-			return {
-				'error': True,
-				'data': 'payload not valid'
-			}
+		if payloads is None:
+			return response.set_error(True).set_message('Payload not valid').build()
 
 		# check if social or email
 		if payloads['social_id'] is not None:
@@ -44,58 +58,81 @@ class UserService(BaseService):
 
 		# check if user already exist
 		if(check_user is not None):
-			data = {
-				'registered': True
-			}
-			return {
-				'data': data,
-				'message': 'User already registered',
-				'error': True
-			}
+			return response.set_data(None).set_message('User already registered').set_error(True).build()
 
-		self.model_user = User()
-		self.model_user.first_name = payloads['first_name']
-		self.model_user.last_name = payloads['last_name']
-		self.model_user.email = payloads['email']
-		self.model_user.username = payloads['username']
-		self.model_user.role_id = role
-		self.model_user.social_id = payloads['social_id']
-		self.model_user.hash_password(payloads['password'])
-		db.session.add(self.model_user)
+		# check referal limit
+		check_referer = db.session.query(User).filter_by(
+				username=payloads['referer']).all()
+		if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
+			return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
 
-		try:
-			db.session.commit()
-			data = self.model_user.as_dict()
-
-			# insert role model
-			if(role == ROLE['attendee']):
-				attendee = Attendee()
-				attendee.user_id = data['id']
-				db.session.add(attendee)
+		if payloads['email'] is not None:
+			try:
+				self.model_user = User()
+				self.model_user.first_name = payloads['first_name']
+				self.model_user.last_name = payloads['last_name']
+				self.model_user.email = payloads['email']
+				self.model_user.username = payloads['username']
+				self.model_user.role_id = payloads['role']
+				self.model_user.social_id = payloads['social_id']
+				self.model_user.referer = payloads['referer'] if check_referer else None
+				if payloads['provider'] == 'email': 
+					self.model_user.hash_password(payloads['password'])
+				db.session.add(self.model_user)
 				db.session.commit()
-			elif(role == ROLE['booth']):
-				booth = Booth()
-				booth.user_id = data['id']
-				db.session.add(booth)
-				db.session.commit()
-			elif(role == ROLE['speaker']):
-				speaker = Speaker()
-				speaker.user_id = data['id']
-				db.session.add(speaker)
-				db.session.commit()
+				data = self.model_user.as_dict()
 
-			return {
-				'error': False,
-				'data': data,
-				'message': 'user registered successfully'
-			}
-		except SQLAlchemyError as e:
-			data = e.orig.args
-			return {
-				'error': True,
-				'data': {'sql_error': True},
-				'message': data
-			}
+				# checking referer add full day ticket if reach 10 counts
+				if payloads['referer'] is not None:
+					check_referer_count = db.session.query(User).filter_by(referer=payloads['referer']).all()
+					if check_referer_count is not None and len(check_referer_count) > 0:
+						referer_detail = db.session.query(User).filter_by(username=payloads['referer']).first().as_dict()
+						count = len(check_referer_count)
+						payload = {}
+						payload['user_id'] = referer_detail['id']
+						payload['ticket_id'] = 1 
+						if count == 10:
+							UserTicketService().create(payload)
+
+				return response.set_error(False).set_data(data).set_message('User created successfully').build()
+
+			except SQLAlchemyError as e:
+				data = e.orig.args
+				return response.set_error(True).set_message('SQL error').set_data(data).build()
+
+		# try:
+		# 	db.session.commit()
+		# 	data = self.model_user.as_dict()
+
+		# 	# insert role model
+		# 	if(role == ROLE['attendee']):
+		# 		attendee = Attendee()
+		# 		attendee.user_id = data['id']
+		# 		db.session.add(attendee)
+		# 		db.session.commit()
+		# 	elif(role == ROLE['booth']):
+		# 		booth = Booth()
+		# 		booth.user_id = data['id']
+		# 		db.session.add(booth)
+		# 		db.session.commit()
+		# 	elif(role == ROLE['speaker']):
+		# 		speaker = Speaker()
+		# 		speaker.user_id = data['id']
+		# 		db.session.add(speaker)
+		# 		db.session.commit()
+
+		# 	return {
+		# 		'error': False,
+		# 		'data': data,
+		# 		'message': 'user registered successfully'
+		# 	}
+		# except SQLAlchemyError as e:
+		# 	data = e.orig.args
+		# 	return {
+		# 		'error': True,
+		# 		'data': {'sql_error': True},
+		# 		'message': data
+		# 	}
 
 	def list_user(self, request, admin=False):
 		self.total_items = User.query.count()
@@ -122,13 +159,14 @@ class UserService(BaseService):
 		if user['role_id'] != 1:
 			for role, role_id in ROLE.items():
 				if role_id == user['role_id']:
-					includes = role.title()   
+					includes = role.title()
 		user = super().outer_include(user, [includes])
 		return response.set_data(user).build()
 
-	def get_user(self, username):
+	def get_user(self, param):
 		self.model_user = db.session.query(
-			User).filter_by(username=username).first()
+			User).filter(or_(User.username.like(param), User.email.like(param))).first()
+		
 		return self.model_user
 
 	def get_user_photo(self, id):
@@ -440,8 +478,8 @@ class UserService(BaseService):
 			data = e.args
 			return response.set_message(data).set_error(True).set_data(None).build()
 
-	def editIncludes(self, includes, payloads):		
-		user_id = self.model_user.first().as_dict()['id']				
+	def editIncludes(self, includes, payloads):
+		user_id = self.model_user.first().as_dict()['id']
 		Model = self.mapIncludesToModel(includes)
 		entityModel = db.session.query(Model).filter_by(user_id=user_id)
 		entity = entityModel.first()

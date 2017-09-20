@@ -25,16 +25,18 @@ class EntryCashLogService(BaseService):
 
     def show(self, id):
         return db.session.query(EntryCashLog).filter_by(id=id).first()
-
+        
     def update(self, payloads, entrycashlog_id):
         response = ResponseBuilder()
-        if not isinstance(payloads['amount'], int) and not isinstance(payloads['description'], str):
+        if not isinstance(payloads['debit'], int) and not isinstance(payloads['credit'], int) and not isinstance(payloads['description'], str):
             return response.set_error(True).set_status_code(400).set_message('payloads is invalid').build()
 
         try:
             self.model_entrycashlog = db.session.query(EntryCashLog).filter_by(id=entrycashlog_id)
             self.model_entrycashlog.update({
-                'amount': payloads['amount'],
+                'debit': payloads['debit'],
+                'credit': payloads['credit'],
+                'source_id': payloads['source_id'],
                 'description': payloads['description']
             })
             db.session.commit()
@@ -52,12 +54,14 @@ class EntryCashLogService(BaseService):
 
     def create(self, payloads):
         response = ResponseBuilder()
-        if not isinstance(payloads['amount'], int) and not isinstance(payloads['description'], str):
+        if not isinstance(payloads['debit'], int) and not isinstance(payloads['credit'], int) and not isinstance(payloads['description'], str):
             return response.set_error(True).set_status_code(400).set_data('payloads is invalid').build()
 
         self.model_entrycashlog = EntryCashLog()
-        self.model_entrycashlog.amount = payloads['amount']
+        self.model_entrycashlog.debit = payloads['debit']
+        self.model_entrycashlog.credit = payloads['credit']
         self.model_entrycashlog.description = payloads['description']
+        self.model_entrycashlog.source_id = payloads['source_id']
         db.session.add(self.model_entrycashlog)
 
         try:

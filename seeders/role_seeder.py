@@ -10,7 +10,7 @@ class RoleSeeder():
 
 	@staticmethod
 	def run():
-		roles = ('admin', 'attendee', 'booth', 'speaker')
+		roles = ('admin', 'attendee', 'booth', 'speaker', 'hackaton', 'ambassador', 'user')
 		for role in roles:
 			new_role = Role()
 			new_role.name = role

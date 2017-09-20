@@ -78,4 +78,4 @@ class ReferalController(BaseController):
 				return BaseController.send_error_api(referal['data'], referal['message'])
 			return BaseController.send_response_api(referal['data'], referal['message'])
 
-		return BaseController.send_error_api({'payload_invalid': True}, 'payload is not valid not valid')
+		return BaseController.send_error_api({'payload_invalid': True}, 'payload is not valid')

@@ -30,7 +30,13 @@ from app.controllers.user_controller import UserController
 from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
+from app.controllers.feed_controller import FeedController
+from app.controllers.notification_controller import NotificationController
 from app.controllers.rundown_list_controller import RundownListController
+from app.controllers.redeem_code_controller import RedeemCodeController
+from app.controllers.Grantrole_controller import GrantroleController
+from app.controllers.source_controller import SourceController
+from app.controllers.booth_gallery_controller import BoothGalleryController
 from app.configs.constants import ROLE
 
 
@@ -296,8 +302,48 @@ def booth_id(booth_id, *args, **kwargs):
     return BoothController.update(request, None, booth_id)
 
 
+@api.route('/booths/updatelogo', methods=['PUT', 'PATCH'])
+@token_required
+def update_booth_logo(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    return BoothController.update_logo(request, user)
+
 # Point endpoint
 
+
+# booth images
+
+
+@api.route('/booths/galleries', methods=['GET', 'POST'])
+@token_required
+def booth_gallery(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'POST'):
+        return BoothGalleryController.create(request, user)
+    if(request.method == 'GET'):
+        return BoothGalleryController.index()
+
+@api.route('/booths/galleries/<id>', methods=['GET', 'DELETE'])
+@token_required
+def booth_gallery_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return BoothGalleryController.show(id)
+    if(request.method == 'DELETE'):
+        return BoothGalleryController.delete(id)
+
+@api.route('/booths/galleries/show/<booth_id>', methods=['GET'])
+@token_required
+def booth_gallery_booth_id(booth_id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return BoothGalleryController.booth_gallery(booth_id)
+
+@api.route('/booths/galleries/self', methods=['GET'])
+@token_required
+def booth_gallery_self(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'GET'):
+        return BoothGalleryController.self_gallery(user)
+    
 
 @api.route('/points/transfer', methods=['POST'])
 @token_required
@@ -375,12 +421,14 @@ def speaker_document_admin(*args, **kwargs):
 # GET SPECIFIC FILE UPLOADED BY THE SPEAKER || DELETE SPECIFIC FILE
 
 
-@api.route('/documents/<id>', methods=['DELETE', 'GET'])
+@api.route('/documents/<id>', methods=['DELETE', 'GET', 'PUT', 'PATCH'])
 @token_required
 def _speaker_document(id, *args, **kwargs):
     user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
         return SpeakerDocumentController.view(id)
+    elif(request.method == 'PUT' or request.method == 'PATCH'):
+        return SpeakerDocumentController.update(request, user, id)
     elif(request.method == 'DELETE'):
         return SpeakerDocumentController.delete(user, id)
 
@@ -668,3 +716,83 @@ def rundown_id(id, *args, **kwargs):
         return RundownListController.update(request, id)
     elif (request.method == 'DELETE'):
         return RundownListController.delete(id)
+
+
+@api.route('/feeds/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def feeds_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return FeedController.show(id)
+
+
+@api.route('/feeds', methods=['GET', 'POST'])
+@token_required
+def feeds(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'GET'):
+        return FeedController.index(request)
+    else:
+        return FeedController.create(request, user['id'])
+
+@api.route('/notifications', methods=['GET', 'POST'])
+@token_required
+def notifications(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if(request.method == 'GET'):
+        return NotificationController.index(request, user['id'])
+    else:
+        return NotificationController.create(request, user)
+
+@api.route('/notifications/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+@token_required
+def notification_id(id, *args, **kwargs):
+    if(request.method == 'GET'):
+        return NotificationController.show(id)
+
+
+# Add redeem code API
+@api.route('/redeemcodes', methods=['GET', 'POST'])
+@token_required
+def redeem(*args, **kwargs):
+    if (request.method == 'POST'):
+        return RedeemCodeController.create(request)
+    if (request.method == 'GET'):
+        return RedeemCodeController.index()
+
+
+@api.route('/redeemcodes/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def redeem_id(id, *args, **kwargs):
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        return RedeemCodeController.update(request, id)
+    if (request.method == 'GET'):
+        return RedeemCodeController.show(id)
+    if (request.method == 'DELETE'):
+        return RedeemCodeController.delete(id)
+
+
+@api.route('/grantrole/<id>', methods=['PUT', 'PATCH'])
+@token_required
+def grantrole(id, *args, **kwargs):
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        return GrantroleController.update(request, id)
+
+
+@api.route('/sources', methods=['GET', 'POST'])
+@token_required
+def sources(*args, **kwargs):
+    if (request.method == 'GET'):
+        return SourceController.get(request)
+    elif (request.method == 'POST'):
+        return SourceController.create(request)
+
+
+@api.route('/sources/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def sources_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SourceController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):                
+        return SourceController.update(request, id)
+    elif (request.method == 'DELETE'):
+        return SourceController.delete(id)

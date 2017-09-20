@@ -30,6 +30,13 @@ def change_setting(*args, **kwargs):
 	return UserAuthorizationController.change_name(request, user)
 
 
+@auth.route('/me/booth', methods=['GET'])
+@token_required
+def get_booth(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return UserAuthorizationController.get_booth_info(user)
+
+
 @auth.route('/me/changepassword', methods=['PATCH', 'PUT'])
 @token_required
 def change_password(*args, **kwargs):
