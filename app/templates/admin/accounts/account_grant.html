@@ -54,6 +54,7 @@
 </div>
 <!-- /.modal -->
 <!-- page script -->
+<script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
 <script>
     /* Build includes payload function */
     const buildIncludesGrantPayload = function (role) {
@@ -79,7 +80,8 @@
                     name: 'Speaker',
                     job: $('#grant_speaker-job').val(),
                     summary: $('#grant_speaker-summary').val(),
-                    information: $('#grant_speaker-information').val()
+                    information: $('#grant_speaker-information').val(),
+                    type: $('#grant-speaker-type').val()
                 }
                 break;
             case 'ambassador':
@@ -104,7 +106,7 @@
         if (role !== 'admin') {
             payload['includes'] = buildIncludesGrantPayload(role);
         };
-        console.log(payload['includes'])
+
         dsa.patch('grantrole/' + id, payload, function (result) {
             if (result.meta.success) {
                 window.location = '/accounts';
@@ -137,11 +139,30 @@
     /* Role dropdown select change */
     $("#account-grant-select-role").change(function (event) {
         role = $('#account-grant-select-role').find(":selected").text();
+        let select = $(".speaker-types-add");
+        select.find('option').remove();
+        if (role == 'speaker') {
+            SPEAKER_TYPES.map(function (type) {
+                // add to select
+                let option = document.createElement('option');
+                option.innerHTML = capitalizeFirstLetter(type);
+                option.value = type;
+                if (type === 'keynote') {
+                    option.selected = true;
+                }
+                $(".speaker-types-add").append(option);
+            });
+        }
+
         // change role name to title case and display as tab caption
         $(".a-tab2-grant").html(UCFL(role) + ' Informations');
         // display related tab
         $('.tab2-fields').css('display', 'none');
         $('.' + role + '-fields').css('display', 'block');
     });
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 
 </script>
