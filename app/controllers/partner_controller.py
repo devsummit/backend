@@ -14,15 +14,15 @@ class PartnerController(BaseController):
 		name = request.form['name'] if 'name' in request.form else None
 		email = request.form['email'] if 'email' in request.form else None
 		website = request.form['website'] if 'website' in request.form else None
-		type = request.form['type'] if 'type' in request.form else None
-		photo = request.files['image_file'] if request.files['image_file'] else None
-		if name and website and type:
+		types = request.form['type'] if 'type' in request.form else None
+		photo = request.files['image_file'] if 'image_file' in request.files else None
+		if name and website and email:
 			payloads = {
 				'name': name,
 				'email': email,
 				'website': website,
 				'photo': photo,
-				'type': type
+				'type': types
 			}
 		else:
 			return BaseController.send_error_api(None, 'field is not complete')
