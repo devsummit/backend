@@ -807,5 +807,13 @@ def sources_id(id, *args, **kwargs):
 @api.route('/speaker-candidates/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
 @token_required
 def speaker_candidate_update(id, *args, **kwargs):
-    if (request.method == 'PUT' or request.method == 'PATCH'):
+    if (request.method == 'GET'):
+        return SpeakerCandidateController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):
         return SpeakerCandidateController.update(request, id)
+
+
+@api.route('/speaker-candidates', methods=['POST'])
+@token_required
+def speaker_candidate_create(*args, **kwargs):
+    return SpeakerCandidateController.create(request)

@@ -19,7 +19,19 @@ class SpeakerCandidateService():
         }
 
     def show(self, id):
-        pass
+        self.model_candidate = db.session.query(
+            SpeakerCandidate).filter_by(id=id).first()
+        if self.model_candidate:
+            return {
+                'data': self.model_candidate.as_dict(),
+                'message': 'candidate retrieved successfully',
+                'error': False
+            }
+        else:
+            return {
+                'error': True,
+                'data': 'candidate not found'
+            }
 
     def update(self, payloads, id):
         self.model_candidate = db.session.query(
@@ -41,6 +53,25 @@ class SpeakerCandidateService():
             return {
                 'error': False,
                 'data': data.as_dict(),
+                'included': []
+            }
+        except SQLAlchemyError as e:
+            return {
+                'error': True,
+                'data': e.orig.args
+            }
+
+    def create(self, payloads):
+        self.model_candidate = SpeakerCandidate()
+        for key in payloads:
+            setattr(self.model_candidate, key, payloads[key])
+        db.session.add(self.model_candidate)
+        try:
+            db.session.commit()
+            data = self.model_candidate.as_dict()
+            return {
+                'error': False,
+                'data': data,
                 'included': []
             }
         except SQLAlchemyError as e:
