@@ -62,9 +62,11 @@
                             <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
+                            {% if account.role['id'] == 7 %}
                             <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-grant" data-toggle="modal" data-target="#modal-grant">
                                 Grant
                             </button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
