@@ -9,6 +9,7 @@ from app.models.base_model import BaseModel
 from app.models.booth import Booth
 from app.models.attendee import Attendee
 from app.models.user_booth import UserBooth
+from app.models.user_ticket import UserTicket
 from app.models.partners import Partner
 from app.models.user import User
 
@@ -76,7 +77,11 @@ class RedeemCodeService():
                 # become attendee
                 attendee = Attendee()
                 attendee.user_id = user['id']
+                userticket = UserTicket()
+                userticket.user_id = user['id']
+                userticket.ticket_id = 1
                 db.session.add(attendee)
+                db.session.add(userticket)
                 user['role_id'] = 2
                 db.session.commit()
                 _result['attendee'] = attendee.as_dict()
