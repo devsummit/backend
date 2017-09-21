@@ -1,0 +1,72 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Tickets list </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Notification
+        <small>Send Notification To Our User</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Notification</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <div class="form-group">
+                <label for="notification">Notification title:</label>
+                <input type="text" class="form-control notification-title" id="notification-title">
+            </div>
+            <div class="form-group">
+                <label for="notification">Notification Content:</label>
+                <input type="text" class="form-control notification-content" id="notification-content">
+            </div>
+            <a href="#" class="btn btn-primary btn-block btn-send">Send</b></a>
+        </div>
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+
+    $('.btn-send').click(function(event){
+        const title = $('.notification-title').val()
+        const content = $('.notification-content').val()
+
+        if (title.trim().length >= 0 && content.trim().length > 0) {
+            const payload = {
+                'message': content,
+                'type': title
+            }
+            if (confirm('Are you sure to broadcast this notification to our user?')) {
+                dsa.post('admin/broadcastnotification', payload, function(result) {
+                    if(result.meta.success) {
+                        alert('Notification broadcasted!')
+                        $('.notification-title').val('');
+                        $('.notification-content').val('');
+                    }
+                });
+            }
+        } else {
+            alert('Don\'t send empty notification to our user');
+        }
+    });
+
+</script>
+
+{% endblock %}
