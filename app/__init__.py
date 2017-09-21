@@ -12,7 +12,6 @@ from app.configs.constants import SPONSOR_STAGES
 
 # db instance
 from app.models import db
-from app.models import socketio
 
 
 def create_app(configuration):
@@ -23,7 +22,6 @@ def create_app(configuration):
 
     # database
     db.init_app(app)
-    socketio.init_app(app)
 
     # register blueprints
     app.register_blueprint(main)
