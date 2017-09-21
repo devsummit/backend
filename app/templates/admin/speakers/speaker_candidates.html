@@ -1,59 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "admin/base/index.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+{% block header_link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/SpeakerCandidateKanban.css') }}">
+{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/font-awesome/css/font-awesome.min.css') }}">
+{% block content %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/SpeakerCandidateKanban.css') }}">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/AdminLTE.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/skins/skin-yellow.min.css') }}">
-
-    <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.js') }}"></script>
-    <script src="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.js') }}"></script>
-    <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
-
-
-    <title>Speaker Candidates</title>
-</head>
-
-<body>
-    <div id='kanban-board'>
-        <div class='sortable-wrapper'>
-            <div>PROSPECTS</div>
-            <div class='sortable' id="div-prospect" style="border:1px solid gray; min-height: 600px; max-height: 100%">
+<div id='kanban-board'>
+    <div class='sortable-wrapper box box-danger'>
+            <div>
+                <a class="btn box-header bg-red" id="btn-new-propect">
+                    <i class="fa fa-plus-square"></i> NEW PROSPECT
+                </a>
+            </div>
+            <!-- <div class="box-header bg-red">PROSPECTS</div> -->
+            <div class='sortable box box-danger' id="div-prospect" style="border:1px solid #CFC9C9; min-height: 600px; max-height: 100%">
                 {% for candidate in candidates %} 
                 {% if(candidate['stage']=="prospect") %}
-                <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                <div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
                 {% endif %} 
                 {% endfor %}
             </div>
-            <div>
-                <a class="btn btn-success btn-block" id="btn-new-propect">
-                    <i class="fa fa-plus-square"></i> New Prospect
-                </a>
-            </div>
         </div>
-        <div class='sortable-wrapper'>
-            <div>LEADS</div>
-            <div class='sortable' id="div-lead" style="border:1px solid gray; min-height: 600px; max-height: 100%">
+        <div class='sortable-wrapper box box-warning'>
+            <div class="box-header bg-yellow">LEADS</div>
+            <div class='sortable' id="div-lead" style="border:1px solid #CFC9C9; min-height: 600px; max-height: 100%">
                 {% for candidate in candidates %} {% if(candidate['stage']=="lead") %}
-                <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                <div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
                 {% endif %} {% endfor %}
             </div>
         </div>
-        <div class='sortable-wrapper' draggable= false>
-            <div>OFFICIALS</div>
-            <div class='sortable' id="div-official" style="border:1px solid gray; min-height: 600px; max-height: 100%">
+        <div class='sortable-wrapper box box-success' draggable= false>
+            <div class="box-header bg-green">OFFICIALS</div>
+            <div class='sortable' id="div-official" style="border:1px solid #CFC9C9; min-height: 600px; max-height: 100%">
                 {% for candidate in candidates %} 
                 {% if(candidate['stage']=="official") %}
-                <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}' draggable= false>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                <div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-{{ candidate["id"] }}' draggable= false>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
                 {% endif %} 
                 {% endfor %}
             </div>
@@ -65,8 +47,10 @@
 
     {% include "admin/speakers/speaker_candidate_modal.html" ignore missing %}
 
-    <!-- Bootstrap 3.3.7 -->
-    <script src="{{ url_for('static', filename='assets/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+{% endblock %}
+
+{% block footer_link %}
 
     <script>
         const updateCandidate = function (id, payload, callback) {
@@ -235,6 +219,9 @@
 
             /* Generate username from email */
             function emailUsername(emailAddress) {
+                if (!emailAddress) {
+                    return "speaker" + sessionStorage.getItem('candidate_id');
+                }
                 return emailAddress.match(/^(.+)@/)[1];
             }
 
@@ -317,6 +304,5 @@
             })
         });
     </script>
-</body>
 
-</html>
+    {% endblock %}

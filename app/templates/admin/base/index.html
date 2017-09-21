@@ -34,7 +34,8 @@
   {% endblock %}
 
   <!-- jQuery 3 -->
-  <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.js') }}"></script>
   <!-- Devsummit Auth Client -->
   <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
   
@@ -278,6 +279,7 @@
             <li><a href="/accounts">Accounts Management</a></li>
             <li><a href="/redeemcodes">Redeem Codes Management</a></li>            
             <li><a href="/booths">Booths</a></li>
+            <li><a href="/speaker-candidates">Speaker Candidate Kanban</a></li>
             <li><a href="/speakers">Speakers</a></li>
             <li><a href="/attendees">Attendees</a></li>
             <li><a href="/password">Change Password</a></li>
