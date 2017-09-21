@@ -1,22 +1,22 @@
 version: '2'
 
 services:
-  database:
+  database-dev:
     build: ./mysql
     ports:
-      - "3306:3306"
+      - "3308:3308"
     environment:
       MYSQL_DATABASE: devsummit
       MYSQL_USER: root
       MYSQL_PASSWORD: GAKtahu
       MYSQL_ROOT_PASSWORD: GAKtahu
 
-  web:
+  web-dev:
     depends_on:
-      - database
+      - database-dev
     build: .
-    container_name: devsummit
+    container_name: devsummit-dev
     ports:
-      - "5000:5000"
+      - "8081:8081"
     volumes:
       - .:/backend
