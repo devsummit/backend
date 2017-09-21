@@ -1,10 +1,12 @@
 '''
 put api route in here
 '''
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 # import middlewares
 from app.middlewares.authentication import token_required
+from app.models import socketio
+from flask_socketio import emit
 
 # controllers import
 from app.controllers.ticket_controller import TicketController
@@ -743,7 +745,15 @@ def feeds(*args, **kwargs):
     if(request.method == 'GET'):
         return FeedController.index(request)
     else:
-        return FeedController.create(request, user['id'])
+        data = FeedController.create(request, user['id'])
+        socketio.emit('feeds', data.data.decode(), broadcast=True)
+        return data
+
+
+@socketio.on('feeds')
+def handle_post(data):
+    emit('response', data, broadcast=True)
+
 
 
 @api.route('/notifications', methods=['GET', 'POST'])
