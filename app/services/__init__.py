@@ -31,6 +31,7 @@ from app.services.grantrole_service import GrantroleService
 from app.services.source_service import SourceService
 from app.services.fcm_service import FCMService
 from app.services.booth_gallery_service import BoothGalleryService
+from app.services.speaker_candidate_service import SpeakerCandidateService
 
 
 # instantiate service
@@ -65,4 +66,5 @@ redeemcodeservice = RedeemCodeService()
 grantroleservice = GrantroleService()
 sourceservice = SourceService()
 boothgalleryservice = BoothGalleryService()
+speakercandidateservice = SpeakerCandidateService()
 fcmservice = FCMService()

@@ -15,6 +15,7 @@ from app.services import entrycashlogservice
 from app.services import sponsorservice
 from app.services import rundownlistservice
 from app.services import redeemcodeservice
+from app.services import speakercandidateservice
 
 
 class MainController(BaseController):
@@ -98,6 +99,10 @@ class MainController(BaseController):
     def getRedeemCodes():
         redeemcodes = redeemcodeservice.get()
         return render_template('admin/redeem_codes/redeem_codes.html', redeemcodes=redeemcodes['data'])
+    
+    def showSpeakerCandidates():
+        candidates = speakercandidateservice.get()
+        return render_template('admin/speakers/speaker_candidates.html', candidates=candidates['data'])
 
     def getReportFinance(request):
         # if request.args.get('filter') is not None:
