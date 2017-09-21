@@ -124,6 +124,26 @@
         });
     } 
 
+    /* Register func */
+    dsa.register = function(payloads, onSuccess) {
+        $.ajax({
+            url : "/auth/register",
+            type: "POST",
+            data: JSON.stringify(payloads),
+            contentType: "application/json; charset=utf-8",
+            dataType   : "json",
+            success    : function(result){
+                console.log(result)
+                const success=result['meta']['success']
+                if (success) {
+                    var data = result['data']
+                    // window.location.href = "/";
+                }
+                onSuccess(success, result);
+            }
+        });
+    };
+
     /* Login func */
     dsa.login = function(payloads, onSuccess) {
         $.ajax({
