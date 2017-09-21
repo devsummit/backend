@@ -51,8 +51,11 @@ class FeedService(BaseService):
 		db.session.add(feed)
 		try:
 			db.session.commit()
+			user = feed.user.include_photos().as_dict()
+			del user['fcmtoken']
 			data = feed.as_dict()
 			data['attachment'] = Helper().url_helper(data['attachment'], current_app.config['GET_DEST']) if data['attachment'] is not None else None
+			data['user'] = user
 			# data['user'] = feed.user.as_dict()
 			return response.set_data(data).build()
 		except SQLAlchemyError as e:
