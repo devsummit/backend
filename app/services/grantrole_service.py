@@ -25,10 +25,10 @@ class GrantroleService():
             if payloads['role_id'] == '4':
                 speaker = Speaker()
                 speaker.user_id = id  
-                speaker.job = includes['job']  
-                speaker.information = includes['information']
-                speaker.summary = includes['summary']
-                speaker.type = includes['type']
+                speaker.job = includes['job'] if 'job' in includes else None
+                speaker.information = includes['information'] if 'information' in includes else None
+                speaker.summary = includes['summary'] if 'summary' in includes else None
+                speaker.type = includes['type'] if 'type' in includes else None
                 db.session.add(speaker)
                 db.session.commit()
 
