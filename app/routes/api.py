@@ -750,12 +750,6 @@ def feeds(*args, **kwargs):
         return data
 
 
-@socketio.on('feeds')
-def handle_post(data):
-    emit('response', data, broadcast=True)
-
-
-
 @api.route('/notifications', methods=['GET', 'POST'])
 @token_required
 def notifications(*args, **kwargs):
