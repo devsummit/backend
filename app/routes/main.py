@@ -119,3 +119,11 @@ def speaker_candidates():
 @main.route('/entrycashlogsfilter')
 def report_finance_source():
     return MainController.getReportFinance(request)
+
+@main.route('/notification')
+def notification():
+    return render_template('admin/communication/notification.html')
+
+@main.route('/post')
+def post():
+    return render_template('admin/communication/post.html')
