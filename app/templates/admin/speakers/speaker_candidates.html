@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,18 +19,19 @@
     <script src="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
 
-    
+
     <title>Speaker Candidates</title>
 </head>
+
 <body>
     <div id='kanban-board'>
         <div class='sortable-wrapper'>
             <div>PROSPECTS</div>
             <div class='sortable' id="div-prospect" style="border:1px solid gray; min-height: 600px; max-height: 100%">
-                {% for candidate in candidates %}
+                {% for candidate in candidates %} 
                 {% if(candidate['stage']=="prospect") %}
-                    <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
-                {% endif %}
+                <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                {% endif %} 
                 {% endfor %}
             </div>
             <div>
@@ -41,20 +43,18 @@
         <div class='sortable-wrapper'>
             <div>LEADS</div>
             <div class='sortable' id="div-lead" style="border:1px solid gray; min-height: 600px; max-height: 100%">
-                {% for candidate in candidates %}
-                {% if(candidate['stage']=="lead") %}
-                    <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
-                {% endif %}
-                {% endfor %}
+                {% for candidate in candidates %} {% if(candidate['stage']=="lead") %}
+                <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                {% endif %} {% endfor %}
             </div>
         </div>
-        <div class='sortable-wrapper'>
+        <div class='sortable-wrapper' draggable= false>
             <div>OFFICIALS</div>
             <div class='sortable' id="div-official" style="border:1px solid gray; min-height: 600px; max-height: 100%">
-                {% for candidate in candidates %}
+                {% for candidate in candidates %} 
                 {% if(candidate['stage']=="official") %}
-                    <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name']  }}</div>
-                {% endif %}
+                <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}' draggable= false>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                {% endif %} 
                 {% endfor %}
             </div>
         </div>
@@ -69,20 +69,19 @@
     <script src="{{ url_for('static', filename='assets/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
     <script>
-
-        const updateCandidate = function(id, payload, callback) {
-            dsa.request('/api/v1/speaker-candidates/'+id, 'PATCH', payload, function(result) {
-                if(!id){
+        const updateCandidate = function (id, payload, callback) {
+            dsa.request('/api/v1/speaker-candidates/' + id, 'PATCH', payload, function (result) {
+                if (!id) {
                     callback('id not define, check the ui');
                 } else {
                     callback(result);
                 }
             });
         }
-        
-        const showCandidate = function(id, callback) {
-            dsa.request('/api/v1/speaker-candidates/'+id, 'GET', null, function(result) {
-                if(!id){
+
+        const showCandidate = function (id, callback) {
+            dsa.request('/api/v1/speaker-candidates/' + id, 'GET', null, function (result) {
+                if (!id) {
                     callback('id not define, check the ui');
                 } else {
                     callback(result);
@@ -90,165 +89,201 @@
             })
         }
 
-        const createCandidate = function(payload, callback) {
-            dsa.request('/api/v1/speaker-candidates', 'POST', payload, function(result) {
+        const createCandidate = function (payload, callback) {
+            dsa.request('/api/v1/speaker-candidates', 'POST', payload, function (result) {
                 callback(result);
             })
         }
 
-        const showLogs = function(id, callback) {
-            dsa.request('api/v1/speaker-candidate-logs/'+id, 'GET', null, function(result) {
+        const showLogs = function (id, callback) {
+            dsa.request('api/v1/speaker-candidate-logs/' + id, 'GET', null, function (result) {
                 callback(result);
             })
         }
-        const postNewLog = function(method, payload, callback) {
-            dsa.request('api/v1/speaker-candidate-logs', method, payload, function(result) {
+        const postNewLog = function (method, payload, callback) {
+            dsa.request('api/v1/speaker-candidate-logs', method, payload, function (result) {
                 callback(result);
             })
         }
-        
-        const showModalTab =  function(tabClass) {
+
+        const showModalTab = function (tabClass) {
             $(".tab1-input").removeClass('active');
             $(".tab2-input").removeClass('active');
-            $("."+tabClass).addClass('active');
-            if(tabClass=="tab2-input") {
+            $("." + tabClass).addClass('active');
+            if (tabClass == "tab2-input") {
                 $("#btn-modal-save1").css('display', 'none');
             } else {
                 $("#btn-modal-save1").css('display', '');
             }
             $("#btn-show-modal").click();
         }
-        
-        const bindDataToModal = function(type, data) {
-            if (type=='info') {
+
+        const bindDataToModal = function (type, data) {
+            if (type == 'info') {
                 for (var key in data) {
-                    $('#data-'+key).val(data[key]);
+                    $('#data-' + key).val(data[key]);
                 }
             } else {
 
             }
         }
 
-        const clearModalInput = function() {
+        const clearModalInput = function () {
             $('.input-active').val("");
             $('#log-message').val("");
         }
 
-        const getPayloadFromInputModal = function() {
+        const getPayloadFromInputModal = function () {
             var payloads = {};
-            $(".input-active").each(function() {
+            $(".input-active").each(function () {
                 payloads[$(this).attr("name")] = $(this).val();
             });
             return payloads
         }
 
-        const defineNewLog = function(from, to) {
+        const defineNewLog = function (from, to) {
             var user = dsa.getUser();
             var new_log = "@" + user['username'] + " changed this candidate stage from " + from + " to " + to;
             return new_log;
         }
 
-        const renderLogs = function(logs) {
+        const renderLogs = function (logs) {
             $('.div-logs').empty();
             logs.map((log) => {
-                var log_item = '<h4><span class="label label-success">'+ log['created_at'] +'</span>';
-                log_item += '<span class="label label-dafault text-black">'+ log['message'] +'</span></h4>';
+                var log_item = '<h4><span class="label label-success">' + log['created_at'] + '</span>';
+                log_item += '<span class="label label-dafault text-black">' + log['message'] + '</span></h4>';
                 $('.div-logs').append(log_item);
             })
         }
-        
-        $(function() {
+
+        $(function () {
             var boardWidth = $('#kanban-board').width();
             var $columns = $('.sortable-wrapper');
             var columnCount = $columns.length;
             var columnMargin = 10;
-            $columns.width(Math.floor((boardWidth - (columnMargin*(columnCount + 1))) / columnCount));
-            
-            $( ".sortable" ).sortable({
+            $columns.width(Math.floor((boardWidth - (columnMargin * (columnCount + 1))) / columnCount));
+
+            $(".sortable").sortable({
                 revert: true,
                 placeholder: 'drag-place-holder',
-                forcePlaceholderSize: true, 
+                forcePlaceholderSize: true,
                 connectWith: ".sortable",
-                helper:function(event, element){return $(element).clone().addClass('dragging');},
-                start: function (e, ui) {ui.item.show().addClass('ghost')},
-                stop: function (e, ui) { ui.item.show().removeClass('ghost')},      
-                cursor:'move'
-                })
+                helper: function (event, element) { return $(element).clone().addClass('dragging'); },
+                start: function (e, ui) { ui.item.show().addClass('ghost') },
+                stop: function (e, ui) { ui.item.show().removeClass('ghost') },
+                cursor: 'move'
+            })
                 .disableSelection();
             $(".sortable").droppable({
-                drop: function(event, ui) {
+                drop: function (event, ui) {
                     var stageName = $(this)[0].getAttribute("id").replace('div-', '');
                     var candidateID = ui["draggable"][0].getAttribute("id").replace('cnd-', '');
                     sessionStorage.setItem('candidate_id', candidateID);
                     var payload = {
                         stage: stageName
                     }
-                    showCandidate(candidateID, function(result){
-                        if(result['meta']['success']) {
+                    showCandidate(candidateID, function (result) {
+                        if (result['meta']['success']) {
                             var candidate = result['data'];
                             var fromStage = result['data']['stage'];
-                            updateCandidate(candidateID, payload, function(result){
-                                console.log(result);
-                                //display logs tab
-                                var new_log = defineNewLog(fromStage, stageName);
-                                $('#log-message').val(new_log);
-                                bindDataToModal('info', candidate);
-                                showLogs(candidateID, function(result) {
-                                    renderLogs(result['data']);
+                            if(fromStage != 'official') {
+                                updateCandidate(candidateID, payload, function (result) {
+                                    if (result.meta.success && result['data']['stage'] == "official") {
+                                        const data = {
+                                            "first_name": result.data.first_name,
+                                            "last_name": result.data.last_name,
+                                            "username": emailUsername(result.data.email),
+                                            "password": emailUsername(result.data.email),
+                                            "email": result.data.email
+                                        }
+                                        dsa.register(data, function (stat, res) {
+                                            if (stat && res.meta.success) {
+                                                var payload = {
+                                                    "role_id": '4'
+                                                };
+                                                payload['includes'] = {
+                                                    name: 'Speaker',
+                                                    job: result.data.job || "",
+                                                    summary: result.data.summary || "",
+                                                    information: result.data.information || ""
+                                                }
+                                                dsa.patch('grantrole/' + res.data.id, payload, function (result) {
+                                                    if (result.meta.success) {
+                                                        
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                    //display logs tab
+                                    var new_log = defineNewLog(fromStage, stageName);
+                                    $('#log-message').val(new_log);
+                                    bindDataToModal('info', candidate);
+                                    showLogs(candidateID, function (result) {
+                                        renderLogs(result['data']);
+                                    });
+                                    showModalTab('tab2-input');
                                 });
-                                showModalTab('tab2-input');
-                            });
-                        }
+                            } else {
+                                location.reload()
+                            }
+                        } 
+                        
                     })
                 }
             });
 
+            /* Generate username from email */
+            function emailUsername(emailAddress) {
+                return emailAddress.match(/^(.+)@/)[1];
+            }
+
             /* Candidate Click */
-            $(".candidate-item").click(function(event) {
+            $(".candidate-item").click(function (event) {
                 var candidateID = event.currentTarget.id.replace('cnd-', '');
                 sessionStorage.setItem('candidate_id', candidateID);
                 // get the candidate infos
                 var candidate = {}
-                showCandidate(candidateID, function(result) {
+                showCandidate(candidateID, function (result) {
                     var result = result['data'];
                     for (var key in result) {
                         candidate[key] = result[key]
                     }
                     clearModalInput();
                     bindDataToModal('info', candidate);
-                    showLogs(candidateID, function(result) {
+                    showLogs(candidateID, function (result) {
                         renderLogs(result['data']);
                     })
                     // display information tab
                     showModalTab('tab1-input');
                 });
             });
-            
+
             /* Tab change event */
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 var target = $(e.target).attr("href") // activated tab
-                if(target=="#tab2-input") {
+                if (target == "#tab2-input") {
                     $("#btn-modal-save1").css('display', 'none');
                 } else {
                     $("#btn-modal-save1").css('display', '');
                 }
             });
-            
+
             /* btn-modal-save1 click */
-            $('#btn-modal-save1').click(function() {
+            $('#btn-modal-save1').click(function () {
                 var data = getPayloadFromInputModal();
                 var candidateID = sessionStorage.getItem('candidate_id');
                 if (candidateID) {
-                    updateCandidate(candidateID, data, function(result) {
+                    updateCandidate(candidateID, data, function (result) {
                         var new_name = [result['data']['first_name'], result['data']['last_name']].join(' ');
-                        $('#cnd-'+candidateID).html(new_name);
+                        $('#cnd-' + candidateID).html(new_name);
                     })
                 } else {
                     data['stage'] = "prospect";
-                    createCandidate(data, function(result) {
-                        if(result['meta']['success']) {
+                    createCandidate(data, function (result) {
+                        if (result['meta']['success']) {
                             var new_name = [result['data']['first_name'], result['data']['last_name']].join(' ');
-                            var new_id =  result['data']['id'];
+                            var new_id = result['data']['id'];
                             var new_candidate_item = `<div class='ui-state-default candidate-item' id='cnd-${new_id}'> ${new_name} </div>`
                             $('#div-prospect').append(new_candidate_item);
                         }
@@ -257,7 +292,7 @@
             });
 
             /* btn-new-propect click */
-            $('#btn-new-propect').click(function() {
+            $('#btn-new-propect').click(function () {
                 // delete candidateID from storage, ad this is  new candidate
                 sessionStorage.removeItem('candidate_id');
                 clearModalInput();
@@ -266,14 +301,14 @@
             });
 
             /* btn-submit-log click */
-            $('#btn-submit-log').click(function() {
+            $('#btn-submit-log').click(function () {
                 var candidateID = sessionStorage.getItem('candidate_id');
                 var new_log = {
                     candidate_id: candidateID,
                     message: $('#log-message').val()
                 };
-                postNewLog('POST', new_log, function(result){
-                    showLogs(candidateID, function(result) {
+                postNewLog('POST', new_log, function (result) {
+                    showLogs(candidateID, function (result) {
                         if (result['meta']['success']) {
                             renderLogs(result['data']);
                         }
@@ -281,7 +316,7 @@
                 })
             })
         });
-
     </script>
 </body>
+
 </html>
