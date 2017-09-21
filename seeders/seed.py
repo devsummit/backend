@@ -10,6 +10,7 @@ from seeders.payments_seeder import PaymentsSeeder
 from seeders.orders_seeder import OrdersSeeder
 from seeders.order_details_seeder import OrdersDetailsSeeder
 from seeders.user_tickets_seeder import UserTicketsSeeder
+from seeders.speaker_candidates_seeder import SpeakerCandidateSeeder
 
 
 class Seed():
@@ -63,3 +64,8 @@ class Seed():
 		print('seeding user tickets seeder...')
 		UserTicketsSeeder.run()
 		print('finish seeding user tickets seeder')
+
+		print('seeding speaker candidates')
+		SpeakerCandidateSeeder.run()
+		print('finish seeding speaker candidates')
+
