@@ -16,6 +16,19 @@ SQLALCHEMY_DATABASE_URI = 'mysql://' + os.environ.get("DB_USERNAME") + ':' + os.
 							+ '@' + os.environ.get("DB_HOST") + '/' + os.environ.get("DB_NAME")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+
+# email server
+MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_PORT = 465
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
+MAIL_USERNAME = 'andy.developmode@gmail.com'
+MAIL_DEFAULT_SENDER = 'admin@devsummit.com'
+MAIL_PASSWORD = 'lmwdurszelzyxthl'
+MAIL_SUPPRESS_SEND = False
+# administrator list
+ADMINS = ['andy.developmode@gmail.com']
+
 # default saving, database saving & domain based url
 MAX_CONTENT_LENGTH = 5 * 1024 * 1024
 POST_STAGE_PHOTO_DEST = 'app/static/images/stages/'

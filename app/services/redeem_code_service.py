@@ -2,6 +2,7 @@ import datetime
 import secrets
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import and_
 from app.builders.response_builder import ResponseBuilder
 
 from app.models.redeem_code import RedeemCode
@@ -19,6 +20,11 @@ class RedeemCodeService():
     def get(self):
         response = ResponseBuilder()
         redeem_codes = db.session.query(RedeemCode).all()
+        results = self.include_type_detail(redeem_codes)
+
+        return response.set_data(results).set_message("Redeem codes retrieved successfully").build()
+    
+    def include_type_detail(self, redeem_codes):
         results = []
         for redeem_code in redeem_codes:
             data = redeem_code.as_dict()
@@ -35,17 +41,37 @@ class RedeemCodeService():
                 partner = partner.as_dict()
                 data['partner'] = partner
             results.append(data)
+        return results
+
+
+    def filter(self, param):
+        response = ResponseBuilder()
+        redeem_codes = db.session.query(RedeemCode).filter(and_(RedeemCode.codeable_id.like(param['codeable_id']), RedeemCode.codeable_type.like(param['codeable_type']))).all()
+        results = self.include_type_detail(redeem_codes)
 
         return response.set_data(results).set_message("Redeem codes retrieved successfully").build()
 
     def show(self, id):
         response = ResponseBuilder()
         redeem_code = db.session.query(RedeemCode).filter_by(id=id).first()
-        return response.set_data(redeem_code.as_dict()).set_message('Data retrieved successfully').build()
+        data = redeem_code.as_dict()
+        if data['codeable_type'] == 'booth':
+            booth = db.session.query(Booth).filter_by(id=data['codeable_id']).first()
+            booth = booth.as_dict()
+            data['booth'] = booth
+            user = db.session.query(User).filter_by(id=data['booth']['user_id']).first()
+            if user is not None:
+                user = user.as_dict()
+                data['user'] = user
+        elif data['codeable_type'] == 'partner':
+            partner = db.session.query(Partner).filter_by(id=data['codeable_id']).first()
+            partner = partner.as_dict()
+            data['partner'] = partner
+        return response.set_data(data).set_message('Data retrieved successfully').build()
 
     def create(self, payloads):
         response = ResponseBuilder()
-        codes = BaseModel.as_list(db.session.query(RedeemCode.code).all())
+        codes = [r.code for r in db.session.query(RedeemCode.code).all()]
         for i in range(0, int(payloads['count'])):
             code = secrets.token_hex(3)
             while (code in codes):

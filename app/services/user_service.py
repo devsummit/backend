@@ -23,6 +23,7 @@ from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from app.models.base_model import BaseModel
 from app.services.user_ticket_service import UserTicketService
+from app.services.fcm_service import FCMService
 
 
 class UserService(BaseService):
@@ -64,7 +65,7 @@ class UserService(BaseService):
 
 		# check referal limit
 		check_referer = db.session.query(User).filter_by(
-				username=payloads['referer']).all()
+				referer=payloads['referer']).all()
 		if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
 			return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
 
@@ -92,8 +93,19 @@ class UserService(BaseService):
 						count = len(check_referer_count)
 						payload = {}
 						payload['user_id'] = referer_detail['id']
-						payload['ticket_id'] = 1 
-						if count == 10:
+						payload['ticket_id'] = 1						
+						receiver_id = referer_detail['id']
+						sender_id = 1
+						# only send notification if count less than 10
+						if count < 10:
+							type = "Referral Notification"
+							message = "%s has registered referring you, your total referals count is: %d" % (payloads['username'], count)
+							FCMService().send_single_notification(type, message, receiver_id, sender_id)
+						# else count==10, send notif and create new ticket
+						else:
+							type = "Free Ticket Notification"
+							message = "Congratulation! You have been referred 10 times! You've got one free ticket, please check it on 'my ticket' menu"
+							FCMService().send_single_notification(type, message, receiver_id, sender_id)
 							UserTicketService().create(payload)
 
 				return response.set_error(False).set_data(data).set_message('User created successfully').build()

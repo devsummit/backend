@@ -36,9 +36,15 @@
                         {{ redeemcode['codeable_type']|e }}
                     </td>
                     <td>
-                        {% if redeemcode['codeable_type'] == 'booth' and redeemcode['user'] %} {{ redeemcode['user']['first_name']|e + ' ' + redeemcode['user']['last_name']|e
-                        + ' ( ' + redeemcode['user']['username']|e + ' ) ' }} {% elif redeemcode['codeable_type'] == 'partner'
-                        and redeemcode['partner'] %} {{ redeemcode['partner']['name']|e }} {% endif %}
+                        <a href="" id='ard-{{ redeemcode["id"] }}' class="redeemcodes-detail" data-toggle="modal" data-target="#modal-detail">  
+                                
+                        {% if redeemcode['codeable_type'] == 'booth' and redeemcode['user'] %} 
+                            {{ redeemcode['user']['first_name']|e + ' ' + redeemcode['user']['last_name']|e + ' ( ' + redeemcode['user']['username']|e + ' ) ' }} 
+                        {% elif redeemcode['codeable_type'] == 'partner' and redeemcode['partner'] %} 
+                            {{ redeemcode['partner']['name']|e }} 
+                        {% endif %}
+                    
+                        </a>
                     </td>
                     <td>
                         {{ redeemcode['code']|e }}
@@ -65,7 +71,8 @@
 
     {% include "admin/redeem_codes/redeem_codes_add.html" %} 
     {% include "admin/redeem_codes/redeem_codes_edit.html" %}     
-    {% include "admin/base/modal_delete.html" %}     
+    {% include "admin/base/modal_delete.html" %}  
+    {% include "admin/redeem_codes/redeem_codes_detail.html" %}    
 
 {% endblock %} 
 {% block footer_link %}
@@ -75,6 +82,39 @@
     <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
     <!-- page script -->
     <script>
+
+        /* Display user Detail using user detail template*/
+        $('.redeemcodes-detail').click(function (event) {
+            event.preventDefault();
+            const ard_id = $(this).attr('id');
+            const id = ard_id.substring(4, ard_id.length);
+            dsa.get('redeemcodes/' + id, function (result) {
+                const redeemcode = result['data'];
+                let title = ''
+                if (redeemcode['codeable_type'] == 'booth' && redeemcode['user']){
+                    title = redeemcode['user']['first_name'] + ' ' + redeemcode['user']['last_name'] + ' ( ' + redeemcode['user']['username']+ ' ) '  
+                } else if (redeemcode['codeable_type'] == 'partner' && redeemcode['partner']) {
+                    title = redeemcode['partner']['name'] || '' 
+                }
+                $('.modal-title').html(redeemcode['codeable_type'].toUpperCase() + ' - ' + title);            
+                if (result.meta.success) {
+                    dsa.get(
+                        'redeemcodes?codeable_id=' + 
+                        redeemcode['codeable_id'] + 
+                        '&codeable_type=' + 
+                        redeemcode['codeable_type'], function(res){
+                            if(res.meta.success) {
+                                codes = res.data.map((val)=>{
+                                    return val.code
+                                })
+                                codesString = codes.join('-')
+                                $('.codes-data').html(codesString);
+                            }
+                        })
+                }
+            });
+            
+        });
        
         /* Delete specific redeem code */
         $('.btn-redeemcode-delete').click(function (event) {

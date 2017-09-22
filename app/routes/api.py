@@ -646,13 +646,15 @@ def partners_id(id, *args, **kwargs):
         return PartnerController.delete(id)
 
 
-@api.route('/partners', methods=['GET', 'POST'])
-@token_required
+@api.route('/partners', methods=['GET'])
 def partners(*args, **kwargs):
-    if(request.method == 'GET'):
-        return PartnerController.index(request)
-    else:
-        return PartnerController.create(request)
+    return PartnerController.index(request)
+    
+
+@api.route('/partners', methods=['POST'])
+@token_required
+def postpartner(*args, **kwargs):
+    return PartnerController.create(request)
 
 
 @api.route('/entrycashlogs', methods=['GET', 'POST'])
@@ -775,16 +777,27 @@ def redeem(*args, **kwargs):
     if (request.method == 'POST'):
         return RedeemCodeController.create(request)
     if (request.method == 'GET'):
-        return RedeemCodeController.index()
+        codeable_id = request.args.get('codeable_id') or None 
+        codeable_type = request.args.get('codeable_type') or None
+        if codeable_id and codeable_type:
+            param = {
+                'codeable_id': codeable_id,
+                'codeable_type': codeable_type
+            }
+            return RedeemCodeController.filter(param)
+        else:
+            return RedeemCodeController.index()
     if (request.method in ['PUT', 'PATCH']):
         return RedeemCodeController.update(request, user)
 
 
-@api.route('/redeemcodes/<id>', methods=['DELETE'])
+@api.route('/redeemcodes/<id>', methods=['DELETE', 'GET'])
 @token_required
 def redeem_id(id, *args, **kwargs):
     if (request.method == 'DELETE'):
         return RedeemCodeController.delete(id)
+    if (request.method == 'GET'):
+        return RedeemCodeController.show(id)
 
 
 @api.route('/grantrole/<id>', methods=['PUT', 'PATCH'])
@@ -860,3 +873,13 @@ def broadcast_notification(*args, **kwargs):
         return 'unauthorized'
     else:
         return AdminController.broadcast_notification(request, user)
+
+
+@api.route('/admin/sendemail', methods=['POST'])
+@token_required
+def send_email(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (user['role_id'] != ROLE['admin']):
+        return 'unauthorized'
+    else:
+        return AdminController.send_email(request, user)
