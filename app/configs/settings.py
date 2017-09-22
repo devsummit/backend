@@ -42,8 +42,8 @@ SAVE_FEED_PHOTO_DEST = 'images/feeds/'
 POST_BOOTH_PHOTO_DEST = 'app/static/images/booths/'
 SAVE_BOOTH_PHOTO_DEST = 'images/booths/'
 # booth gallery
-POST_BOOTH_GALL_DEST = 'app/static/images/booths/galleries'
-SAVE_BOOTH_GALL_DEST = 'images/booths/galleries'
+POST_BOOTH_GALL_DEST = 'app/static/images/booths/galleries/'
+SAVE_BOOTH_GALL_DEST = 'images/booths/galleries/'
 
 GET_DEST = 'static/'
 STATIC_DEST = 'app/static/'
