@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, jsonify
 from app.controllers.main_controller import MainController
+from app.services.helper import Helper
 
 
 main = Blueprint('main', __name__)
@@ -127,3 +128,9 @@ def notification():
 @main.route('/post')
 def post():
     return render_template('admin/communication/post.html')
+
+@main.route('/site-map')
+def site_map():
+    routes_list = Helper.site_map()
+    print(routes_list)
+    return jsonify(routes_list)
