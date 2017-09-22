@@ -187,8 +187,22 @@
     });
 
     /* Role dropdown select change */
-    $( "#account-input-select-role").change(function(event) {
+    $("#account-input-select-role").change(function (event) {
         role = $('#account-input-select-role').find(":selected").text();
+        if (role == 'speaker') {
+            let select = $(".speaker-types-edit");
+            select.find('option').remove();
+            SPEAKER_TYPES.map(function (type) {
+                // add to select
+                let option = document.createElement('option');
+                option.innerHTML = capitalizeFirstLetter(type);
+                option.value = type;
+                if (type === 'keynote') {
+                    option.selected = true;
+                }
+                $(".speaker-types-edit").append(option);
+            });
+        }
         // change role name to title case and display as tab caption
         $(".a-tab2-input").html(UCFL(role) + ' Informations');
         
