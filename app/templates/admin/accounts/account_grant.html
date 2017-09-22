@@ -106,10 +106,9 @@
         if (role !== 'admin') {
             payload['includes'] = buildIncludesGrantPayload(role);
         };
-
         dsa.patch('grantrole/' + id, payload, function (result) {
             if (result.meta.success) {
-                window.location = '/accounts';
+              //  window.location = '/accounts';
             }
         });
     }

@@ -47,12 +47,14 @@ class GrantroleController(BaseController):
             job = request.json['includes']['job'] if 'job' in request.json['includes'] else None
             summary = request.json['includes']['summary'] if 'job' in request.json['includes'] else None
             information = request.json['includes']['information'] if 'information' in request.json['includes'] else None
+            type = request.json['includes']['type'] if 'type' in request.json['includes'] else None
             if job and summary and information:
                 payloads = {
                     'user_id': user_id,
                     'job': job,
                     'summary': summary,
-                    'information': information
+                    'information': information,
+                    'type': type
                 }
                 result = grantroleservice.add_speaker(payloads)
             else:

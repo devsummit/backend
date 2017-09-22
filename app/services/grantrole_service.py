@@ -65,6 +65,7 @@ class GrantroleService():
         self.speaker.job = payloads['job']
         self.speaker.summary = payloads['summary']
         self.speaker.information = payloads['information']
+        self.speaker.type = payloads['type']
         db.session.add(self.speaker)
         try:
             db.session.commit()
