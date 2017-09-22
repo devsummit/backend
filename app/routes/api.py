@@ -1,10 +1,12 @@
 '''
 put api route in here
 '''
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 # import middlewares
 from app.middlewares.authentication import token_required
+from app.models import socketio
+from flask_socketio import emit
 
 # controllers import
 from app.controllers.ticket_controller import TicketController
@@ -36,8 +38,9 @@ from app.controllers.rundown_list_controller import RundownListController
 from app.controllers.redeem_code_controller import RedeemCodeController
 from app.controllers.Grantrole_controller import GrantroleController
 from app.controllers.source_controller import SourceController
+from app.controllers.admin_controller import AdminController
 from app.controllers.booth_gallery_controller import BoothGalleryController
-from app.controllers.user_authorization_controller import UserAuthorizationController
+from app.controllers.speaker_candidate_controller import SpeakerCandidateController
 from app.configs.constants import ROLE
 
 
@@ -235,13 +238,13 @@ def delete(event_id):
 @api.route('/schedules', methods=['GET', 'POST'])
 @token_required
 def schedule(*args, **kwargs):
-        filter = request.args.get('filter')
-        if(request.method == 'POST'):
-            return ScheduleController.create(request)
-        elif(request.method == 'GET' and filter is not None):
-            return ScheduleController.filter(filter)
-        elif(request.method == 'GET'):
-            return ScheduleController.index()
+    filter = request.args.get('filter')
+    if(request.method == 'POST'):
+        return ScheduleController.create(request)
+    elif(request.method == 'GET' and filter is not None):
+        return ScheduleController.filter(filter)
+    elif(request.method == 'GET'):
+        return ScheduleController.index()
 
 
 # Beacon route by id
@@ -324,6 +327,7 @@ def booth_gallery(*args, **kwargs):
     if(request.method == 'GET'):
         return BoothGalleryController.index()
 
+
 @api.route('/booths/galleries/<id>', methods=['GET', 'DELETE'])
 @token_required
 def booth_gallery_id(id, *args, **kwargs):
@@ -332,11 +336,13 @@ def booth_gallery_id(id, *args, **kwargs):
     if(request.method == 'DELETE'):
         return BoothGalleryController.delete(id)
 
+
 @api.route('/booths/galleries/show/<booth_id>', methods=['GET'])
 @token_required
 def booth_gallery_booth_id(booth_id, *args, **kwargs):
     if(request.method == 'GET'):
         return BoothGalleryController.booth_gallery(booth_id)
+
 
 @api.route('/booths/galleries/self', methods=['GET'])
 @token_required
@@ -344,7 +350,7 @@ def booth_gallery_self(*args, **kwargs):
     user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
         return BoothGalleryController.self_gallery(user)
-    
+
 
 @api.route('/points/transfer', methods=['POST'])
 @token_required
@@ -367,13 +373,13 @@ def transfer_points_log(*args, **kwargs):
 @api.route('/user/photo', methods=['GET', 'POST', 'DELETE'])
 @token_required
 def user_photo(*args, **kwargs):
-	user_id = kwargs['user'].id
-	if(request.method == 'POST'):
-		return UserPhotoController.create(request, user_id)
-	elif(request.method == 'DELETE'):
-		return UserPhotoController.delete(user_id)
-	elif(request.method == 'GET'):
-		return UserPhotoController.show(user_id)
+    user_id = kwargs['user'].id
+    if(request.method == 'POST'):
+        return UserPhotoController.create(request, user_id)
+    elif(request.method == 'DELETE'):
+        return UserPhotoController.delete(user_id)
+    elif(request.method == 'GET'):
+        return UserPhotoController.show(user_id)
 
 
 @api.route('/user/photos', methods=['GET'])
@@ -570,7 +576,7 @@ def payment(*args, **kwargs):
 @api.route('/payments/authorize', methods=['POST'])
 @token_required
 def authorize_credit_card(*args, **kwargs):
-	return PaymentController.authorize(request)
+    return PaymentController.authorize(request)
 
 
 @api.route('/payments/status/<id>', methods=['PATCH', 'PUT'])
@@ -625,8 +631,8 @@ def check_referal(*args, **kwargs):
 @api.route('/me', methods=['GET'])
 @token_required
 def me(*args, **kwargs):
-	user = kwargs['user'].as_dict()
-	return UserController.show(user['id'])
+    user = kwargs['user'].as_dict()
+    return UserController.show(user['id'])
 
 
 @api.route('/partners/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
@@ -669,7 +675,7 @@ def entry_cash_log_id(id, *args, **kwargs):
         return EntryCashLogController.show(id)
 
 
-@api.route('/entrycashlogsfilter', methods=['GET', 'POST'])
+@api.route('/entrycashlogsfilter', methods=['GET'])
 @token_required
 def get_entry_cash_log_filter(*args, **kwargs):
     return EntryCashLogController.get_by_filter(request)
@@ -707,8 +713,8 @@ def get_sponsor_log(id, *args, **kwargs):
 # Add rundown list API
 @api.route('/rundownlist', methods=['GET', 'POST'])
 @token_required
-def rundown(*args, **kwargs):    
-    if (request.method == 'GET'):                
+def rundown(*args, **kwargs):
+    if (request.method == 'GET'):
         return RundownListController.get(request)
     elif (request.method == 'POST'):
         return RundownListController.create(request)
@@ -719,7 +725,7 @@ def rundown(*args, **kwargs):
 def rundown_id(id, *args, **kwargs):
     if (request.method == 'GET'):
         return RundownListController.show(id)
-    elif (request.method == 'PUT' or request.method == 'PATCH'):                
+    elif (request.method == 'PUT' or request.method == 'PATCH'):
         return RundownListController.update(request, id)
     elif (request.method == 'DELETE'):
         return RundownListController.delete(id)
@@ -739,7 +745,10 @@ def feeds(*args, **kwargs):
     if(request.method == 'GET'):
         return FeedController.index(request)
     else:
-        return FeedController.create(request, user['id'])
+        data = FeedController.create(request, user['id'])
+        socketio.emit('feeds', data.data.decode(), broadcast=True)
+        return data
+
 
 @api.route('/notifications', methods=['GET', 'POST'])
 @token_required
@@ -749,6 +758,7 @@ def notifications(*args, **kwargs):
         return NotificationController.index(request, user['id'])
     else:
         return NotificationController.create(request, user)
+
 
 @api.route('/notifications/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @token_required
@@ -798,14 +808,56 @@ def sources(*args, **kwargs):
 def sources_id(id, *args, **kwargs):
     if (request.method == 'GET'):
         return SourceController.show(id)
-    elif (request.method == 'PUT' or request.method == 'PATCH'):                
+    elif (request.method == 'PUT' or request.method == 'PATCH'):
         return SourceController.update(request, id)
     elif (request.method == 'DELETE'):
         return SourceController.delete(id)
 
 
-# register new account with/without referal
-@api.route('/addnewuser', methods=['POST'])
+@api.route('/speaker-candidates/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
 @token_required
-def addnewuser(*args, **kwargs):
-    return UserAuthorizationController.register(request)
+def speaker_candidate_update(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SpeakerCandidateController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):
+        return SpeakerCandidateController.update(request, id)
+
+
+@api.route('/speaker-candidates', methods=['POST'])
+@token_required
+def speaker_candidate_create(*args, **kwargs):
+    return SpeakerCandidateController.create(request)
+
+
+@api.route('/speaker-candidate-logs/<id>', methods=['GET'])
+@token_required
+def speaker_candidate_show_logs(id, *args, **kwargs):
+    return SpeakerCandidateController.show_logs(id)
+
+
+@api.route('/speaker-candidate-logs', methods=['POST'])
+@token_required
+def speaker_candidate_logs(*args, **kwargs):
+    if(request.method == 'POST'):
+        return SpeakerCandidateController.create_log(request)
+
+
+@api.route('/admin/sendnotification', methods=['POST'])
+@token_required
+def send_notification(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (user['role_id'] != ROLE['admin']):
+        return 'unauthorized'
+    else:
+        return AdminController.send_single_notification(request, user)
+
+
+@api.route('/admin/broadcastnotification', methods=['POST'])
+@token_required
+def broadcast_notification(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (user['role_id'] != ROLE['admin']):
+        return 'unauthorized'
+    else:
+        return AdminController.broadcast_notification(request, user)
+

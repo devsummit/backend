@@ -55,7 +55,7 @@
         };
         dsa.post('tickets', payload, function(result) {
             if(result.meta.success) {
-                window.location = "http://localhost:5000/tickets";
+                window.location = "/tickets";
             }
         });
     })

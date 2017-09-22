@@ -467,3 +467,16 @@ class UserService(BaseService):
 				setattr(entityModel, key, includes[key])
 			db.session.add(entityModel)
 		db.session.commit()
+
+	def updatefcmtoken(self, token, user):
+		response = ResponseBuilder()
+		user = db.session.query(User).filter_by(id=user['id'])
+		user.update({
+			'fcmtoken': token
+		})
+		try:
+			db.session.commit()
+			return response.set_data(user.first().include_photos().as_dict()).build()
+		except SQLAlchemyError as e:
+			data = e.args
+			return response.set_error(True).set_message(data).build()
