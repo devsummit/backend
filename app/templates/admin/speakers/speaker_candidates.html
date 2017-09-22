@@ -63,6 +63,20 @@
             });
         }
 
+        const updateCandidateStage = function(candidateID, candidate, fromStage, payloadStage) {
+            var stageName = payloadStage['stage'];
+            updateCandidate(candidateID, payloadStage, function (result) {
+                //display logs tab
+                var new_log = defineNewLog(fromStage, stageName);
+                $('#log-message').val(new_log);
+                bindDataToModal('info', candidate);
+                showLogs(candidateID, function (result) {
+                    renderLogs(result['data']);
+                });
+                showModalTab('tab2-input');
+            });
+        }
+
         const showCandidate = function (id, callback) {
             dsa.request('/api/v1/speaker-candidates/' + id, 'GET', null, function (result) {
                 if (!id) {
@@ -178,6 +192,27 @@
             })
         }
 
+        const registerUserAsSpeaker =  function(payload, onSuccess, onError) {
+            dsa.register(payload.data, function (stat, res) {
+                if (stat && res.meta.success) {
+                    var speakerPayload = {
+                        "role_id": '4'
+                    };
+                    speakerPayload['includes'] = payload.includes; 
+                    speakerPayload['includes']['name'] = 'Speaker';
+                    dsa.patch('grantrole/' + res.data.id, speakerPayload, function (result) {
+                        if (result.meta.success) {
+                            onSuccess(result);
+                        } else {
+                            onError(result.meta.message);
+                        }
+                    });
+                } else {
+                    onError(result.meta.message);
+                }
+            });
+        }
+
         $(function () {
             var boardWidth = $('#kanban-board').width();
             var $columns = $('.sortable-wrapper');
@@ -196,56 +231,49 @@
                 cursor: 'move'
             })
                 .disableSelection();
+
             $(".sortable").droppable({
                 drop: function (event, ui) {
                     var stageName = $(this)[0].getAttribute("id").replace('div-', '');
                     var candidateID = ui["draggable"][0].getAttribute("id").replace('cnd-', '');
                     sessionStorage.setItem('candidate_id', candidateID);
-                    var payload = {
+                    var payloadStage = {
                         stage: stageName
                     }
                     showCandidate(candidateID, function (result) {
                         if (result['meta']['success']) {
                             var candidate = result['data'];
                             var fromStage = result['data']['stage'];
-                            if(fromStage != 'official') {
-                                updateCandidate(candidateID, payload, function (result) {
-                                    if (result.meta.success && result['data']['stage'] == "official") {
-                                        const data = {
-                                            "first_name": result.data.first_name,
-                                            "last_name": result.data.last_name,
-                                            "username": emailUsername(result.data.email),
-                                            "password": emailUsername(result.data.email),
-                                            "email": result.data.email
-                                        }
-                                        dsa.register(data, function (stat, res) {
-                                            if (stat && res.meta.success) {
-                                                var payload = {
-                                                    "role_id": '4'
-                                                };
-                                                payload['includes'] = {
-                                                    name: 'Speaker',
-                                                    job: result.data.job || "",
-                                                    summary: result.data.summary || "",
-                                                    information: result.data.information || ""
-                                                }
-                                                dsa.patch('grantrole/' + res.data.id, payload, function (result) {
-                                                    if (result.meta.success) {
-                                                        
-                                                    }
-                                                });
-                                            }
-                                        });
+                            if(fromStage !== 'official') {
+                                if(stageName==='official') {
+                                    var payloadUser = {}
+                                    payloadUser['data'] = {
+                                        "first_name": candidate.first_name,
+                                        "last_name": candidate.last_name,
+                                        "username": emailUsername(candidate.email),
+                                        "password": emailUsername(candidate.email),
+                                        "email": candidate.email
                                     }
-                                    //display logs tab
-                                    var new_log = defineNewLog(fromStage, stageName);
-                                    $('#log-message').val(new_log);
-                                    bindDataToModal('info', candidate);
-                                    showLogs(candidateID, function (result) {
-                                        renderLogs(result['data']);
-                                    });
-                                    showModalTab('tab2-input');
-                                });
+                                    payloadUser['includes'] = {
+                                        job: candidate.job || "",
+                                        summary: candidate.summary || "",
+                                        information: candidate.information || ""
+                                    }
+                                    registerUserAsSpeaker(payloadUser,
+                                        //onSuccess
+                                        function(result) {
+                                            // we can do something for result, but we just need to update stage
+                                            updateCandidateStage(candidateID, candidate, fromStage, payloadStage);    
+                                        },
+                                        //onError
+                                        function(error) {
+                                            alert('something going wrong: ' + error);
+                                        }
+                                    );
+                                } else {
+                                    updateCandidateStage(candidateID, candidate, fromStage, payloadStage);
+                                }
+                                
                             } else {
                                 location.reload()
                             }
@@ -309,7 +337,7 @@
                         $('#cnd-' + candidateID).html(new_name);
                         $('.alert-modal-candidate').addClass('alert-success');
                         $('.alert-modal-candidate').html('Candidate information updated');
-                    })
+                    });
                 } else {
                     data['stage'] = "prospect";
                     createCandidate(data, function (result) {
@@ -322,7 +350,7 @@
                             $('.alert-modal-candidate').html('New Candidate has been added');
                             clearModalInput();
                         }
-                    })
+                    });
                 }
             });
 
