@@ -140,8 +140,12 @@ def notification():
 def post():
     return render_template('admin/communication/post.html')
 
-@main.route('/site-map')
 def site_map():
     routes_list = Helper.site_map()
     print(routes_list)
     return jsonify(routes_list)
+
+@main.route('/sources')
+def source():
+    return MainController.getSource(request)
+
