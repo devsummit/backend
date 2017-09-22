@@ -4,6 +4,7 @@ import os
 from app.services.helper import Helper
 # import model class
 from app.models.booth_gallery import BoothGallery
+from app.models.booth import Booth
 from app.models.base_model import BaseModel
 from app.builders.response_builder import ResponseBuilder
 
@@ -16,8 +17,11 @@ class BoothGalleryService():
         if booth_galleries is not None:
             for booth_gallery in booth_galleries:
                 booth_gallery = booth_gallery
+                booth_id = booth_gallery['booth_id']
                 booth_gallery['url'] = Helper().url_helper(booth_gallery['url'], current_app.config['GET_DEST'])
-        return response.set_data(booth_galleries).set_message('data retrieved successfully').build()
+        booth = db.session.query(Booth).filter_by(id=booth_id).first().as_dict()
+        booth['logo_url'] = Helper().url_helper(booth['logo_url'], current_app.config['GET_DEST']) if booth['logo_url'] else "https://museum.wales/media/40374/thumb_480/empty-profile-grey.jpg"
+        return response.set_data(booth_galleries).set_message('data retrieved successfully').set_included(booth).build()
 
     def show(self, id):
         reponse = ResponseBuilder()
