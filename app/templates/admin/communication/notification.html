@@ -1,6 +1,6 @@
 {% extends "admin/base/index.html" %}
 
-{% block title %} <title> Tickets list </title>  {% endblock %}
+{% block title %} <title> Notification </title>  {% endblock %}
 
 {% block header_link %}
     <!-- DataTables -->
@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block page_header %}
-    {{ super() }}
-    <h1>
+<h1>
+        {{ super() }}
         Notification
         <small>Send Notification To Our User</small>
     </h1>
@@ -32,8 +32,11 @@
                 <label for="notification">Notification Content:</label>
                 <input type="text" class="form-control notification-content" id="notification-content">
             </div>
-            <a href="#" class="btn btn-primary btn-block btn-send">Send</b></a>
+           <!-- <a href="#" class="btn btn-primary btn-block btn-send">Send</b></a> -->
+            <button class="btn btn-primary btn-block btn-authorize" data-toggle="modal" data-target="#modal-authorize">Send</button>
         </div>
+
+{% include "admin/communication/notification_authorize.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -44,6 +47,17 @@
 <!-- page script -->
 <script>
 
+    $('.btn-authorize').click(function(event){
+        $('.modal-title').html('Authorize');
+        const title = $('.notification-title').val()
+        const content = $('.notification-content').val()
+        
+        const admin = dsa.getUser();
+        $('#title').val(title);
+        $('#content').val(content)
+        $('#username').val(admin['username']);
+    })
+/*
     $('.btn-send').click(function(event){
         const title = $('.notification-title').val()
         const content = $('.notification-content').val()
@@ -66,7 +80,7 @@
             alert('Don\'t send empty notification to our user');
         }
     });
-
+*/
 </script>
 
 {% endblock %}

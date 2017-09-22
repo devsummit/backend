@@ -29,6 +29,25 @@
         } : null
     });
 
+    const authorize = (url, methodType, payloads, onSuccess) => ({
+        url: 'auth/' + url,
+        type: methodType,
+        data: payloads ? JSON.stringify(payloads) : '',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        headers: {
+        Authorization: dsa.acess_token()
+        },
+        success: onSuccess ? function (result) {
+        if (result['expired']) {
+            clearCredential();
+            window.location.href = '/login';
+        } else {
+            onSuccess(result);
+        }
+        } : null
+    });
+
     const ajaxObjForm = (url, methodType, payloads, onSuccess) => ({
         url : 'api/v1/'+url,
         type: methodType,
@@ -102,6 +121,10 @@
     dsa.patchForm = function(url, payloads=null, onSuccess=null) {
         $.ajax(ajaxObjForm(url, 'PATCH', payloads, onSuccess));
     };
+
+    dsa.authorize = function(url, payloads=null, onSuccess=null){
+        $.ajax(authorize(url, 'POST', payloads, onSuccess))
+    }
     
     dsa.request = function(url, method, payloads, onSuccess){
         $.ajax({
