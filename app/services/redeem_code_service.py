@@ -19,10 +19,17 @@ class RedeemCodeService():
 
     def get(self):
         response = ResponseBuilder()
-        redeem_codes = db.session.query(RedeemCode).all()
-        results = self.include_type_detail(redeem_codes)
+        entities = db.session.query(RedeemCode.codeable_id, RedeemCode.codeable_type).group_by(RedeemCode.codeable_id, RedeemCode.codeable_type).all()
+        # redeem_codes = db.session.query(RedeemCode.codeable_type, RedeemCode.codeable_id).group_by(RedeemCode.codeable_type, RedeemCode.codeable_id).all()
+        # print(redeem_codes)
+        results = []
+        for entity in entities:
+            data = db.session.query(RedeemCode).filter(and_(RedeemCode.codeable_id.like(entity[0]), RedeemCode.codeable_type.like(entity[1]))).first()
+            results.append(data)
+        
+        final_results = self.include_type_detail(results)
 
-        return response.set_data(results).set_message("Redeem codes retrieved successfully").build()
+        return response.set_data(final_results).set_message("Redeem codes retrieved successfully").build()
     
     def include_type_detail(self, redeem_codes):
         results = []
@@ -46,7 +53,7 @@ class RedeemCodeService():
 
     def filter(self, param):
         response = ResponseBuilder()
-        redeem_codes = db.session.query(RedeemCode).filter(and_(RedeemCode.codeable_id.like(param['codeable_id']), RedeemCode.codeable_type.like(param['codeable_type']))).all()
+        redeem_codes = db.session.query(RedeemCode).filter(and_(RedeemCode.codeable_id.like(param['codeable_id']), RedeemCode.codeable_type.like(param['codeable_type']), RedeemCode.used.like(0))).all()
         results = self.include_type_detail(redeem_codes)
 
         return response.set_data(results).set_message("Redeem codes retrieved successfully").build()

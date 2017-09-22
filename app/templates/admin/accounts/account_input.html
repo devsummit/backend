@@ -150,11 +150,12 @@
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
             "role_id": $('#account-input-select-role').find(":selected").val()
-            };
-            
-        if(role!=='admin') {
+        };
+
+        if(role!=='admin' && role!=='partner') {
             payload['includes'] = buildIncludesPayload(role);           
         };        
+
         dsa.post('{{ globals["api_route"] }}', payload, function(result) {            
             if(result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
@@ -172,7 +173,6 @@
         }
         if($('.modal-title').html() === 'EDIT') {
             const id = $(this).attr('id');
-            console.log(id)
             saveEdit(id);
         } else {
             saveAdd();
@@ -202,6 +202,27 @@
                 }
                 $(".speaker-types-edit").append(option);
             });
+        } else if (role === 'booth') {
+            let select = $(".booth-stage-id");
+            select.find('option').remove();
+
+            dsa.get('stages', function(result){
+                var stages = result['data'];
+
+                let option = document.createElement('option');
+                option.innerHTML = 'No stage';
+                option.value = null;
+                select.append(option);
+
+                stages.map(function (stage) {
+                    // add to select
+                    let option = document.createElement('option');
+                    option.innerHTML = capitalizeFirstLetter(stage.name);
+                    option.value = stage.id;
+
+                    select.append(option);
+                })
+            })
         }
         // change role name to title case and display as tab caption
         $(".a-tab2-input").html(UCFL(role) + ' Informations');

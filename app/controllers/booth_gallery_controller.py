@@ -11,10 +11,9 @@ class BoothGalleryController(BaseController):
     @staticmethod
     def index():
         result = boothgalleryservice.index()
-        print("RESULT", result)
         if result['error']:
             return BaseController.send_error_api(result['data'], result['message'])
-        return BaseController.send_response_api(result['data'], result['message'])
+        return BaseController.send_response_api(result['data'], result['message'], result['included'])
 
     @staticmethod
     def show(id):

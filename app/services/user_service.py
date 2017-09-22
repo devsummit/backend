@@ -419,19 +419,20 @@ class UserService(BaseService):
 			self.model_user.email = payloads['email']
 			self.model_user.username = payloads['username']
 			self.model_user.role_id = payloads['role_id']
+			self.model_user.hash_password('supersecret')
 			db.session.add(self.model_user)
 			db.session.commit()
 			data = self.model_user.as_dict()
-
 			# apply includes data if not admin (role_id != 1)
-			if 'role_id' in payloads and payloads['role_id'] != 1:
+			if 'role_id' in payloads and payloads['role_id'] != '1' and payloads['role_id'] != '8':
 				includes = payloads['includes']
 				data = self.postIncludes(includes)
 				return data
+			return response.set_data(data).build()
 
 		except SQLAlchemyError as e:
 			data = e.args
-			return response.set_message(data).set_error(True).build()
+			return response.set_data(None).set_message(data).set_error(True).build()
 
 	def include_role_data(self, user):
 		if (user['role_id'] is ROLE['speaker']):

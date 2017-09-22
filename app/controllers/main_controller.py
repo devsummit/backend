@@ -19,7 +19,9 @@ from app.services import speakercandidateservice
 from app.services import sourceservice
 
 
+
 class MainController(BaseController):
+
     def index():
         return render_template('admin/base/index.html')
 
