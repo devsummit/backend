@@ -57,30 +57,6 @@
         $('#content').val(content)
         $('#username').val(admin['username']);
     })
-/*
-    $('.btn-send').click(function(event){
-        const title = $('.notification-title').val()
-        const content = $('.notification-content').val()
-
-        if (title.trim().length >= 0 && content.trim().length > 0) {
-            const payload = {
-                'message': content,
-                'type': title
-            }
-            if (confirm('Are you sure to broadcast this notification to our user?')) {
-                dsa.post('admin/broadcastnotification', payload, function(result) {
-                    if(result.meta.success) {
-                        alert('Notification broadcasted!')
-                        $('.notification-title').val('');
-                        $('.notification-content').val('');
-                    }
-                });
-            }
-        } else {
-            alert('Don\'t send empty notification to our user');
-        }
-    });
-*/
 </script>
 
 {% endblock %}
