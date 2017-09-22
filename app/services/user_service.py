@@ -99,12 +99,12 @@ class UserService(BaseService):
 						# only send notification if count less than 10
 						if count < 10:
 							type = "Referral Notification"
-							message = "Your username has been referred %d time(s)!" % (count)
+							message = "%s has registered referring you, your total referals count is: %d" % (payloads['username'], count)
 							FCMService().send_single_notification(type, message, receiver_id, sender_id)
 						# else count==10, send notif and create new ticket
 						else:
 							type = "Free Ticket Notification"
-							message = "Congratulation! Your username have been referred 10 times! You are entitled one free ticket"
+							message = "Congratulation! You have been referred 10 times! You've got one free ticket, please check it on 'my ticket' menu"
 							FCMService().send_single_notification(type, message, receiver_id, sender_id)
 							UserTicketService().create(payload)
 
