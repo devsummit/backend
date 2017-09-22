@@ -6,7 +6,6 @@ import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
-from sqlalchemy import func
 from flask import request
 from app.models.access_token import AccessToken
 from app.models.user import User
@@ -97,12 +96,12 @@ class UserService(BaseService):
 						payload['ticket_id'] = 1						
 						receiver_id = referer_detail['id']
 						sender_id = 1
+						# only send notification if count less than 10
 						if count < 10:
 							type = "Referral Notification"
 							message = "Your username has been referred %d time(s)!" % (count)
 							FCMService().send_single_notification(type, message, receiver_id, sender_id)
-							UserTicketService().create(payload)
-						# if count==10
+						# else count==10, send notif and create new ticket
 						else:
 							type = "Free Ticket Notification"
 							message = "Congratulation! Your username have been referred 10 times! You are entitled one free ticket"
