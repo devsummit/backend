@@ -1,29 +1,16 @@
-{% extends "admin/base/index.html" %} 
-
-{% block title %} <title> Accounts list </title>  {% endblock %}
-
-{% set globals={'base_route': 'accounts', 'api_route': 'users'} %} 
-
-
-{% block header_link %}
+{% extends "admin/base/index.html" %} {% block title %}
+<title> Accounts list </title> {% endblock %} {% set globals={'base_route': 'accounts', 'api_route': 'users'} %} {% block header_link
+%}
 <!-- DataTables -->
-<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
-{% endblock %}
-
-{% block page_header %} 
-{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
 <h1>
     Accounts
     <small>List of accounts</small>
 
 </h1>
-{% endblock %}
-
-{% block breadcrumb %}
+{% endblock %} {% block breadcrumb %}
 <li class="active">Accounts</li>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div class="box">
     <!-- /.box-header -->
     <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-input" id="-"><b>Add New</b></a>
@@ -57,56 +44,53 @@
                     </td>
                     <td>
                         <button id='bte-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-input">
-                            Edit
-                        </button>
+                                Edit
+                            </button>
                         <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
-                            Delete
-                        </button>
-                            {% if account.role['id'] == 7 %}
-                        <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-grant" data-toggle="modal" data-target="#modal-grant">
-                            Grant
-                        </button>
-                            {% endif %}
+                                Delete
+                            </button>
+                        <button id='btd-{{ account.id }}' value='role-{{ account.role_id }}' type="button" class="btn btn-sm btn-info btn-grant" data-toggle="modal" data-target="#modal-grant">
+                                Grant
+                            </button>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    {% include "admin/base/modal_delete.html" %} 
-    {% include "admin/accounts/account_input.html" %} 
-    {% include "admin/accounts/account_grant.html" %} 
-    {% endblock %}
-    
-    {% block footer_link %}
+    {% include "admin/base/modal_delete.html" %} {% include "admin/accounts/account_input.html" %} {% include "admin/accounts/account_grant.html"
+    %} {% endblock %} {% block footer_link %}
     <!-- DataTables -->
     <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
-    
+
     <!-- page script -->
     <script>
+        /* check if not user, button will disabled */
         $(document).ready(function(){
-
+           $('.btn-grant').each(function(index, value){
+               if($(this).val() !== "role-7"){
+                    $(this).prop('disabled', true)   
+               }
+           })     
         })
         /* account storage */
-        this.current_account= {}
+        this.current_account = {}
 
         /* Uppercase first letter */
-        function UCFL(string)
-        {
+        function UCFL(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
         /* Function to set tab content to display */
-        const setTabContent = function(id) {
+        const setTabContent = function (id) {
             /* Set default tab2 fields based on role name */
             // change tab2 caption
             const role = $('#account-input-select-role').find(":selected").text();
             $("#a-tab2-input").html(UCFL(role) + ' Informations');
 
             $('.tab2-fields').css('display', 'none');
-            $('#tab-'+ role +'-fields').css('display', 'block');
+            $('#tab-' + role + '-fields').css('display', 'block');
 
             $('.btn-input-save').attr("id", id || '-');
             //set default tab
@@ -115,14 +99,14 @@
             $('.btn-input-save').html("NEXT");
         }
 
-        $('.btn-edit').click(function(event){
+        $('.btn-edit').click(function (event) {
             $('.modal-title').html('EDIT');
             $('#account-input-select-role').prop('disabled', true);
 
             const bte_id = $(this).attr('id');
             const id = bte_id.substring(4, bte_id.length);
 
-            dsa.get('users/' + id, function(result) {
+            dsa.get('users/' + id, function (result) {
                 // bind result value in to account_detail.html 
                 const data = result['data'];
                 this.current_account = data;
@@ -132,9 +116,9 @@
                 $('#account-username').val(data['username']);
                 $('#account-role_id').val(data['role_id']);
                 $('#account-input-select-role').find('*').removeAttr('selected');
-                $('#input-role'+data['role_id']).attr('selected', 'selected');
+                $('#input-role' + data['role_id']).attr('selected', 'selected');
 
-                switch(data['role_id']) {
+                switch (data['role_id']) {
                     case 2:
                         $('#attendee-points').val(current_account['attendee']['points']);
                         break;
@@ -147,19 +131,6 @@
                         $('#speaker-job').val(current_account['speaker']['job']);
                         $('#speaker-summary').val(current_account['speaker']['summary']);
                         $('#speaker-information').val(current_account['speaker']['information']);
-                        let select = $(".speaker-types-edit");
-                        select.find('option').remove();
-                        SPEAKER_TYPES.map(function (type) {
-                            // add to select
-                            let option = document.createElement('option');
-                            option.innerHTML = capitalizeFirstLetter(type);
-                            option.value = type;
-                            if (type === current_account['speaker']['type']) {
-                                option.selected = true;
-                            }
-                            $(".speaker-types-edit").append(option);
-                        });
-
                         break;
                     case 5:
                         $('#ambassador-informations').val(current_account['ambassador']['informations']);
@@ -172,7 +143,7 @@
             });
         });
 
-        $('.btn-add').click(function(event){
+        $('.btn-add').click(function (event) {
             $('#account-input-select-role').prop('disabled', false);
             $('.modal-title').html('ADD');
             $('#account-input-select-role').find('*').removeAttr('selected');
@@ -180,7 +151,7 @@
             setTabContent(0);
         });
 
-        $('.btn-delete').click(function(event){
+        $('.btn-delete').click(function (event) {
             $('.modal-title').html('Are you sure want to delete this account?');
 
             const btd_id = $(this).attr('id');
@@ -188,7 +159,7 @@
             $('.btn-yes').attr("id", id);
         });
 
-        $('.btn-grant').click(function(event){
+        $('.btn-grant').click(function (event) {
             $('#account-grant-select-role').prop('disabled', false);
             $('.modal-title').html('GRANT')
             $('#account-grant-select-role').find('*').removeAttr('selected');
@@ -197,16 +168,17 @@
             const bte_id = $(this).attr('id');
             const id = bte_id.substring(4, bte_id.length);
 
-            dsa.get('users/' + id, function(result){
+            dsa.get('users/' + id, function (result) {
                 var data = result['data'];
                 $('#account-role_id').val(data['role_id']);
                 $('.btn-input-save').attr("id", `${data['id']}`);
             })
         })
 
-        $(function (){
+        $(function () {
             $('#account-list1').DataTable();
         });
+
     </script>
 
     {% endblock %}
