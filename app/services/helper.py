@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app, url_for, jsonify
 import datetime
 import os
 
@@ -28,3 +28,20 @@ class Helper():
             os.remove(filename)
         except OSError:
             pass
+
+    @staticmethod
+    def __has_no_empty_params(rule):
+        defaults = rule.defaults if rule.defaults is not None else ()
+        arguments = rule.arguments if rule.arguments is not None else ()
+        return len(defaults) >= len(arguments)
+
+    @staticmethod
+    def site_map():
+        links = []
+        for rule in current_app.url_map.iter_rules():
+            # Filter out rules we can't navigate to in a browser
+            # and rules that require parameters
+            if "GET" in rule.methods and Helper.__has_no_empty_params(rule):
+                url = url_for(rule.endpoint, **(rule.defaults or {}))
+                links.append({rule.endpoint: url, 'role_access': 'admin'})
+        return links
