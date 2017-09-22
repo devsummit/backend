@@ -53,13 +53,13 @@ class Seed():
 		ClientsSeeder.run()
 		print('finish seeding client')
 
-		print('seeding payments...')
-		PaymentsSeeder.run()
-		print('finish seeding payment')
-
 		print('seeding orderdetailsseeder...')
 		OrdersDetailsSeeder.run()
 		print('finish seeding Order Details Seeder')
+
+		print('seeding payments...')
+		PaymentsSeeder.run()
+		print('finish seeding payment')
 
 		print('seeding user tickets seeder...')
 		UserTicketsSeeder.run()
