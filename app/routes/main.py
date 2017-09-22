@@ -13,7 +13,7 @@ def init(param, *args, **kwargs):
     accessible = jsonify(kwargs['accessible'])
     return accessible
 
-@main.route('/not-found')
+@main.route('/upss')
 def not_found():
     return render_template("admin/base/404.html")
 

@@ -205,10 +205,10 @@
     /* initialize */
     dsa.initialize = function() {
         param = window.location.href.split("/")[3];
-        if(param && (param !== "not-found")) {
+        if(param && (param !== "upss")) {
             dsa.request('/init/'+param, 'POST', null, function(result){
                 if(!result) {
-                    window.location.href="/not-found";
+                    window.location.href="/upss";
                 }
             })
         }

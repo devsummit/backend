@@ -6,7 +6,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 from app.models.user import User
 
 PREVILLEGES = {
-    6:
+    8:
     [
         "/partners",
         "/sponsors",
