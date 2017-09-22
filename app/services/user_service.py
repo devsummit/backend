@@ -6,6 +6,7 @@ import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
+from sqlalchemy import func
 from flask import request
 from app.models.access_token import AccessToken
 from app.models.user import User
@@ -23,6 +24,7 @@ from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from app.models.base_model import BaseModel
 from app.services.user_ticket_service import UserTicketService
+from app.services.fcm_service import FCMService
 
 
 class UserService(BaseService):
@@ -64,7 +66,7 @@ class UserService(BaseService):
 
 		# check referal limit
 		check_referer = db.session.query(User).filter_by(
-				username=payloads['referer']).all()
+				referer=payloads['referer']).all()
 		if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
 			return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
 
@@ -92,8 +94,19 @@ class UserService(BaseService):
 						count = len(check_referer_count)
 						payload = {}
 						payload['user_id'] = referer_detail['id']
-						payload['ticket_id'] = 1 
-						if count == 10:
+						payload['ticket_id'] = 1						
+						receiver_id = referer_detail['id']
+						sender_id = 1
+						if count < 10:
+							type = "Referral Notification"
+							message = "Your username has been referred %d time(s)!" % (count)
+							FCMService().send_single_notification(type, message, receiver_id, sender_id)
+							UserTicketService().create(payload)
+						# if count==10
+						else:
+							type = "Free Ticket Notification"
+							message = "Congratulation! Your username have been referred 10 times! You are entitled one free ticket"
+							FCMService().send_single_notification(type, message, receiver_id, sender_id)
 							UserTicketService().create(payload)
 
 				return response.set_error(False).set_data(data).set_message('User created successfully').build()
