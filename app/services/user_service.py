@@ -452,6 +452,14 @@ class UserService(BaseService):
 		db.session.add(entityModel)
 		try:
 			db.session.commit()
+
+			if includes['name'] == 'Booth':
+				user_booth = UserBooth()
+				user_booth.user_id = user_id
+				user_booth.booth_id = entityModel.as_dict()['id']
+				db.session.add(user_booth)
+				db.session.commit()
+
 			return response.set_data(None).build()
 		except SQLAlchemyError as e:
 			data = e.args
