@@ -68,4 +68,3 @@ class Seed():
 		print('seeding speaker candidates')
 		SpeakerCandidateSeeder.run()
 		print('finish seeding speaker candidates')
-

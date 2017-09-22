@@ -127,3 +127,7 @@ def notification():
 @main.route('/post')
 def post():
     return render_template('admin/communication/post.html')
+
+@main.route('/sources')
+def source():
+    return MainController.getSource(request)
