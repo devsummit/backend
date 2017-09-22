@@ -202,6 +202,27 @@
                 }
                 $(".speaker-types-edit").append(option);
             });
+        } else if (role === 'booth') {
+            let select = $(".booth-stage-id");
+            select.find('option').remove();
+
+            dsa.get('stages', function(result){
+                var stages = result['data'];
+
+                let option = document.createElement('option');
+                option.innerHTML = 'No stage';
+                option.value = null;
+                select.append(option);
+
+                stages.map(function (stage) {
+                    // add to select
+                    let option = document.createElement('option');
+                    option.innerHTML = capitalizeFirstLetter(stage.name);
+                    option.value = stage.id;
+
+                    select.append(option);
+                })
+            })
         }
         // change role name to title case and display as tab caption
         $(".a-tab2-input").html(UCFL(role) + ' Informations');
