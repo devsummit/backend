@@ -775,16 +775,27 @@ def redeem(*args, **kwargs):
     if (request.method == 'POST'):
         return RedeemCodeController.create(request)
     if (request.method == 'GET'):
-        return RedeemCodeController.index()
+        codeable_id = request.args.get('codeable_id') or None 
+        codeable_type = request.args.get('codeable_type') or None
+        if codeable_id and codeable_type:
+            param = {
+                'codeable_id': codeable_id,
+                'codeable_type': codeable_type
+            }
+            return RedeemCodeController.filter(param)
+        else:
+            return RedeemCodeController.index()
     if (request.method in ['PUT', 'PATCH']):
         return RedeemCodeController.update(request, user)
 
 
-@api.route('/redeemcodes/<id>', methods=['DELETE'])
+@api.route('/redeemcodes/<id>', methods=['DELETE', 'GET'])
 @token_required
 def redeem_id(id, *args, **kwargs):
     if (request.method == 'DELETE'):
         return RedeemCodeController.delete(id)
+    if (request.method == 'GET'):
+        return RedeemCodeController.show(id)
 
 
 @api.route('/grantrole/<id>', methods=['PUT', 'PATCH'])
