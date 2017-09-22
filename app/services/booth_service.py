@@ -27,7 +27,7 @@ class BoothService(BaseService):
 		paginate = super().paginate(db.session.query(Booth))
 		paginate = super().include(['user', 'stage']) 
 		for row in paginate['data']:
-			row['logo_url'] = Helper().url_helper(row['logo_url'], current_app.config['GET_DEST']) if row['logo_url'] else None
+			row['logo_url'] = Helper().url_helper(row['logo_url'], current_app.config['GET_DEST']) if row['logo_url'] else "https://museum.wales/media/40374/thumb_480/empty-profile-grey.jpg"
 		response = ResponseBuilder()
 		result = response.set_data(paginate['data']).set_links(paginate['links']).build()
 		return result
