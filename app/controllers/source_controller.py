@@ -57,7 +57,7 @@ class SourceController(BaseController):
     def show(id):
         source = sourceservice.show(id)
         if source['error']:
-            return BaseController.send_error_api(source['data'], source['message'])
+            return BaseController.send_response_api(source['data'], source['message'])
         return BaseController.send_response_api(source['data'], source['message'], source['included'])
 
     @staticmethod
