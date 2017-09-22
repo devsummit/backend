@@ -13,8 +13,7 @@ class AdminController(BaseController):
         attachment = requests.json['attachment'] if 'attachment' in requests.json else None
         type = requests.json['type'] if 'type' in requests.json else None
         if message and receiver_id and type:
-            result = fcmservice.send_single_notification(
-                type, message, receiver_id, user['id'])
+            result = fcmservice.send_single_notification(type, message, receiver_id, user['id'])
         else:
             return BaseController.send_error_api(None, 'payload not valid')
         if result['error']:
@@ -27,8 +26,7 @@ class AdminController(BaseController):
         attachment = requests.json['attachment'] if 'attachment' in requests.json else None
         type = requests.json['type'] if 'type' in requests.json else None
         if message and type:
-            result = fcmservice.broadcast_notification(
-                type, message, user['id'])
+            result = fcmservice.broadcast_notification(type, message, user['id'])
         else:
             return BaseController.send_error_api(None, 'payload not valid')
         if result['error']:
