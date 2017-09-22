@@ -23,10 +23,10 @@
                 <tr>
                     <th>Type</th>
                     <th>Name</th>
-                    <th>Code</th>
-                    <th>Used</th>
-                    <th>Last Update</th>
-                    <th>Action</th>
+                    <!-- <th>Code</th>
+                    <th>Used</th> -->
+                    <!-- <th>Last Update</th> -->
+                    <!-- <th>Action</th> -->
                 </tr>
             </thead>
             <tbody id="main-tbody">
@@ -36,7 +36,7 @@
                         {{ redeemcode['codeable_type']|e }}
                     </td>
                     <td>
-                        <a href="" id='ard-{{ redeemcode["id"] }}' class="redeemcodes-detail" data-toggle="modal" data-target="#modal-detail">  
+                        <!-- <a href="" id='ard-{{ redeemcode["id"] }}' class="redeemcodes-detail" data-toggle="modal" data-target="#modal-detail">   -->
                                 
                         {% if redeemcode['codeable_type'] == 'booth' and redeemcode['user'] %} 
                             {{ redeemcode['user']['first_name']|e + ' ' + redeemcode['user']['last_name']|e + ' ( ' + redeemcode['user']['username']|e + ' ) ' }} 
@@ -44,23 +44,23 @@
                             {{ redeemcode['partner']['name']|e }} 
                         {% endif %}
                     
-                        </a>
+                        <!-- </a> -->
                     </td>
-                    <td>
+                    <!-- <td>
                         {{ redeemcode['code']|e }}
                     </td>
                     <td>
                         {{ redeemcode['used']|e }}
-                    </td>
-                    <td>
+                    </td> -->
+                    <!-- <td>
                         {{ redeemcode['updated_at']|e }}
-                    </td>
+                    </td> -->
                     <td>
                         <!-- <button id='bte-{{ redeemcode["id"] }}' type="button" class="btn btn-sm btn-info btn-redeemcode-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                         </button> -->
-                        <button id='btd-{{ redeemcode["id"] }}' type="button" class="btn btn-sm btn-info btn-redeemcode-delete" data-toggle="modal" data-target="#modal-delete">
-                                Delete
+                        <button id='ard-{{ redeemcode["id"] }}' class="redeemcodes-detail btn btn-sm btn-info btn-redeemcode-edit" data-toggle="modal" data-target="#modal-detail">
+                            SHOW AVAILABLE CODES
                         </button>
                     </td>
                 </tr>
