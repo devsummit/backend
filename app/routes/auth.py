@@ -4,6 +4,7 @@ from app.middlewares.authentication import token_required
 
 # import controller
 from app.controllers.user_authorization_controller import UserAuthorizationController
+from app.controllers.admin_controller import AdminController
 
 auth = Blueprint('auth', __name__)
 
@@ -18,6 +19,11 @@ def register():
 	return UserAuthorizationController.register(request)
 
 
+@auth.route('/admin/authorize', methods=['POST'])
+def admin_authorize():
+    return AdminController.password_require(request)
+
+
 @auth.route('/refreshtoken', methods=['POST'])
 def refreshtoken():
 	return UserAuthorizationController.refreshtoken(request)
@@ -28,6 +34,19 @@ def refreshtoken():
 def change_setting(*args, **kwargs):
 	user = kwargs['user'].as_dict()
 	return UserAuthorizationController.change_name(request, user)
+
+@auth.route('/me/updatefcmtoken', methods=['PUT', 'PATCH'])
+@token_required
+def update_fcm_token(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return UserAuthorizationController.updatefcmtoken(request, user)
+
+
+@auth.route('/me/booth', methods=['GET'])
+@token_required
+def get_booth(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return UserAuthorizationController.get_booth_info(user)
 
 
 @auth.route('/me/changepassword', methods=['PATCH', 'PUT'])

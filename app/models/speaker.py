@@ -9,7 +9,7 @@ class Speaker(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'speakers'
 	# displayed fields
-	visible = ['id', 'user_id', 'summary', 'information', 'job', 'created_at', 'updated_at']
+	visible = ['id', 'user_id', 'summary', 'information', 'job', 'type',  'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -22,6 +22,11 @@ class Speaker(db.Model, BaseModel):
 	information = db.Column(db.Text)
 	summary = db.Column(db.String)
 	job = db.Column(db.String)
+	type = db.Column(
+		db.String, 
+		default='keynote',
+		nullable=False
+	)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 

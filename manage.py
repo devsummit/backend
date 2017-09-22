@@ -16,11 +16,14 @@ manager.add_command("clean", Clean())
 
 # Seeder
 from seeders.seed import Seed
-
+from seeders.production_seed import ProductionSeed
 
 @manager.command
 def seed():
     Seed.run()
+@manager.command
+def productionseed():
+    ProductionSeed.run()
 
 
 if __name__ == "__main__":

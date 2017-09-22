@@ -9,6 +9,7 @@
             <div class="modal-body">
                 <div class="box box-primary">
                     <div class="box-body box-profile">
+                        <form action="#" id="add-form">
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
                                 <div class="form-group">
@@ -18,19 +19,25 @@
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="i-entry-cash-flow">Cash Flow:</label>
-                                    <select class="form-control" id="i-entry-cash-flow"></select>
+                                    <label for="i-entry-cash-amount">Source Id:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-source-id">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="i-entry-cash-amount">Amount:</label>
-                                    <input type="text" class="form-control" id="i-entry-cash-amount">
+                                    <label for="i-entry-cash-amount">Debit:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-debit">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-entry-cash-amount">Credit:</label>
+                                    <input type="text" class="form-control" id="i-entry-cash-credit">
                                 </div>
                             </li>
                         </ul>
-                        <a href="#" class="btn btn-primary btn-block" id="btn-add-save"><b>Save</b></a>
-
+                        <input type="submit" class="btn btn-primary btn-block btn-save" id="-" value="Save">
+                    </form>
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -46,27 +53,30 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
-    let cashFlow 
-    $('#i-entry-cash-flow').click(function() {
-        let selectedValue = $(this).val();
-        if (selectedValue == 'Expense') {
-            cashFlow = selectedValue;
-        } else {
-            cashFlow = selectedValue;
-        }
-    });
-    $('#btn-add-save').click(function (event) {
-        let cash = $('#i-entry-cash-amount').val();
-        let amount = cashFlow == 'Expense' ? -cash : cash
-        const payload = {
-            "description": $('#i-entry-cash-desc').val(),
-            "amount": amount
-        };
-        dsa.post('{{ globals["api_route"] }}', payload, function (result) {
-            if (result.meta.success) {
-                window.location = '/entrycashlogs';
-            }
-        });
-    });
+    $(document).ready(function () {
+        $('#add-form').on('submit', function (e) {
+            e.preventDefault();
+            var target = $(this);
+            var credit = target.find('#i-entry-cash-credit').val();
+            var debit = target.find('#i-entry-cash-debit').val();
 
+            if (credit == 0 || credit == null) {
+                credit = 0
+            } else if (debit == 0 || debit == null) {
+                debit = 0
+            }
+
+            payload = {
+                "description": target.find('#i-entry-cash-desc').val(),
+                "debit": debit,
+                "credit": credit,
+                "source_id": target.find('#i-entry-cash-source-id').val()
+            };
+             dsa.post('{{ globals["api_route"] }}', payload, function (result) {
+                if (result.meta.success) {
+                    window.location = '/{{ globals["base_route"] }}';
+                }
+            });
+        })
+    })
 </script>

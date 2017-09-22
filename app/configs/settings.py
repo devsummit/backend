@@ -16,14 +16,35 @@ SQLALCHEMY_DATABASE_URI = 'mysql://' + os.environ.get("DB_USERNAME") + ':' + os.
 							+ '@' + os.environ.get("DB_HOST") + '/' + os.environ.get("DB_NAME")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-# default saving, database saving & domain based url
 
+# email server
+MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_PORT = 465
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
+MAIL_USERNAME = 'andy.developmode@gmail.com'
+MAIL_DEFAULT_SENDER = 'admin@devsummit.com'
+MAIL_PASSWORD = 'lmwdurszelzyxthl'
+MAIL_SUPPRESS_SEND = False
+# administrator list
+ADMINS = ['andy.developmode@gmail.com']
+
+# default saving, database saving & domain based url
+MAX_CONTENT_LENGTH = 5 * 1024 * 1024
 POST_STAGE_PHOTO_DEST = 'app/static/images/stages/'
 SAVE_STAGE_PHOTO_DEST = 'images/stages/'
 POST_PARTNER_PHOTO_DEST = 'app/static/images/partners/'
 SAVE_PARTNER_PHOTO_DEST = 'images/partners/'
 POST_USER_PHOTO_DEST = 'app/static/images/users/'
 SAVE_USER_PHOTO_DEST = 'images/users/'
+POST_FEED_PHOTO_DEST = 'app/static/images/feeds/'
+SAVE_FEED_PHOTO_DEST = 'images/feeds/'
+POST_BOOTH_PHOTO_DEST = 'app/static/images/booths/'
+SAVE_BOOTH_PHOTO_DEST = 'images/booths/'
+# booth gallery
+POST_BOOTH_GALL_DEST = 'app/static/images/booths/galleries/'
+SAVE_BOOTH_GALL_DEST = 'images/booths/galleries/'
+
 GET_DEST = 'static/'
 STATIC_DEST = 'app/static/'
 

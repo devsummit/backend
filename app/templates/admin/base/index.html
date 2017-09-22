@@ -34,7 +34,8 @@
   {% endblock %}
 
   <!-- jQuery 3 -->
-  <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.js') }}"></script>
   <!-- Devsummit Auth Client -->
   <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
   
@@ -278,6 +279,7 @@
             <li><a href="/accounts">Accounts Management</a></li>
             <li><a href="/redeemcodes">Redeem Codes Management</a></li>            
             <li><a href="/booths">Booths</a></li>
+            <li><a href="/speaker-candidates">Speaker Candidate Kanban</a></li>
             <li><a href="/speakers">Speakers</a></li>
             <li><a href="/attendees">Attendees</a></li>
             <li><a href="/password">Change Password</a></li>
@@ -297,7 +299,9 @@
           <ul class="treeview-menu">
              <li><a href="/payments">Payment List</a></li>
              <li><a href="/authorize-payments">Authorize Needed</a></li>
+             <li><a href="/sources">Sources Management</a></li>
              <li><a href="/entrycashlogs">Entry Cash</a></li>
+             <li><a href="/entrycashlogsfilter">Finance Report</a></li>
           </ul>
         </li>
 
@@ -336,7 +340,8 @@
             <li><a a href="/schedules">Schedules</a></li>
             <li><a href="/stages">Stages</a></li>
             <li><a href="/events">Events</a></li>
-            <li><a hre="/rundownlist">Rundown</a></li>
+            <li><a href="/events/kanban">Events Kanban</a></li>
+            <li><a href="/rundownlist">Rundown</a></li>
           </ul>
         </li>
 
@@ -350,6 +355,20 @@
           <ul class="treeview-menu">
             <li><a href="/partners">Partners</a></li>
             <li><a href="/sponsors">Sponsors</a></li>
+            <li><a href="/speaker-candidates">Speaker Candidates</a></li>
+          </ul>
+        </li>
+
+        <!-- Partners -->
+        <li class="treeview">
+          <a href="#"><i class="fa fa-id-card"></i> <span>Communication</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="/notification">Notification</a></li>
+            <li><a href="/post">Post Feeds</a></li>
           </ul>
         </li>
 
@@ -388,7 +407,7 @@
   <footer class="main-footer">
     <!-- To the right -->
     <div class="pull-right hidden-xs">
-      Anything you want
+      Indonesia
     </div>
     <!-- Default to the left -->
     <strong>Copyright &copy; 2017 <a href="#">DEVSUMMIT</a>.</strong> All rights reserved.

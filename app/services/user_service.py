@@ -5,27 +5,45 @@ import datetime
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import or_
 from flask import request
 from app.models.access_token import AccessToken
 from app.models.user import User
+from app.models.user_booth import UserBooth
 from app.models.user_photo import UserPhoto
 from app.models.booth import Booth  # noqa
 from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
 from app.models.ambassador import Ambassador  # noqa
+from app.models.redeem_code import RedeemCode  # noqa
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from app.models.base_model import BaseModel
 from app.services.user_ticket_service import UserTicketService
+from app.services.fcm_service import FCMService
 
 
 class UserService(BaseService):
 
 	def __init__(self, perpage):
 		self.perpage = perpage
+
+
+	def get_booth_by_uid(self, user_id):
+		response = ResponseBuilder()
+
+		user_booth = db.session.query(UserBooth).filter_by(user_id=user_id).first()
+		data = user_booth.booth.as_dict()
+		members = db.session.query(UserBooth).filter_by(booth_id=data['id']).all()
+		data['members'] = []
+
+		for member in members:
+			data['members'].append(member.user.include_photos().as_dict())
+
+		return response.set_data(data).build()
 
 	def register(self, payloads):
 		response = ResponseBuilder()
@@ -47,7 +65,7 @@ class UserService(BaseService):
 
 		# check referal limit
 		check_referer = db.session.query(User).filter_by(
-				username=payloads['referer']).all()
+				referer=payloads['referer']).all()
 		if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
 			return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
 
@@ -61,7 +79,8 @@ class UserService(BaseService):
 				self.model_user.role_id = payloads['role']
 				self.model_user.social_id = payloads['social_id']
 				self.model_user.referer = payloads['referer'] if check_referer else None
-				# self.model_user.hash_password(payloads['password'])
+				if payloads['provider'] == 'email': 
+					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
 				db.session.commit()
 				data = self.model_user.as_dict()
@@ -74,8 +93,19 @@ class UserService(BaseService):
 						count = len(check_referer_count)
 						payload = {}
 						payload['user_id'] = referer_detail['id']
-						payload['ticket_id'] = 1 
-						if count == 10:
+						payload['ticket_id'] = 1						
+						receiver_id = referer_detail['id']
+						sender_id = 1
+						# only send notification if count less than 10
+						if count < 10:
+							type = "Referral Notification"
+							message = "%s has registered referring you, your total referals count is: %d" % (payloads['username'], count)
+							FCMService().send_single_notification(type, message, receiver_id, sender_id)
+						# else count==10, send notif and create new ticket
+						else:
+							type = "Free Ticket Notification"
+							message = "Congratulation! You have been referred 10 times! You've got one free ticket, please check it on 'my ticket' menu"
+							FCMService().send_single_notification(type, message, receiver_id, sender_id)
 							UserTicketService().create(payload)
 
 				return response.set_error(False).set_data(data).set_message('User created successfully').build()
@@ -83,40 +113,6 @@ class UserService(BaseService):
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return response.set_error(True).set_message('SQL error').set_data(data).build()
-
-		# try:
-		# 	db.session.commit()
-		# 	data = self.model_user.as_dict()
-
-		# 	# insert role model
-		# 	if(role == ROLE['attendee']):
-		# 		attendee = Attendee()
-		# 		attendee.user_id = data['id']
-		# 		db.session.add(attendee)
-		# 		db.session.commit()
-		# 	elif(role == ROLE['booth']):
-		# 		booth = Booth()
-		# 		booth.user_id = data['id']
-		# 		db.session.add(booth)
-		# 		db.session.commit()
-		# 	elif(role == ROLE['speaker']):
-		# 		speaker = Speaker()
-		# 		speaker.user_id = data['id']
-		# 		db.session.add(speaker)
-		# 		db.session.commit()
-
-		# 	return {
-		# 		'error': False,
-		# 		'data': data,
-		# 		'message': 'user registered successfully'
-		# 	}
-		# except SQLAlchemyError as e:
-		# 	data = e.orig.args
-		# 	return {
-		# 		'error': True,
-		# 		'data': {'sql_error': True},
-		# 		'message': data
-		# 	}
 
 	def list_user(self, request, admin=False):
 		self.total_items = User.query.count()
@@ -147,9 +143,10 @@ class UserService(BaseService):
 		user = super().outer_include(user, [includes])
 		return response.set_data(user).build()
 
-	def get_user(self, username):
+	def get_user(self, param):
 		self.model_user = db.session.query(
-			User).filter_by(username=username).first()
+			User).filter(or_(User.username.like(param), User.email.like(param))).first()
+		
 		return self.model_user
 
 	def get_user_photo(self, id):
@@ -291,7 +288,7 @@ class UserService(BaseService):
 				if payloads['speaker_job'] is not None and payloads['speaker_summary'] is not None:
 					speaker.update({
 						'job': payloads['speaker_job'],
-						'summary': payloads['speaker_summary']
+						'summary': payloads['speaker_summary']	
 					})
 					db.session.commit()
 				data['speaker'] = speaker.first().as_dict()
@@ -400,8 +397,7 @@ class UserService(BaseService):
 			# apply includes data
 			if 'admin' not in payloads.values():
 				includes = payloads['includes']
-				includes_data = payloads[includes]
-				self.postIncludes(includes, includes_data)
+				self.editIncludes(includes)
 
 			return {
 				'error': False,
@@ -447,7 +443,7 @@ class UserService(BaseService):
 	def postIncludes(self, includes):
 		response = ResponseBuilder()
 		user_id = self.model_user.as_dict()['id']
-
+	
 		entityModel = eval(includes['name'])()
 		entityModel.user_id = user_id
 		for key in includes:
@@ -461,18 +457,31 @@ class UserService(BaseService):
 			data = e.args
 			return response.set_message(data).set_error(True).set_data(None).build()
 
-	def editIncludes(self, includes, payloads):
+	def editIncludes(self, includes):
 		user_id = self.model_user.first().as_dict()['id']
-		Model = self.mapIncludesToModel(includes)
-		entityModel = db.session.query(Model).filter_by(user_id=user_id)
+		entityModel = db.session.query(eval(includes['name'])).filter_by(user_id=user_id)
+		del includes['name']
 		entity = entityModel.first()
 
 		if (entity):
-			entityModel.update(payloads)
+			entityModel.update(includes)
 		else:
 			entityModel = Model()
 			entityModel.user_id = user_id
-			for key in payloads:
-				setattr(entityModel, key, payloads[key])
+			for key in includes:
+				setattr(entityModel, key, includes[key])
 			db.session.add(entityModel)
 		db.session.commit()
+
+	def updatefcmtoken(self, token, user):
+		response = ResponseBuilder()
+		user = db.session.query(User).filter_by(id=user['id'])
+		user.update({
+			'fcmtoken': token
+		})
+		try:
+			db.session.commit()
+			return response.set_data(user.first().include_photos().as_dict()).build()
+		except SQLAlchemyError as e:
+			data = e.args
+			return response.set_error(True).set_message(data).build()

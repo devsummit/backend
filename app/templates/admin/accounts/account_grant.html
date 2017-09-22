@@ -36,10 +36,8 @@
                         </ul>
                     </div>
                     <div class="tab-pane tab2-grant" id="tab2-grant">
-                        {% include "admin/accounts/grant/ambassador_grant.html" %} 
-                        {% include "admin/accounts/grant/attendee_grant.html" %} 
-                        {% include "admin/accounts/grant/speaker_grant.html"%} 
-                        {% include "admin/accounts/grant/booth_grant.html" %}
+                        {% include "admin/accounts/grant/ambassador_grant.html" %} {% include "admin/accounts/grant/attendee_grant.html" %} {% include
+                        "admin/accounts/grant/speaker_grant.html"%} {% include "admin/accounts/grant/booth_grant.html" %}
                     </div>
                 </div>
             </div>
@@ -104,9 +102,10 @@
         if (role !== 'admin') {
             payload['includes'] = buildIncludesGrantPayload(role);
         };
+        console.log(payload)
         dsa.patch('grantrole/' + id, payload, function (result) {
             if (result.meta.success) {
-                window.location = '/accounts';
+                //window.location = '/accounts';
             }
         });
     }

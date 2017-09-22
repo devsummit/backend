@@ -13,7 +13,7 @@ from app.models.base_model import BaseModel
 
 
 class GrantroleService():
-    
+
     def update(self, payloads, id):
         response = ResponseBuilder()
         try:
@@ -27,8 +27,7 @@ class GrantroleService():
 
         except SQLAlchemyError as e:
             return response.set_data(e.orig.args).set_message('SQL error').set_error(True).build()
-    
-    
+
     def add_attendee(self, payloads):
         response = ResponseBuilder()
         self.attendee = Attendee()
@@ -42,7 +41,7 @@ class GrantroleService():
         except SQLAlchemyError as e:
             data = e.orig.args
             return response.set_data(data).set_error(True).build()
-    
+
     def add_booth(self, payloads):
         response = ResponseBuilder()
         self.booth = Booth()
@@ -89,4 +88,3 @@ class GrantroleService():
         except SQLAlchemyError as e:
             data = e.orig.args
             return response.set_data(data).set_error(True).build()
-            

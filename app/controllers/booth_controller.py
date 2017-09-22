@@ -51,9 +51,9 @@ class BoothController(BaseController):
         result = boothservice.update(payloads, booth_id)
 
         if not result['error']:
-            return BaseController.send_response_api(result['data'], 'booth succesfully updated')
+            return BaseController.send_response_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_error_api(result['data'], result['message'])
 
     @staticmethod
     def create(request):
@@ -74,7 +74,26 @@ class BoothController(BaseController):
 
         result = boothservice.create(payloads)
 
-        if not result['error']:
-            return BaseController.send_response_api(result['data'], 'booth succesfully created')
+        if result['error']:
+            return BaseController.send_error_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_response_api(result['data'], result['message'])
+    
+    @staticmethod
+    def update_logo(request, user):
+        image_data = request.files['image_data']
+        booth_id = db.session.query(Booth).filter_by(user_id=user['id']).first().as_dict()['id']
+
+        if image_data:
+            payloads = {
+                'image_data': image_data
+            }
+        else:
+            return BaseController.send_error_api(None, 'You need to upload an image')
+
+        result = boothservice.update_logo(payloads, booth_id)
+
+        if not result['error']:
+            return BaseController.send_response_api(result['data'], result['message'])
+        else:
+            return BaseController.send_error_api(result['data'], result['message'])

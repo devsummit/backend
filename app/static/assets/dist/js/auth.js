@@ -13,7 +13,7 @@
     const ajaxObj = (url, methodType, payloads, onSuccess) => ({
         url : 'api/v1/'+url,
         type: methodType,
-        data: JSON.stringify(payloads),
+        data: payloads ? JSON.stringify(payloads) : '',
         contentType: "application/json; charset=utf-8",
         dataType   : "json",
         headers: {
@@ -26,6 +26,25 @@
             } else {
                 onSuccess(result);
             }
+        } : null
+    });
+
+    const authorize = (url, methodType, payloads, onSuccess) => ({
+        url: 'auth/' + url,
+        type: methodType,
+        data: payloads ? JSON.stringify(payloads) : '',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        headers: {
+        Authorization: dsa.acess_token()
+        },
+        success: onSuccess ? function (result) {
+        if (result['expired']) {
+            clearCredential();
+            window.location.href = '/login';
+        } else {
+            onSuccess(result);
+        }
         } : null
     });
 
@@ -102,12 +121,16 @@
     dsa.patchForm = function(url, payloads=null, onSuccess=null) {
         $.ajax(ajaxObjForm(url, 'PATCH', payloads, onSuccess));
     };
+
+    dsa.authorize = function(url, payloads=null, onSuccess=null){
+        $.ajax(authorize(url, 'POST', payloads, onSuccess))
+    }
     
     dsa.request = function(url, method, payloads, onSuccess){
         $.ajax({
             url : url,
             type: method,
-            data: JSON.stringify(payloads),
+            data: payloads ? JSON.stringify(payloads) : '',
             contentType: "application/json; charset=utf-8",
             dataType   : "json",
             headers: {
@@ -123,6 +146,26 @@
             }
         });
     } 
+
+    /* Register func */
+    dsa.register = function(payloads, onSuccess) {
+        $.ajax({
+            url : "/auth/register",
+            type: "POST",
+            data: JSON.stringify(payloads),
+            contentType: "application/json; charset=utf-8",
+            dataType   : "json",
+            success    : function(result){
+                console.log(result)
+                const success=result['meta']['success']
+                if (success) {
+                    var data = result['data']
+                    // window.location.href = "/";
+                }
+                onSuccess(success, result);
+            }
+        });
+    };
 
     /* Login func */
     dsa.login = function(payloads, onSuccess) {

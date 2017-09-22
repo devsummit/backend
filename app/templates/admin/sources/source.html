@@ -1,0 +1,103 @@
+{% extends "admin/base/index.html" %} 
+
+{% block title %}<title> Sources </title> {% endblock %} 
+
+{% set globals={'base_route': 'sources', 'api_route': 'sources'} %} 
+
+{% block header_link %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Sources
+    <small>List of Sources</small>
+</h1>
+{% endblock %} 
+
+{% block breadcrumb %}
+<li class="active">Sources List</li>
+{% endblock %} 
+
+{% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+
+    <div class="box-body">
+        <table id="partner-list1" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Account Number</th>
+                    <th>bank</th>
+                    <th>Alias</th>
+                    <th>action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for source in sources %}
+                <tr>
+                    <td>
+                        {{ source.account_number }}</a>
+                    </td>
+                    <td>
+                        {{ source.bank }}
+                    </td>
+                    <td>
+                        {{ source.alias }}
+                    </td>
+                    <td>
+                        <button id='btd-{{ source.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                        <button id='btd-{{ source.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                            </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "admin/base/modal_delete.html" %} 
+    {% include "admin/sources/source_edit.html" %}
+    {% include "admin/sources/source_add.html" %} 
+    {% endblock %} 
+    
+    {% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+
+
+    <!-- page script -->
+    <script>
+        /* Display Sources Detail */
+        $('.btn-edit').click(function (event) {
+            $('.modal-title').html('Edit Current Source');            
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+
+            dsa.get('sources/' + id, function (result) { 
+                const data = result['data'];
+                $('#i-edit-account-number').val(data['account_number']);
+                $('#i-edit-bank').val(data['bank']);
+                $('#i-edit-alias').val(data['alias']);
+                $('#i-hidden-source-id').val(data['id']);
+                $('.btn-source-edit').attr("id", `${data['id']}`);
+            });
+        });            
+
+        $('.btn-add').click(function (event) {
+            $('.modal-title').html('Add New Source');
+        });
+
+        $('.btn-delete').click(function (event) {
+            $('.modal-title').html('Are you sure want to delete this source?');
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            $('.btn-yes').attr("id", id);
+        });
+    </script>
+
+    {% endblock %}
