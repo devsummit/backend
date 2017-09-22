@@ -150,11 +150,12 @@
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
             "role_id": $('#account-input-select-role').find(":selected").val()
-            };
-            
-        if(role!=='admin') {
+        };
+
+        if(role!=='admin' && role!=='partner') {
             payload['includes'] = buildIncludesPayload(role);           
         };        
+
         dsa.post('{{ globals["api_route"] }}', payload, function(result) {            
             if(result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
@@ -172,7 +173,6 @@
         }
         if($('.modal-title').html() === 'EDIT') {
             const id = $(this).attr('id');
-            console.log(id)
             saveEdit(id);
         } else {
             saveAdd();
