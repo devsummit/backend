@@ -19,15 +19,14 @@ class PaymentsSeeder():
         """
         Create 4 Payments seeds
         """
-        orders = db.session.query(Order).all()
-        orders = BaseModel.as_list(orders)
+        
         transaction_statuses = ['capture', 'authorize', 'deny']
         statuses = ['accept', 'challenge', 'deny']
         payment_types = ['bank_transfer', 'credit_card']
         banks = ['bri', 'bni', 'permata', 'maybank', 'mandiri', 'bca', 'cimb']
         range_start = 10 ** (7 - 1)
         range_end = (10 ** 7) - 1
-
+        orders = BaseModel.as_list(db.session.query(Order).all())
         for i in range(0, 4):
             order_id = choice(orders)['id']
             saved_token_id = randint(range_start, range_end)

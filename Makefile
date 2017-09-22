@@ -15,4 +15,4 @@ lint:
 	flake8 --config=flake8.ini .
 
 deps:
-	pip install -r requirements.txt
+	sudo pip install -r requirements.txt
