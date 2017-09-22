@@ -1,5 +1,6 @@
 from app.controllers.base_controller import BaseController
 from app.services import redeemcodeservice
+from flask import request
 
 
 class RedeemCodeController(BaseController):
@@ -15,6 +16,12 @@ class RedeemCodeController(BaseController):
         if redeem_code is None:
             return BaseController.send_error_api(None, 'redeem code not found')
         return BaseController.send_response_api(redeem_code['data'], redeem_code['message'])
+
+    @staticmethod
+    def filter(param):
+        print(param)
+        redeem_codes = redeemcodeservice.filter(param)
+        return BaseController.send_response_api(redeem_codes['data'], redeem_codes['message'])        
 
     @staticmethod
     def create(request):

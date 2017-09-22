@@ -1,0 +1,74 @@
+<div class="modal fade" id="modal-authorize">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="tab-content">
+                    <div class="tab-pane tab1-grant active" id="tab1-grant">
+                        <ul class="list-group list-group-unbordered">
+                            <li style="display:none" class="list-group-item">
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label>Confrim Password</label>
+                                    <input type="hidden" id="username">
+                                    <input type="password" class="form-control confirm-password">
+                                    <input type="hidden" id="title">
+                                    <input type="hidden" id="content">
+                                </select>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary btn-send" id="-"><b>Send</b></a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+<script>
+    /* Build includes payload function */
+    $('.btn-send').click(function(event){
+        const username = $('#username').val();
+        const password = $('.confirm-password').val();
+        const payloads = {  
+            "username": username,
+            "password": password
+        }
+        dsa.authorize('admin/authorize', payloads, function(result){
+            if(result.meta.success){
+                const title = $('#title').val()
+                const content = $('#content').val()
+
+                if(title.trim().length >= 0 && content.trim().length > 0){
+                    const payloads = {
+                        'message': content,
+                        'type': title
+                    }
+                    dsa.post('admin/broadcastnotification', payloads, function(result){
+                        if(result.meta.success){
+                            alert('Notification broadcasted!')
+                            window.location = '/notification'
+                        }
+                    })
+                }else{
+                    alert('Don\t send empty notification to user');
+                }
+            }else{
+                alert('Password didn\t match')
+            }
+        })
+    })
+</script>

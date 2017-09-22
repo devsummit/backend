@@ -1,59 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "admin/base/index.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+{% block header_link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/SpeakerCandidateKanban.css') }}">
+{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/font-awesome/css/font-awesome.min.css') }}">
+{% block content %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/SpeakerCandidateKanban.css') }}">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/AdminLTE.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/skins/skin-yellow.min.css') }}">
-
-    <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.js') }}"></script>
-    <script src="{{ url_for('static', filename='assets/jquery-ui/jquery-ui.js') }}"></script>
-    <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
-
-
-    <title>Speaker Candidates</title>
-</head>
-
-<body>
-    <div id='kanban-board'>
-        <div class='sortable-wrapper'>
-            <div>PROSPECTS</div>
-            <div class='sortable' id="div-prospect" style="border:1px solid gray; min-height: 600px; max-height: 100%">
+<div id='kanban-board'>
+    <div class='sortable-wrapper box box-danger'>
+            <div>
+                <a class="btn box-header bg-red" id="btn-new-propect">
+                    <i class="fa fa-plus-square"></i> NEW PROSPECT
+                </a>
+            </div>
+            <!-- <div class="box-header bg-red">PROSPECTS</div> -->
+            <div class='sortable box box-danger' id="div-prospect" style="border:1px solid #CFC9C9; min-height: 600px; max-height: 100%">
                 {% for candidate in candidates %} 
                 {% if(candidate['stage']=="prospect") %}
-                <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                <div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
                 {% endif %} 
                 {% endfor %}
             </div>
-            <div>
-                <a class="btn btn-success btn-block" id="btn-new-propect">
-                    <i class="fa fa-plus-square"></i> New Prospect
-                </a>
-            </div>
         </div>
-        <div class='sortable-wrapper'>
-            <div>LEADS</div>
-            <div class='sortable' id="div-lead" style="border:1px solid gray; min-height: 600px; max-height: 100%">
+        <div class='sortable-wrapper box box-warning'>
+            <div class="box-header bg-yellow">LEADS</div>
+            <div class='sortable' id="div-lead" style="border:1px solid #CFC9C9; min-height: 600px; max-height: 100%">
                 {% for candidate in candidates %} {% if(candidate['stage']=="lead") %}
-                <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                <div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
                 {% endif %} {% endfor %}
             </div>
         </div>
-        <div class='sortable-wrapper' draggable= false>
-            <div>OFFICIALS</div>
-            <div class='sortable' id="div-official" style="border:1px solid gray; min-height: 600px; max-height: 100%">
+        <div class='sortable-wrapper box box-success' draggable= false>
+            <div class="box-header bg-green">OFFICIALS</div>
+            <div class='sortable' id="div-official" style="border:1px solid #CFC9C9; min-height: 600px; max-height: 100%">
                 {% for candidate in candidates %} 
                 {% if(candidate['stage']=="official") %}
-                <div class='ui-state-default candidate-item' id='cnd-{{ candidate["id"] }}' draggable= false>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                <div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-{{ candidate["id"] }}' draggable= false>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
                 {% endif %} 
                 {% endfor %}
             </div>
@@ -65,8 +47,10 @@
 
     {% include "admin/speakers/speaker_candidate_modal.html" ignore missing %}
 
-    <!-- Bootstrap 3.3.7 -->
-    <script src="{{ url_for('static', filename='assets/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+{% endblock %}
+
+{% block footer_link %}
 
     <script>
         const updateCandidate = function (id, payload, callback) {
@@ -76,6 +60,20 @@
                 } else {
                     callback(result);
                 }
+            });
+        }
+
+        const updateCandidateStage = function(candidateID, candidate, fromStage, payloadStage) {
+            var stageName = payloadStage['stage'];
+            updateCandidate(candidateID, payloadStage, function (result) {
+                //display logs tab
+                var new_log = defineNewLog(fromStage, stageName);
+                $('#log-message').val(new_log);
+                bindDataToModal('info', candidate);
+                showLogs(candidateID, function (result) {
+                    renderLogs(result['data']);
+                });
+                showModalTab('tab2-input');
             });
         }
 
@@ -110,10 +108,12 @@
             $(".tab1-input").removeClass('active');
             $(".tab2-input").removeClass('active');
             $("." + tabClass).addClass('active');
-            if (tabClass == "tab2-input") {
+            if (tabClass === "tab2-input") {
                 $("#btn-modal-save1").css('display', 'none');
+                $("#alert-modal-candidate").css('display', 'none');
             } else {
                 $("#btn-modal-save1").css('display', '');
+                $("#alert-modal-candidate").css('display', '');
             }
             $("#btn-show-modal").click();
         }
@@ -131,6 +131,42 @@
         const clearModalInput = function () {
             $('.input-active').val("");
             $('#log-message').val("");
+        }
+
+        const modalFormValidation = function () {
+            var OK = true;
+            $('.form-group').removeClass('has-error');
+            $('.alert-modal-candidate').removeClass('alert-info');
+            $('.alert-modal-candidate').removeClass('alert-danger');
+            $('.alert-modal-candidate').removeClass('alert-success');
+
+            var v1 = ($('#data-first_name').val()!==""),
+                v2 = ($('#data-last_name').val()!==""),
+                v3 = ($('#data-email').val()!=="");
+            if (!v1) {
+                $('.div-first_name').addClass('has-error');
+                OK = false;
+            }
+            if (!v2) {
+                $('.div-last_name').addClass('has-error');
+                OK = false;
+            }
+            if (!v3) {
+                $('.div-email').addClass('has-error');
+                OK = false;
+            }
+            if(!OK){
+                $('.alert-modal-candidate').addClass('alert-danger');
+                $('.alert-modal-candidate').html('There is required field that empty');
+            }
+            return OK;
+        }
+        
+        const resetAlertInfo = function() {
+            $('.alert-modal-candidate').removeClass('alert-danger');
+            $('.alert-modal-candidate').removeClass('alert-success');
+            $('.alert-modal-candidate').addClass('alert-info');
+            $('.alert-modal-candidate').html('Please fill the information of the Candidate');
         }
 
         const getPayloadFromInputModal = function () {
@@ -156,6 +192,27 @@
             })
         }
 
+        const registerUserAsSpeaker =  function(payload, onSuccess, onError) {
+            dsa.register(payload.data, function (stat, res) {
+                if (stat && res.meta.success) {
+                    var speakerPayload = {
+                        "role_id": '4'
+                    };
+                    speakerPayload['includes'] = payload.includes; 
+                    speakerPayload['includes']['name'] = 'Speaker';
+                    dsa.patch('grantrole/' + res.data.id, speakerPayload, function (result) {
+                        if (result.meta.success) {
+                            onSuccess(result);
+                        } else {
+                            onError(result.meta.message);
+                        }
+                    });
+                } else {
+                    onError(result.meta.message);
+                }
+            });
+        }
+
         $(function () {
             var boardWidth = $('#kanban-board').width();
             var $columns = $('.sortable-wrapper');
@@ -174,56 +231,49 @@
                 cursor: 'move'
             })
                 .disableSelection();
+
             $(".sortable").droppable({
                 drop: function (event, ui) {
                     var stageName = $(this)[0].getAttribute("id").replace('div-', '');
                     var candidateID = ui["draggable"][0].getAttribute("id").replace('cnd-', '');
                     sessionStorage.setItem('candidate_id', candidateID);
-                    var payload = {
+                    var payloadStage = {
                         stage: stageName
                     }
                     showCandidate(candidateID, function (result) {
                         if (result['meta']['success']) {
                             var candidate = result['data'];
                             var fromStage = result['data']['stage'];
-                            if(fromStage != 'official') {
-                                updateCandidate(candidateID, payload, function (result) {
-                                    if (result.meta.success && result['data']['stage'] == "official") {
-                                        const data = {
-                                            "first_name": result.data.first_name,
-                                            "last_name": result.data.last_name,
-                                            "username": emailUsername(result.data.email),
-                                            "password": emailUsername(result.data.email),
-                                            "email": result.data.email
-                                        }
-                                        dsa.register(data, function (stat, res) {
-                                            if (stat && res.meta.success) {
-                                                var payload = {
-                                                    "role_id": '4'
-                                                };
-                                                payload['includes'] = {
-                                                    name: 'Speaker',
-                                                    job: result.data.job || "",
-                                                    summary: result.data.summary || "",
-                                                    information: result.data.information || ""
-                                                }
-                                                dsa.patch('grantrole/' + res.data.id, payload, function (result) {
-                                                    if (result.meta.success) {
-                                                        
-                                                    }
-                                                });
-                                            }
-                                        });
+                            if(fromStage !== 'official') {
+                                if(stageName==='official') {
+                                    var payloadUser = {}
+                                    payloadUser['data'] = {
+                                        "first_name": candidate.first_name,
+                                        "last_name": candidate.last_name,
+                                        "username": emailUsername(candidate.email),
+                                        "password": emailUsername(candidate.email),
+                                        "email": candidate.email
                                     }
-                                    //display logs tab
-                                    var new_log = defineNewLog(fromStage, stageName);
-                                    $('#log-message').val(new_log);
-                                    bindDataToModal('info', candidate);
-                                    showLogs(candidateID, function (result) {
-                                        renderLogs(result['data']);
-                                    });
-                                    showModalTab('tab2-input');
-                                });
+                                    payloadUser['includes'] = {
+                                        job: candidate.job || "",
+                                        summary: candidate.summary || "",
+                                        information: candidate.information || ""
+                                    }
+                                    registerUserAsSpeaker(payloadUser,
+                                        //onSuccess
+                                        function(result) {
+                                            // we can do something for result, but we just need to update stage
+                                            updateCandidateStage(candidateID, candidate, fromStage, payloadStage);    
+                                        },
+                                        //onError
+                                        function(error) {
+                                            alert('something going wrong: ' + error);
+                                        }
+                                    );
+                                } else {
+                                    updateCandidateStage(candidateID, candidate, fromStage, payloadStage);
+                                }
+                                
                             } else {
                                 location.reload()
                             }
@@ -235,7 +285,11 @@
 
             /* Generate username from email */
             function emailUsername(emailAddress) {
-                return emailAddress.match(/^(.+)@/)[1];
+                var chunk = emailAddress.match(/^(.+)@/); 
+                if (!chunk) {
+                    return "speaker" + sessionStorage.getItem('candidate_id');
+                }
+                return chunk[1];
             }
 
             /* Candidate Click */
@@ -255,6 +309,7 @@
                         renderLogs(result['data']);
                     })
                     // display information tab
+                    resetAlertInfo();
                     showModalTab('tab1-input');
                 });
             });
@@ -271,23 +326,31 @@
 
             /* btn-modal-save1 click */
             $('#btn-modal-save1').click(function () {
+                if (!modalFormValidation()) {
+                    return;
+                }
                 var data = getPayloadFromInputModal();
                 var candidateID = sessionStorage.getItem('candidate_id');
                 if (candidateID) {
                     updateCandidate(candidateID, data, function (result) {
                         var new_name = [result['data']['first_name'], result['data']['last_name']].join(' ');
                         $('#cnd-' + candidateID).html(new_name);
-                    })
+                        $('.alert-modal-candidate').addClass('alert-success');
+                        $('.alert-modal-candidate').html('Candidate information updated');
+                    });
                 } else {
                     data['stage'] = "prospect";
                     createCandidate(data, function (result) {
                         if (result['meta']['success']) {
                             var new_name = [result['data']['first_name'], result['data']['last_name']].join(' ');
                             var new_id = result['data']['id'];
-                            var new_candidate_item = `<div class='ui-state-default candidate-item' id='cnd-${new_id}'> ${new_name} </div>`
+                            var new_candidate_item = `<div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-${new_id}'>  ${new_name} </div>`;
                             $('#div-prospect').append(new_candidate_item);
+                            $('.alert-modal-candidate').addClass('alert-success');
+                            $('.alert-modal-candidate').html('New Candidate has been added');
+                            clearModalInput();
                         }
-                    })
+                    });
                 }
             });
 
@@ -297,6 +360,7 @@
                 sessionStorage.removeItem('candidate_id');
                 clearModalInput();
                 $('#data-stage').val('prospect');
+                resetAlertInfo();
                 showModalTab('tab1-input');
             });
 
@@ -317,6 +381,5 @@
             })
         });
     </script>
-</body>
 
-</html>
+    {% endblock %}
