@@ -49,7 +49,7 @@
                         <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
-                        <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-grant" data-toggle="modal" data-target="#modal-grant">
+                        <button id='btd-{{ account.id }}' value='role-{{ account.role_id }}' type="button" class="btn btn-sm btn-info btn-grant" data-toggle="modal" data-target="#modal-grant">
                                 Grant
                             </button>
                     </td>
@@ -69,7 +69,7 @@
         /* check if not user, button will disabled */
         $(document).ready(function(){
            $('.btn-grant').each(function(index, value){
-               if(this.id !== "btd-7"){
+               if($(this).val() !== "role-7"){
                     $(this).prop('disabled', true)   
                }
            })     
