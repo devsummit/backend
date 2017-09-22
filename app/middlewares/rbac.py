@@ -9,8 +9,7 @@ PREVILLEGES = {
     8:
     [
         "/partners",
-        "/sponsors",
-        "/changepassword",
+        "/password",
     ]
 }
 
