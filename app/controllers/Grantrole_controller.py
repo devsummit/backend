@@ -33,7 +33,7 @@ class GrantroleController(BaseController):
             stage_id = request.json['includes']['stage_id'] if 'stage_id' in request.json['includes'] else None
             points = request.json['includes']['points'] if 'points' in request.json['includes'] else None
             summary = request.json['includes']['summary'] if 'summary' in request.json['includes'] else None
-            if stage_id and points and summary:
+            if points and summary:
                 payloads = {
                     'user_id': user_id,
                     'stage_id': stage_id,
