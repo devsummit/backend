@@ -30,7 +30,6 @@
                             </li>
                         </ul>
                         <a href="#" class="btn btn-primary btn-block btn-source-save" id="-"><b>Save</b></a>
-
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -50,7 +49,7 @@
     $('.btn-source-save').click(function (event) {
         const account_number = $('#i-account-number').val()
         if (account_number == null || account_number == "" || account_number == 0){
-            alert('must be number dont use - key')
+            alert('Please only input numbers in account column')
         }
         const bank = $('#i-bank').val()
         const alias = $('#i-alias').val()
