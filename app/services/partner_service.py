@@ -14,6 +14,7 @@ class PartnerService(BaseService):
 
 	def __init__(self, perpage):
 		self.perpage = perpage
+		self.temp_image = 'images/partners/empty-profile-grey.jpg'
 
 	def get(self, request):
 		self.total_items = Partner.query.count()
@@ -28,9 +29,10 @@ class PartnerService(BaseService):
 		paginate = super().transform()
 		for item in paginate['data']:
 			if item['photo']:
+				item['photo']= Helper().url_helper(item['photo'], current_app.config['GET_DEST'])
 				continue
 			else:
-				item['photo']='images/partners/empty-profile-grey.jpg'
+				item['photo']=Helper().url_helper(self.temp_image, current_app.config['GET_DEST'])
 				continue		 	
 		response = ResponseBuilder()
 		return response.set_data(paginate['data']).set_links(paginate['links']).build()
