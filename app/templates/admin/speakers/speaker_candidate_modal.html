@@ -16,31 +16,33 @@
                 <div class="tab-content">
                     <div class="tab-pane tab1-input active" id="tab1-input">
                             <ul class="list-group list-group-unbordered">
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="data-first_name">First Name:</label>
-                                        <input type="text" name="first_name" class="form-control input-active data-first_name" id="data-first_name">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="data-last_name">Last Name:</label>
-                                        <input type="text" name="last_name" class="form-control input-active data-last_name" id="data-last_name">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="data-email">Email:</label>
-                                        <input type="text" name="email" class="form-control input-active data-email" id="data-email">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="data-job">Job:</label>
-                                        <input type="text" name="job" class="form-control input-active data-job" id="data-job">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="data-summary">Summary:</label>
-                                        <input type="text" name="summary" class="form-control input-active data-summary" id="data-summary">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="data-stage">Stage:</label>
-                                        <input type="text" name="stage" class="form-control data-stage" id="data-stage" disabled>
-                                    </div>
+                                <li class="list-group-item"></li>
+                                    <form>
+                                        <div class="form-group div-first_name">
+                                            <label for="data-first_name">First Name:</label>
+                                            <input type="text" required="true" name="first_name" class="form-control input-active data-first_name" id="data-first_name">
+                                        </div>
+                                        <div class="form-group div-last_name">
+                                            <label for="data-last_name">Last Name:</label>
+                                            <input type="text" required="true" name="last_name" class="form-control input-active data-last_name" id="data-last_name">
+                                        </div>
+                                        <div class="form-group div-email">
+                                            <label for="data-email">Email:</label>
+                                            <input type="text" required="true" name="email" class="form-control input-active data-email" id="data-email">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="data-job">Job:</label>
+                                            <input type="text" name="job" class="form-control input-active data-job" id="data-job">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="data-summary">Summary:</label>
+                                            <input type="text" name="summary" class="form-control input-active data-summary" id="data-summary">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="data-stage">Stage:</label>
+                                            <input type="text" name="stage" class="form-control data-stage" id="data-stage" disabled>
+                                        </div>
+                                    </form>
                                 </li>
                             </ul>
                     </div>
@@ -64,7 +66,8 @@
                 </div>
                 
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="margin-top: -30px">
+                <div class="alert alert-modal-candidate alert-info" id="alert-modal-candidate" role="alert" style="height: 30px;">Please fill the information of the Candidate</div>
                 <button type="button" class="btn btn-default pull-left" id="btn-modal-close1" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="btn-modal-save1">Save changes</button>
             </div>
