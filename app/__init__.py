@@ -12,6 +12,7 @@ from app.configs.constants import SPONSOR_STAGES
 
 # db instance
 from app.models import db
+from app.models import mail
 
 
 def create_app(configuration):
@@ -22,7 +23,8 @@ def create_app(configuration):
 
     # database
     db.init_app(app)
-
+    # email client
+    mail.init_app(app)
     # register blueprints
     app.register_blueprint(main)
     app.register_blueprint(api, url_prefix=app.config['API_BASE_URL'])
