@@ -199,7 +199,19 @@
 
     /* isLogin func */
     dsa.isLogin = function() {
-        return (!!dsa.acess_token())
+        return(!!dsa.acess_token())
+    }
+
+    /* initialize */
+    dsa.initialize = function() {
+        param = window.location.href.split("/")[3];
+        if(param && (param !== "not-found")) {
+            dsa.request('/init/'+param, 'POST', null, function(result){
+                if(!result) {
+                    window.location.href="/not-found";
+                }
+            })
+        }
     }
 
     /* get user data */

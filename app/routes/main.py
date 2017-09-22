@@ -1,13 +1,24 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, redirect
 from app.controllers.main_controller import MainController
 from app.services.helper import Helper
+from app.middlewares.rbac import get_previllege
 
 
 main = Blueprint('main', __name__)
 
 
+@main.route('/init/<param>', methods=["POST"])
+@get_previllege
+def init(param, *args, **kwargs):
+    accessible = jsonify(kwargs['accessible'])
+    return accessible
+
+@main.route('/not-found')
+def not_found():
+    return render_template("admin/base/404.html")
+
 @main.route('/')
-def index():
+def index(*args, **kwargs):
     return MainController.index()
 
 

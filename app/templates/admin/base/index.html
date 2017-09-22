@@ -47,6 +47,9 @@
         
         // check if user is login when enter this page
         // use dsa client from auth.js
+        
+        var init = dsa.initialize();
+        
         if (!dsa.isLogin()) {
           window.location.href = '/login';
         }

@@ -16,9 +16,11 @@ from app.services import sponsorservice
 from app.services import rundownlistservice
 from app.services import redeemcodeservice
 from app.services import speakercandidateservice
+from app.models.user import User
 
 
 class MainController(BaseController):
+
     def index():
         return render_template('admin/base/index.html')
 
