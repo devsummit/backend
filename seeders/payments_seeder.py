@@ -19,7 +19,7 @@ class PaymentsSeeder():
         """
         Create 4 Payments seeds
         """
-
+        
         transaction_statuses = ['capture', 'authorize', 'deny']
         statuses = ['accept', 'challenge', 'deny']
         payment_types = ['bank_transfer', 'credit_card']
