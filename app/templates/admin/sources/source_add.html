@@ -1,0 +1,70 @@
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-account-number">Account Number:</label>
+                                    <input type="number" class="form-control" id="i-account-number">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-bank">Bank:</label>
+                                    <input type="text" class="form-control" id="i-bank">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-alias">Alias:</label>
+                                    <input type="text" class="form-control" id="i-alias">
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-source-save" id="-"><b>Save</b></a>
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+
+    $('.btn-source-save').click(function (event) {
+        const account_number = $('#i-account-number').val()
+        if (account_number == null || account_number == "" || account_number == 0){
+            alert('must be number dont use - key')
+        }
+        const bank = $('#i-bank').val()
+        const alias = $('#i-alias').val()
+
+        const payloads = {
+            'account_number': account_number,
+            'bank': bank,
+            'alias': alias
+        }
+        dsa.post('sources', payloads, function (result) {
+            if (result.meta.success) {
+                window.location = "/sources";
+            }
+        });
+    });
+
+</script>

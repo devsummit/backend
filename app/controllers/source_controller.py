@@ -28,7 +28,7 @@ class SourceController(BaseController):
             return BaseController.send_error_api(None, 'field is not complete')
 
         if not result['error']:
-            return BaseController.send_error_api(result['data'], 'source succesfully created', result['included'])
+            return BaseController.send_response_api(result['data'], 'source succesfully created', result['included'])
         else:
             return BaseController.send_error_api(None, result['data'])
 
