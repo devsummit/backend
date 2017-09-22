@@ -32,6 +32,7 @@
                     <th>Job</th>
                     <th>Summary</th>
                     <th>Information</th>
+                    <th>Type</th>                    
                     <th></th>
                 </tr>
                 </thead>
@@ -39,16 +40,19 @@
                     {% for speaker in speakers %}
                     <tr>
                         <td>
-                            {{ speaker.user.first_name }} {{ speaker.user.last_name }}
+                            {{ speaker.user.first_name|e }} {{ speaker.user.last_name|e }}
                         </td>
                         <td>
-                            {{ speaker.job }}
+                            {{ speaker.job|e }}
                         </td>
                         <td>
-                            {{ speaker.summary }}
+                            {{ speaker.summary|e }}
                         </td>
                         <td>
-                            {{ speaker.information }}
+                            {{ speaker.information|e }}
+                        </td>
+                        <td>
+                            {{ speaker.type|e }}
                         </td>
                         <td class="text-center">
                             <button id='bte-{{ speaker.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
