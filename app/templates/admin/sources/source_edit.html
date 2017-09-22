@@ -1,0 +1,75 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <form action="#" id="edit-form">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <input type="hidden" id="i-hidden-source-id">
+                                        <label for="i-account-number">Account Number:</label>
+                                        <input type="number" class="form-control" id="i-edit-account-number">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="i-bank">Bank:</label>
+                                        <input type="text" class="form-control" id="i-edit-bank">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="i-alias">Alias:</label>
+                                        <input type="text" class="form-control" id="i-edit-alias">
+                                    </div>
+                                </li>
+                            </ul>                        
+                            <input type="submit" class="btn btn-primary btn-block btn-save btn-source-edit" id="-" value="Save">
+                        </form>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+$(document).ready(function () {
+    $('#edit-form').on('submit', function (e) {
+        e.preventDefault();
+        const source_id = $('#i-hidden-source-id').val();
+        var account_number = $('#i-edit-account-number').val();
+        if (account_number == null || account_number == "" || account_number == 0){
+            alert('Please only input numbers in account column')
+        }
+        var bank = $('#i-edit-bank').val()
+        var alias = $('#i-edit-alias').val()
+
+        var payloads = {
+            'account_number': account_number,
+            'bank': bank,
+            'alias': alias
+        }
+        dsa.patch('sources/' + source_id, payloads, function (result) {
+            if (result.meta.success) {
+                window.location = "/sources";
+            }
+        });
+    });
+});
+
+</script>
