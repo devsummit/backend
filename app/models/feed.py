@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 from app.models.base_model import BaseModel
 from app.models import db
 
@@ -22,5 +22,5 @@ class Feed(db.Model, BaseModel):
 	updated_at = db.Column(db.DateTime)
 
 	def __init__(self):
-		self.created_at = datetime.datetime.now()
-		self.updated_at = datetime.datetime.now()
+		self.created_at = datetime.now() + timedelta(hours=7) 
+		self.updated_at = datetime.now() + timedelta(hours=7)
