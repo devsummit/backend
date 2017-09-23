@@ -15,9 +15,11 @@ class FeedService(BaseService):
 	def __init__(self, perpage):
 		self.perpage = perpage
 
-	def get(self, request):
+	def get(self, request, page):
 		self.total_items = Feed.query.count()
-		if request.args.get('page'):
+		print(self.total_items, 'total')
+		print(page)
+		if page is not None:
 			self.page = request.args.get('page')
 		else:
 			self.perpage = self.total_items

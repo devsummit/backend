@@ -745,6 +745,8 @@ def feeds_id(id, *args, **kwargs):
 def feeds(*args, **kwargs):
     user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
+        if request.args.get('page'):
+            return FeedController.index(request, page=request.args.get('page'))
         return FeedController.index(request)
     else:
         data = FeedController.create(request, user['id'])

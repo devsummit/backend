@@ -5,8 +5,8 @@ from app.services import feedservice
 class FeedController(BaseController):
 
 	@staticmethod
-	def index(request):
-		feeds = feedservice.get(request)
+	def index(request, page=None):
+		feeds = feedservice.get(request, page=page)
 		return BaseController.send_response_api(feeds['data'], feeds['message'], {}, feeds['links'])
 
 	@staticmethod
