@@ -7,6 +7,7 @@ from app.builders.response_builder import ResponseBuilder
 from app.models.user import User
 from app.models.attendee import Attendee
 from app.models.booth import Booth
+from app.models.user_booth import UserBooth
 from app.models.speaker import Speaker
 from app.models.ambassador import Ambassador
 from app.models.base_model import BaseModel
@@ -44,6 +45,11 @@ class GrantroleService():
 
     def add_booth(self, payloads):
         response = ResponseBuilder()
+        booth_exists = db.session.query(db.exists().where(Booth.user_id == payloads['user_id'])).scalar()
+
+        if booth_exists:
+            return response.set_data(payloads).build()
+
         self.booth = Booth()
         self.booth.user_id = payloads['user_id']
         self.booth.stage_id = payloads['stage_id']
@@ -53,6 +59,13 @@ class GrantroleService():
         try:
             db.session.commit()
             data = self.booth.as_dict()
+
+            user_booth = UserBooth()
+            user_booth.user_id = data['user_id']
+            user_booth.booth_id = data['id']
+            db.session.add(user_booth)
+            db.session.commit()
+
             return response.set_data(data).build()
         except SQLAlchemyError as e:
             data = e.orig.args
