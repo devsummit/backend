@@ -91,9 +91,11 @@
                 break;
             case 'booth':
                 var points = $('#booth-points').val();
+                const stage_id = $('#booth-stageid').val() > 0 ? parseInt($('#booth-stageid').val()) : null
+
                 payload = {
                     name: 'Booth',
-                    stage_id: $('#booth-stageid').val(),
+                    stage_id: stage_id,
                     points: points ? points : 0,
                     summary: $('#booth-summary').val()
                 }
@@ -211,7 +213,7 @@
 
                 let option = document.createElement('option');
                 option.innerHTML = 'No stage';
-                option.value = null;
+                option.value = -1;
                 select.append(option);
 
                 stages.map(function (stage) {
