@@ -263,7 +263,6 @@
       <!-- Sidebar Menu -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MENUS</li>
-        
         <!-- Dashboard -->
         <li class="active">
           <a href="#">
@@ -272,20 +271,20 @@
         </li>
 
         <!-- User -->
-        <li class="treeview">
+        <li class="treeview account-menu">
           <a href="#"><i class="fa fa-user"></i> <span>Accounts</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="/accounts">Accounts Management</a></li>
-            <li><a href="/redeemcodes">Redeem Codes Management</a></li>            
-            <li><a href="/booths">Booths</a></li>
-            <li><a href="/speaker-candidates">Speaker Candidate Kanban</a></li>
-            <li><a href="/speakers">Speakers</a></li>
-            <li><a href="/attendees">Attendees</a></li>
-            <li><a href="/password">Change Password</a></li>
+            <li class="account-management-menu"><a href="/accounts">Accounts Management</a></li>
+            <li class="redeemcode-menu"><a href="/redeemcodes">Redeem Codes Management</a></li>            
+            <li class="booth-menu"><a href="/booths">Booths</a></li>
+            <li class="speaker-candidate-kanban-menu"><a href="/speaker-candidates">Speaker Candidate Kanban</a></li>
+            <li class="speaker-menu"><a href="/speakers">Speakers</a></li>
+            <li class="attendee-menu"><a href="/attendees">Attendees</a></li>
+            <li class="changepassword-menu"><a href="/password">Change Password</a></li>
           </ul>
           <ul class="treeview-menu">
             <li><a href="/account-profile">Profile</a></li>
@@ -293,7 +292,7 @@
         </li>
 
         <!-- Payments -->
-        <li class="treeview">
+        <li class="treeview finance-menu">
           <a href="#"><i class="fa fa-money"></i> <span>Finance</span>
              <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
@@ -309,7 +308,7 @@
         </li>
 
         <!-- Ticket -->
-        <li class="treeview">
+        <li class="treeview ticket-menu">
           <a href="#"><i class="fa fa-ticket"></i> <span>Tickets</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
@@ -321,7 +320,7 @@
         </li>
 
         <!-- Referals -->
-        <li class="treeview">
+        <li class="treeview referal-menu">
           <a href="#"><i class="fa fa-user-circle-o"></i> <span>Referals</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
@@ -333,7 +332,7 @@
         </li>
 
         <!-- Events -->
-        <li class="treeview">
+        <li class="treeview event-menu">
           <a href="#"><i class="fa fa-calendar"></i> <span>Events</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
@@ -349,27 +348,27 @@
         </li>
 
         <!-- Partners -->
-        <li class="treeview">
+        <li class="treeview partner-menu">
           <a href="#"><i class="fa fa-id-card"></i> <span>Partnership</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="/partners">Partners</a></li>
-            <li><a href="/sponsors">Sponsors</a></li>
-            <li><a href="/speaker-candidates">Speaker Candidates</a></li>
+            <li class="partner-menu"><a href="/partners">Partners</a></li>
+            <li class="sponsor-menu"><a href="/sponsors">Sponsors</a></li>
+            <li class="speaker-candidate-menu"><a href="/speaker-candidates">Speaker Candidates</a></li>
           </ul>
         </li>
 
         <!-- Partners -->
-        <li class="treeview">
+        <li class="treeview communication-menu">
           <a href="#"><i class="fa fa-id-card"></i> <span>Communication</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu">
+          <ul class="treeview-menu notification-menu">
             <li><a href="/notification">Notification</a></li>
             <li><a href="/post">Post Feeds</a></li>
           </ul>
@@ -532,7 +531,22 @@
     $('.userNameLabel').html(user['username']);
     $('.completeNameLabel').html(`${user['first_name']} ${user['last_name']}`);
     $('.userCreatedAtLabel').html(`Registered since ${user['created_at']}`);
-    
+    if (user.role_id == 8) {
+      $('.speaker-menu').hide();
+      $('.redeemcode-menu').hide();
+      $('.attendee-menu').hide();
+      $('.speaker-candidate-menu').hide();
+      $('.speaker-candidate-kanban-menu').hide();
+      $('.sponsor-menu').hide();
+      $('.booth-menu').hide();
+      $('.account-management-menu').hide();
+      $('.notification-menu').hide();
+      $('.communication-menu').hide();
+      $('.ticket-menu').hide();
+      $('.referal-menu').hide();
+      $('.event-menu').hide();
+      $('.finance-menu').hide();
+    }
   });
 </script>
 
