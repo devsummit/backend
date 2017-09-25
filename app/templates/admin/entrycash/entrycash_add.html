@@ -20,7 +20,11 @@
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-entry-cash-amount">Source Id:</label>
-                                    <input type="text" class="form-control" id="i-entry-cash-source-id">
+                                    <select class="form-control" id="i-entry-cash-source-id">
+                                        {% for source in sources %}
+                                            <option id="source-id-{{ source.id }}" value={{ source.id }}>{{ source.id }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </li>
                             <li class="list-group-item">
