@@ -17,12 +17,10 @@ class FeedService(BaseService):
 
 	def get(self, request, page):
 		self.total_items = Feed.query.count()
-		print(self.total_items, 'total')
-		print(page)
 		if page is not None:
 			self.page = request.args.get('page')
 		else:
-			self.perpage = self.total_items
+			self.perpage = 10
 			self.page = 1
 		self.base_url = request.base_url
         # paginate
