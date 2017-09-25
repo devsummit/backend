@@ -29,6 +29,7 @@ class UserController(BaseController):
         email = request.json['email'] if 'email' in request.json else None
         username = request.json['username'] if 'username' in request.json else None
         role_id = request.json['role_id'] if 'role_id' in request.json else None
+        role = request.json['role'] if 'role' in request.json else None
         includes = request.json['includes'] if 'includes' in request.json else None
         if first_name and last_name and email and username and role_id:
             payloads = {
@@ -37,6 +38,7 @@ class UserController(BaseController):
                 'email': email,
                 'username': username,
                 'role_id': role_id,
+                'role': role,
                 'includes': includes
             }
         else:
@@ -65,18 +67,17 @@ class UserController(BaseController):
                 'email': email,
                 'username': username,
                 'role_id': role_id,
-                'includes': includes                
+                'includes': includes
             }
         else:
             return BaseController.send_error_api(None, 'field is not complete')
 
         result = userservice.add(payloads)
 
-        if not result['error']:            
+        if not result['error']:
             return BaseController.send_response_api(result['data'], 'user succesfully added')
         else:
             return BaseController.send_error_api(None, result['data'])
-
 
     @staticmethod
     def redeemcode(request, user):
