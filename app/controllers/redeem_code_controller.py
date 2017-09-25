@@ -47,12 +47,9 @@ class RedeemCodeController(BaseController):
     @staticmethod
     def update(request, user):
         code = request.json['code'] if 'code' in request.json else None
-
         if code is None:
             return BaseController.send_error_api(None, 'field is not complete')
-
         result = redeemcodeservice.update(code, user)
-
         if not result['error']:
             return BaseController.send_response_api(result['data'], result['message'])
         else:
