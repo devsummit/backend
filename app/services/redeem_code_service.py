@@ -102,6 +102,8 @@ class RedeemCodeService():
         if raw_redeem_code.first() is None:
             return response.set_data(None).set_error(True).set_message('code not found').build()
         redeem_code = raw_redeem_code.first().as_dict()
+        if raw_user.first() is None:
+            return response.set_data(None).set_error(True).set_message('user not found').build()
         if redeem_code['used'] == 1:
             return response.set_data(None).set_error(True).set_message('code already used').build()
 
