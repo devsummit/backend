@@ -395,7 +395,7 @@ class UserService(BaseService):
 			data = self.model_user.first().as_dict()
 
 			# apply includes data
-			if 'admin' not in payloads.values() and 'user' not in payloads.values():
+			if '1' not in payloads.values() and '7' not in payloads.values():
 				includes = payloads['includes']
 				self.editIncludes(includes)
 
