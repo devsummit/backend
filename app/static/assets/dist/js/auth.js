@@ -73,7 +73,11 @@
 
     function storeCredential(data){
       Object.keys(data).map((key)=>{
-        localStorage.setItem(baseStorage+'-'+key, data[key]);
+        if(key == "photos"){
+            localStorage.setItem("photos", data[key][0].url)
+        }else{
+            localStorage.setItem(baseStorage + '-' + key, data[key]);
+        }
       })
     }
 
@@ -184,7 +188,7 @@
                     //store user data
                     data = result['included'];
                     storeCredential(data);
-                    window.location.href = "/";
+                     window.location.href = "/";
                 }
                 onSuccess(success, result);
             }
@@ -224,6 +228,7 @@
             user.role_id = localStorage[baseStorage+'-role_id'];
             user.id = localStorage[baseStorage+'-id'];
             user.avatar = localStorage[baseStorage+'-url'];
+            user.photo = localStorage['photos']
             user.email = localStorage[baseStorage+'-email'];
             user.created_at = localStorage[baseStorage+'-created_at'];
         }

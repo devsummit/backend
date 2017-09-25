@@ -370,7 +370,7 @@ def transfer_points_log(*args, **kwargs):
 # User Photo api
 
 
-@api.route('/user/photo', methods=['GET', 'POST', 'DELETE'])
+@api.route('/user/photo/<id>', methods=['GET', 'POST', 'DELETE'])
 @token_required
 def user_photo(*args, **kwargs):
     user_id = kwargs['user'].id
