@@ -2,6 +2,7 @@ import datetime
 
 from app.models import db
 from app.models.base_model import BaseModel
+import secrets  # noqa
 
 
 class UserTicket(db.Model, BaseModel):
@@ -31,3 +32,8 @@ class UserTicket(db.Model, BaseModel):
 	def __init__(self):
 		self.created_at = datetime.datetime.now()
 		self.updated_at = datetime.datetime.now()
+		# codes = [r.code for r in db.session.query(UserTicket.ticket_code).all()]
+		# code = secrets.token_hex(6)
+		# while (code in codes):
+		# 	code = secrets.token_hex(6)
+		# self.ticket_code = code
