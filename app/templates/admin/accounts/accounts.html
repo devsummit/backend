@@ -127,14 +127,43 @@
                         $('#attendee-points').val(current_account['attendee']['points']);
                         break;
                     case 3:
-                        $('#booth-stageid').val(current_account['booth']['stage_id']);
                         $('#booth-points').val(current_account['booth']['points']);
                         $('#booth-summary').val(current_account['booth']['summary']);
+
+                        var selectStages = $(".booth-stage-id");
+                        selectStages.find('option').remove();
+
+                        dsa.get('stages', function(result){
+                        var stages = result['data'];
+
+                        stages.map(function (stage) {
+                            // add to select
+                            var option = document.createElement('option');
+                            option.innerHTML = capitalizeFirstLetter(stage.name);
+                            option.value = stage.id;
+
+                            $(".booth-stage-id").append(option);
+                        })
+                    })
+                        
                         break;
                     case 4:
                         $('#speaker-job').val(current_account['speaker']['job']);
                         $('#speaker-summary').val(current_account['speaker']['summary']);
                         $('#speaker-information').val(current_account['speaker']['information']);
+                        
+                        let select = $(".speaker-types-edit");
+                        select.find('option').remove();
+                        SPEAKER_TYPES.map(function (type) {
+                            // add to select
+                            let option = document.createElement('option');
+                            option.innerHTML = capitalizeFirstLetter(type);
+                            option.value = type;
+                            if (type === 'keynote') {
+                                option.selected = true;
+                            }
+                            $(".speaker-types-edit").append(option);
+                        });
                         break;
                     case 5:
                         $('#ambassador-informations').val(current_account['ambassador']['informations']);
