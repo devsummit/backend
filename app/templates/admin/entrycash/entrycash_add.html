@@ -19,8 +19,12 @@
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="i-entry-cash-amount">Source Id:</label>
-                                    <input type="text" class="form-control" id="i-entry-cash-source-id">
+                                    <label for="i-entry-cash-amount">Source:</label>
+                                    <select class="form-control" id="i-entry-cash-source-id">
+                                        {% for source in sources %}
+                                            <option id="source-id-{{ source.id }}" value={{ source.id }}>{{ source.bank }}({{ source.account_number }})|{{ source.alias }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </li>
                             <li class="list-group-item">
