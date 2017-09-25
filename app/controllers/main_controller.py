@@ -17,13 +17,24 @@ from app.services import rundownlistservice
 from app.services import redeemcodeservice
 from app.services import speakercandidateservice
 from app.services import sourceservice
+from app.services import overviewservice
 
 
 
 class MainController(BaseController):
 
     def index():
-        return render_template('admin/base/index.html')
+        attendees = overviewservice.getAttendees()
+        booths = overviewservice.getBooths()
+        sponsors = overviewservice.getSponsors()
+        finances = overviewservice.getFinances()
+        overview = {
+            'attendees': attendees,
+            'booths': booths,
+            'sponsors': sponsors,
+            'finances': finances
+        }
+        return render_template('admin/base/overview.html', overview=overview)
 
     def getAttendees():
         attendees = attendeeservice.get(request)
