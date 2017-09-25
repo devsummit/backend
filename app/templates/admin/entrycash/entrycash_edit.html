@@ -21,7 +21,7 @@
                                     <label for="i-entry-cash-amount">Source Id:</label>
                                     <select class="form-control" id="i-entry-cash-source-id">
                                         {% for source in sources %}
-                                            <option id="source-id-{{ source.id }}" value={{ source.id }}>{{ source.id }}</option>
+                                            <option id="source-id-{{ source.id }}" value={{ source.id }}>{{ source.bank }}-{{ source.account_number }}-{{ source.alias }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
