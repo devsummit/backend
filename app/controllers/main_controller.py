@@ -82,7 +82,8 @@ class MainController(BaseController):
 
     def getEntryCashLogs():
         entrycashlogs = entrycashlogservice.get(request)
-        return render_template('admin/entrycash/entrycash.html', entrycashlogs=entrycashlogs['data'])
+        sources = sourceservice.get(request)
+        return render_template('admin/entrycash/entrycash.html', entrycashlogs=entrycashlogs['data'], sources=sources['data'])
 
     def getSponsors():
         sponsors = sponsorservice.get(request)
