@@ -9,7 +9,7 @@ class UserTicket(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'user_tickets'
 	# displayed fields
-	visible = ['id', 'user_id', 'ticket_id']
+	visible = ['id', 'user_id', 'ticket_id', 'ticket_code']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +24,7 @@ class UserTicket(db.Model, BaseModel):
 		db.ForeignKey('tickets.id'),
 		nullable=False)
 	ticket = db.relationship('Ticket')
+	ticket_code = db.Column(db.String)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
