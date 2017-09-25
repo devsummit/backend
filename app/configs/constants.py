@@ -4,6 +4,7 @@ ROLE = {
     'booth': 3,
     'speaker': 4,
     'ambassador': 5,
+    'user': 7,
     'partner': 8
 }
 

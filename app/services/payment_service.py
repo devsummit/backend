@@ -404,7 +404,6 @@ class PaymentService():
                 json=payloads
         )
         payload = result.json()
-
         if(str(payload['status_code']) in ['400', '202']):
 
             if 'validation_messages' in payload and payload['validation_messages'][0]:
@@ -421,12 +420,16 @@ class PaymentService():
             elif payloads['payment_type'] == 'echannel':
                 payload['bank'] = 'mandiri_bill'
                 payload['va_number'] = self.get_midtrans_va_number(payload)
+            
             else:
                 if 'bank_transfer' in payloads:
                     payload['bank'] = payloads['bank_transfer']['bank']
                     payload['va_number'] = self.get_midtrans_va_number(payload)
                 else:
                     payload['bank'] = None
+
+            if payloads['payment_type'] in ['bca_klikbca', 'bca_klikpay', 'cimb_clicks']:
+                payload['va_number'] = payload['redirect_url']
 
             if 'status_code' in payload and payload['status_code'] == '406':
                 return response.set_data(payload).set_error(True).set_message('Duplicate order ID. Order ID has already been utilized previously').build()

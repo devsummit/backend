@@ -132,7 +132,7 @@
             "username": $('.account-username').val(),
             "role_id": role_id            
         };
-        if(role!=='admin') {
+        if(role!=='admin' && role!=='user') {
             payload['includes'] = buildIncludesPayload(role);
             
         };

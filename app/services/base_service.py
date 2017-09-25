@@ -4,6 +4,7 @@ from app.models.attendee import Attendee  # noqa
 from app.models.booth import Booth  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.ambassador import Ambassador  # noqa
+from app.models.user import User  #noqa
 
 
 class BaseService():
