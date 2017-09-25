@@ -64,10 +64,12 @@ class UserService(BaseService):
 			return response.set_data(None).set_message('User already registered').set_error(True).build()
 
 		# check referal limit
-		check_referer = db.session.query(User).filter_by(
-				referer=payloads['referer']).all()
-		if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
-			return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
+		check_referer = None
+		if 'referer' in payloads and payloads['referer']:
+			check_referer = db.session.query(User).filter_by(
+					referer=payloads['referer']).all()
+			if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
+				return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
 
 		if payloads['email'] is not None:
 			try:
