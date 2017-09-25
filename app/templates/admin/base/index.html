@@ -239,7 +239,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img class="img-circle" id="left-top-image" alt="User Image">
+          <img class="img-circle round-image" id="left-top-image" alt="User Image">
         </div>
         <div class="pull-left info">
           <p class="completeNameLabel">UserName</p>
@@ -528,6 +528,10 @@
 
   $(function(){
     const user = dsa.getUser();
+    $('.round-image').css({
+      "max-width": "50px",
+      "height": "50px"
+    })
     $("#left-top-image").attr("src", user['photo']);
     $("#right-top-image").attr("src", user['photo']);
     $("#user-header-image").attr("src", user['photo']);    
