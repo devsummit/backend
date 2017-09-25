@@ -136,7 +136,7 @@ class UserService(BaseService):
 		user = user.include_photos().as_dict()
 		# add relation includes
 		includes = ''
-		if user['role_id'] != 1:
+		if user['role_id'] != 1 and user['role_id'] != 7:
 			for role, role_id in ROLE.items():
 				if role_id == user['role_id']:
 					includes = role.title()
