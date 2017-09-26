@@ -736,9 +736,11 @@ def rundown_id(id, *args, **kwargs):
 @api.route('/feeds/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @token_required
 def feeds_id(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
         return FeedController.show(id)
-
+    elif request.method == 'DELETE':
+        return FeedController.delete(user, id)
 
 @api.route('/feeds', methods=['GET', 'POST'])
 @token_required
