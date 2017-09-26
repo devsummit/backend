@@ -1,0 +1,66 @@
+{% extends "admin/base/index.html" %}
+
+{% block content %}
+<div class="row">
+        <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ overview.attendees.new }}</h3>
+                    <p>New Registrants</p>
+                    <h3>{{ overview.attendees.total }}</h3>
+                    <p>Total Attendees</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-ios-people-outline"></i>
+                </div>
+                <a href="/attendees" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>{{ overview.booths.new }}</h3>
+                    <p>New Booths</p>
+                    <h3>{{ overview.booths.total }}</h3>
+                    <p>Total Booths</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-ios-flag"></i>
+                </div>
+                <a href="/booths" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>{{ overview.sponsors.new }}</h3>
+                    <p>New Sponsors</p>
+                    <h3>{{ overview.sponsors.total }}</h3>
+                    <p>Total Sponsors</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-social-usd"></i>
+                </div>
+                <a href="/sponsors" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+            <div class="small-box bg-fuchsia">
+                <div class="inner">
+                    <h3>{{ overview.finances.income }} / {{ overview.finances.expense }}</h3>
+                    <p>Income/ Expense</p>
+                    <h3>{{ overview.finances.saldo }}</h3>
+                    <p>Saldo</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-ios-book"></i>
+                </div>
+                <a href="/entrycashlogs" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+</div>
+{% endblock %}
