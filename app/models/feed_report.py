@@ -7,7 +7,7 @@ class FeedReport(db.Model, BaseModel):
 
     __tablename__ = 'feed_reports'
 
-    visible = ['id', 'user_id', 'type', 'feed_id', 'created_at', 'updated_at']
+    visible = ['id', 'user_id', 'report_type', 'feed_id', 'created_at', 'updated_at']
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
@@ -15,7 +15,7 @@ class FeedReport(db.Model, BaseModel):
         db.ForeignKey('users.id'),
         nullable=False
     )
-    type = db.Column(db.String)
+    report_type = db.Column(db.String)
     feed_id = db.Column(
         db.Integer,
         db.ForeignKey('feeds.id'),
