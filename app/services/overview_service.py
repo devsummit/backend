@@ -1,4 +1,5 @@
 import datetime
+import time
 from sqlalchemy import text
 from app.models import db
 # import model class
@@ -11,7 +12,7 @@ class OverviewService(BaseService):
         if t and len(t)>0:
             last_date = t[0].isoformat()
         else:
-            last_date = now.isoformat()
+            last_date = time.strftime("%Y/%m/%d")
         new = db.engine.execute('select coalesce(count(*),0) from attendees where created_at >= "' + last_date + '"').first()
         total = db.engine.execute("select coalesce(count(*),0) from attendees").first()
         return {
@@ -24,7 +25,7 @@ class OverviewService(BaseService):
         if t and len(t)>0:
             last_date = t[0].isoformat()
         else:
-            last_date = now.isoformat()
+            last_date = time.strftime("%Y/%m/%d")
         new = db.engine.execute('select coalesce(count(*),0) from booths where created_at >= "' + last_date + '"').first()
         total = db.engine.execute("select coalesce(count(*),0) from booths").first()
         return {
@@ -43,10 +44,10 @@ class OverviewService(BaseService):
     
     def getSponsors(self):
         t = db.engine.execute("select max(created_at) from sponsors").first()
-        if t and len(t)>0:
+        if t and len(t)>0 and isinstance(t[0], datetime.date):
             last_date = t[0].isoformat()
         else:
-            last_date = now.isoformat()
+            last_date = time.strftime("%Y/%m/%d")
         new = db.engine.execute('select coalesce(count(*),0) from sponsors where created_at >= "' + last_date + '"').first()
         total = db.engine.execute("select coalesce(count(*),0) from sponsors").first()
         return {
