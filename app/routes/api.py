@@ -356,7 +356,7 @@ def booth_gallery_self(*args, **kwargs):
 @token_required
 def transfer_points(*args, **kwargs):
     user = kwargs['user'].as_dict()
-    if(user['role_id'] == 1 or user['role_id'] == 3):
+    if(user['role_id'] in [ROLE['admin'], ROLE['booth']]):
         return PointsController.transfer_point(request, user['id'])
     return 'You cannot transfer points'
 
