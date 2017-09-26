@@ -96,8 +96,8 @@ class UserController(BaseController):
         username = request.json['username'] if 'username' in request.json else None
         password = request.json['password'] if 'password' in request.json else None
         if username and password:
-            admin = userservice.get_user(username)
-            if admin.verify_password(password):
+            user = userservice.get_user(username)
+            if user.verify_password(password):
                 return BaseController.send_response_api(None, "Password match")
             else:
                 return BaseController.send_error_api(None, "Password did not match")
