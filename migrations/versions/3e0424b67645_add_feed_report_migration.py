@@ -22,7 +22,7 @@ def upgrade():
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('user_id', sa.Integer,
             sa.ForeignKey('users.id', ondelete='CASCADE')),
-        sa.Column('type', sa.String(255)),
+        sa.Column('report_type', sa.String(255)),
         sa.Column('feed_id', sa.Integer, sa.ForeignKey('feeds.id', ondelete='CASCADE')),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
