@@ -892,18 +892,17 @@ def send_email(*args, **kwargs):
         return AdminController.send_email(request, user)
 
 # Feed report
-@api.route('/feeds/reports', methods=['GET'])
+@api.route('/feeds/reports', methods=['GET', 'POST'])
 @token_required
 def feed_report_get(*args, **kwargs):
-    return FeedReportController.index(request)
+    if request.method == 'GET':
+        return FeedReportController.index(request)
+    else:
+        user = kwargs['user'].as_dict()
+        return FeedReportController.create(request, user['id'])
 
 @api.route('/feeds/reports/<id>', methods=['GET'])
 @token_required
 def feed_report_show(id, *args, **kwargs):
     return FeedReportController.show(id)
 
-@api.route('/feeds/reports', methods=['POST'])
-@token_required
-def feed_report_post(*args, **kwargs):
-    user = kwargs['user'].as_dict()
-    return FeedReportController.create(request, user['id'])

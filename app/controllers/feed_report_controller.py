@@ -13,9 +13,6 @@ class FeedReportController(BaseController):
     def create(request, user_id):
         report_type = request.json['report_type'] if 'report_type' in request.json else None
         feed_id = request.json['feed_id'] if 'feed_id' in request.json else None
-        print(user_id)
-        print(report_type)
-        print(feed_id)
         if user_id and report_type and feed_id:
             payloads = {
                 'user_id': user_id,
