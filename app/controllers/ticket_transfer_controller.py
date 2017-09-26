@@ -20,15 +20,16 @@ class TicketTransferController(BaseController):
 		return BaseController.send_response_api(BaseModel.as_list(result), 'logs retrieved succesfully')
 
 	def ticket_transfer(request, user):
-		receiver_user_id = request.json['receiver_user_id']
-		user_ticket_id = request.json['user_ticket_id']
-
-		if user['role_id'] == ROLE['attendee']:
-			result = tickettransferservice.transfer(user['id'], user_ticket_id, receiver_user_id)
+		receiver = request.json['receiver'] if 'receiver' in request.json else None
+		user_ticket_id = request.json['user_ticket_id'] if 'user_ticket_id' in request.json else None
+		if None in [user, receiver, user_ticket_id]:
+			return BaseController.send_error_api(None, 'payload is not valid')
+		if user['role_id'] in [ROLE['attendee'], ROLE['user']]:
+			result = tickettransferservice.transfer(user['id'], user_ticket_id, receiver)
 		else:
 			return BaseController.send_error_api(None, 'this operation is not valid for this type of user')
 
 		if result['error']:
-			return BaseController.send_error_api(result['data'], 'transfer failed')
+			return BaseController.send_error_api(result['data'], result['message'])
 		else:			
-			return BaseController.send_response_api(result['data'], 'ticket transfered successfully')
+			return BaseController.send_response_api(result['data'], result['message'])
