@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.create.table(
+    op.create_table(
         'feed_reports',
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('user_id', sa.Integer,
