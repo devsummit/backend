@@ -20,7 +20,6 @@ from app.services import sourceservice
 from app.services import overviewservice
 
 
-
 class MainController(BaseController):
 
     def index():
@@ -82,7 +81,7 @@ class MainController(BaseController):
         if request.args.get('filter') is not None:
             filter = request.args.get('filter')
             schedules = scheduleservice.filter(filter)
-        else: 
+        else:
             schedules = scheduleservice.get()
 
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
@@ -114,7 +113,7 @@ class MainController(BaseController):
     def getRedeemCodes():
         redeemcodes = redeemcodeservice.get()
         return render_template('admin/redeem_codes/redeem_codes.html', redeemcodes=redeemcodes['data'])
-    
+
     def showSpeakerCandidates():
         candidates = speakercandidateservice.get()
         return render_template('admin/speakers/speaker_candidates.html', candidates=candidates['data'])

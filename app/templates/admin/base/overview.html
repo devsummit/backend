@@ -14,7 +14,7 @@
                 <div class="icon">
                     <i class="ion ion-ios-people-outline"></i>
                 </div>
-                <a href="/attendees" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="/attendees" class="small-box-footer">Attendee Info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <div class="col-lg-3 col-xs-6">
@@ -29,7 +29,7 @@
                 <div class="icon">
                     <i class="ion ion-ios-flag"></i>
                 </div>
-                <a href="/booths" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="/booths" class="small-box-footer">Booth Info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <div class="col-lg-3 col-xs-6">
@@ -44,22 +44,22 @@
                 <div class="icon">
                     <i class="ion ion-social-usd"></i>
                 </div>
-                <a href="/sponsors" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="/sponsors" class="small-box-footer">Sponsor Info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <div class="col-lg-3 col-xs-6">
         <!-- small box -->
-            <div class="small-box bg-fuchsia">
-                <div class="inner">
-                    <h3>{{ overview.finances.income }} / {{ overview.finances.expense }}</h3>
-                    <p>Income/ Expense</p>
-                    <h3>{{ overview.finances.saldo }}</h3>
-                    <p>Saldo</p>
-                </div>
+            <div class="small-box bg-blue">
                 <div class="icon">
                     <i class="ion ion-ios-book"></i>
+                    <p>Cashflow</p>
                 </div>
-                <a href="/entrycashlogs" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <div class="inner">
+                    <h2 style="color:#2BD62B; text-align:right"> + {{ overview.finances.income }}</h2>
+                    <h2 style="color:red; text-align:right"> - {{ overview.finances.expense }}</h2>
+                    <h2 style="text-align:right"> = {{ overview.finances.balance }}</h2>
+                </div>
+                <a href="/entrycashlogs" class="small-box-footer">Cashlog Info<i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
 </div>

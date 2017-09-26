@@ -1,4 +1,5 @@
 import datetime
+import locale
 from sqlalchemy import text
 from app.models import db
 # import model class
@@ -36,9 +37,9 @@ class OverviewService(BaseService):
         income = db.engine.execute("select coalesce(sum(debit),0) from entry_cash_log").first()
         expense = db.engine.execute("select coalesce(sum(credit),0) from entry_cash_log").first()
         return {
-            'income': int(income[0].__str__()),
-            'expense': int(expense[0].__str__()),
-            'saldo': int(income[0].__str__())-int(expense[0].__str__())
+            'income': "{0:,.2f}".format(income[0]),
+            'expense': "{0:,.2f}".format(expense[0]),
+            'balance': "{0:,.2f}".format(income[0]-expense[0])
         }
     
     def getSponsors(self):
