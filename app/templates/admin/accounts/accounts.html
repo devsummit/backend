@@ -111,7 +111,7 @@
             const id = bte_id.substring(4, bte_id.length);
 
             dsa.get('users/' + id, function (result) {
-                // bind result value in to account_detail.html 
+                // bind result value in to account_detail.html
                 const data = result['data'];
                 this.current_account = data;
                 $('#account-firstname').val(data['first_name']);
@@ -129,23 +129,22 @@
                     case 3:
                         $('#booth-points').val(current_account['booth']['points']);
                         $('#booth-summary').val(current_account['booth']['summary']);
-
-                        var selectStages = $(".booth-stage-id");
+                        var selectStages = $("#booth-stageid");
                         selectStages.find('option').remove();
 
-                        dsa.get('stages', function(result){
-                        var stages = result['data'];
+                        var booths = result['data']['booth']['stage_id']
 
-                        stages.map(function (stage) {
-                            // add to select
-                            var option = document.createElement('option');
-                            option.innerHTML = capitalizeFirstLetter(stage.name);
-                            option.value = stage.id;
+                            BOOTH_STAGES.map(function (booth) {
+                                // add to select
+                                var option = document.createElement('option');
+                                option.innerHTML = capitalizeFirstLetter(booth.type);
+                                option.value = booth.stage_id;
+                                if (booth.stage_id === parseInt(booths)) {
+                                    option.selected = true;
+                                }
 
-                            $(".booth-stage-id").append(option);
-                        })
-                    })
-                        
+                                $("#booth-stageid").append(option);
+                            })                  
                         break;
                     case 4:
                         $('#speaker-job').val(current_account['speaker']['job']);
@@ -154,14 +153,17 @@
                         
                         let select = $(".speaker-types-edit");
                         select.find('option').remove();
+
+                        let speaker_type = result['data']['speaker']['type'];
+
                         SPEAKER_TYPES.map(function (type) {
                             // add to select
                             let option = document.createElement('option');
                             option.innerHTML = capitalizeFirstLetter(type);
                             option.value = type;
-                            if (type === 'keynote') {
+                            if (type === (speaker_type)) {
                                 option.selected = true;
-                            }
+                        }
                             $(".speaker-types-edit").append(option);
                         });
                         break;
