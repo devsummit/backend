@@ -80,9 +80,9 @@ class RedeemCodeService():
         response = ResponseBuilder()
         codes = [r.code for r in db.session.query(RedeemCode.code).all()]
         for i in range(0, int(payloads['count'])):
-            code = secrets.token_hex(3)
+            code = secrets.token_hex(4)
             while (code in codes):
-                code = secrets.token_hex(3)
+                code = secrets.token_hex(4)
             self.model_redeem_code = RedeemCode()
             self.model_redeem_code.codeable_type = payloads['codeable_type']
             self.model_redeem_code.codeable_id = payloads['codeable_id']

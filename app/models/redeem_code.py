@@ -20,7 +20,7 @@ class RedeemCode(db.Model, BaseModel):
         nullable=False
     )
     code = db.Column(
-        db.String(6),
+        db.String(40),
         nullable=False
     )
     codeable_id = db.Column(
