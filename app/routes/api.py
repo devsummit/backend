@@ -40,6 +40,7 @@ from app.controllers.Grantrole_controller import GrantroleController
 from app.controllers.source_controller import SourceController
 from app.controllers.admin_controller import AdminController
 from app.controllers.booth_gallery_controller import BoothGalleryController
+from app.controllers.feed_report_controller import FeedReportController
 from app.controllers.speaker_candidate_controller import SpeakerCandidateController
 from app.configs.constants import ROLE
 
@@ -889,3 +890,20 @@ def send_email(*args, **kwargs):
         return 'unauthorized'
     else:
         return AdminController.send_email(request, user)
+
+# Feed report
+@api.route('/feeds/reports', methods=['GET'])
+@token_required
+def feed_report_get(*args, **kwargs):
+    return FeedReportController.index(request)
+
+@api.route('/feeds/reports/<id>', methods=['GET'])
+@token_required
+def feed_report_show(id, *args, **kwargs):
+    return FeedReportController.show(id)
+
+@api.route('/feeds/reports', methods=['POST'])
+@token_required
+def feed_report_post(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    return FeedReportController.create(request, user['id'])
