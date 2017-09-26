@@ -22,6 +22,12 @@ const SPONSOR_STAGES = [
 	{ id: 3, type: 'official' }
 ]
 
+const BOOTH_STAGES = [
+    { stage_id: 1, type: 'Main speaker stage A' },
+    { stage_id: 2, type: 'Podium stage A' },
+    { stage_id: 3, type: 'Booth stage A' }
+]
+
 const EVENT_TYPES = [
 	'discuss panel',
 	'speaker',
