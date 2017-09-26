@@ -8,7 +8,7 @@ class OverviewService(BaseService):
 
     def getAttendees(self):
         t = db.engine.execute("select max(created_at) from attendees").first()
-        if t:
+        if t and len(t)>0:
             last_date = t[0].isoformat()
         else:
             last_date = now.isoformat()
@@ -21,7 +21,7 @@ class OverviewService(BaseService):
     
     def getBooths(self):
         t = db.engine.execute("select max(created_at) from booths").first()
-        if t:
+        if t and len(t)>0:
             last_date = t[0].isoformat()
         else:
             last_date = now.isoformat()
@@ -43,7 +43,7 @@ class OverviewService(BaseService):
     
     def getSponsors(self):
         t = db.engine.execute("select max(created_at) from sponsors").first()
-        if t:
+        if t and len(t)>0:
             last_date = t[0].isoformat()
         else:
             last_date = now.isoformat()
