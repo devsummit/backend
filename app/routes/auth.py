@@ -20,8 +20,9 @@ def register():
 	return UserAuthorizationController.register(request)
 
 @auth.route('/user/authorize', methods=['POST'])
+@token_required
 def user_authorize():
-	return UserController.password_require(request)
+	return UserController.token_require(request)
 
 @auth.route('/admin/authorize', methods=['POST'])
 def admin_authorize():
