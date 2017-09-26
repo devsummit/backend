@@ -5,6 +5,7 @@ from app.middlewares.authentication import token_required
 # import controller
 from app.controllers.user_authorization_controller import UserAuthorizationController
 from app.controllers.admin_controller import AdminController
+from app.controllers.user_controller import UserController
 
 auth = Blueprint('auth', __name__)
 
@@ -18,6 +19,9 @@ def login():
 def register():
 	return UserAuthorizationController.register(request)
 
+@auth.route('/user/authorize', methods=['POST'])
+def user_authorize():
+	return UserController.password_require(request)
 
 @auth.route('/admin/authorize', methods=['POST'])
 def admin_authorize():
