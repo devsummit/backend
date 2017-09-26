@@ -1,5 +1,4 @@
 import datetime
-import locale
 from sqlalchemy import text
 from app.models import db
 # import model class
