@@ -24,6 +24,7 @@ from app.builders.response_builder import ResponseBuilder
 from app.models.base_model import BaseModel
 from app.services.user_ticket_service import UserTicketService
 from app.services.fcm_service import FCMService
+from app.services.user_photo_service import UserPhotoService
 
 
 class UserService(BaseService):
@@ -425,8 +426,12 @@ class UserService(BaseService):
 			db.session.add(self.model_user)
 			db.session.commit()
 			data = self.model_user.as_dict()
+			# apply user picture payload to be redirected to userphotoservice
+			if 'user_picture' in payloads and payloads['user_picture']:	
+				# print ("content of the payload", payloads)			
+				UserPhotoService.add_photo(self, payloads)
 			# apply includes data if not admin (role_id != 1)
-			if 'role_id' in payloads and payloads['role_id'] != '1' and payloads['role_id'] != '8':
+			if 'role_id' in payloads and payloads['role_id'] != 1 and payloads['role_id'] != 8:
 				includes = payloads['includes']
 				data = self.postIncludes(includes)
 				return data

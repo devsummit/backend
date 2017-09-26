@@ -57,6 +57,14 @@
                                 </select>
                             </div>
                         </li>
+                        <li class="list-group-item">
+                            <div class="form-group">                                        
+                                <label for="user-picture">User Picture (optional):</label>
+                                <input type="file" name="image_data" class="form-control" id="i-user-photo" accept=".jpg,.jpeg,.png">
+                                <img id="i-preview-user-pic" src="#" alt="" width="100" height="100" />
+                            </div>
+                        </li>
+                        
                     </ul>
                 </div>
                 <div class="tab-pane tab2-input" id="tab2-input">
@@ -79,6 +87,19 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#i-preview-user-pic').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+            }
+        }
+    $("#i-user-photo").change(function(){
+        readURL(this);
+    });
+
     /* Build includes payload function */
     const buildIncludesPayload = function(role) {        
         switch (role) {
@@ -146,14 +167,16 @@
     var saveAdd = function() {
         const role = $('#account-input-select-role').find(":selected").text();
         const role_id = $('#account-input-select-role').find(":selected").val();
+        var user_picture = $('#i-preview-user-pic').attr('src');
         var payload = {
             "first_name": $('.account-firstname').val(),
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
-            "role_id": $('#account-input-select-role').find(":selected").val()
+            "role_id": $('#account-input-select-role').find(":selected").val(),
+            "user_picture": user_picture
         };
-
+        
         if(role!=='admin' && role!=='partner') {
             payload['includes'] = buildIncludesPayload(role);           
         };        
