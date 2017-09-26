@@ -19,8 +19,8 @@ class EntryCashLog(db.Model, BaseModel):
         nullable=False
     )
     source = db.relationship('Source')
-    debit = db.Column(db.Integer)
-    credit = db.Column(db.Integer)
+    debit = db.Column(db.Float)
+    credit = db.Column(db.Float)
     description = db.Column(db.String)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)

@@ -51,7 +51,7 @@ class RedeemCodeController(BaseController):
             return BaseController.send_error_api(None, 'field is not complete')
         result = redeemcodeservice.update(code, user)
         if not result['error']:
-            return BaseController.send_response_api(result['data'], result['message'])
+            return BaseController.send_response_api(result['data'], result['message'], result['included'])
         else:
             return BaseController.send_error_api(result['data'], result['message'])
 
