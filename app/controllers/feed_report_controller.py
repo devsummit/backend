@@ -26,10 +26,10 @@ class FeedReportController(BaseController):
             return BaseController.send_error_api(None, 'field is not complete')
         
         feed_report = db.session.query(FeedReport).filter(and_(FeedReport.user_id==user_id, FeedReport.feed_id==feed_id)).first()
-        if feed_report is None:
-            result = feedreportservice.create(payloads)
-        else:
+        if feed_report is not None:
             return BaseController.send_error_api(None, 'You already report this feed')  
+            
+        result = feedreportservice.create(payloads)
 
         if result['error']:
             return BaseController.send_error_api(result['data'], result['message'])
