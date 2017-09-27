@@ -122,7 +122,7 @@ class UserPhotoService(BaseService):
     def add_photo(self, payloads):
         response = ResponseBuilder()
         username = payloads['username']
-        user_id = db.session.query(User.id).filter_by(username=username).first()       
+        user_id = db.session.query(User).filter_by(username=username).first().as_dict()['id']     
         # take the base64 input
         raw_base64 = payloads['user_picture']
         #do regex to prepare the data for decoding into binary and extract image type
