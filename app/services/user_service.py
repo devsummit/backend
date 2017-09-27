@@ -2,11 +2,12 @@ import oauth2 as oauth
 import json
 import requests
 import datetime
+import os
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
-from flask import request
+from flask import request, current_app
 from app.models.access_token import AccessToken
 from app.models.user import User
 from app.models.user_booth import UserBooth
@@ -365,6 +366,9 @@ class UserService(BaseService):
 		temp_model = self.model_user.first().as_dict() if self.model_user.first() else None
 		user_id = db.session.query(User).filter_by(id=id).first().as_dict()['id']
 		self.user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id)
+
+		self.user_photo_row = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
+		os.remove(current_app.config['STATIC_DEST'] + self.user_photo_row.url)
 
 		error = True
 		data = ''
