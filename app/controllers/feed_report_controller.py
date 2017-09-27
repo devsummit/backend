@@ -1,5 +1,8 @@
 from app.controllers.base_controller import BaseController
 from app.services import feedreportservice
+from app.models.feed_report import FeedReport
+from app.models import db
+from sqlalchemy import and_
 
 
 class FeedReportController(BaseController):
@@ -10,8 +13,7 @@ class FeedReportController(BaseController):
         return BaseController.send_response_api(feed_reports['data'], feed_reports['message'], {}, feed_reports['links'])
 
     @staticmethod
-    def create(request, user_id):
-        feed_reports = feedreportservice.get(request, page=None)
+    def create(request, user_id):        
         report_type = request.json['report_type'] if 'report_type' in request.json else None
         feed_id = request.json['feed_id'] if 'feed_id' in request.json else None
         if user_id and report_type and feed_id:
@@ -23,15 +25,11 @@ class FeedReportController(BaseController):
         else:
             return BaseController.send_error_api(None, 'field is not complete')
         
-        for feed_report in feed_reports['data']:
-            if user_id == feed_report['user_id'] and feed_id == feed_report['feed_id']:
-                return BaseController.send_error_api(None, 'You already report this feed')
-                break
-            else:
-                result = feedreportservice.create(payloads)
-                break
+        feed_report = db.session.query(FeedReport).filter(and_(FeedReport.user_id==user_id, FeedReport.feed_id==feed_id)).first()
+        if feed_report is None:
+            result = feedreportservice.create(payloads)
         else:
-            result = feedreportservice.create(payloads)            
+            return BaseController.send_error_api(None, 'You already report this feed')  
 
         if result['error']:
             return BaseController.send_error_api(result['data'], result['message'])
