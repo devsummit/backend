@@ -431,7 +431,7 @@ class UserService(BaseService):
 				# print ("content of the payload", payloads)			
 				UserPhotoService.add_photo(self, payloads)
 			# apply includes data if not admin (role_id != 1)
-			if 'role_id' in payloads and payloads['role_id'] != 1 and payloads['role_id'] != 8:
+			if 'role_id' in payloads and payloads['role_id'] != "1" and payloads['role_id'] != "8":
 				includes = payloads['includes']
 				data = self.postIncludes(includes)
 				return data
