@@ -11,6 +11,7 @@ class FeedReportController(BaseController):
 
     @staticmethod
     def create(request, user_id):
+        feed_reports = feedreportservice.get(request, page=None)
         report_type = request.json['report_type'] if 'report_type' in request.json else None
         feed_id = request.json['feed_id'] if 'feed_id' in request.json else None
         if user_id and report_type and feed_id:
@@ -21,8 +22,16 @@ class FeedReportController(BaseController):
             }
         else:
             return BaseController.send_error_api(None, 'field is not complete')
-
-        result = feedreportservice.create(payloads)
+        
+        for feed_report in feed_reports['data']:
+            if user_id == feed_report['user_id'] and feed_id == feed_report['feed_id']:
+                return BaseController.send_error_api(None, 'You already report this feed')
+                break
+            else:
+                result = feedreportservice.create(payloads)
+                break
+        else:
+            result = feedreportservice.create(payloads)            
 
         if result['error']:
             return BaseController.send_error_api(result['data'], result['message'])
