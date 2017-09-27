@@ -1,0 +1,65 @@
+config:
+  target: 'http://localhost:5000'
+  phases:
+    - duration: 600
+      arrivalRate: 60
+  environments:
+    dev:
+      target: 'http://api.devsummit.io:8081'
+      phases:
+        - duration: 1200
+          arrivalRate: 180
+    local:
+      target: 'http://localhost:5000'
+      phases:
+      - duration: 300
+        arrivalRate: 15
+  variables:
+    feedMessage: "test feed message"
+  defaults:
+    headers:
+      Authorization: 'eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwNjM5NzEwMSwiZXhwIjoxNTA3MDAxOTAxfQ.eyJpZCI6Mzd9.ZeKoNxDjWBfe9eS4vIDtXtWAGpMv-Kfq7WRrtomn96g'
+      Content-Type: 'application/json'
+scenarios:
+  - name: "Feed test"
+    flow:
+      - loop:
+        - get:
+            url: "/api/v1/feeds"
+        - post:
+            url: "/api/v1/feeds"
+            json:
+              message: "{{ feedMessage }}"
+        count: 10
+  - name: "Order test"
+    flow:
+      - loop:
+        - get:
+            url: "/api/v1/orders"
+        - post:
+            url: "/api/v1/orders"
+            json:
+              order_details:
+                json:
+                  ticket_id: 1
+                  count: 4
+
+        count: 10
+  - name: "Payment test"
+    flow:
+      - loop:
+        - get:
+            url: "/api/v1/payments"
+        - post:
+            url: "/api/v1/payments"
+            json:
+              payment_type: "bca_klikbca"
+              gross_amount: 100000
+              description: 'testing arti'
+              bank: 'mandiri'
+              order_id: 'ds-3333'
+              first_name: 'Andy'
+              last_name: 'Herman'
+              email: 'shi77.andy@gmail'
+              phone: '089777777'
+        count: 10
