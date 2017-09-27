@@ -327,6 +327,29 @@ class UserService(BaseService):
 				'data': data
 			}
 
+	def password_required(self, payloads):
+		user = self.get_user(payloads['user']['username'])
+		try:
+			if user.verify_password(payloads['password']):
+				self.model_user = db.session.query(
+					User).filter_by(id=payloads['user']['id'])
+				db.session.commit()
+				data = self.model_user.first().as_dict()
+				return {
+					'error': False,
+					'data': data
+				}
+			return {
+				'error': True,
+				'data': "Invalid password"
+			}
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return {
+				'error': True,
+				'data': data
+			}
+
 	def check_refresh_token(self, refresh_token):
 		refresh_token_exist = db.session.query(AccessToken).filter_by(
 			refresh_token=refresh_token).first()
