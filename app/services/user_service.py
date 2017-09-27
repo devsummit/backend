@@ -68,8 +68,13 @@ class UserService(BaseService):
 		if 'referer' in payloads and payloads['referer']:
 			check_referer = db.session.query(User).filter_by(
 					referer=payloads['referer']).all()
-			if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
-				return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
+			#if the check_referer return empty list, must be first time referred
+			if not check_referer:
+				count_referer = 1
+			else:
+				count_referer = len(BaseModel.as_list(check_referer))
+		if check_referer is not None and count_referer >= 10:
+			return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
 
 		if payloads['email'] is not None:
 			try:
@@ -80,7 +85,13 @@ class UserService(BaseService):
 				self.model_user.username = payloads['username']
 				self.model_user.role_id = payloads['role']
 				self.model_user.social_id = payloads['social_id']
-				self.model_user.referer = payloads['referer'] if check_referer else None
+				# checking if referer role_id = 7
+				if payloads['referer'] is not None:
+					referer_role_id = db.session.query(User.role_id).filter_by(username=payloads['referer']).first()
+					if referer_role_id[0] == 7:
+						self.model_user.referer = payloads['referer']
+					else:
+						return response.set_data(None).set_message('Referal Username is Invalid').set_error(True).build()
 				if payloads['provider'] == 'email': 
 					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
@@ -310,6 +321,29 @@ class UserService(BaseService):
 					'password': generate_password_hash(payloads['new_password']),
 					'updated_at': datetime.datetime.now()
 				})
+				db.session.commit()
+				data = self.model_user.first().as_dict()
+				return {
+					'error': False,
+					'data': data
+				}
+			return {
+				'error': True,
+				'data': "Invalid password"
+			}
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return {
+				'error': True,
+				'data': data
+			}
+
+	def password_required(self, payloads):
+		user = self.get_user(payloads['user']['username'])
+		try:
+			if user.verify_password(payloads['password']):
+				self.model_user = db.session.query(
+					User).filter_by(id=payloads['user']['id'])
 				db.session.commit()
 				data = self.model_user.first().as_dict()
 				return {
