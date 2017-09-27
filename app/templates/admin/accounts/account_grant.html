@@ -39,7 +39,7 @@
                         {% include "admin/accounts/grant/ambassador_grant.html" %} 
                         {% include "admin/accounts/grant/attendee_grant.html" %} 
                         {% include "admin/accounts/grant/speaker_grant.html"%} 
-                        {% include "admin/accounts/grant/booth_grant.html" %}
+                        {% include "admin/accounts/grant/booth_grant.html" %} 
                     </div>
                 </div>
             </div>
@@ -68,9 +68,10 @@
                 break;
             case 'booth':
                 var points = $('#grant_booth-points').val();
+                const stage_id = $('#grant-booth-stageid').val() > 0 ? parseInt($('#grant-booth-stageid').val()) : null
                 payload = {
                     name: 'Booth',
-                    stage_id: $('#grant_booth-stageid').val(),
+                    stage_id: stage_id,
                     points: points ? points : 0,
                     summary: $('#grant_booth-summary').val()
                 }
@@ -106,10 +107,9 @@
         if (role !== 'admin') {
             payload['includes'] = buildIncludesGrantPayload(role);
         };
-
         dsa.patch('grantrole/' + id, payload, function (result) {
             if (result.meta.success) {
-                window.location = '/accounts';
+               window.location = '/accounts';
             }
         });
     }
@@ -151,6 +151,27 @@
                 }
                 $(".speaker-types-add").append(option);
             });
+        } else if (role === 'booth') {
+            let select = $("#grant-booth-stageid");
+            select.find('option').remove();
+
+            dsa.get('stages', function(result){
+                var stages = result['data'];
+
+                let option = document.createElement('option');
+                option.innerHTML = 'No stage';
+                option.value = -1;
+                select.append(option);
+
+                stages.map(function (stage) {
+                    // add to select
+                    let option = document.createElement('option');
+                    option.innerHTML = capitalizeFirstLetter(stage.name);
+                    option.value = stage.id;
+
+                    select.append(option);
+                })
+            })
         }
 
         // change role name to title case and display as tab caption

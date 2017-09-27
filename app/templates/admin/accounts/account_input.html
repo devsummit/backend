@@ -91,9 +91,11 @@
                 break;
             case 'booth':
                 var points = $('#booth-points').val();
+                const stage_id = $('#booth-stageid').val() > 0 ? parseInt($('#booth-stageid').val()) : null
+
                 payload = {
                     name: 'Booth',
-                    stage_id: $('#booth-stageid').val(),
+                    stage_id: stage_id,
                     points: points ? points : 0,
                     summary: $('#booth-summary').val()
                 }
@@ -130,7 +132,7 @@
             "username": $('.account-username').val(),
             "role_id": role_id            
         };
-        if(role!=='admin') {
+        if(role!=='admin' && role!=='user') {
             payload['includes'] = buildIncludesPayload(role);
             
         };
@@ -150,11 +152,12 @@
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
             "role_id": $('#account-input-select-role').find(":selected").val()
-            };
-            
-        if(role!=='admin') {
+        };
+
+        if(role!=='admin' && role!=='partner') {
             payload['includes'] = buildIncludesPayload(role);           
         };        
+
         dsa.post('{{ globals["api_route"] }}', payload, function(result) {            
             if(result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
@@ -172,7 +175,6 @@
         }
         if($('.modal-title').html() === 'EDIT') {
             const id = $(this).attr('id');
-            console.log(id)
             saveEdit(id);
         } else {
             saveAdd();
@@ -187,8 +189,43 @@
     });
 
     /* Role dropdown select change */
-    $( "#account-input-select-role").change(function(event) {
+    $("#account-input-select-role").change(function (event) {
         role = $('#account-input-select-role').find(":selected").text();
+        if (role == 'speaker') {
+            let select = $(".speaker-types-edit");
+            select.find('option').remove();
+            SPEAKER_TYPES.map(function (type) {
+                // add to select
+                let option = document.createElement('option');
+                option.innerHTML = capitalizeFirstLetter(type);
+                option.value = type;
+                if (type === 'keynote') {
+                    option.selected = true;
+                }
+                $(".speaker-types-edit").append(option);
+            });
+        } else if (role === 'booth') {
+            let select = $(".booth-stage-id");
+            select.find('option').remove();
+
+            dsa.get('stages', function(result){
+                var stages = result['data'];
+
+                let option = document.createElement('option');
+                option.innerHTML = 'No stage';
+                option.value = -1;
+                select.append(option);
+
+                stages.map(function (stage) {
+                    // add to select
+                    let option = document.createElement('option');
+                    option.innerHTML = capitalizeFirstLetter(stage.name);
+                    option.value = stage.id;
+
+                    select.append(option);
+                })
+            })
+        }
         // change role name to title case and display as tab caption
         $(".a-tab2-input").html(UCFL(role) + ' Informations');
         

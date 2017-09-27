@@ -2,6 +2,7 @@ import os
 import datetime
 from flask import current_app
 from app.models import db
+from app.configs.constants import ROLE
 from app.services.helper import Helper 
 from werkzeug import secure_filename
 from sqlalchemy.exc import SQLAlchemyError
@@ -15,12 +16,12 @@ class FeedService(BaseService):
 	def __init__(self, perpage):
 		self.perpage = perpage
 
-	def get(self, request):
+	def get(self, request, page):
 		self.total_items = Feed.query.count()
-		if request.args.get('page'):
+		if page is not None:
 			self.page = request.args.get('page')
 		else:
-			self.perpage = self.total_items
+			self.perpage = 10
 			self.page = 1
 		self.base_url = request.base_url
         # paginate
@@ -40,6 +41,24 @@ class FeedService(BaseService):
 		data['user'] = feed.user.include_photos().as_dict()
 		data['attachment'] = Helper().url_helper(data['attachment'], current_app.config['GET_DEST']) if data['attachment'] is not None else None
 		return response.set_data(data).build()
+
+	def delete(self, user, id):
+		response = ResponseBuilder()
+		feed = db.session.query(Feed).filter_by(id=id)
+		if feed.first() is None:
+			return response.set_error(True).set_data(None).set_message('feed not found').build()
+
+		if user['role_id'] != ROLE['admin']:
+			if feed.first().as_dict()['user_id'] != user['id']:
+				print(feed.first().as_dict())
+				return response.set_error(True).set_data(None).set_message('you are unauthorized to delete this feed').build()
+		feed.delete()
+		try:
+			db.session.commit()
+			return response.set_data(None).set_message('Feed deleted').build()
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return response.set_data(data).set_error(True).build()
 
 	def create(self, payloads):
 		response = ResponseBuilder()

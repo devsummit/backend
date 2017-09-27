@@ -48,7 +48,6 @@ class FCMService():
 		if not self.save_notification(title, message, None, sender_id):
 			return response.set_error(True).set_message('failed to save notification').set_data(None).build()
 		result = self.broadcast_message(title, message)
-		print(result.json(), 'cuukkk')
 		if 'message_id' in result.json():
 			return response.set_data(result.json()).set_message('notification broadcasted').build()
 		return response.set_data(None).set_message('an error occured').set_error(True).build()

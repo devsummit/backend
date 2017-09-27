@@ -24,6 +24,7 @@ from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from app.models.base_model import BaseModel
 from app.services.user_ticket_service import UserTicketService
+from app.services.fcm_service import FCMService
 
 
 class UserService(BaseService):
@@ -70,10 +71,17 @@ class UserService(BaseService):
 			return response.set_data(None).set_message('Referal Promotion has been closed').set_error(True).build()
 
 		# check referal limit
-		check_referer = db.session.query(User).filter_by(
-				username=payloads['referer']).all()		
-		if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
-			return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
+		check_referer = None
+		if 'referer' in payloads and payloads['referer']:
+			check_referer = db.session.query(User).filter_by(
+					referer=payloads['referer']).all()
+			#if the check_referer return empty list, must be first time referred
+			if not check_referer:
+				count_referer = 1
+			else:
+				count_referer = len(BaseModel.as_list(check_referer))
+		if check_referer is not None and count_referer >= 10:
+			return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
 
 		if payloads['email'] is not None:
 			try:
@@ -84,7 +92,13 @@ class UserService(BaseService):
 				self.model_user.username = payloads['username']
 				self.model_user.role_id = payloads['role']
 				self.model_user.social_id = payloads['social_id']
-				self.model_user.referer = payloads['referer'] if check_referer else None
+				# checking if referer role_id = 7
+				if payloads['referer'] is not None:
+					referer_role_id = db.session.query(User.role_id).filter_by(username=payloads['referer']).first()
+					if referer_role_id[0] == 7:
+						self.model_user.referer = payloads['referer']
+					else:
+						return response.set_data(None).set_message('Referal Username is Invalid').set_error(True).build()
 				if payloads['provider'] == 'email': 
 					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
@@ -99,8 +113,19 @@ class UserService(BaseService):
 						count = len(check_referer_count)
 						payload = {}
 						payload['user_id'] = referer_detail['id']
-						payload['ticket_id'] = 1 
-						if count == 10:
+						payload['ticket_id'] = 1						
+						receiver_id = referer_detail['id']
+						sender_id = 1
+						# only send notification if count less than 10
+						if count < 10:
+							type = "Referral Notification"
+							message = "%s has registered referring you, your total referals count is: %d" % (payloads['username'], count)
+							FCMService().send_single_notification(type, message, receiver_id, sender_id)
+						# else count==10, send notif and create new ticket
+						else:
+							type = "Free Ticket Notification"
+							message = "Congratulation! You have been referred 10 times! You've got one free ticket, please check it on 'my ticket' menu"
+							FCMService().send_single_notification(type, message, receiver_id, sender_id)
 							UserTicketService().create(payload)
 
 				return response.set_error(False).set_data(data).set_message('User created successfully').build()
@@ -131,7 +156,7 @@ class UserService(BaseService):
 		user = user.include_photos().as_dict()
 		# add relation includes
 		includes = ''
-		if user['role_id'] != 1:
+		if user['role_id'] != 1 and user['role_id'] != 7:
 			for role, role_id in ROLE.items():
 				if role_id == user['role_id']:
 					includes = role.title()
@@ -320,6 +345,29 @@ class UserService(BaseService):
 				'data': data
 			}
 
+	def password_required(self, payloads):
+		user = self.get_user(payloads['user']['username'])
+		try:
+			if user.verify_password(payloads['password']):
+				self.model_user = db.session.query(
+					User).filter_by(id=payloads['user']['id'])
+				db.session.commit()
+				data = self.model_user.first().as_dict()
+				return {
+					'error': False,
+					'data': data
+				}
+			return {
+				'error': True,
+				'data': "Invalid password"
+			}
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return {
+				'error': True,
+				'data': data
+			}
+
 	def check_refresh_token(self, refresh_token):
 		refresh_token_exist = db.session.query(AccessToken).filter_by(
 			refresh_token=refresh_token).first()
@@ -390,7 +438,7 @@ class UserService(BaseService):
 			data = self.model_user.first().as_dict()
 
 			# apply includes data
-			if 'admin' not in payloads.values():
+			if str(ROLE['admin']) not in payloads.values() and str(ROLE['user']) not in payloads.values():
 				includes = payloads['includes']
 				self.editIncludes(includes)
 
@@ -414,19 +462,20 @@ class UserService(BaseService):
 			self.model_user.email = payloads['email']
 			self.model_user.username = payloads['username']
 			self.model_user.role_id = payloads['role_id']
+			self.model_user.hash_password('supersecret')
 			db.session.add(self.model_user)
 			db.session.commit()
 			data = self.model_user.as_dict()
-
 			# apply includes data if not admin (role_id != 1)
-			if 'role_id' in payloads and payloads['role_id'] != 1:
+			if 'role_id' in payloads and payloads['role_id'] != '1' and payloads['role_id'] != '8':
 				includes = payloads['includes']
 				data = self.postIncludes(includes)
 				return data
+			return response.set_data(data).build()
 
 		except SQLAlchemyError as e:
 			data = e.args
-			return response.set_message(data).set_error(True).build()
+			return response.set_data(None).set_message(data).set_error(True).build()
 
 	def include_role_data(self, user):
 		if (user['role_id'] is ROLE['speaker']):
@@ -447,6 +496,14 @@ class UserService(BaseService):
 		db.session.add(entityModel)
 		try:
 			db.session.commit()
+
+			if includes['name'] == 'Booth':
+				user_booth = UserBooth()
+				user_booth.user_id = user_id
+				user_booth.booth_id = entityModel.as_dict()['id']
+				db.session.add(user_booth)
+				db.session.commit()
+
 			return response.set_data(None).build()
 		except SQLAlchemyError as e:
 			data = e.args

@@ -1,6 +1,6 @@
 {% extends "admin/base/index.html" %}
 
-{% block title %} <title> Tickets list </title>  {% endblock %}
+{% block title %} <title> Notification </title>  {% endblock %}
 
 {% block header_link %}
     <!-- DataTables -->
@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block page_header %}
-    {{ super() }}
-    <h1>
+<h1>
+        {{ super() }}
         Notification
         <small>Send Notification To Our User</small>
     </h1>
@@ -32,8 +32,10 @@
                 <label for="notification">Notification Content:</label>
                 <input type="text" class="form-control notification-content" id="notification-content">
             </div>
-            <a href="#" class="btn btn-primary btn-block btn-send">Send</b></a>
+            <button class="btn btn-primary btn-block btn-authorize" data-toggle="modal" data-target="#modal-authorize">Send</button>
         </div>
+
+{% include "admin/communication/notification_authorize.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -44,29 +46,16 @@
 <!-- page script -->
 <script>
 
-    $('.btn-send').click(function(event){
+    $('.btn-authorize').click(function(event){
+        $('.modal-title').html('Authorize');
         const title = $('.notification-title').val()
         const content = $('.notification-content').val()
-
-        if (title.trim().length >= 0 && content.trim().length > 0) {
-            const payload = {
-                'message': content,
-                'type': title
-            }
-            if (confirm('Are you sure to broadcast this notification to our user?')) {
-                dsa.post('admin/broadcastnotification', payload, function(result) {
-                    if(result.meta.success) {
-                        alert('Notification broadcasted!')
-                        $('.notification-title').val('');
-                        $('.notification-content').val('');
-                    }
-                });
-            }
-        } else {
-            alert('Don\'t send empty notification to our user');
-        }
-    });
-
+        
+        const admin = dsa.getUser();
+        $('#title').val(title);
+        $('#content').val(content)
+        $('#username').val(admin['username']);
+    })
 </script>
 
 {% endblock %}

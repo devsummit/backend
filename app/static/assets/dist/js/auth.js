@@ -29,6 +29,25 @@
         } : null
     });
 
+    const authorize = (url, methodType, payloads, onSuccess) => ({
+        url: 'auth/' + url,
+        type: methodType,
+        data: payloads ? JSON.stringify(payloads) : '',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        headers: {
+        Authorization: dsa.acess_token()
+        },
+        success: onSuccess ? function (result) {
+        if (result['expired']) {
+            clearCredential();
+            window.location.href = '/login';
+        } else {
+            onSuccess(result);
+        }
+        } : null
+    });
+
     const ajaxObjForm = (url, methodType, payloads, onSuccess) => ({
         url : 'api/v1/'+url,
         type: methodType,
@@ -54,7 +73,11 @@
 
     function storeCredential(data){
       Object.keys(data).map((key)=>{
-        localStorage.setItem(baseStorage+'-'+key, data[key]);
+        if(key == "photos"){
+            localStorage.setItem("photos", data[key][0].url)
+        }else{
+            localStorage.setItem(baseStorage + '-' + key, data[key]);
+        }
       })
     }
 
@@ -102,6 +125,10 @@
     dsa.patchForm = function(url, payloads=null, onSuccess=null) {
         $.ajax(ajaxObjForm(url, 'PATCH', payloads, onSuccess));
     };
+
+    dsa.authorize = function(url, payloads=null, onSuccess=null){
+        $.ajax(authorize(url, 'POST', payloads, onSuccess))
+    }
     
     dsa.request = function(url, method, payloads, onSuccess){
         $.ajax({
@@ -161,7 +188,7 @@
                     //store user data
                     data = result['included'];
                     storeCredential(data);
-                    window.location.href = "/";
+                     window.location.href = "/";
                 }
                 onSuccess(success, result);
             }
@@ -176,7 +203,19 @@
 
     /* isLogin func */
     dsa.isLogin = function() {
-        return (!!dsa.acess_token())
+        return(!!dsa.acess_token())
+    }
+
+    /* initialize */
+    dsa.initialize = function() {
+        param = window.location.href.split("/")[3];
+        if(param && (param !== "upss")) {
+            dsa.request('/init/'+param, 'POST', null, function(result){
+                if(!result) {
+                    window.location.href="/upss";
+                }
+            })
+        }
     }
 
     /* get user data */
@@ -189,6 +228,7 @@
             user.role_id = localStorage[baseStorage+'-role_id'];
             user.id = localStorage[baseStorage+'-id'];
             user.avatar = localStorage[baseStorage+'-url'];
+            user.photo = localStorage['photos']
             user.email = localStorage[baseStorage+'-email'];
             user.created_at = localStorage[baseStorage+'-created_at'];
         }

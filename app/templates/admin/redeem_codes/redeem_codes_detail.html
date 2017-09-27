@@ -1,0 +1,54 @@
+<div class="modal fade" id="modal-detail">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Default title</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box box-primary">
+                        <div class="box-body box-profile">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="code-string">Available  Codes:</label>
+                                        <label class="codes-data">
+                                        </select>
+                                    </div>
+                                </li>
+                            </ul>
+                            <a href="#" class="btn btn-primary btn-block btn-send-codes" id="-"><b>SEND EMAIL</b></a>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- page script -->
+        
+    <script>
+        /* Display Attendee Detail */
+        $('.btn-send-codes').click(function (event) {
+            payload = {
+                'stage_id': $('.detail-redeemcodes-stages').val(),
+                'event_id': $('.detail-redeemcodes-events').val(),
+                'time_start': $('.detail-date').val() + ' ' + $('.detail-time-start').val()+'.000000',
+                'time_end': $('.detail-date').val() + ' ' + $('.detail-time-end').val()+'.000000'
+            };
+       
+            dsa.post('redeemcodess', payload, function (result) {
+                if (result.meta.success) {
+                    location.reload()
+                }
+            });
+        })
+        
+    </script>

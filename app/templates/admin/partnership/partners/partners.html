@@ -45,7 +45,7 @@
                             <a href="http://{{ partner.website }}" id='atd-{{ partner.id }}' class="partner-name">
                             {{ partner.name }}</a> 
                         </td>
-                        <td>
+                        <td class='partner-email'>
                             {{ partner.email|e }}
                         </td>
                         <td>
@@ -55,7 +55,7 @@
                             {{ partner.type|e }}
                         </td>
                         <td>
-                            <img src="static/{{partner.photo|e}}" height="120px" width="100px" alt='partner photo'>
+                            <img src="{{partner.photo|e}}" height="120px" width="100px" alt='partner photo'>
                         </td>
                         <td>
                             <button id='btd-{{ partner.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
@@ -64,6 +64,9 @@
                             <button id='btd-{{ partner.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
+                            <!-- <button id='btd-{{ partner.id }}' type="button" class="btn btn-sm btn-info btn-email" data-toggle="modal" data-target="#modal-email">
+                                Email
+                            </button> -->
                         </td>
                     </tr>
                     {% endfor %}
@@ -72,6 +75,7 @@
         </div>
 
         {% include "admin/base/modal_delete.html" %}
+        {% include "admin/base/modal_email.html" %}
         {% include "admin/partnership/partners/partner_edit.html" %}
         {% include "admin/partnership/partners/partner_add.html" %}
 {% endblock %}
@@ -129,6 +133,12 @@
             select.append(option);
         });
     });
+
+    $('.btn-email').click(function(event){
+        $('.modal-title').html('Devsummit Email Form');
+        const email = $('.partner-email').html().trim();
+        $('.email-receiver').val(email);
+    })
 
     $('.btn-delete').click(function(event){
         $('.modal-title').html('Are you sure want to delete this account?');

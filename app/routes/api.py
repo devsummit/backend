@@ -40,6 +40,7 @@ from app.controllers.Grantrole_controller import GrantroleController
 from app.controllers.source_controller import SourceController
 from app.controllers.admin_controller import AdminController
 from app.controllers.booth_gallery_controller import BoothGalleryController
+from app.controllers.feed_report_controller import FeedReportController
 from app.controllers.speaker_candidate_controller import SpeakerCandidateController
 from app.configs.constants import ROLE
 
@@ -356,7 +357,7 @@ def booth_gallery_self(*args, **kwargs):
 @token_required
 def transfer_points(*args, **kwargs):
     user = kwargs['user'].as_dict()
-    if(user['role_id'] == 1 or user['role_id'] == 3):
+    if(user['role_id'] in [ROLE['admin'], ROLE['booth']]):
         return PointsController.transfer_point(request, user['id'])
     return 'You cannot transfer points'
 
@@ -646,13 +647,15 @@ def partners_id(id, *args, **kwargs):
         return PartnerController.delete(id)
 
 
-@api.route('/partners', methods=['GET', 'POST'])
-@token_required
+@api.route('/partners', methods=['GET'])
 def partners(*args, **kwargs):
-    if(request.method == 'GET'):
-        return PartnerController.index(request)
-    else:
-        return PartnerController.create(request)
+    return PartnerController.index(request)
+    
+
+@api.route('/partners', methods=['POST'])
+@token_required
+def postpartner(*args, **kwargs):
+    return PartnerController.create(request)
 
 
 @api.route('/entrycashlogs', methods=['GET', 'POST'])
@@ -734,15 +737,19 @@ def rundown_id(id, *args, **kwargs):
 @api.route('/feeds/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @token_required
 def feeds_id(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
         return FeedController.show(id)
-
+    elif request.method == 'DELETE':
+        return FeedController.delete(user, id)
 
 @api.route('/feeds', methods=['GET', 'POST'])
 @token_required
 def feeds(*args, **kwargs):
     user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
+        if request.args.get('page'):
+            return FeedController.index(request, page=request.args.get('page'))
         return FeedController.index(request)
     else:
         data = FeedController.create(request, user['id'])
@@ -767,6 +774,8 @@ def notification_id(id, *args, **kwargs):
         return NotificationController.show(id)
 
 
+
+
 # Add redeem code API
 @api.route('/redeemcodes', methods=['GET', 'PUT', 'PATCH', 'POST'])
 @token_required
@@ -775,16 +784,27 @@ def redeem(*args, **kwargs):
     if (request.method == 'POST'):
         return RedeemCodeController.create(request)
     if (request.method == 'GET'):
-        return RedeemCodeController.index()
+        codeable_id = request.args.get('codeable_id') or None 
+        codeable_type = request.args.get('codeable_type') or None
+        if codeable_id and codeable_type:
+            param = {
+                'codeable_id': codeable_id,
+                'codeable_type': codeable_type
+            }
+            return RedeemCodeController.filter(param)
+        else:
+            return RedeemCodeController.index()
     if (request.method in ['PUT', 'PATCH']):
         return RedeemCodeController.update(request, user)
 
 
-@api.route('/redeemcodes/<id>', methods=['DELETE'])
+@api.route('/redeemcodes/<id>', methods=['DELETE', 'GET'])
 @token_required
 def redeem_id(id, *args, **kwargs):
     if (request.method == 'DELETE'):
         return RedeemCodeController.delete(id)
+    if (request.method == 'GET'):
+        return RedeemCodeController.show(id)
 
 
 @api.route('/grantrole/<id>', methods=['PUT', 'PATCH'])
@@ -860,4 +880,29 @@ def broadcast_notification(*args, **kwargs):
         return 'unauthorized'
     else:
         return AdminController.broadcast_notification(request, user)
+
+@api.route('/admin/sendemail', methods=['POST'])
+@token_required
+def send_email(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (user['role_id'] != ROLE['admin']):
+        return 'unauthorized'
+    else:
+        return AdminController.send_email(request, user)
+
+# Feed report
+@api.route('/feeds/reports', methods=['GET', 'POST'])
+@token_required
+def feed_report_get(*args, **kwargs):
+    if request.method == 'GET':
+        return FeedReportController.index(request)
+    else:
+        user = kwargs['user'].as_dict()
+        return FeedReportController.create(request, user['id'])
+
+@api.route('/feeds/reports/<id>', methods=['GET'])
+@token_required
+def feed_report_show(id, *args, **kwargs):
+    return FeedReportController.show(id)
+
 

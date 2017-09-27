@@ -39,7 +39,7 @@ class UserAuthorizationController(BaseController):
 
                 if user is not None:
                     if admin is not None and admin:
-                        if user.as_dict()['role_id'] != 1:
+                        if user.as_dict()['role_id'] != 1 and user.as_dict()['role_id'] != 8:
                             return BaseController.send_error_api({'unauthorized': True}, 'unauthorized, must be admin to access this page.')
                     if user.verify_password(password):
                         token = userservice.save_token()
@@ -184,6 +184,23 @@ class UserAuthorizationController(BaseController):
             return BaseController.send_response_api(result['data'], 'password succesfully changed')
         else:
             return BaseController.send_error_api(None, result['data'])
+
+    @staticmethod
+    def password_required(request, user):
+        password = request.json['password'] if 'password' in request.json else None
+        
+        if password:
+            payloads = {
+                'password': password,
+                'user': user
+            }
+        else:
+            return BaseController.send_error_api(None, 'Password required')
+        result = userservice.password_required(payloads)
+        if not result['error']:
+            return BaseController.send_response_api(None, "Password match")
+        else:
+            return BaseController.send_error_api(None, "Password did not match")
 
     @staticmethod
     def updatefcmtoken(request, user):
