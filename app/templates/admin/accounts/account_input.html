@@ -60,8 +60,8 @@
                         <li class="list-group-item">
                             <div class="form-group">                                        
                                 <label for="user-picture">User Picture (optional):</label>
-                                <input type="file" name="image_data" class="form-control" id="i-user-photo" accept=".jpg,.jpeg,.png">
-                                <img id="i-preview-user-pic" src="#" alt="" width="100" height="100" />
+                                <input type="file" name="image_data" class="form-control account-user_picure" id="i-input-user-photo" accept=".jpg,.jpeg,.png">
+                                <img id="account-user_picture_id" src="" alt="" width="100" height="100" />
                             </div>
                         </li>
                         
@@ -77,7 +77,7 @@
         </div>
         <div class="modal-footer">
             <a href="#" class="btn btn-primary btn-input-save" id="-"><b>Save</b></a>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="i-closing">Close</button>
         </div>
         </div>
         <!-- /.modal-content -->
@@ -87,16 +87,18 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
+    var user_picture = "";
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
-                $('#i-preview-user-pic').attr('src', e.target.result);
+                $('#account-user_picture_id').attr('src', e.target.result);
+                user_picture = e.target.result;
             }
             reader.readAsDataURL(input.files[0]);
             }
         }
-    $("#i-user-photo").change(function(){
+    $("#i-input-user-photo").change(function(){
         readURL(this);
     });
 
@@ -151,7 +153,8 @@
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
-            "role_id": role_id            
+            "role_id": role_id,
+            "user_picture": user_picture            
         };
         if(role!=='admin' && role!=='user') {
             payload['includes'] = buildIncludesPayload(role);
@@ -167,13 +170,12 @@
     var saveAdd = function() {
         const role = $('#account-input-select-role').find(":selected").text();
         const role_id = $('#account-input-select-role').find(":selected").val();
-        var user_picture = $('#i-preview-user-pic').attr('src');
         var payload = {
             "first_name": $('.account-firstname').val(),
             "last_name": $('.account-lastname').val(),
             "email": $('.account-email').val(),
             "username": $('.account-username').val(),
-            "role_id": $('#account-input-select-role').find(":selected").val(),
+            "role_id": role_id,
             "user_picture": user_picture
         };
         
@@ -203,6 +205,25 @@
             saveAdd();
         }
     });
+
+    /* Close and clear cache */
+    $('#i-closing, .close').click(function(event){
+        $('.account-firstname').val("");
+        $('.account-lastname').val("");
+        $('.account-email').val("");
+        $('.account-username').val("");
+        $('#i-input-user-photo').val("");
+        $('#account-user_picture_id').attr('src', "");
+        $('#attendee-points').val("");
+        $('#booth-stageid').val("");
+        $('#booth-points').val("");
+        $('#booth-summary').val("");
+        $('#speaker-job').val("");
+        $('#speaker-summary').val("");
+        $('#speaker-information').val("");
+        $('#ambassador-informations').val("");
+        $('#ambassador-institution').val("");        
+    })
     
     /* Tab change event */
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {

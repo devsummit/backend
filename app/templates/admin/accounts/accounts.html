@@ -121,6 +121,7 @@
                 $('#account-role_id').val(data['role_id']);
                 $('#account-input-select-role').find('*').removeAttr('selected');
                 $('#input-role' + data['role_id']).attr('selected', 'selected');
+                $('#account-user_picture_id').attr('src', data['photos'][0]['url']);
 
                 switch (data['role_id']) {
                     case 2:

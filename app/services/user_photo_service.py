@@ -150,4 +150,42 @@ class UserPhotoService(BaseService):
             return response.set_data(data).set_message('photo saved').build()
         except SQLAlchemyError as e:
             data = e.orig.args
-            return response.set_error(True).set_data(None).set_message(data).build()   
+            return response.set_error(True).set_data(None).set_message(data).build()
+
+
+    def update_photo(self, payloads):
+        response = ResponseBuilder()
+        username = payloads['username']
+        user_id = db.session.query(User).filter_by(username=username).first().as_dict()['id']     
+        # take the base64 input
+        raw_base64 = payloads['user_picture']
+        #do regex to prepare the data for decoding into binary and extract image type
+        split_header = re.split(r',', raw_base64, maxsplit=1)
+        search_extension = re.search(r'jpeg|png', split_header[0])
+        file_base64 = split_header[1]        
+        #decode and assign file address'
+        raw_binary_image = base64.b64decode(file_base64)
+        filetype = "." + search_extension.group(0)
+        filename = Helper().time_string() + "_" + username + filetype
+        file_location = os.path.join(current_app.config['POST_USER_PHOTO_DEST'], filename) 
+        #write binary into the specified file location
+        with open(file_location, 'wb') as file:
+            file.write(raw_binary_image)
+        #begin database session
+        try:
+            newUrl = current_app.config['SAVE_USER_PHOTO_DEST'] + filename
+            self.model_user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id)
+            self.user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
+            os.remove(current_app.config['STATIC_DEST'] + self.user_photo.url)
+            self.model_user_photo.update({
+                'url': newUrl,
+                'updated_at': datetime.datetime.now()
+            })
+            db.session.commit()
+            data = self.model_user_photo.first().user.include_photos().as_dict()
+            data = self.include_role_data(data)
+            return response.set_data(data).set_message('user photo updated').build()
+        except SQLAlchemyError as e:
+            data = e.orig.args
+            return response.set_error(True).set_data(None).set_message(data).build()
+       

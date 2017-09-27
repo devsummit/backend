@@ -363,10 +363,14 @@ class UserService(BaseService):
 	def delete(self, id):
 		self.model_user = db.session.query(User).filter_by(id=id)
 		temp_model = self.model_user.first().as_dict() if self.model_user.first() else None
+		user_id = db.session.query(User).filter_by(id=id).first().as_dict()['id']
+		self.user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id)
 
 		error = True
 		data = ''
-
+		if self.user_photo is not None:
+			self.user_photo.delete()
+			db.session.commit()
 		if temp_model is not None:
 			if temp_model['role_id'] in [ROLE['admin'], ROLE['speaker'], ROLE['booth']]:
 				self.model_user.delete()
@@ -396,7 +400,14 @@ class UserService(BaseService):
 			})
 			db.session.commit()
 			data = self.model_user.first().as_dict()
-
+			# apply user picture payload to be redirected to userphotoservice accordingly
+			user_id = db.session.query(User).filter_by(username=payloads['username']).first().as_dict()['id']
+			self.user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
+			if 'user_picture' in payloads and payloads['user_picture']:
+				if self.user_photo is None:			
+					UserPhotoService.add_photo(self, payloads)
+				else:
+					UserPhotoService.update_photo(self, payloads)
 			# apply includes data
 			if str(ROLE['admin']) not in payloads.values() and str(ROLE['user']) not in payloads.values():
 				includes = payloads['includes']
@@ -427,8 +438,7 @@ class UserService(BaseService):
 			db.session.commit()
 			data = self.model_user.as_dict()
 			# apply user picture payload to be redirected to userphotoservice
-			if 'user_picture' in payloads and payloads['user_picture']:	
-				# print ("content of the payload", payloads)			
+			if 'user_picture' in payloads and payloads['user_picture']:
 				UserPhotoService.add_photo(self, payloads)
 			# apply includes data if not admin (role_id != 1)
 			if 'role_id' in payloads and payloads['role_id'] != "1" and payloads['role_id'] != "8":

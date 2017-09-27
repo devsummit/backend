@@ -29,6 +29,7 @@ class UserController(BaseController):
         email = request.json['email'] if 'email' in request.json else None
         username = request.json['username'] if 'username' in request.json else None
         role_id = request.json['role_id'] if 'role_id' in request.json else None
+        user_picture = request.json['user_picture'] if 'user_picture' in request.json else None
         includes = request.json['includes'] if 'includes' in request.json else None
         if first_name and last_name and email and username and role_id:
             payloads = {
@@ -37,6 +38,7 @@ class UserController(BaseController):
                 'email': email,
                 'username': username,
                 'role_id': role_id,
+                'user_picture': user_picture,
                 'includes': includes
             }
         else:
