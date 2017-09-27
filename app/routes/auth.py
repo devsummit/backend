@@ -29,6 +29,13 @@ def refreshtoken():
 	return UserAuthorizationController.refreshtoken(request)
 
 
+@auth.route('/user/authorize', methods=['POST'])
+@token_required
+def user_authorize(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return UserAuthorizationController.password_required(request, user)
+
+
 @auth.route('/me/changesetting', methods=['PATCH', 'PUT'])
 @token_required
 def change_setting(*args, **kwargs):
