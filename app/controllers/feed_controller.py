@@ -14,6 +14,8 @@ class FeedController(BaseController):
 		message = request.form['message'] if 'message' in request.form else None
 		attachment = request.files['attachment'] if 'attachment' in request.files else None
 		if message:
+			if len(message.strip()) < 1:
+				return BaseController.send_error_api(None, 'message can\'t be empty')
 			payloads = {
 				'message': message,
 				'user_id': user_id,
