@@ -8,58 +8,53 @@ config:
       target: 'http://api.devsummit.io:8081'
       phases:
         - duration: 1200
-          arrivalRate: 180
+          arrivalRate: 20
     local:
       target: 'http://localhost:5000'
       phases:
-      - duration: 300
-        arrivalRate: 15
-  variables:
-    feedMessage: "test feed message"
+      - duration: 180
+        arrivalRate: 10
   defaults:
     headers:
-      Authorization: 'eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwNjM5NzEwMSwiZXhwIjoxNTA3MDAxOTAxfQ.eyJpZCI6Mzd9.ZeKoNxDjWBfe9eS4vIDtXtWAGpMv-Kfq7WRrtomn96g'
-      Content-Type: 'application/json'
+      Authorization: 'eyJhbGciOiJIUzI1NiIsImlhdCI6MTUwNjUyMTU0NCwiZXhwIjoxNTA3MTI2MzQ0fQ.eyJpZCI6Mn0.MYJiqlykRf7OSq30GP9nWEl-ESPpWrqre3gkU76aQbU'
 scenarios:
   - name: "Feed test"
     flow:
-      - loop:
-        - get:
-            url: "/api/v1/feeds"
-        - post:
-            url: "/api/v1/feeds"
-            json:
-              message: "{{ feedMessage }}"
-        count: 10
-  - name: "Order test"
+      - get:
+          Content-Type: 'application/json'
+          url: "/api/v1/feeds"
+      - post:
+          url: "/api/v1/feeds"
+          formData:
+            message: "Testing from arti"
+  - name: "Order and payment test"
     flow:
-      - loop:
-        - get:
-            url: "/api/v1/orders"
-        - post:
-            url: "/api/v1/orders"
-            json:
-              order_details:
-                json:
-                  ticket_id: 1
-                  count: 4
+      - get:
+          headers: 
+            Content-Type: 'application/json'
+          url: "/api/v1/orders"
+      - post:
+          url: "/api/v1/orders"
+          headers:
+            Content-Type: 'application/json'
+          json:
+            order_details:
+              - ticket_id: 1
+                count: 4
+          capture:
+            json: $.data.id
+            as: orderId
+      - post:
+          headers:
+            Content-Type: 'application/json'
+          url: '/api/v1/payments'
+          json:
+            payment_type: 'bca_klikbca'
+            gross_amount: 1600000
+            order_id: '{{ orderId }}'
+            email: 'shi77.andy@gmail.com'
+            first_name: 'andy'
+            last_name: 'herman'
+            phone: '089677777'
+            description: 'testing via artillery'
 
-        count: 10
-  - name: "Payment test"
-    flow:
-      - loop:
-        - get:
-            url: "/api/v1/payments"
-        - post:
-            url: "/api/v1/payments"
-            json:
-              payment_type: "bca_klikbca"
-              gross_amount: 100000
-              description: 'testing arti'
-              bank: 'mandiri'
-              order_id: 'ds-3333'
-              first_name: 'Andy'
-              last_name: 'Herman'
-              email: 'shi77.andy@gmail'
-              phone: '089777777'
-        count: 10
