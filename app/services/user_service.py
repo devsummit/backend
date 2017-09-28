@@ -88,7 +88,7 @@ class UserService(BaseService):
 				# checking if referer role_id = 7
 				if payloads['referer'] is not None:
 					referer_role_id = db.session.query(User.role_id).filter_by(username=payloads['referer']).first()
-					if referer_role_id[0] == 7:
+					if referer_role_id is not None and referer_role_id[0] == 7:
 						self.model_user.referer = payloads['referer']
 					else:
 						return response.set_data(None).set_message('Referal Username is Invalid').set_error(True).build()
