@@ -19,9 +19,9 @@ class PointsController(BaseController):
 		if user['role_id'] == 1:
 			# admin
 			result = pointtransactionservice.get_admin_log()
-		elif user['role_id'] == 2:
+		elif user['role_id'] == 7:
 			# attendee
-			result = pointtransactionservice.get_attendee_log(user['id'])
+			result = pointtransactionservice.get_user_log(user['id'])
 		elif user['role_id'] == 3:
 			# booth
 			result = pointtransactionservice.get_booth_log(user['id'])
