@@ -2,11 +2,12 @@ import oauth2 as oauth
 import json
 import requests
 import datetime
+import os
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
-from flask import request
+from flask import request, current_app
 from app.models.access_token import AccessToken
 from app.models.user import User
 from app.models.user_booth import UserBooth
@@ -24,6 +25,7 @@ from app.builders.response_builder import ResponseBuilder
 from app.models.base_model import BaseModel
 from app.services.user_ticket_service import UserTicketService
 from app.services.fcm_service import FCMService
+from app.services.user_photo_service import UserPhotoService
 
 
 class UserService(BaseService):
@@ -396,10 +398,17 @@ class UserService(BaseService):
 	def delete(self, id):
 		self.model_user = db.session.query(User).filter_by(id=id)
 		temp_model = self.model_user.first().as_dict() if self.model_user.first() else None
+		user_id = db.session.query(User).filter_by(id=id).first().as_dict()['id']
+		self.user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id)
+
+		self.user_photo_row = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
+		os.remove(current_app.config['STATIC_DEST'] + self.user_photo_row.url)
 
 		error = True
 		data = ''
-
+		if self.user_photo is not None:
+			self.user_photo.delete()
+			db.session.commit()
 		if temp_model is not None:
 			if temp_model['role_id'] in [ROLE['admin'], ROLE['speaker'], ROLE['booth']]:
 				self.model_user.delete()
@@ -429,7 +438,14 @@ class UserService(BaseService):
 			})
 			db.session.commit()
 			data = self.model_user.first().as_dict()
-
+			# apply user picture payload to be redirected to userphotoservice accordingly
+			user_id = db.session.query(User).filter_by(username=payloads['username']).first().as_dict()['id']
+			self.user_photo = db.session.query(UserPhoto).filter_by(user_id=user_id).first()
+			if 'user_picture' in payloads and payloads['user_picture']:
+				if self.user_photo is None:			
+					UserPhotoService.add_photo(self, payloads)
+				else:
+					UserPhotoService.update_photo(self, payloads)
 			# apply includes data
 			if str(ROLE['admin']) not in payloads.values() and str(ROLE['user']) not in payloads.values():
 				includes = payloads['includes']
@@ -459,8 +475,11 @@ class UserService(BaseService):
 			db.session.add(self.model_user)
 			db.session.commit()
 			data = self.model_user.as_dict()
+			# apply user picture payload to be redirected to userphotoservice
+			if 'user_picture' in payloads and payloads['user_picture']:
+				UserPhotoService.add_photo(self, payloads)
 			# apply includes data if not admin (role_id != 1)
-			if 'role_id' in payloads and payloads['role_id'] != '1' and payloads['role_id'] != '8':
+			if 'role_id' in payloads and payloads['role_id'] != "1" and payloads['role_id'] != "8":
 				includes = payloads['includes']
 				data = self.postIncludes(includes)
 				return data
