@@ -460,7 +460,7 @@ class UserService(BaseService):
 			db.session.commit()
 			data = self.model_user.as_dict()
 			# apply includes data if not admin (role_id != 1)
-			if 'role_id' in payloads and payloads['role_id'] != '1' and payloads['role_id'] != '8':
+			if 'role_id' in payloads and payloads['role_id'] != '1' and payloads['role_id'] != '8' and payloads['role_id'] != '7':
 				includes = payloads['includes']
 				data = self.postIncludes(includes)
 				return data
