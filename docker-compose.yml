@@ -3,11 +3,13 @@ version: '2'
 services:
   database-dev:
     build: ./mysql
+    volumes:
+      - ../storage/data/mysql:/var/lib/mysql
     ports:
       - "3308:3308"
     environment:
       MYSQL_DATABASE: devsummit
-      MYSQL_USER: root
+      MYSQL_USER: andy 
       MYSQL_PASSWORD: GAKtahu
       MYSQL_ROOT_PASSWORD: GAKtahu
 
