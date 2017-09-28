@@ -25,9 +25,12 @@ class FCMService():
 		if not self.save_notification(title, message, uid, sender_id):
 			return response.set_error(True).set_message('failed to save notification').set_data(None).build()
 		fcmtoken = user['fcmtoken']
-		result = self.send_message(fcmtoken, title, message)
-		if 'success' in result.json() and result.json()['success'] == 1:
-			return response.set_data(result.json()).set_message('notification sent').build()
+		if fcmtoken is not None:
+			result = self.send_message(fcmtoken, title, message)
+			if 'success' in result.json() and result.json()['success'] == 1:
+				return response.set_data(result.json()).set_message('notification sent').build()
+		return response.set_data(None).set_message('notification sent').build()
+
 		
 	def save_notification(self, type, message, receiver_id, sender_id):
 		notification = Notification()
