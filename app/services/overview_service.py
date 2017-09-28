@@ -4,17 +4,18 @@ from sqlalchemy import text
 from app.models import db
 # import model class
 from app.services.base_service import BaseService
+from app.configs.constants import ROLE
 
 class OverviewService(BaseService):
 
     def getAttendees(self):
-        t = db.engine.execute("select max(created_at) from attendees").first()
-        if t and len(t)>0:
+        t = db.engine.execute("select max(created_at) from users where role_id = " + str(ROLE['user'])).first()
+        if t[0] and len(t)>0:
             last_date = t[0].isoformat()
         else:
             last_date = time.strftime("%Y/%m/%d")
-        new = db.engine.execute('select coalesce(count(*),0) from attendees where created_at >= "' + last_date + '"').first()
-        total = db.engine.execute("select coalesce(count(*),0) from attendees").first()
+        new = db.engine.execute('select coalesce(count(*),0) from users where role_id = ' + str(ROLE['user']) + ' and created_at >= "' + last_date + '"').first()
+        total = db.engine.execute("select coalesce(count(*),0) from users where role_id = " + str(ROLE['user'])).first()
         return {
             'new': int(new[0].__str__()),
             'total': int(total[0].__str__())
