@@ -9,7 +9,7 @@ class PointTransactionLog(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'point_transaction_log'
 	# displayed fields
-	visible = ['id', 'booth_id', 'attendee_id', 'amount', 'created_at', 'updated_at']
+	visible = ['id', 'booth_id', 'user_id', 'amount', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -19,12 +19,12 @@ class PointTransactionLog(db.Model, BaseModel):
 		nullable=False
 	)
 	booth = db.relationship('Booth')
-	attendee_id = db.Column(
+	user_id = db.Column(
 		db.String(40),
-		db.ForeignKey('attendees.id'),
+		db.ForeignKey('users.id'),
 		nullable=False
 	)
-	attendee = db.relationship('Attendee')
+	user = db.relationship('User')
 	amount = db.Column(db.Integer)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
