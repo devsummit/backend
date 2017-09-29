@@ -21,7 +21,7 @@ class NotificationService(BaseService):
 		if request.args.get('page'):
 			self.page = request.args.get('page')
 		else:
-			self.perpage = self.total_items
+			self.perpage = self.perpage
 			self.page = 1
 		self.base_url = request.base_url
         # paginate
