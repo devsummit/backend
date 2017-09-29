@@ -50,7 +50,7 @@ MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
 MERCHANT_ID = 'M1066775'
 CLIENT_KEY = 'VT-client-g8cB-IVLwe64YIdv'
 SERVER_KEY = 'VT-server-njhqghnFUZbtZgOg9ldNtY0l:'
-
+IMAGE_SIZE = [800, 600]
 
 # FCM key
 FCM_SERVER_KEY = 'key=AAAA8iNOby4:APA91bGxdjtV_YTm3FnvjUiGJPPartTvM5COQFsubP-kBGP0AbmGBml1WtbYgAKc2-CDNcFGYLl4j0JzJq4AzeZwc47aURd3MTKLW_bLS6FtYokJdgjJcE7rM-9KiPlPJ029S9ua7OUF'

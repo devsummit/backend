@@ -1,8 +1,10 @@
 import os
 import datetime
+from PIL import Image
+from resizeimage import resizeimage
 from flask import current_app
 from app.models import db
-from app.configs.constants import ROLE
+from app.configs.constants import ROLE, IMAGE_SIZE
 from app.services.helper import Helper 
 from werkzeug import secure_filename
 from sqlalchemy.exc import SQLAlchemyError
@@ -82,10 +84,15 @@ class FeedService(BaseService):
 			return response.set_data(data).set_error(True).build()
 
 	def save_file(self, file, id=None):
+		image = Image.open(file, 'r')
+		resized_image = resizeimage.resize('contain', image, IMAGE_SIZE)
+
 		if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
-				filename = secure_filename(file.filename)
-				filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
-				file.save(os.path.join(current_app.config['POST_FEED_PHOTO_DEST'], filename))
-				return current_app.config['SAVE_FEED_PHOTO_DEST'] + filename
+			if (Helper().allowed_file(file.filename, ['jpg', 'jpeg'])):
+				resized_image = resized_image.convert("RGB")
+			filename = secure_filename(file.filename)
+			filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
+			resized_image.save(os.path.join(current_app.config['POST_FEED_PHOTO_DEST'], filename))
+			return current_app.config['SAVE_FEED_PHOTO_DEST'] + filename
 		else:
 			return None
