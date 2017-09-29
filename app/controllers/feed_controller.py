@@ -13,14 +13,11 @@ class FeedController(BaseController):
 	def create(request, user_id):
 		message = request.form['message'] if 'message' in request.form else None
 		attachment = request.files['attachment'] if 'attachment' in request.files else None
-		if message:
-			payloads = {
-				'message': message,
-				'user_id': user_id,
-				'attachment': attachment
-			}
-		else:
-			return BaseController.send_error_api(None, 'field is not complete')
+		payloads = {
+			'message': message,
+			'user_id': user_id,
+			'attachment': attachment
+		}
 
 		result = feedservice.create(payloads)
 
