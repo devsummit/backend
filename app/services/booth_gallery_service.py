@@ -25,11 +25,14 @@ class BoothGalleryService():
 
     def show(self, id):
         reponse = ResponseBuilder()
-        booth_gallery = db.session.query(BoothGallery).filter_by(id=id).first()
-        if booth_gallery is not None:
-            booth_gallery = booth_gallery.as_dict()
-            booth_gallery['url'] = Helper().url_helper(booth_gallery['url'], current_app.config['GET_DEST'])
-        return reponse.set_data(booth_gallery).set_message('data retrieved successfully').build()
+        booth_galleries = db.session.query(BoothGallery).filter_by(booth_id=id).all()
+        result = []
+        if booth_galleries is not None:
+            for booth_gallery in booth_galleries:
+                booth_gallery = booth_gallery.as_dict()
+                booth_gallery['url'] = Helper().url_helper(booth_gallery['url'], current_app.config['GET_DEST'])
+                result.append(booth_gallery)
+        return reponse.set_data(result).set_message('data retrieved successfully').build()
 
     def self_gallery(self, booth_id):
         response = ResponseBuilder()
