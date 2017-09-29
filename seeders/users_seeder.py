@@ -33,7 +33,8 @@ class UsersSeeder():
         ganesh.email = 'caudaganesh@gmail.com'
         ganesh.username = 'ganesh'
         ganesh.hash_password('supersecret')
-        ganesh.role_id = 2
+        ganesh.role_id = 7
+        ganesh.points = 0
         db.session.add(ganesh)
 
         # create erdi
@@ -57,12 +58,6 @@ class UsersSeeder():
         db.session.add(guffy)
 
         db.session.commit()
-
-        # create attendee for ganesh
-        ganesh_attendee = Attendee()
-        ganesh_attendee.user_id = 2
-        ganesh_attendee.points = 1000
-        db.session.add(ganesh_attendee)
 
         # create booth for erdi
         erdi_booth = Booth()

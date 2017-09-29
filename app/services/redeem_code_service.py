@@ -4,6 +4,7 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import and_
 from app.builders.response_builder import ResponseBuilder
+from app.models.access_token import AccessToken
 
 from app.models.redeem_code import RedeemCode
 from app.models.base_model import BaseModel
@@ -80,9 +81,9 @@ class RedeemCodeService():
         response = ResponseBuilder()
         codes = [r.code for r in db.session.query(RedeemCode.code).all()]
         for i in range(0, int(payloads['count'])):
-            code = secrets.token_hex(3)
+            code = secrets.token_hex(4)
             while (code in codes):
-                code = secrets.token_hex(3)
+                code = secrets.token_hex(4)
             self.model_redeem_code = RedeemCode()
             self.model_redeem_code.codeable_type = payloads['codeable_type']
             self.model_redeem_code.codeable_id = payloads['codeable_id']
@@ -97,27 +98,25 @@ class RedeemCodeService():
         response = ResponseBuilder()
         _result = {}
         _result['user'] = user
+        token = db.session.query(AccessToken).filter_by(user_id=user['id']).first().as_dict()
         raw_user = db.session.query(User).filter_by(id=user['id'])
         raw_redeem_code = db.session.query(RedeemCode).filter_by(code=code)
         if raw_redeem_code.first() is None:
             return response.set_data(None).set_error(True).set_message('code not found').build()
         redeem_code = raw_redeem_code.first().as_dict()
+        if raw_user.first() is None:
+            return response.set_data(None).set_error(True).set_message('user not found').build()
         if redeem_code['used'] == 1:
             return response.set_data(None).set_error(True).set_message('code already used').build()
 
         try:
             if redeem_code['codeable_type'] == 'partner':
                 # become attendee
-                attendee = Attendee()
-                attendee.user_id = user['id']
                 userticket = UserTicket()
                 userticket.user_id = user['id']
                 userticket.ticket_id = 1
-                db.session.add(attendee)
                 db.session.add(userticket)
-                user['role_id'] = 2
                 db.session.commit()
-                _result['attendee'] = attendee.as_dict()
             elif redeem_code['codeable_type'] == 'booth':
                 # get booth of the code
                 booth = db.session.query(Booth).filter_by(id=redeem_code['codeable_id']).first().as_dict()
@@ -128,7 +127,7 @@ class RedeemCodeService():
                 db.session.add(user_booth)
                 user['role_id'] = 3
                 db.session.commit()
-                _result['booth'] = booth
+                _result['user']['booth'] = booth
             raw_redeem_code.update({
                 'used': True
             })
@@ -136,7 +135,11 @@ class RedeemCodeService():
                 'role_id': user['role_id']
             })
             db.session.commit()
-            return response.set_data(_result).set_message('Redeem code updated successfully').set_error(False).build()
+            token_payload = {
+                'access_token': token['access_token'],
+                'refresh_token': token['refresh_token']
+            }
+            return response.set_data(token_payload).set_included(_result['user']).set_message('Redeem code updated successfully').set_error(False).build()
         except SQLAlchemyError as e:
             return response.set_data(e.orig.args).set_message('SQL error').set_error(True).build()
 

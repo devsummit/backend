@@ -154,9 +154,9 @@
             "role_id": $('#account-input-select-role').find(":selected").val()
         };
 
-        if(role!=='admin' && role!=='partner') {
+        if(role!=='admin' && role!=='partner' && role !=='user') {
             payload['includes'] = buildIncludesPayload(role);           
-        };        
+        };
 
         dsa.post('{{ globals["api_route"] }}', payload, function(result) {            
             if(result.meta.success) {

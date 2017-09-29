@@ -17,8 +17,8 @@ from app.services.newsletter_service import NewsletterService
 from app.services.booth_service import BoothService
 from app.services.user_ticket_service import UserTicketService
 from app.services.attendee_service import AttendeeService
-from app.services.payment_service import PaymentService 
-from app.services.referal_service import ReferalService 
+from app.services.payment_service import PaymentService
+from app.services.referal_service import ReferalService
 from app.services.partner_service import PartnerService
 from app.services.entry_cash_log_service import EntryCashLogService
 from app.services.sponsor_service import SponsorService
@@ -32,6 +32,8 @@ from app.services.source_service import SourceService
 from app.services.fcm_service import FCMService
 from app.services.booth_gallery_service import BoothGalleryService
 from app.services.speaker_candidate_service import SpeakerCandidateService
+from app.services.overview_service import OverviewService
+from app.services.feed_report_service import FeedReportService
 
 
 # instantiate service
@@ -68,3 +70,5 @@ sourceservice = SourceService()
 boothgalleryservice = BoothGalleryService()
 speakercandidateservice = SpeakerCandidateService()
 fcmservice = FCMService()
+overviewservice = OverviewService()
+feedreportservice = FeedReportService(10)

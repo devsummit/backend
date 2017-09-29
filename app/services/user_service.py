@@ -64,10 +64,17 @@ class UserService(BaseService):
 			return response.set_data(None).set_message('User already registered').set_error(True).build()
 
 		# check referal limit
-		check_referer = db.session.query(User).filter_by(
-				referer=payloads['referer']).all()
-		if check_referer is not None and len(BaseModel.as_list(check_referer)) >= 10:
-			return response.set_data(None).set_message('Referal code already exceed the limit').set_error(True).build()
+		check_referer = None
+		if 'referer' in payloads and payloads['referer']:
+			check_referer = db.session.query(User).filter_by(
+					referer=payloads['referer']).all()
+			#if the check_referer return empty list, must be first time referred
+			if not check_referer:
+				count_referer = 1
+			else:
+				count_referer = len(BaseModel.as_list(check_referer))
+		if check_referer is not None and count_referer >= 10:
+			return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
 
 		if payloads['email'] is not None:
 			try:
@@ -78,7 +85,11 @@ class UserService(BaseService):
 				self.model_user.username = payloads['username']
 				self.model_user.role_id = payloads['role']
 				self.model_user.social_id = payloads['social_id']
-				self.model_user.referer = payloads['referer'] if check_referer else None
+				# checking if referer role_id = 7
+				if payloads['referer'] is not None:
+					referer_role_id = db.session.query(User).filter_by(username=payloads['referer']).first()
+					if referer_role_id is not None and referer_role_id.as_dict()['role_id'] == 7:
+						self.model_user.referer = payloads['referer']
 				if payloads['provider'] == 'email': 
 					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
@@ -325,6 +336,29 @@ class UserService(BaseService):
 				'data': data
 			}
 
+	def password_required(self, payloads):
+		user = self.get_user(payloads['user']['username'])
+		try:
+			if user.verify_password(payloads['password']):
+				self.model_user = db.session.query(
+					User).filter_by(id=payloads['user']['id'])
+				db.session.commit()
+				data = self.model_user.first().as_dict()
+				return {
+					'error': False,
+					'data': data
+				}
+			return {
+				'error': True,
+				'data': "Invalid password"
+			}
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return {
+				'error': True,
+				'data': data
+			}
+
 	def check_refresh_token(self, refresh_token):
 		refresh_token_exist = db.session.query(AccessToken).filter_by(
 			refresh_token=refresh_token).first()
@@ -424,7 +458,7 @@ class UserService(BaseService):
 			db.session.commit()
 			data = self.model_user.as_dict()
 			# apply includes data if not admin (role_id != 1)
-			if 'role_id' in payloads and payloads['role_id'] != '1' and payloads['role_id'] != '8':
+			if 'role_id' in payloads and payloads['role_id'] != '1' and payloads['role_id'] != '8' and payloads['role_id'] != '7':
 				includes = payloads['includes']
 				data = self.postIncludes(includes)
 				return data

@@ -19,7 +19,6 @@ class RedeemCodeController(BaseController):
 
     @staticmethod
     def filter(param):
-        print(param)
         redeem_codes = redeemcodeservice.filter(param)
         return BaseController.send_response_api(redeem_codes['data'], redeem_codes['message'])        
 
@@ -48,20 +47,16 @@ class RedeemCodeController(BaseController):
     @staticmethod
     def update(request, user):
         code = request.json['code'] if 'code' in request.json else None
-
         if code is None:
             return BaseController.send_error_api(None, 'field is not complete')
-
         result = redeemcodeservice.update(code, user)
-
         if not result['error']:
-            return BaseController.send_response_api(result['data'], result['message'])
+            return BaseController.send_response_api(result['data'], result['message'], result['included'])
         else:
             return BaseController.send_error_api(result['data'], result['message'])
 
     @staticmethod
     def delete(id):
-        print(id)
         redeem_code = redeemcodeservice.delete(id)
         if redeem_code['error']:
             return BaseController.send_error_api(redeem_code['data'], redeem_code['message'])

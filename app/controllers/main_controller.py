@@ -17,13 +17,23 @@ from app.services import rundownlistservice
 from app.services import redeemcodeservice
 from app.services import speakercandidateservice
 from app.services import sourceservice
-
+from app.services import overviewservice
 
 
 class MainController(BaseController):
 
     def index():
-        return render_template('admin/base/index.html')
+        attendees = overviewservice.getAttendees()
+        booths = overviewservice.getBooths()
+        sponsors = overviewservice.getSponsors()
+        finances = overviewservice.getFinances()
+        overview = {
+            'attendees': attendees,
+            'booths': booths,
+            'sponsors': sponsors,
+            'finances': finances
+        }
+        return render_template('admin/base/overview.html', overview=overview)
 
     def getAttendees():
         attendees = attendeeservice.get(request)
@@ -71,7 +81,7 @@ class MainController(BaseController):
         if request.args.get('filter') is not None:
             filter = request.args.get('filter')
             schedules = scheduleservice.filter(filter)
-        else: 
+        else:
             schedules = scheduleservice.get()
 
         return render_template('admin/events/schedules/schedules.html', schedules=schedules['data'])
@@ -82,7 +92,8 @@ class MainController(BaseController):
 
     def getEntryCashLogs():
         entrycashlogs = entrycashlogservice.get(request)
-        return render_template('admin/entrycash/entrycash.html', entrycashlogs=entrycashlogs['data'])
+        sources = sourceservice.get(request)
+        return render_template('admin/entrycash/entrycash.html', entrycashlogs=entrycashlogs['data'], sources=sources['data'])
 
     def getSponsors():
         sponsors = sponsorservice.get(request)
@@ -102,7 +113,7 @@ class MainController(BaseController):
     def getRedeemCodes():
         redeemcodes = redeemcodeservice.get()
         return render_template('admin/redeem_codes/redeem_codes.html', redeemcodes=redeemcodes['data'])
-    
+
     def showSpeakerCandidates():
         candidates = speakercandidateservice.get()
         return render_template('admin/speakers/speaker_candidates.html', candidates=candidates['data'])

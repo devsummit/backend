@@ -40,6 +40,7 @@ from app.controllers.Grantrole_controller import GrantroleController
 from app.controllers.source_controller import SourceController
 from app.controllers.admin_controller import AdminController
 from app.controllers.booth_gallery_controller import BoothGalleryController
+from app.controllers.feed_report_controller import FeedReportController
 from app.controllers.speaker_candidate_controller import SpeakerCandidateController
 from app.configs.constants import ROLE
 
@@ -356,7 +357,7 @@ def booth_gallery_self(*args, **kwargs):
 @token_required
 def transfer_points(*args, **kwargs):
     user = kwargs['user'].as_dict()
-    if(user['role_id'] == 1 or user['role_id'] == 3):
+    if(user['role_id'] in [ROLE['admin'], ROLE['booth']]):
         return PointsController.transfer_point(request, user['id'])
     return 'You cannot transfer points'
 
@@ -736,9 +737,11 @@ def rundown_id(id, *args, **kwargs):
 @api.route('/feeds/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @token_required
 def feeds_id(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
         return FeedController.show(id)
-
+    elif request.method == 'DELETE':
+        return FeedController.delete(user, id)
 
 @api.route('/feeds', methods=['GET', 'POST'])
 @token_required
@@ -769,6 +772,8 @@ def notifications(*args, **kwargs):
 def notification_id(id, *args, **kwargs):
     if(request.method == 'GET'):
         return NotificationController.show(id)
+
+
 
 
 # Add redeem code API
@@ -885,3 +890,19 @@ def send_email(*args, **kwargs):
         return 'unauthorized'
     else:
         return AdminController.send_email(request, user)
+
+# Feed report
+@api.route('/feeds/reports', methods=['GET', 'POST'])
+@token_required
+def feed_report_get(*args, **kwargs):
+    if request.method == 'GET':
+        return FeedReportController.index(request)
+    else:
+        user = kwargs['user'].as_dict()
+        return FeedReportController.create(request, user['id'])
+
+@api.route('/feeds/reports/<id>', methods=['GET'])
+@token_required
+def feed_report_show(id, *args, **kwargs):
+    return FeedReportController.show(id)
+

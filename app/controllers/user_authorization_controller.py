@@ -186,6 +186,23 @@ class UserAuthorizationController(BaseController):
             return BaseController.send_error_api(None, result['data'])
 
     @staticmethod
+    def password_required(request, user):
+        password = request.json['password'] if 'password' in request.json else None
+        
+        if password:
+            payloads = {
+                'password': password,
+                'user': user
+            }
+        else:
+            return BaseController.send_error_api(None, 'Password required')
+        result = userservice.password_required(payloads)
+        if not result['error']:
+            return BaseController.send_response_api(None, "Password match")
+        else:
+            return BaseController.send_error_api(None, "Password did not match")
+
+    @staticmethod
     def updatefcmtoken(request, user):
         token = request.json['token'] if 'token' in request.json else None
 

@@ -428,7 +428,7 @@ class PaymentService():
                 else:
                     payload['bank'] = None
 
-            if payloads['payment_type'] in ['bca_klikbca', 'bca_klikpay', 'cimb_clicks']:
+            if payloads['payment_type'] in ['bca_klikbca', 'bca_klikpay', 'cimb_clicks', 'danamon_online', 'bri_epay']:
                 payload['va_number'] = payload['redirect_url']
 
             if 'status_code' in payload and payload['status_code'] == '406':

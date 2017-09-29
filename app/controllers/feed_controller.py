@@ -32,3 +32,10 @@ class FeedController(BaseController):
 		if feed['error']:
 			return BaseController.send_error_api(feed['data'], feed['message'])
 		return BaseController.send_response_api(feed['data'], feed['message'])
+
+	@staticmethod
+	def delete(user, id):
+		result = feedservice.delete(user, id)
+		if result['error']:
+			return BaseController.send_error_api(result['data'], result['message'])
+		return BaseController.send_response_api(result['data'], result['message'])

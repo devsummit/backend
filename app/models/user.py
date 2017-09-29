@@ -19,7 +19,7 @@ class User(db.Model, BaseModel):
     # table name
     __tablename__ = 'users'
     # displayed fields
-    visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id',
+    visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id', 'points',
                'username', 'email', 'photos', 'fcmtoken', 'created_at', 'updated_at', 'referer']
 
     # columns definitions
@@ -42,6 +42,7 @@ class User(db.Model, BaseModel):
     role = db.relationship('Role')
     referer = db.Column(db.String)
     fcmtoken = db.Column(db.String)
+    points = db.Column(db.Integer, default=0)
 
     def __init__(self):
         self.created_at = datetime.datetime.now()

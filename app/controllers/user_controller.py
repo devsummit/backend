@@ -1,5 +1,6 @@
 from app.controllers.base_controller import BaseController
 from app.services import userservice
+import requests
 
 
 class UserController(BaseController):
@@ -89,3 +90,16 @@ class UserController(BaseController):
             return BaseController.send_response_api(result['data'], result['message'])
         else:
             return BaseController.send_error_api(None, 'invalid payload')
+
+    @staticmethod
+    def password_require(request):
+        username = request.json['username'] if 'username' in request.json else None
+        password = request.json['password'] if 'password' in request.json else None
+        if username and password:
+            user = userservice.get_user(username)
+            if user.verify_password(password):
+                return BaseController.send_response_api(None, "Password match")
+            else:
+                return BaseController.send_error_api(None, "Password did not match")
+        else:
+            return BaseController.send_error_api(None, 'Password required')
