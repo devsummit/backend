@@ -112,16 +112,11 @@ class RedeemCodeService():
         try:
             if redeem_code['codeable_type'] == 'partner':
                 # become attendee
-                attendee = Attendee()
-                attendee.user_id = user['id']
                 userticket = UserTicket()
                 userticket.user_id = user['id']
                 userticket.ticket_id = 1
-                db.session.add(attendee)
                 db.session.add(userticket)
-                user['role_id'] = 2
                 db.session.commit()
-                _result['user']['attendee'] = attendee.as_dict()
             elif redeem_code['codeable_type'] == 'booth':
                 # get booth of the code
                 booth = db.session.query(Booth).filter_by(id=redeem_code['codeable_id']).first().as_dict()
@@ -144,7 +139,6 @@ class RedeemCodeService():
                 'access_token': token['access_token'],
                 'refresh_token': token['refresh_token']
             }
-            print(_result)
             return response.set_data(token_payload).set_included(_result['user']).set_message('Redeem code updated successfully').set_error(False).build()
         except SQLAlchemyError as e:
             return response.set_data(e.orig.args).set_message('SQL error').set_error(True).build()
