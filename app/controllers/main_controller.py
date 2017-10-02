@@ -19,7 +19,6 @@ from app.services import speakercandidateservice
 from app.services import sourceservice
 from app.services import overviewservice
 from app.services import feedreportservice
-
 from app.services import feedservice
 
 
