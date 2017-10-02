@@ -18,6 +18,9 @@ from app.services import redeemcodeservice
 from app.services import speakercandidateservice
 from app.services import sourceservice
 from app.services import overviewservice
+from app.services import feedreportservice
+
+from app.services import feedservice
 
 
 class MainController(BaseController):
@@ -125,3 +128,7 @@ class MainController(BaseController):
     def getSource(request):
         sources = sourceservice.get(request)
         return render_template('admin/sources/source.html', sources=sources['data'])
+
+    def getReportFeed(request):
+        reportfeeds = feedreportservice.admin_get(request)
+        return render_template('admin/report_feed/report_feed.html', reportfeeds=reportfeeds['data'])

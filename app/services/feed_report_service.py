@@ -51,3 +51,13 @@ class FeedReportService(BaseService):
         except SQLAlchemyError as e:
             data = e.orig.args
             return response.set_data(data).set_error(True).build()
+
+    def admin_get(self, request):
+        report_feeds = db.session.query(FeedReport).all()
+        results = []
+        for report in report_feeds:
+            data = report.as_dict()
+            results.append(data)
+        response = ResponseBuilder()
+        result = response.set_data(results).build()
+        return result
