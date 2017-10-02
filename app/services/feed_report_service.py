@@ -56,10 +56,11 @@ class FeedReportService(BaseService):
 
     def admin_get(self, request):
         report_feeds = db.session.query(Feed,User).filter(Feed.user_id == User.id).all()
-        spam = db.session.query(Feed,FeedReport,User).filter(FeedReport.feed_id == Feed.id).filter(FeedReport.user_id == User.id).filter(FeedReport.report_type == 'Spam').count()
-        racism = db.session.query(Feed,FeedReport,User).filter(FeedReport.feed_id == Feed.id).filter(FeedReport.user_id == User.id).filter(FeedReport.report_type == 'Racism').count()
         results = []
+        included = {}
         for feed, user in report_feeds:
+            spam = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.id).filter(FeedReport.report_type == 'spam').count()
+            racism = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.id).filter(FeedReport.report_type == 'racism').count()            
             data = {
                 'id': feed.id,
                 'username': user.username,
@@ -68,22 +69,10 @@ class FeedReportService(BaseService):
                     'racism': racism,
                     'spam': spam,
                     'pornography': 0,
-                    'violence': 1
+                    'violence': 0
                 }
             }
-            print(data)
             results.append(data)
         response = ResponseBuilder()
         result = response.set_data(results).build()
         return result
-
-        # report_feeds = db.session.query(FeedReport,Feed,User).all()
-        # report_feeds = db.session.query(Feed, FeedReport, User).join(FeedReport).join(Feed).join(User)
-        # results = []
-        # for report in report_feeds:
-        #     # data = report.as_dict()
-        #     print(report)
-        #     results.append(report)
-        # response = ResponseBuilder()
-        # result = response.set_data(results).build()
-        # return result
