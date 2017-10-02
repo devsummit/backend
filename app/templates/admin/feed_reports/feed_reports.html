@@ -1,0 +1,79 @@
+{% extends "admin/base/index.html" %} {% block title %}
+
+<title> Feed Reports List</title> {% endblock %} 
+
+{% set globals={'base_route': 'accounts', 'api_route': 'users'} %} {% block header_link %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Feed Reports
+    <small>List of reports</small>
+
+</h1>
+{% endblock %}
+
+{% block breadcrumb %}
+<li class="active">Feed Reports</li>
+{% endblock %} 
+
+{% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <div class="box-body">
+        <table id="feed-reports-list" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Feed Message</th>
+                    <th>Reports Data</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feed_report in feed_reports %}
+                <tr>
+                    <td>
+                        {{ feed_report.id|e }}
+                    </td>
+                    <td>
+                        {{ feed_report.username|e }}
+                    </td>
+                    <td>
+                        {{ feed_report.reports_data|e }}
+                    </td>                    
+                    <td>
+                        <button id='bte-{{ feed_reports.user_id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                                BAN
+                            </button>                        
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include "admin/feed_reports/feed_reports_ban.html" %} 
+    {% endblock %} 
+    {% block footer_link %}
+
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+
+    $('.btn-delete').click(function (event) {
+        $('.modal-title').html('Are you sure want to delete this account?');
+
+        const btd_id = $(this).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        $('.btn-yes').attr("id", id);
+    });
+
+    $(function () {
+            $('#account-list1').DataTable();
+        });
+    </script>
+
+    {% endblock %}
