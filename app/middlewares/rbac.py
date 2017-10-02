@@ -10,6 +10,9 @@ PREVILLEGES = {
     [
         "/partners",
         "/password",
+        "/entrycashlogs",
+        "/entrycashlogsfilter",
+        "/sources"
     ]
 }
 
