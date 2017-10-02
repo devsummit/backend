@@ -37,10 +37,10 @@
                         <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['source_id']|e }}</a>
                     </td>
                     <td>
-                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['debit']|e }}</a>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ "{0:,.2f}".format(entry['debit'])|e }}</a>
                     </td>
                     <td>
-                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ entry['credit']|e }}</a>
+                        <a href="" id='atd-{{ entry.id }}' class="entry-amount">{{ "{0:,.2f}".format(entry['credit'])|e }}</a>
                     </td>
                     <td>
                         <button id='entry-{{ entry.id }}' type="button" class="btn btn-sm btn-info btn-entry-edit" data-toggle="modal" data-target="#modal-edit">
