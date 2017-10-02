@@ -36,9 +36,16 @@ class EntryCashLogService(BaseService):
                 cash_log_data = cash_log.as_dict()
                 cash_log_data['source'] = cash_log.source.as_dict()
                 data.append(cash_log_data)
-
-            total_debit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.debit)).scalar())
-            total_credit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.credit)).scalar())
+            t_debit = EntryCashLog.query.with_entities(func.sum(EntryCashLog.debit)).scalar()
+            if t_debit:
+                total_debit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.debit)).scalar())
+            else:
+                total_debit = 0
+            t_kredit = EntryCashLog.query.with_entities(func.sum(EntryCashLog.credit)).scalar()
+            if t_kredit:
+                total_credit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.credit)).scalar())
+            else:
+                total_credit = 0
             total = total_debit + total_credit
         elif 'filter' in request.args and 'date_from' in request.args and 'date_to' in request.args and request.args.get('filter') == 'date':
             date_from = request.args.get('date_from') if 'date_from' in request.args else None
