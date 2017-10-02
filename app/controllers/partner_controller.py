@@ -47,7 +47,7 @@ class PartnerController(BaseController):
 		email = request.form['email'] if 'email' in request.form else None
 		website = request.form['website'] if 'website' in request.form else None
 		type = request.form['type'] if 'type' in request.form else None
-		photo = request.files['image_file'] if request.files['image_file'] else None
+		photo = request.files['image_file'] if 'image_file' in request.files else None
 		if name and website and type:
 			payloads = {
 				'name': name,

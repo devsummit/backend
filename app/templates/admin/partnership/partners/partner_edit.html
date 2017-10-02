@@ -12,33 +12,33 @@
                             <ul class="list-group list-group-unbordered">
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="partner-name">Name:</label>
-                                        <input type="text" class="form-control partner-name" id="partner-name">
+                                        <label for="e-partner-name">Name:</label>
+                                        <input type="text" class="form-control e-partner-name" id="e-partner-name">
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                         <div class="form-group">
-                                            <label for="partner-email">Email:</label>
-                                            <input type="text" class="form-control partner-email" id="partner-email">
+                                            <label for="e-partner-email">Email:</label>
+                                            <input type="text" class="form-control e-partner-email" id="e-partner-email">
                                         </div>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="partner-type">Type:</label>
-                                        <select class="partner-type form-control">
+                                        <label for="e-partner-type">Type:</label>
+                                        <select class="e-partner-type form-control">
                                         </select>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="partner-website">Website:</label>
-                                        <input type="text" class="form-control partner-website" id="partner-website">
+                                        <label for="e-partner-website">Website:</label>
+                                        <input type="text" class="form-control e-partner-website" id="e-partner-website">
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
                                         <label for="partner-photo">Photo:</label>
-                                         <input class="input-file partner-photo" id="fileInput" type="file" name="file">
+                                         <input class="input-file e-partner-photo" id="e-fileInput" type="file" name="file">
                                          <img id='img-upload' style="width: 300px; height: 200px" />
                                     </div>
                                 </li>
@@ -63,13 +63,13 @@
     /* Save edit account */   
     $('.btn-edit-save').click(function(event){
         const id = $(this).attr('id');
-        const type = $('.partner-type').find(":selected").val();
+        const type = $('.e-partner-type').find(":selected").val();
         const formdata = new FormData();
-        formdata.append('image_file', $('#fileInput')[0].files[0])
-        formdata.append('name', $('.partner-name').val())
+        formdata.append('image_file', $('#e-fileInput')[0].files[0])
+        formdata.append('name', $('.e-partner-name').val())
         formdata.append('type', type)
-        formdata.append('website', $('.partner-website').val())
-        formdata.append('email', $('.partner-email').val())
+        formdata.append('website', $('.e-partner-website').val())
+        formdata.append('email', $('.e-partner-email').val())
         dsa.patchForm('partners/' + id, formdata, function(result) {
             if(result.meta.success) {
                 window.location = "/partners";
