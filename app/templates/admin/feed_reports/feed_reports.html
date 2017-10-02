@@ -43,7 +43,9 @@
                         {{ report.message|e }}
                     </td>
                     <td>
-                        {{ report.report_type }}
+                        {% for key, type in report.report_type.items() %}
+                            {{key}}:{{type}}<br />
+                        {% endfor %}
                     </td>                    
                     <td>
                         <button id='bte-{{ report.user_id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
@@ -67,7 +69,7 @@
 <script>
 
     $('.btn-delete').click(function (event) {
-        $('.modal-title').html('Are you sure want to delete this account?');
+        $('.modal-title').html('Message should be implemented here?????');
 
         const btd_id = $(this).attr('id');
         const id = btd_id.substring(4, btd_id.length);

@@ -54,7 +54,7 @@ class FeedReportService(BaseService):
             data = e.orig.args
             return response.set_data(data).set_error(True).build()
 
-    def admin_get(self, request):
+    def admin_get(self, request)
         report_feeds = db.session.query(Feed,User).filter(Feed.user_id == User.id).all()
         results = []
         included = {}
