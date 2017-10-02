@@ -130,4 +130,4 @@ class MainController(BaseController):
 
     def getReportFeed(request):
         reportfeeds = feedreportservice.admin_get(request)
-        return render_template('admin/report_feed/report_feed.html', reportfeeds=reportfeeds['data'])
+        return render_template('admin/feed_reports/feed_reports.html', reportfeeds=reportfeeds['data'])
