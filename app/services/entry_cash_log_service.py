@@ -35,14 +35,18 @@ class EntryCashLogService(BaseService):
             for cash_log in cash_logs:
                 cash_log_data = cash_log.as_dict()
                 cash_log_data['source'] = cash_log.source.as_dict()
+                if cash_log_data['debit']:
+                    cash_log_data['debit'] = "{0:,.2f}".format(cash_log_data['debit'])
+                if cash_log_data['credit']:
+                    cash_log_data['credit'] = "{0:,.2f}".format(cash_log_data['credit'])
                 data.append(cash_log_data)
             t_debit = EntryCashLog.query.with_entities(func.sum(EntryCashLog.debit)).scalar()
             if t_debit:
                 total_debit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.debit)).scalar())
             else:
                 total_debit = 0
-            t_kredit = EntryCashLog.query.with_entities(func.sum(EntryCashLog.credit)).scalar()
-            if t_kredit:
+            t_credit = EntryCashLog.query.with_entities(func.sum(EntryCashLog.credit)).scalar()
+            if t_credit:
                 total_credit = int(EntryCashLog.query.with_entities(func.sum(EntryCashLog.credit)).scalar())
             else:
                 total_credit = 0
@@ -58,19 +62,25 @@ class EntryCashLogService(BaseService):
             for cash_log in cash_logs:
                 cash_log_data = cash_log.as_dict()
                 cash_log_data['source'] = cash_log.source.as_dict()
+                t_debit = cash_log_data['debit']
+                t_credit = cash_log_data['credit']
+                if cash_log_data['debit']:
+                    cash_log_data['debit'] = "{0:,.2f}".format(cash_log_data['debit'])
+                if cash_log_data['credit']:
+                    cash_log_data['credit'] = "{0:,.2f}".format(cash_log_data['credit'])
                 data.append(cash_log_data)
 
-                total_debit += cash_log_data['debit']
-                total_credit += cash_log_data['credit']
+                total_debit += t_debit
+                total_credit += t_credit
 
             total = total_debit + total_credit
         else:
             return response.set_error(True).set_status_code(400).set_message('You need to specify filter').build()
 
         if data:
-            included['total_debit'] = total_debit
-            included['total_credit'] = total_credit
-            included['total'] = total
+            included['total_debit'] = "{0:,.2f}".format(total_debit)
+            included['total_credit'] = "{0:,.2f}".format(total_credit)
+            included['total'] = "{0:,.2f}".format(total)
         
         result = response.set_data(data).set_included(included).build()
 
