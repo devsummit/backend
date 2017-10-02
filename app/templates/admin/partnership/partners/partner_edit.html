@@ -39,7 +39,7 @@
                                     <div class="form-group">
                                         <label for="partner-photo">Photo:</label>
                                          <input class="input-file e-partner-photo" id="e-fileInput" type="file" name="file">
-                                         <img id='img-upload' style="width: 300px; height: 200px" />
+                                         <img id='e-img-upload' style="width: 300px; height: 200px" />
                                     </div>
                                 </li>
                             </ul>
@@ -81,14 +81,14 @@
             var reader = new FileReader();
             
             reader.onload = function (e) {
-                $('#img-upload').attr('src', e.target.result);
+                $('#e-img-upload').attr('src', e.target.result);
             }
             
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    $("#fileInput").change(function(){
+    $("#e-fileInput").change(function(){
         readURL(this);
     }); 
     $(function () {
