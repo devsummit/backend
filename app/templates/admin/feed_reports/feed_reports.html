@@ -44,7 +44,7 @@
                     </td>
                     <td>
                         {% for key, type in report.report_type.items() %}
-                            {{key}}:{{type}}<br />
+                            {{key}} : {{type}}<br />
                         {% endfor %}
                     </td>                    
                     <td>
@@ -69,7 +69,7 @@
 <script>
 
     $('.btn-delete').click(function (event) {
-        $('.modal-title').html('Message should be implemented here?????');
+        $('.modal-title').html('Insert Ban Confirmation Message');
 
         const btd_id = $(this).attr('id');
         const id = btd_id.substring(4, btd_id.length);
