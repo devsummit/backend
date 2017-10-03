@@ -94,3 +94,12 @@ class FeedService(BaseService):
 			return current_app.config['SAVE_FEED_PHOTO_DEST'] + filename
 		else:
 			return None
+
+	def bannedfeeds(self, user, feed_id):
+		response = ResponseBuilder()
+		try:
+			self.model_user = db.session.query(
+				User).filter_by(id=payloads['user']['id'])
+				'updated_at': datetime.datetime.now()
+			})
+			db.session.commit()
