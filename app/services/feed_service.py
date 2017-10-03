@@ -105,18 +105,3 @@ class FeedService(BaseService):
 			})
 
 			db.session.commit()
-				data = self.model_feed.first().as_dict()
-				return {
-					'error': False,
-					'data': data
-				}
-			return {
-				'error': True,
-				'data': "Invalid password"
-			}
-		except SQLAlchemyError as e:
-			data = e.orig.args
-			return {
-				'error': True,
-				'data': data
-			}
