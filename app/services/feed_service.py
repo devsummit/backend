@@ -95,7 +95,7 @@ class FeedService(BaseService):
 		else:
 			return None
 
-	def bannedfeeds(self, feed_id):
+	def bannedfeeds(self, user, feed_id):
 		try:
 			self.model_feed = db.session.query(
 				Feed).filter_by(id=feed_id)
@@ -103,7 +103,7 @@ class FeedService(BaseService):
 				'deleted_at': datetime.datetime.now()
 			})
 			db.session.commit()
-			data = self.model_feed.first().as_dict()
+			data = self.model_feed.first()
 			return {
 				'error': False,
 				'data': data
