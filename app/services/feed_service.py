@@ -98,10 +98,25 @@ class FeedService(BaseService):
 	def bannedfeeds(self, user, feed_id):
 		response = ResponseBuilder()
 		try:
-			self.model_feed = db.session.query(
+			feed = db.session.query(
 				Feed).filter_by(id=feed_id)
-				self.model_user.update({
+				self.feed.update({
 				'deleted_at': datetime.datetime.now()
 			})
 
 			db.session.commit()
+				data = self.model_feed.first().as_dict()
+				return {
+					'error': False,
+					'data': data
+				}
+			return {
+				'error': True,
+				'data': "Invalid password"
+			}
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return {
+				'error': True,
+				'data': data
+			}
