@@ -7,9 +7,7 @@ class Feed(db.Model, BaseModel):
 
 	__tablename__ = 'feeds'
 
-
 	visible = ['id', 'message', 'user_id', 'attachment', 'created_at', 'updated_at', 'deleted_at']
-
 
 	id = db.Column(db.Integer, primary_key=True)
 	message = db.Column(db.Text)
@@ -28,13 +26,6 @@ class Feed(db.Model, BaseModel):
 	deleted_at = db.Column(db.DateTime)
 
 	def __init__(self):
-<<<<<<< HEAD
 		self.created_at = datetime.now()
 		self.updated_at = datetime.now()
 		self.deleted_at = datetime.now()
-	
-=======
-		self.created_at = datetime.now() + timedelta(hours=7) 
-		self.updated_at = datetime.now() + timedelta(hours=7)
-		self.type = 'user'
->>>>>>> develop
