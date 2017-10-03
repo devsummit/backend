@@ -1,9 +1,11 @@
 import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import desc
 from app.configs.constants import SPONSOR_STAGES, SPONSOR_TYPES
 # import model class
 from app.models.sponsor import Sponsor
+from app.models.sponsor_templates import SponsorTemplate
 from app.models.sponsor_interaction_log import SponsorInteractionLog
 from app.services.base_service import BaseService
 from app.models.base_model import BaseModel
@@ -69,6 +71,12 @@ class SponsorService(BaseService):
         db.session.add(sponsor)
 
         try:
+            db.session.commit()
+            #add sponsor_template
+            sponsor = db.session.query(Sponsor).order_by(desc(Sponsor.id)).first()            
+            sponsor_template = SponsorTemplate()
+            sponsor_template.sponsor_id = sponsor.id
+            db.session.add(sponsor_template)
             db.session.commit()
             return response.set_data(sponsor.as_dict()).set_message('Data created succesfully').build()
         except SQLAlchemyError as e:
