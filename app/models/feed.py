@@ -26,3 +26,4 @@ class Feed(db.Model, BaseModel):
 		self.created_at = datetime.now() + timedelta(hours=7) 
 		self.updated_at = datetime.now() + timedelta(hours=7)
 		self.updated_at = datetime.now() + timedelta(hours=7)
+	
