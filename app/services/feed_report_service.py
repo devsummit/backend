@@ -55,17 +55,18 @@ class FeedReportService(BaseService):
 			return response.set_data(data).set_error(True).build()
 
 	def admin_get(self, request):
-		report_feeds = db.session.query(Feed,User).filter(Feed.user_id == User.id).all()
+		# TODO: optimize this method
+		report_feeds = db.session.query(FeedReport).group_by(FeedReport.feed_id).all()
 		results = []
-		for feed, user in report_feeds:
-			spam = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.id).filter(FeedReport.report_type == 'spam').count()
-			racism = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.id).filter(FeedReport.report_type == 'racism').count()
-			pornography = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.id).filter(FeedReport.report_type == 'pornography').count()
-			violence = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.id).filter(FeedReport.report_type == 'violence').count()			
+		for feed in report_feeds:
+			spam = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.feed_id).filter(FeedReport.report_type == 'spam').count()
+			racism = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.feed_id).filter(FeedReport.report_type == 'racism').count()
+			pornography = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.feed_id).filter(FeedReport.report_type == 'pornography').count()
+			violence = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.feed_id).filter(FeedReport.report_type == 'violence').count()			
 			data = {
 				'id': feed.id,
-				'username': user.username,
-				'message': feed.message,
+				'message': feed.feed.message,
+				'username': feed.feed.user.username,
 				'report_type': {
 					'Racism': racism,
 					'Spam': spam,
