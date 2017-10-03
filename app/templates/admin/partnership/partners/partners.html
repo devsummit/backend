@@ -95,15 +95,15 @@
         $('.modal-title').html('Edit');
         const bte_id = $(this).attr('id');
         const id = bte_id.substring(4, bte_id.length);
-        let select = $(".partner-type");
+        let select = $(".e-partner-type");
         select.find('option').remove();
         dsa.get('partners/' + id, function(result) {
             // bind result value in to account_detail.html 
             const data = result['data'];
-            $('.partner-name').val(data['name']);
-            $('.partner-email').val(data['email']);
+            $('.e-partner-name').val(data['name']);
+            $('.e-partner-email').val(data['email']);
             selected_type = data['type'];
-            $('.partner-website').val(data['website']);
+            $('.e-partner-website').val(data['website']);
             PARTNER_TYPES.map(function(type) {
                 let option = document.createElement('option');
                 option.innerHTML = type;
@@ -116,8 +116,8 @@
 
                 select.append(option);
             });
-            $("#img-upload").attr("src", 'static/' + data['photo']);
-            $('.partner-photo').val(data['photo'] ? data['photo'] : '-');
+            $("#e-img-upload").attr("src", 'static/' + data['photo']);
+            $('.e-partner-photo').val(data['photo'] ? data['photo'] : '-');
         });
         $('.btn-edit-save').attr("id", id);
     });

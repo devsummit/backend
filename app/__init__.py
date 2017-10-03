@@ -1,5 +1,5 @@
 from flask import Flask
-
+from flask_cors import CORS
 # routes
 from app.routes.main import main
 from app.routes.api import api
@@ -20,7 +20,8 @@ def create_app(configuration):
 
     # set configuration
     app.config.from_object(configuration)
-
+    # allow cors on blueprint
+    CORS(api)
     # database
     db.init_app(app)
     # email client

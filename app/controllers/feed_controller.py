@@ -13,12 +13,19 @@ class FeedController(BaseController):
 	def create(request, user_id):
 		message = request.form['message'] if 'message' in request.form else None
 		attachment = request.files['attachment'] if 'attachment' in request.files else None
+		type = request.form['type'] if 'type' in request.form else 'user'
+		redirect_url = request.form['redirect_url'] if 'redirect_url' in request.form else None
+		sponsor_id = request.form['sponsor_id'] if 'sponsor_id' in request.form else None
+
 		payloads = {
 			'message': message,
 			'user_id': user_id,
-			'attachment': attachment
+			'attachment': attachment,
+			'type': type,
+			'redirect_url': redirect_url,
+			'sponsor_id': sponsor_id
 		}
-
+	
 		result = feedservice.create(payloads)
 
 		if result['error']:

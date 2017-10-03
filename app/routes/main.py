@@ -149,3 +149,7 @@ def site_map():
 def source():
     return MainController.getSource(request)
 
+@main.route('/report-feed')
+def report_feed():
+    return MainController.getReportFeed(request)
+

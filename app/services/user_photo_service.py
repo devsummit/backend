@@ -68,8 +68,6 @@ class UserPhotoService(BaseService):
             user = super().outer_include(user, ['Speaker'])
         elif (user['role_id'] is ROLE['booth']):
             user = super().outer_include(user, ['Booth'])
-        elif (user['role_id'] is ROLE['attendee']):
-            user = super().outer_include(user, ['Attendee'])
         return user
 
     def update(self, payloads):
