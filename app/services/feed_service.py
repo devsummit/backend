@@ -98,8 +98,9 @@ class FeedService(BaseService):
 	def bannedfeeds(self, user, feed_id):
 		response = ResponseBuilder()
 		try:
-			self.model_user = db.session.query(
-				User).filter_by(id=payloads['user']['id'])
+			self.model_feed = db.session.query(
+				Feed).filter_by(id=feed_id)
 				'updated_at': datetime.datetime.now()
 			})
+
 			db.session.commit()
