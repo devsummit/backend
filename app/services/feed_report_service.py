@@ -1,6 +1,7 @@
 import datetime
 from flask import current_app
 from app.models import db
+from sqlalchemy import func, distinct
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.feed_report import FeedReport
 from app.models.feed import Feed
