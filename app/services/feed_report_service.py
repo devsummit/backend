@@ -1,6 +1,7 @@
 import datetime
 from flask import current_app
 from app.models import db
+from sqlalchemy import func, distinct
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.feed_report import FeedReport
 from app.models.feed import Feed
@@ -55,7 +56,7 @@ class FeedReportService(BaseService):
 			return response.set_data(data).set_error(True).build()
 
 	def admin_get(self, request):
-		report_feeds = db.session.query(Feed,User).filter(Feed.user_id == User.id).all()
+		report_feeds = db.session.query(Feed,User).filter(Feed.id == FeedReport.feed_id, Feed.user_id == User.id).all()
 		results = []
 		for feed, user in report_feeds:
 			spam = db.session.query(FeedReport).filter(FeedReport.feed_id == feed.id).filter(FeedReport.report_type == 'spam').count()
