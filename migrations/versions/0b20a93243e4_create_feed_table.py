@@ -25,7 +25,8 @@ def upgrade():
         sa.Column('message', sa.Text),
         sa.Column('attachment', sa.String(255)),
         sa.Column('created_at', sa.DateTime),
-        sa.Column('updated_at', sa.DateTime)
+        sa.Column('updated_at', sa.DateTime),
+        sa.Column('deleted_at',sa.DateTime)
     )
 
 
