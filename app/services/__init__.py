@@ -34,6 +34,7 @@ from app.services.booth_gallery_service import BoothGalleryService
 from app.services.speaker_candidate_service import SpeakerCandidateService
 from app.services.overview_service import OverviewService
 from app.services.feed_report_service import FeedReportService
+from app.services.sponsor_template_service import SponsorTemplateService
 
 
 # instantiate service
@@ -72,3 +73,4 @@ speakercandidateservice = SpeakerCandidateService()
 fcmservice = FCMService()
 overviewservice = OverviewService()
 feedreportservice = FeedReportService(10)
+sponsortemplateservice = SponsorTemplateService()

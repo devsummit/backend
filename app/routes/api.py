@@ -42,6 +42,7 @@ from app.controllers.admin_controller import AdminController
 from app.controllers.booth_gallery_controller import BoothGalleryController
 from app.controllers.feed_report_controller import FeedReportController
 from app.controllers.speaker_candidate_controller import SpeakerCandidateController
+from app.controllers.sponsor_template_controller import SponsorTemplateController
 from app.configs.constants import ROLE
 
 
@@ -711,6 +712,23 @@ def get_sponsor_log(id, *args, **kwargs):
         return SponsorController.get_logs(id)
     elif (request.method in ['POST']):
         return SponsorController.create_log(request, id)
+
+
+@api.route('/sponsors/template', methods=['GET', 'POST'])
+@token_required
+def get_sponsor_template(*args, **kwargs):
+    if (request.method == 'GET'):
+        return SponsorTemplateController.index(request)
+    elif (request.method == 'POST'):
+        return SponsorTemplateController.create(request)
+
+@api.route('/sponsors/template/<sponsor_id>', methods=['GET', 'PATCH', 'PUT'])
+@token_required
+def update_sponsor_template(sponsor_id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return SponsorTemplateController.index(request)
+    elif (request.method in ['PATCH', 'PUT']):
+        return SponsorTemplateController.update(request, sponsor_id)
 
 
 # Add rundown list API
