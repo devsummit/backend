@@ -756,7 +756,7 @@ def feeds(*args, **kwargs):
         socketio.emit('feeds', data.data.decode(), broadcast=True)
         return data
 
-@api.route('/feeds/<id>/ban', methods=['DELETE'])
+@api.route('/feeds/<feed_id>/ban', methods=['DELETE'])
 @token_required
 def feeds_delete_at_banned(feed_id, *args, **kwargs):
     user = kwargs['user'].as_dict()
