@@ -8,6 +8,7 @@ from app.services.helper import Helper
 from werkzeug import secure_filename
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.feed import Feed
+from app.models.sponsor import Sponsor
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 
@@ -27,7 +28,7 @@ class FeedService(BaseService):
 		self.base_url = request.base_url
         # paginate
 		paginate = super().paginate(db.session.query(Feed).order_by(Feed.created_at.desc()))
-		paginate = super().include_user()
+		paginate = super().include_sponsor()
 		response = ResponseBuilder()
 		for row in paginate['data']:
 			if row['attachment'] is not None:
@@ -64,10 +65,14 @@ class FeedService(BaseService):
 	def create(self, payloads):
 		response = ResponseBuilder()
 		feed = Feed()
+		sponsor = db.session.query(Sponsor).filter_by(id=payloads['sponsor_id']).first()
 		attachment = self.save_file(payloads['attachment']) if payloads['attachment'] is not None else None
 		feed.message = payloads['message']
 		feed.attachment = attachment
 		feed.user_id = payloads['user_id']
+		feed.type = payloads['type']
+		feed.redirect_url = payloads['redirect_url']
+		feed.sponsor_id = payloads['sponsor_id']
 		db.session.add(feed)
 		try:
 			db.session.commit()
@@ -75,8 +80,10 @@ class FeedService(BaseService):
 			del user['fcmtoken']
 			data = feed.as_dict()
 			data['attachment'] = Helper().url_helper(data['attachment'], current_app.config['GET_DEST']) if data['attachment'] is not None else None
-			data['user'] = user
-			# data['user'] = feed.user.as_dict()
+			if 'user' in payloads['type']:
+				data['user'] = user
+			elif 'sponsor' in payloads['type']:
+				data['user'] = sponsor.as_dict()
 			return response.set_data(data).build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
