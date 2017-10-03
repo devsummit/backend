@@ -21,4 +21,9 @@ class Feed(db.Model, BaseModel):
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 	deleted_at = db.Column(db.DateTime)
+
+	def __init__(self):
+		self.created_at = datetime.now()
+		self.updated_at = datetime.now()
+		self.deleted_at = datetime.now()
 	
