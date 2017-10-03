@@ -762,8 +762,6 @@ def feeds_delete_at_banned(feed_id, *args, **kwargs):
     user = kwargs['user'].as_dict()
     if (request.method == 'DELETE'):
         return FeedController.bannedfeeds(user, feed_id)
-    if (request.method == 'GET'):
-        return FeedController.show(feed_id)
 
 @api.route('/notifications', methods=['GET', 'POST'])
 @token_required
