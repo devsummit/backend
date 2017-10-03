@@ -42,6 +42,7 @@ from app.controllers.admin_controller import AdminController
 from app.controllers.booth_gallery_controller import BoothGalleryController
 from app.controllers.feed_report_controller import FeedReportController
 from app.controllers.speaker_candidate_controller import SpeakerCandidateController
+from app.controllers.prize_list_controller import PrizeListController
 from app.configs.constants import ROLE
 
 
@@ -905,4 +906,23 @@ def feed_report_get(*args, **kwargs):
 @token_required
 def feed_report_show(id, *args, **kwargs):
     return FeedReportController.show(id)
+
+# Prize List API
+@api.route('/prizelist', methods=['GET', 'POST'])
+@token_required
+def prize_list_general(*args, **kwargs):
+    if request.method == 'GET':
+        return PrizeListController.get(request)
+    else:
+        return PrizeListController.create(request)
+
+@api.route('/prizelist/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def prize_list_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return PrizeListController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):
+        return PrizeListController.update(id, request)
+    else:
+        return PrizeListController.delete(id)
 
