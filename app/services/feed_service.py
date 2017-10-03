@@ -100,7 +100,8 @@ class FeedService(BaseService):
 		try:
 			self.model_feed = db.session.query(
 				Feed).filter_by(id=feed_id)
-				'updated_at': datetime.datetime.now()
+				self.model_user.update({
+				'deleted_at': datetime.datetime.now()
 			})
 
 			db.session.commit()
