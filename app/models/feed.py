@@ -23,7 +23,6 @@ class Feed(db.Model, BaseModel):
 	deleted_at = db.Column(db.DateTime)
 
 	def __init__(self):
-		self.created_at = datetime.now() + timedelta(hours=7) 
-		self.updated_at = datetime.now() + timedelta(hours=7)
-		self.updated_at = datetime.now() + timedelta(hours=7)
-	
+        self.created_at = datetime.datetime.now()
+        self.updated_at = datetime.datetime.now()
+		def.deleted_at = datetime.datetime.now()
