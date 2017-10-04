@@ -21,5 +21,7 @@ class SponsorTemplate(db.Model, BaseModel):
     updated_at = db.Column(db.DateTime)
 
     def __init__(self):
+        self.message = "insert message here"
+        self.redirect_url = "insert web promo here"
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
