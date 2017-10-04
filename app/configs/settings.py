@@ -41,6 +41,9 @@ POST_FEED_PHOTO_DEST = 'app/static/images/feeds/'
 SAVE_FEED_PHOTO_DEST = 'images/feeds/'
 POST_BOOTH_PHOTO_DEST = 'app/static/images/booths/'
 SAVE_BOOTH_PHOTO_DEST = 'images/booths/'
+# prize lists
+POST_PRIZE_LIST_DEST = 'app/static/images/prize_lists/'
+SAVE_PRIZE_LIST_DEST = 'images/prize_lists/'
 # booth gallery
 POST_BOOTH_GALL_DEST = 'app/static/images/booths/galleries/'
 SAVE_BOOTH_GALL_DEST = 'images/booths/galleries/'
