@@ -7,7 +7,7 @@ class Helper():
     # Document URL helper, turn into domain based url
     @staticmethod
     def url_helper(url, config):
-        return request.url_root + config + url
+        return request.url_root.replace("http://", "https://") + config + url
 
     # For a given file, retun whether it's an allowed type or not
     @staticmethod
