@@ -11,12 +11,13 @@ class PrizeListController(BaseController):
 			return BaseController.send_error(prizelist['data'], prizelist['message'])
 		return BaseController.send_response_api(prizelist['data'], prizelist['message'], prizelist['included'])
 
+
 	@staticmethod
 	def create(request):
-		name = request.json['name'] if 'name' in request.json else None
-		point_cost = request.json['point_cost'] if 'point_cost' in request.json else None
-		attachment = request.json['attachment'] if 'attachment' in request.json else None
-		count = request.json['count'] if 'count' in request.json else ''
+		name = request.form['name'] if 'name' in request.form else None
+		point_cost = request.form['point_cost'] if 'point_cost' in request.form else None
+		attachment = request.files['attachment'] if 'attachment' in request.files else None
+		count = request.form['count'] if 'count' in request.form else None
 		if name and point_cost and count and attachment:
 			payloads = {
 				'name': name,
@@ -24,15 +25,13 @@ class PrizeListController(BaseController):
 				'attachment': attachment,
 				'count': count
 			}
+			result = prizelistservice.create(payloads)
+			if result['error']:
+				return BaseController.send_error_api(result['data'], result['message'])
+			else:
+				return BaseController.send_response_api(result['data'], result['message'])
 		else:
-			BaseController.send_error_api(None, 'payload is invalid')
-
-		result = prizelistservice.create(payloads)
-
-		if result['error']:
-			return BaseController.send_error_api(result['data'], result['message'])
-
-		return BaseController.send_response_api(result['data'], result['message'])
+			return BaseController.send_error_api(None, 'payload is invalid')
 
 	@staticmethod
 	def show(id):
@@ -41,23 +40,24 @@ class PrizeListController(BaseController):
 
 	@staticmethod
 	def update(id, request):
-		name = request.json['name'] if 'name' in request.json else None
-		point_cost = request.json['point_cost'] if 'point_cost' in request.json else None
-		attachment = request.json['attachment'] if 'attachment' in request.json else None
-		count = request.json['count'] if 'count' in request.json else None
-
-		payloads = {
-			'name': name,
-			'point_cost': point_cost,
-			'attachment': attachment,
-			'count': count
-		}
-
-		result = prizelistservice.update(id, payloads)
-
-		if result['error']:
-			return BaseController.send_error_api(result['data'], result['message'])
-		return BaseController.send_response_api(result['data'], result['message'])
+		name = request.form['name'] if 'name' in request.form else None
+		point_cost = request.form['point_cost'] if 'point_cost' in request.form else None
+		attachment = request.files['attachment'] if 'attachment' in request.files else None
+		count = request.form['count'] if 'count' in request.form else None
+		if name or point_cost or count or attachment:
+			payloads = {
+				'name': name,
+				'point_cost': point_cost,
+				'attachment': attachment,
+				'count': count
+			}
+			result = prizelistservice.update(id, payloads)
+			if result['error']:
+				return BaseController.send_error_api(result['data'], result['message'])
+			else:
+				return BaseController.send_response_api(result['data'], result['message'])
+		else:
+			return BaseController.send_error_api({}, 'payload is invalid')
 
 	@staticmethod
 	def delete(id):

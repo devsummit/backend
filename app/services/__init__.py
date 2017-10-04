@@ -73,4 +73,4 @@ speakercandidateservice = SpeakerCandidateService()
 fcmservice = FCMService()
 overviewservice = OverviewService()
 feedreportservice = FeedReportService(10)
-prizelistservice = PrizeListService
+prizelistservice = PrizeListService()
