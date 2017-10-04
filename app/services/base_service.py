@@ -53,7 +53,7 @@ class BaseService():
         _results = []
         for item in self.paginated['data']:
             data = item.as_dict()
-            if 'user' in item.type or item.type is None:
+            if item.type is None or 'user' in item.type:
                 data['user'] = item.user.include_photos().as_dict()
             elif 'sponsor' in item.type:
                 sponsor = db.session.query(Sponsor).filter_by(id=item.sponsor_id).first()        
