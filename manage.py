@@ -7,9 +7,12 @@ from flask_script.commands import ShowUrls, Clean
 from app.configs import settings
 from app import create_app
 
+# cron job
+from app.services.cron.post_feed import run_schedule
+
 manager = Manager(create_app(settings))
 
-# add executeable command 
+# add executeable command
 manager.add_command("server", Server())
 manager.add_command("show-urls", ShowUrls())
 manager.add_command("clean", Clean())
@@ -18,12 +21,21 @@ manager.add_command("clean", Clean())
 from seeders.seed import Seed
 from seeders.production_seed import ProductionSeed
 
+
 @manager.command
 def seed():
     Seed.run()
+
+
 @manager.command
 def productionseed():
     ProductionSeed.run()
+
+
+@manager.command
+def job():
+    # start cron
+    run_schedule()
 
 
 if __name__ == "__main__":
