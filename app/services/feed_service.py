@@ -102,22 +102,15 @@ class FeedService(BaseService):
 		else:
 			return None
 
-	def bannedfeeds(self, user, feed_id):
+	def bannedfeeds(self, feed_id, user):
+		response = ResponseBuilder()
+		self.model_feed = db.session.query(Feed).filter_by(id=feed_id)
+		self.model_feed.update({
+			'deleted_at':datetime.datetime.now()
+		})
 		try:
-			self.model_feed = db.session.query(
-				Feed).filter_by(id=feed_id)
-			self.model_feed.update({
-				'deleted_at': datetime.datetime.now()
-			})
 			db.session.commit()
-			data = self.model_feed.first()
-			return {
-				'error': False,
-				'data': data
-			}
+			return response.set_data(None).set_message('Success').build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
-			return {
-				'error': True,
-				'data': data
-			}
+			return response.set_data(data).set_error(True).build()
