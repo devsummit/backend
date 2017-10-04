@@ -137,3 +137,7 @@ class MainController(BaseController):
         sponsors = sponsorservice.get(request)
         sponsortemplates = sponsortemplateservice.get(request)
         return render_template('admin/sponsor_template/sponsor_template.html', sponsors=sponsors['data'], sponsortemplates=sponsortemplates['data'])
+
+    def getSponsorPost(request):
+        sponsortemplates = sponsortemplateservice.get(request)
+        return render_template('admin/communication/sponsor_post.html', sponsortemplates=sponsortemplates['data'])
