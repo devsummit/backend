@@ -1,0 +1,86 @@
+<div class="modal fade" id="modal-edit-template">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Default title</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box box-primary">
+                        <div class="box-body box-profile">
+                            <form id='upload-template' enctype="multipart/form-data">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="e-message">Message:</label>
+                                        <!-- <input type="text" class="form-control" id="e-message"> -->
+                                        <textarea class='form-control' id='e-message' style="resize:vertical"></textarea>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="e-attachment">Attachment:</label>
+                                        <input type="file" class="form-control" id="e-attachment" accept='.jpg,.png'>
+                                        <img id='e-img-upload' style="width: 300px; height: 200px" />
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="e-redirect-url">Website Promo:</label>
+                                        <input type="text" class="form-control" id="e-redirect-url">
+                                    </div>
+                                </li>
+                            </ul>
+                            <a href="#" class="btn btn-primary btn-block btn-save-template" id="-"><b>Save</b></a>
+                            </form>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- page script -->
+    <script>
+        // Used for capitalize words
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    
+        $('.btn-save-template').click(function(event){
+            const id = $(this).attr('id');
+            var formdata = new FormData();
+            formdata.append('message', $('#e-message').val())
+            formdata.append('attachment', $('#e-attachment')[0].files[0])
+            formdata.append('redirect_url', $('#e-redirect-url').val())
+
+            dsa.patchForm('sponsors/template/' + id, formdata, function(result){
+                if(result.meta.success){
+                    window.location = '/sponsor-feeds';
+                }
+            })
+        })
+    
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    $('#e-img-upload').attr('src', e.target.result);
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#e-attachment").change(function(){
+            readURL(this);
+        }); 
+    </script>

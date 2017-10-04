@@ -20,6 +20,7 @@ from app.services import sourceservice
 from app.services import overviewservice
 from app.services import feedreportservice
 from app.services import feedservice
+from app.services import sponsortemplateservice
 
 
 class MainController(BaseController):
@@ -131,3 +132,8 @@ class MainController(BaseController):
     def getReportFeed(request):
         reportfeeds = feedreportservice.admin_get(request)
         return render_template('admin/feed_reports/feed_reports.html', reportfeeds=reportfeeds['data'])
+
+    def getSponsorFeed(request):
+        sponsors = sponsorservice.get(request)
+        sponsortemplates = sponsortemplateservice.get(request)
+        return render_template('admin/sponsor_template/sponsor_template.html', sponsors=sponsors['data'], sponsortemplates=sponsortemplates['data'])
