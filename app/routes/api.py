@@ -760,7 +760,10 @@ def feeds(*args, **kwargs):
 @token_required
 def feeds_banned(feed_id, *args, **kwargs):
     user = kwargs['user'].as_dict()
-    return FeedController.bannedfeeds(user, feed_id)
+    if (user['role_id'] != ROLE['admin']):
+        return 'unauthorized'
+    else: 
+        return FeedController.bannedfeeds(user, feed_id)
 
 @api.route('/notifications', methods=['GET', 'POST'])
 @token_required
