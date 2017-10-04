@@ -51,10 +51,12 @@ class PrizeListService(BaseService):
 
 	def update(self, id, payloads):
 		response = ResponseBuilder()
-		try:
+		if payloads['attachment'] is not None:
 			prizelist_dict = db.session.query(PrizeList).filter_by(id=id).first()
-			os.remove(current_app.config['STATIC_DEST'] + prizelist_dict.attachment)
-			attachment = self.save_file(payloads['attachment']) if payloads['attachment'] is not None else None
+			if prizelist_dict.attachment is not None:
+				os.remove(current_app.config['STATIC_DEST'] + prizelist_dict.attachment)
+		attachment = self.save_file(payloads['attachment']) if payloads['attachment'] is not None else None
+		try:
 			prizelist = db.session.query(PrizeList).filter_by(id=id)			
 			prizelist.update({
 				'name': payloads['name'],
