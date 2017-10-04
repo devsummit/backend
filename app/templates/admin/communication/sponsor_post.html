@@ -78,6 +78,7 @@
             formdata.append('sponsor_id', $('#hidden-sponsor-id').val())
             dsa.postForm('feeds', formdata, function(result){
                 if(result.meta.success){
+                    alert('post sent')
                     window.location = '/sponsor-post'
                 }
             })        
