@@ -29,7 +29,7 @@
                             </li>
                             <li class="list-group-item" id="participant-add">
                                 <label for="event-participant-add">Participants:</label>
-                                <select class="event-participants-add form-control">
+                                <select class="event-participants-add form-control" id="participant-select2" name="user[]" multiple="multiple" style="width:75%">
                                 </select>
                             </li>
                         </ul>
@@ -44,6 +44,8 @@
     </div>
 </div>
 <!-- page script -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
 <script>
     // Change participants based on event type
     $('.event-types-add').on('change', function() {
@@ -51,21 +53,60 @@
             $('#participant-add').hide();
         } else {
             $('#participant-add').show();
-            let participant = $(".event-participants-add");
-            participant.find('option').remove();
+            $('#participant-select2').select2({
+                dropdownParent: $('#modal-add'),
+                width: 'resolve',
+                placeholder: 'Select the participants',
+                allowClear: true,
+                ajax: {
+                    processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                    transport: function(params, success, failure){
+                        var request = dsa.get('users');
+                        request.then(success);
+                        request.fail(failure);
+                        return request;
+                    }
+                }
 
-            dsa.get('speakers', function(result) {
-                result.data.map(function(res) {
-                    let option = document.createElement('option');
 
-                    option.innerHTML = capitalizeFirstLetter(res.user.first_name) + ' ' + capitalizeFirstLetter(res.user.last_name);
-                    option.value = res.user.id;
 
-                    participant.append(option);
-                })
+
+                // ajax: {
+                //     url:'api/v1/users',
+                //     dataType   : "json",
+                //     headers: {
+                //         Authorization: dsa.acess_token()
+                //     },
+                //     processResults: function(data) {
+                //         return {
+                //             results: data
+                //         };
+                //     }
+                // }        
             });
-        }
-    })
+        };
+    });
+
+
+    //         $('#participant-add').show();
+    //         let participant = $(".event-participants-add");
+    //         participant.find('option').remove();
+
+    //         dsa.get('speakers', function(result) {
+    //             result.data.map(function(res) {
+    //                 let option = document.createElement('option');
+
+    //                 option.innerHTML = capitalizeFirstLetter(res.user.first_name) + ' ' + capitalizeFirstLetter(res.user.last_name);
+    //                 option.value = res.user.id;
+
+    //                 participant.append(option);
+                
+    //         });
+    //     }
+    // })
 
     // Used for capitalize words
     function capitalizeFirstLetter(string) {
@@ -95,4 +136,22 @@
             }
         });
     })
+    
+    
+
+
+
+    // dsa.get('rundownlist/' + id, function (result) { 
+    //         const data = result['data'];
+    //         var d = new Date(data['time_start'])
+    //         var hours = d.getHours();
+    //         console.log(hours);
+    //         $('.edit-description').val(data['description']);
+    //         $('.edit-date').val(moment(new Date(data['time_start'])).format("YYYY-MM-DD"));
+    //         $('.edit-time-start').val(moment(data['time_start']).format("HH:mm:ss"));
+    //         $('.edit-time-end').val(moment(data['time_end']).format("HH:mm:ss"));
+    //         $('.edit-location').val(data['location']);
+    //         $('.hidden-rundown-id').val(data['id']);
+    //         $('.btn-save').attr("id", `${data['id']}`);
+    //     });
 </script>
