@@ -7,7 +7,7 @@ class Feed(db.Model, BaseModel):
 
 	__tablename__ = 'feeds'
 
-	visible = ['id', 'message', 'user_id', 'attachment', 'created_at', 'updated_at', 'deleted_at']
+	visible = ['id', 'message', 'user_id', 'attachment', 'type', 'redirect_url', 'sponsor_id', 'created_at', 'updated_at', 'deleted_at']
 
 	id = db.Column(db.Integer, primary_key=True)
 	message = db.Column(db.Text)
