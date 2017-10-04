@@ -26,3 +26,6 @@ Flask-SocketIO==2.9.2
 Flask-Mail==0.9.1
 python_resize_image==1.1.11
 flask-cors==3.0.3
+
+# cron schedule
+schedule==0.4.3
