@@ -26,7 +26,7 @@ class FeedController(BaseController):
 				'sponsor_id': sponsor_id
 			}
 			result = feedservice.create(payloads)
-		else:
+		elif 'attachment' not in request.files:
 			attachment = request.form['attachment'] if 'attachment' in request.form else None
 			payloads = {
 				'message': message,
