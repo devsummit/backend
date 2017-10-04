@@ -35,7 +35,6 @@ class SponsorTemplateService(BaseService):
         data = {}
         data = sponsor_template.as_dict() if sponsor_template else None
         data['sponsor'] = sponsor.as_dict()
-        data['attachment'] = Helper().url_helper(data['attachment'], current_app.config['GET_DEST']) if data['attachment'] is not None else None
         return response.set_data(data).build()
 
     def create(self, payloads):

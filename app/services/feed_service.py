@@ -88,6 +88,31 @@ class FeedService(BaseService):
 		except SQLAlchemyError as e:
 			data = e.orig.args
 			return response.set_data(data).set_error(True).build()
+	
+	#this method use for create sponsor feeds in admin panel
+	#because i can't move file from sponsor_template
+	#the different this method with method create just in attachment type
+	def sponsor_create(self, payloads):
+		response = ResponseBuilder()
+		feed = Feed()
+		for key in payloads:
+			setattr(feed, key, payloads[key])
+		db.session.add(feed)
+		try:
+			db.session.commit()
+			user = feed.user.include_photos().as_dict()
+			sponsor = db.session.query(Sponsor).filter_by(id=payloads['sponsor_id']).first()		
+			del user['fcmtoken']
+			data = feed.as_dict()
+			data['attachment'] = Helper().url_helper(data['attachment'], current_app.config['GET_DEST']) if data['attachment'] is not None else None
+			if 'user' in payloads['type']:
+				data['user'] = user
+			elif 'sponsor' in payloads['type']:
+				data['user'] = sponsor.as_dict()
+			return response.set_data(data).build()
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return response.set_data(data).set_error(True).build()
 
 	def save_file(self, file, id=None):
 		image = Image.open(file, 'r')
