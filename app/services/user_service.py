@@ -18,6 +18,7 @@ from app.models.client import Client
 from app.models.ambassador import Ambassador  # noqa
 from app.models.redeem_code import RedeemCode  # noqa
 from app.configs.constants import ROLE  # noqa
+from app.configs.constants import REFERAL_EXPIRE
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
@@ -62,6 +63,12 @@ class UserService(BaseService):
 		# check if user already exist
 		if(check_user is not None):
 			return response.set_data(None).set_message('User already registered').set_error(True).build()
+
+		#check if referal code has already expired
+		daynow = datetime.datetime.today()
+		expired_date = datetime.datetime.strptime(REFERAL_EXPIRE['expired_date'], "%Y-%m-%d")		
+		if expired_date < daynow:
+			return response.set_data(None).set_message('Referal Promotion has been closed').set_error(True).build()
 
 		# check referal limit
 		check_referer = None

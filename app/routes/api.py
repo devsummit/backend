@@ -899,7 +899,6 @@ def broadcast_notification(*args, **kwargs):
     else:
         return AdminController.broadcast_notification(request, user)
 
-
 @api.route('/admin/sendemail', methods=['POST'])
 @token_required
 def send_email(*args, **kwargs):
@@ -923,4 +922,5 @@ def feed_report_get(*args, **kwargs):
 @token_required
 def feed_report_show(id, *args, **kwargs):
     return FeedReportController.show(id)
+
 
