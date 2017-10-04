@@ -10,6 +10,7 @@ from app.models.sponsor_interaction_log import SponsorInteractionLog
 from app.services.base_service import BaseService
 from app.models.base_model import BaseModel
 from app.builders.response_builder import ResponseBuilder
+from sqlalchemy import and_
 
 
 class SponsorService(BaseService):
@@ -73,11 +74,12 @@ class SponsorService(BaseService):
         try:
             db.session.commit()
             #add sponsor_template
-            sponsor = db.session.query(Sponsor).order_by(desc(Sponsor.id)).first()            
-            sponsor_template = SponsorTemplate()
-            sponsor_template.sponsor_id = sponsor.id
-            db.session.add(sponsor_template)
-            db.session.commit()
+            if payload['stage'] == 3:
+                sponsor = db.session.query(Sponsor).filter_by(stage=3).order_by(desc(Sponsor.id)).first()
+                sponsor_template = SponsorTemplate()
+                sponsor_template.sponsor_id = sponsor.id
+                db.session.add(sponsor_template)
+                db.session.commit()
             return response.set_data(sponsor.as_dict()).set_message('Data created succesfully').build()
         except SQLAlchemyError as e:
             data = e.orig.args
@@ -105,7 +107,7 @@ class SponsorService(BaseService):
             log.sponsor_id = id
             db.session.add(log)
 
-        new_data = super().filter_update_payload(payload)        
+        new_data = super().filter_update_payload(payload)
 
         if SPONSOR_STAGES[str(payload['stage'])] is not SPONSOR_STAGES['3']:
             new_data['type'] = None
@@ -115,6 +117,14 @@ class SponsorService(BaseService):
 
         try:
             db.session.commit()
+            #when update sponsor to official, automatically create sponsor_template
+            if new_data['stage'] == 3:
+                sponsor_update = Sponsor()
+                sponsor_update = db.session.query(Sponsor).filter(and_(Sponsor.stage == 3, Sponsor.id == id)).first()
+                sponsor_template = SponsorTemplate()
+                sponsor_template.sponsor_id = sponsor_update.id
+                db.session.add(sponsor_template)
+                db.session.commit()
             return response.set_data(sponsor.first().as_dict()).build()
 
         except SQLAlchemyError as e:
