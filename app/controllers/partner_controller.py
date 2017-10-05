@@ -69,5 +69,12 @@ class PartnerController(BaseController):
 	def delete(id):
 		partner = partnerservice.delete(id)
 		if partner['error']:
-			return BaseController.send_response_api(partner['data'], partner['message'])
+			return BaseController.send_error_api(partner['data'], partner['message'])
+		return BaseController.send_response_api(partner['data'], partner['message'])
+
+	@staticmethod
+	def filter(filter, request):
+		partner = partnerservice.filter(filter, request)
+		if partner['error']:
+			return BaseController.send_error_api(partner['data'], partner['message'])
 		return BaseController.send_response_api(partner['data'], partner['message'])

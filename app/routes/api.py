@@ -652,8 +652,12 @@ def partners_id(id, *args, **kwargs):
 
 @api.route('/partners', methods=['GET'])
 def partners(*args, **kwargs):
-    return PartnerController.index(request)
-    
+    filter = request.args.get('type')
+    if (request.method == 'GET' and filter is not None):
+        return PartnerController.filter(filter, request)
+    elif (request.method == 'GET'):
+        return PartnerController.index(request)
+
 
 @api.route('/partners', methods=['POST'])
 @token_required
@@ -804,7 +808,7 @@ def redeem(*args, **kwargs):
     if (request.method == 'POST'):
         return RedeemCodeController.create(request)
     if (request.method == 'GET'):
-        codeable_id = request.args.get('codeable_id') or None 
+        codeable_id = request.args.get('codeable_id') or None
         codeable_type = request.args.get('codeable_type') or None
         if codeable_id and codeable_type:
             param = {
@@ -944,4 +948,3 @@ def prize_list_id(id, *args, **kwargs):
         return PrizeListController.update(id, request)
     else:
         return PrizeListController.delete(id)
-
