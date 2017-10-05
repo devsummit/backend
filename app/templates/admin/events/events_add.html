@@ -28,8 +28,8 @@
                                 </select>
                             </li>
                             <li class="list-group-item" id="participant-add">
-                                <label for="event-participant-add">Participants:</label>
-                                <select class="event-participants-add form-control" id="participant-select2" name="user[]" multiple="multiple" style="width:75%">
+                                <label for="event-participant-add">Participants:</label> <br />
+                                <select class="event-participants-add form-control" id="participant-select2" name="user[]" multiple="multiple" style="width:98%">
                                 </select>
                             </li>
                         </ul>
@@ -47,6 +47,23 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
 <script>
+    var select2_data;
+    dsa.get('users', function(result) {
+        this.select2_data = transformJSON(result);        
+    })
+    
+    function transformJSON (obj) {
+        const data = obj['data'];
+            const arr = [];
+            $.map(data, function(item) {
+                    arr.push({
+                        text: item.username,
+                        id: item.id
+                    })                                                
+            })
+        return arr;
+        }
+
     // Change participants based on event type
     $('.event-types-add').on('change', function() {
         if (this.value !== 'speaker') {
@@ -54,59 +71,40 @@
         } else {
             $('#participant-add').show();
             $('#participant-select2').select2({
+                allowClear: true,
+                data: select2_data,
                 dropdownParent: $('#modal-add'),
                 width: 'resolve',
-                placeholder: 'Select the participants',
-                allowClear: true,
-                ajax: {
-                    processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                    transport: function(params, success, failure){
-                        var request = dsa.get('users');
-                        request.then(success);
-                        request.fail(failure);
-                        return request;
-                    }
-                }
-
-
-
-
+                // minimumInputLength: 1,
+                // placeholder: 'Select the Participants',
+                // in case we need to do filtering by querying to the server use this ajax
                 // ajax: {
-                //     url:'api/v1/users',
+                //     url : 'api/v1/users',
+                //     type: 'GET',
+                //     contentType: "application/json; charset=utf-8",
                 //     dataType   : "json",
                 //     headers: {
                 //         Authorization: dsa.acess_token()
                 //     },
-                //     processResults: function(data) {
-                //         return {
-                //             results: data
-                //         };
+                //     processResults: function(result){
+                //         if(result['expired']) {
+                //             clearCredential();
+                //             window.location.href = '/login';
+                //         } else {
+                //             return {
+                //                 results: $.makeArray($.map(result.data, function(data) {
+                //                     return {
+                //                         text: data.username,
+                //                         id: data.id
+                //                     }                                    
+                //                 }))
+                //             }                         
+                //         }
                 //     }
-                // }        
+                // }                
             });
-        };
+        }
     });
-
-
-    //         $('#participant-add').show();
-    //         let participant = $(".event-participants-add");
-    //         participant.find('option').remove();
-
-    //         dsa.get('speakers', function(result) {
-    //             result.data.map(function(res) {
-    //                 let option = document.createElement('option');
-
-    //                 option.innerHTML = capitalizeFirstLetter(res.user.first_name) + ' ' + capitalizeFirstLetter(res.user.last_name);
-    //                 option.value = res.user.id;
-
-    //                 participant.append(option);
-                
-    //         });
-    //     }
-    // })
 
     // Used for capitalize words
     function capitalizeFirstLetter(string) {
@@ -135,23 +133,6 @@
                 window.location = "/events";
             }
         });
-    })
-    
-    
+    });
 
-
-
-    // dsa.get('rundownlist/' + id, function (result) { 
-    //         const data = result['data'];
-    //         var d = new Date(data['time_start'])
-    //         var hours = d.getHours();
-    //         console.log(hours);
-    //         $('.edit-description').val(data['description']);
-    //         $('.edit-date').val(moment(new Date(data['time_start'])).format("YYYY-MM-DD"));
-    //         $('.edit-time-start').val(moment(data['time_start']).format("HH:mm:ss"));
-    //         $('.edit-time-end').val(moment(data['time_end']).format("HH:mm:ss"));
-    //         $('.edit-location').val(data['location']);
-    //         $('.hidden-rundown-id').val(data['id']);
-    //         $('.btn-save').attr("id", `${data['id']}`);
-    //     });
 </script>
