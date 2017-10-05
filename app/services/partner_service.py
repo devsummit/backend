@@ -112,22 +112,11 @@ class PartnerService(BaseService):
 			return response.set_data(None).set_message(data).set_error(True).build()
 
 	def filter(self, filter, request):
-		self.total_items = Partner.query.count()
-		if request.args.get('page'):
-			self.page = request.args.get('page')
-		else:
-			self.perpage = self.total_items
-			self.page = 1
-		self.base_url = request.base_url
-        # paginate
-		paginate = super().paginate(db.session.query(Partner).filter_by(type=filter))
-		paginate = super().transform()
-		for item in paginate['data']:
-			if item['photo']:
-				item['photo']= Helper().url_helper(item['photo'], current_app.config['GET_DEST'])
-				continue
-			else:
-				item['photo']=Helper().url_helper(self.temp_image, current_app.config['GET_DEST'])
-				continue
 		response = ResponseBuilder()
-		return response.set_data(paginate['data']).set_links(paginate['links']).build()
+		partners = db.session.query(Partner).filter_by(type=filter).all()
+		results = []
+		for partner in partners:
+			data = partner.as_dict()
+			results.append(data)
+		result = response.set_data(results).build()
+		return result
