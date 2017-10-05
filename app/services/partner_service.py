@@ -2,7 +2,7 @@ import os
 import datetime
 from flask import current_app
 from app.models import db
-from app.services.helper import Helper 
+from app.services.helper import Helper
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug import secure_filename
 from app.models.partners import Partner
@@ -33,7 +33,7 @@ class PartnerService(BaseService):
 				continue
 			else:
 				item['photo']=Helper().url_helper(self.temp_image, current_app.config['GET_DEST'])
-				continue		 	
+				continue
 		response = ResponseBuilder()
 		return response.set_data(paginate['data']).set_links(paginate['links']).build()
 
@@ -72,7 +72,7 @@ class PartnerService(BaseService):
 					temp_partner = db.session.query(Partner).filter_by(id=id).first()
 					partner_photo = temp_partner.as_dict() if temp_partner else None
 					if partner_photo is not None and partner_photo['photo'] is not None:
-						Helper().silent_remove(current_app.config['STATIC_DEST'] + partner_photo['photo']) 
+						Helper().silent_remove(current_app.config['STATIC_DEST'] + partner_photo['photo'])
 				return current_app.config['SAVE_PARTNER_PHOTO_DEST'] + filename
 		else:
 			return None
@@ -110,3 +110,24 @@ class PartnerService(BaseService):
 		else:
 			data = 'data not found'
 			return response.set_data(None).set_message(data).set_error(True).build()
+
+	def filter(self, filter, request):
+		self.total_items = Partner.query.count()
+		if request.args.get('page'):
+			self.page = request.args.get('page')
+		else:
+			self.perpage = self.total_items
+			self.page = 1
+		self.base_url = request.base_url
+        # paginate
+		paginate = super().paginate(db.session.query(Partner).filter_by(type=filter))
+		paginate = super().transform()
+		for item in paginate['data']:
+			if item['photo']:
+				item['photo']= Helper().url_helper(item['photo'], current_app.config['GET_DEST'])
+				continue
+			else:
+				item['photo']=Helper().url_helper(self.temp_image, current_app.config['GET_DEST'])
+				continue
+		response = ResponseBuilder()
+		return response.set_data(paginate['data']).set_links(paginate['links']).build()
