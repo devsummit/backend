@@ -732,7 +732,7 @@ def get_sponsor_template(*args, **kwargs):
 @token_required
 def update_sponsor_template(sponsor_id, *args, **kwargs):
     if (request.method == 'GET'):
-        return SponsorTemplateController.index(request)
+        return SponsorTemplateController.show(request, sponsor_id)
     elif (request.method in ['PATCH', 'PUT']):
         return SponsorTemplateController.update(request, sponsor_id)
 

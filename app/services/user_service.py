@@ -285,7 +285,7 @@ class UserService(BaseService):
 				'updated_at': datetime.datetime.now()
 			})
 			db.session.commit()
-			data = self.model_user.first().as_dict()
+			data = self.model_user.first().include_photos().as_dict()
 			if (data['role_id'] is ROLE['booth']):
 				booth = db.session.query(Booth).filter_by(user_id=payloads['user']['id'])
 				if payloads['booth_info'] is not None:

@@ -6,6 +6,7 @@ from app.models.speaker import Speaker  # noqa
 from app.models.ambassador import Ambassador  # noqa
 from app.models.user import User  #noqa
 from app.models.sponsor import Sponsor #noqa
+from app.models.panel_event import PanelEvent 
 
 
 class BaseService():
@@ -53,12 +54,27 @@ class BaseService():
         _results = []
         for item in self.paginated['data']:
             data = item.as_dict()
-            if item.type:
-                if 'user' in item.type:
-                    data['user'] = item.user.include_photos().as_dict()
-                elif 'sponsor' in item.type:
-                    sponsor = db.session.query(Sponsor).filter_by(id=item.sponsor_id).first()        
-                    data['user'] = sponsor.as_dict()
+            if item.type is None or 'user' in item.type:
+                data['user'] = item.user.include_photos().as_dict()
+            elif 'sponsor' in item.type:
+                sponsor = db.session.query(Sponsor).filter_by(id=item.sponsor_id).first()        
+                data['user'] = sponsor.as_dict()
+            _results.append(data)
+        self.paginated['data'] = _results
+        return self.paginated
+
+    def include_events(self):
+        _results = []
+        for item in self.paginated['data']:
+            data = item.as_dict()
+            if item.type is None or 'discuss panel' in item.type:
+                users = []
+                panel_event = db.session.query(PanelEvent).filter_by(event_id=data['id']).all()
+                for pe in panel_event:
+                    users.append(pe.user.include_photos().as_dict())
+                data['user'] = users
+            else:
+                data['user'] = item.user.include_photos().as_dict()
             _results.append(data)
         self.paginated['data'] = _results
         return self.paginated
