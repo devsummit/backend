@@ -113,7 +113,7 @@
 
     /* Saved event action */
     $('.btn-events-add').click(function(event){
-        let user_id = $('#participant-add').find(":selected").val();
+        let user_id_arr = $('#participant-select2').val();
 
         if ($('.event-types-add').val() !== "speaker") {
             user_id = null;
@@ -121,7 +121,7 @@
 
         payload = {
             "data": {
-                "user_id": user_id,
+                "user_id": user_id_arr,
                 "title": $('.event-title-add').val(),
                 "information": $('.event-information-add').val(),
                 "type": $('.event-types-add').val() 
