@@ -1,0 +1,106 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Sponsor Post Feeds </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Sponsor Feeds
+        <small>Sponsor Post Feed</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Sponsor Post Feed</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+    <div class="box-body">
+        <div class="form-group">
+            <label for="i-entry-cash-amount">Sponsor:</label>
+                <select class="form-control" id="i-sponsor">
+                    <option id='default' value='default'>Select sponsor first</option>
+                    {% for sponsor in sponsortemplates %}
+                        {% if '3' in sponsor.sponsor.stage %}
+                            <option id="sponsor-id-{{ sponsor.id }}" value={{ sponsor.sponsor_id }}>{{ sponsor.sponsor.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <input type='hidden' id='hidden-sponsor-id'><br>
+                <input type='hidden' id='hidden-message'><br>
+                <input type='hidden' id='hidden-attachment'><br>
+                <input type='hidden' id='hidden-redirect-url'>
+            </div>
+            <a href="#" class="btn btn-primary btn-block btn-send">Send</b></a>
+    </div>
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+
+    $(document).ready(function(){
+    })
+
+    $('#i-sponsor').change(function(){
+        var id = $('#i-sponsor').val()
+        dsa.get('sponsors/template/' + id, function(result){
+            var data = result['data']
+            $('#hidden-sponsor-id').val(id)
+            $('#hidden-message').val(data['message'])
+            $('#hidden-attachment').val(data['attachment'])
+            $('#hidden-redirect-url').val(data['redirect_url'])
+        })
+    })
+
+    $('.btn-send').click(function(){
+        var message = $('#hidden-message').val()
+        var attachment = $('#hidden-attachment').val()
+        var redirect_url = $('#hidden-redirect-url').val()
+        if($('#i-sponsor').val() != 'default'){
+            const formdata = new FormData();
+            formdata.append('message', message)
+            formdata.append('attachment', attachment)
+            formdata.append('redirect_url', redirect_url)
+            formdata.append('type', 'sponsor')
+            formdata.append('sponsor_id', $('#hidden-sponsor-id').val())
+            dsa.postForm('feeds', formdata, function(result){
+                if(result.meta.success){
+                    alert('post sent')
+                    window.location = '/sponsor-post'
+                }
+            })        
+        }else{
+            alert('dont send empty feeds')
+        }
+    })
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#fileInput").change(function(){
+        readURL(this);
+    });
+</script>
+
+{% endblock %}

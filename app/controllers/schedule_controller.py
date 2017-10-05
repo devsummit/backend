@@ -24,7 +24,7 @@ class ScheduleController(BaseController):
 		schedule = scheduleservice.show(id)
 		if schedule['error']:
 			return BaseController.send_error_api(schedule['data'], schedule['message'])
-		return BaseController.send_response_api(schedule['data'], schedule['message'], schedule['included'])
+		return BaseController.send_response_api(schedule['data'], schedule['message'])
 
 	@staticmethod
 	def create(request):

@@ -153,3 +153,11 @@ def source():
 def report_feed():
     return MainController.getReportFeed(request)
 
+@main.route('/sponsor-feeds')
+def sponsor_feed():
+    return MainController.getSponsorFeed(request)
+
+@main.route('/sponsor-post')
+def sponsor_post():
+    return MainController.getSponsorPost(request)
+

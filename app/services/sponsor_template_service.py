@@ -20,11 +20,22 @@ class SponsorTemplateService(BaseService):
         sponsor_templates = db.session.query(SponsorTemplate).all()
         results = []
         for sponsor in sponsor_templates:
+            sponsor_data = db.session.query(Sponsor).filter_by(id=sponsor.sponsor_id).first()
             data = sponsor.as_dict()
+            data['sponsor'] = sponsor_data.as_dict()
             results.append(data)
         response = ResponseBuilder()
         result = response.set_data(results).build()
         return result
+
+    def show(self, sponsor_id):
+        response = ResponseBuilder()
+        sponsor_template = db.session.query(SponsorTemplate).filter_by(sponsor_id=sponsor_id).first()
+        sponsor = db.session.query(Sponsor).filter_by(id=sponsor_id).first()
+        data = {}
+        data = sponsor_template.as_dict() if sponsor_template else None
+        data['sponsor'] = sponsor.as_dict()
+        return response.set_data(data).build()
 
     def create(self, payloads):
         response = ResponseBuilder()
@@ -48,6 +59,7 @@ class SponsorTemplateService(BaseService):
 
     def update(self, payloads, sponsor_id):
         response = ResponseBuilder()
+        sponsor = db.session.query(Sponsor).filter_by(id=sponsor_id).first()
         try:
             sponsor_template = db.session.query(SponsorTemplate).filter_by(sponsor_id=sponsor_id)
             attachment = self.save_file(payloads['attachment']) if payloads['attachment'] is not None else None
@@ -57,8 +69,9 @@ class SponsorTemplateService(BaseService):
                 'redirect_url': payloads['redirect_url']
             })
             db.session.commit()
-            data = sponsor_template.first()
-            return response.set_data(data.as_dict()).build()
+            data = sponsor_template.first().as_dict()
+            data['sponsor'] = sponsor.as_dict()
+            return response.set_data(data).build()
         except SQLAlchemyError as e:
             data = e.orig.args
             return response.set_data(data).set_error(True).build()

@@ -5,7 +5,7 @@ class SponsorTemplateController(BaseController):
 
     @staticmethod
     def index(request):
-        sponsor_templates = sponsortemplateservice.get()
+        sponsor_templates = sponsortemplateservice.get(request)
         if sponsor_templates['error']:
             return BaseController.send_error(sponsor_templates['data'], sponsor_templates['message'])
         return BaseController.send_response_api(sponsor_templates['data'], sponsor_templates['message'], sponsor_templates['included'])
@@ -30,6 +30,13 @@ class SponsorTemplateController(BaseController):
             return BaseController.send_error_api(result['data'], result['message'])
         else:
             return BaseController.send_response_api(result['data'], result['message'])
+        
+    @staticmethod
+    def show(request, sponsor_id):
+        sponsor_template = sponsortemplateservice.show(sponsor_id)
+        if sponsor_template['error']:
+            return BaseController.send_error_api(sponsor_template['data'], sponsor_template['message'])
+        return BaseController.send_response_api(sponsor_template['data'], sponsor_template['message'])
 
     @staticmethod
     def update(request, sponsor_id):
