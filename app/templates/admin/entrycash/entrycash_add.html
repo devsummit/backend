@@ -70,17 +70,21 @@
                 debit = 0
             }
 
+            if (debit == 0 && credit ==0){
+                alert("don't send empty value")
+            }else{
             payload = {
                 "description": target.find('#i-entry-cash-desc').val(),
                 "debit": debit,
                 "credit": credit,
                 "source_id": target.find('#i-entry-cash-source-id').val()
-            };
+              };
              dsa.post('{{ globals["api_route"] }}', payload, function (result) {
                 if (result.meta.success) {
                     window.location = '/{{ globals["base_route"] }}';
                 }
             });
-        })
+        }
     })
+  })
 </script>
