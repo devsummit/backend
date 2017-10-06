@@ -40,7 +40,7 @@ class BoothController(BaseController):
         points = request.json['points'] if 'points' in request.json else None
         summary = request.json['summary'] if 'summary' in request.json else None
 
-        if name and points and summary:
+        if points and summary:
             payloads = {
                 'name': name,
                 'stage_id': stage_id,
