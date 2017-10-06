@@ -71,6 +71,7 @@
                 const stage_id = $('#grant-booth-stageid').val() > 0 ? parseInt($('#grant-booth-stageid').val()) : null
                 payload = {
                     name: 'Booth',
+                    booth_name: $('#grant-booth-name').val(),
                     stage_id: stage_id,
                     points: points ? points : 0,
                     summary: $('#grant_booth-summary').val()

@@ -26,6 +26,7 @@
                 <thead>
                     <tr>
                         <th>Owner</th>
+                        <th>Booth Name</th>
                         <th>Email</th>
                         <th>Summary</th>
                         <th>Stage</th>
@@ -38,6 +39,9 @@
                     <tr>
                         <td>
                             {{ booth.user.first_name.title() }} {{ booth.user.last_name.title() }}
+                        </td>
+                        <td>
+                            {{ booth.name }}
                         </td>
                         <td>
                             {{ booth.user.email }}
@@ -87,6 +91,7 @@
                 // bind result value in to attendee_detail.html 
                 const data = result['data'];
                 selected_stage_id = data['stage'] ? data['stage'].id : null;
+                $('.booth-name').val(data['name']);
                 $('.booth-summary').val(data['summary']);
                 $('.booth-points').val(data['points']);
                 $('.booth-user-id').val(data['user_id']);

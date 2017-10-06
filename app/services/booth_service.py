@@ -62,6 +62,7 @@ class BoothService(BaseService):
 		try:
 			self.model_booth = db.session.query(Booth).filter_by(id=booth_id)
 			self.model_booth.update({
+				'name': payloads['name'],
 				'stage_id': payloads['stage_id'],
 				'points': payloads['points'],
 				'summary': payloads['summary']

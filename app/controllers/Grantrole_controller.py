@@ -30,16 +30,19 @@ class GrantroleController(BaseController):
             else:
                 return BaseController.send_error_api(None, 'field is not complete')
         elif role_id == "3":
+            booth_name = request.json['includes']['booth_name'] if 'booth_name' in request.json['includes'] else None
             stage_id = request.json['includes']['stage_id'] if 'stage_id' in request.json['includes'] else None
             points = request.json['includes']['points'] if 'points' in request.json['includes'] else None
             summary = request.json['includes']['summary'] if 'summary' in request.json['includes'] else None
             if points and summary:
                 payloads = {
+                    'booth_name': booth_name,
                     'user_id': user_id,
                     'stage_id': stage_id,
                     'points': points,
                     'summary': summary
                 }
+                print(payloads)
                 result = grantroleservice.add_booth(payloads)
             else:
                 return BaseController.send_error_api(None, 'field is not complete')

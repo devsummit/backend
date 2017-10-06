@@ -51,6 +51,7 @@ class GrantroleService():
             return response.set_data(payloads).build()
 
         self.booth = Booth()
+        self.booth.name = payloads['booth_name']
         self.booth.user_id = payloads['user_id']
         self.booth.stage_id = payloads['stage_id']
         self.booth.points = payloads['points']
