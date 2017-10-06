@@ -59,6 +59,7 @@ class BoothController(BaseController):
 
     @staticmethod
     def create(request):
+        name = request.json['name'] if 'name' in request.json else None
         user_id = request.json['user_id'] if 'user_id' in request.json else None
         stage_id = request.json['stage_id'] if 'stage_id' in request.json else None
         points = request.json['points'] if 'points' in request.json else None
@@ -66,6 +67,7 @@ class BoothController(BaseController):
 
         if user_id and stage_id and points and summary:
             payloads = {
+                'name': name,
                 'user_id': user_id,
                 'stage_id': stage_id,
                 'points': points,
