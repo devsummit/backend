@@ -34,13 +34,13 @@ class BoothController(BaseController):
         if user_id is not None:
             booth_id = db.session.query(Booth).filter_by(user_id=user_id).first().as_dict()['id']
         
-        name = request.json['name'] if 'name' in request.json else None
+        name = request.json['name'] if 'name' in request.json else ''
         stage_id = request.json['stage_id'] if 'stage_id' in request.json else None
         stage_id = None if stage_id < 0 else stage_id
         points = request.json['points'] if 'points' in request.json else None
         summary = request.json['summary'] if 'summary' in request.json else None
 
-        if points and summary:
+        if name and points and summary:
             payloads = {
                 'name': name,
                 'stage_id': stage_id,
@@ -59,7 +59,7 @@ class BoothController(BaseController):
 
     @staticmethod
     def create(request):
-        name = request.json['name'] if 'name' in request.json else None
+        name = request.json['name'] if 'name' in request.json else ''
         user_id = request.json['user_id'] if 'user_id' in request.json else None
         stage_id = request.json['stage_id'] if 'stage_id' in request.json else None
         points = request.json['points'] if 'points' in request.json else None
