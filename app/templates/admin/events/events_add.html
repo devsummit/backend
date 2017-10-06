@@ -29,12 +29,12 @@
                                 </select>
                             </li>
                             <li class="list-group-item" id="participant-add" style="display: none">
-                                <label for="event-participant-add">Participants:</label> <br />
+                                <label for="event-participant-add">Speaker:</label> <br />
                                 <select class="event-participants-add form-control" id="participant-add-select">
                                 </select>
                             </li>
                             <li class="list-group-item" id="speaker-add">
-                                <label for="event-speaker-add">Speakers:</label> <br />
+                                <label for="event-speaker-add">Participants:</label> <br />
                                 <select class="event-speaker-add form-control" id="speaker-select2" name="user[]" multiple="multiple" style="width:100%">
                                 </select>
                             </li>
@@ -108,7 +108,19 @@
     $('.event-types-add').on('change', function() {
         if (this.value == 'speaker') {
             $('#participant-add').show();
-            $('#speaker-add').hide();        
+            $('#speaker-add').hide();
+            let participant = $(".event-participants-add");
+            participant.find('option').remove();
+            dsa.get('speakers', function(result) {
+                result.data.map(function(res) {
+                    let option = document.createElement('option');
+
+                    option.innerHTML = capitalizeFirstLetter(res.user.first_name) + ' ' + capitalizeFirstLetter(res.user.last_name);
+                    option.value = res.user.id;
+
+                    participant.append(option);
+                })
+            });        
         } else if (this.value == 'discuss panel') {
             $('#participant-add').hide();
             $('#speaker-add').show();
