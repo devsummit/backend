@@ -138,12 +138,13 @@
     /* Saved event action */
     $('.btn-events-add').click(function(event){
         event_type = $('.event-types-add').val()
-        if (event_type !== "speaker" || event_type !== "discuss panel") {
+        let user_id;
+        if (event_type !== "speaker" && event_type !== "discuss panel") {
             user_id = null;
         } else if (event_type === 'speaker') {
-            let user_id = $('#participant-add-select').val();
+            user_id = $('#participant-add-select').val();
         } else{
-            let user_id = $('#speaker-select2').val();
+            user_id = $('#speaker-select2').val();
         }
         payload = {
             "data": {
@@ -152,8 +153,7 @@
                 "information": $('.event-information-add').val(),
                 "type": event_type 
             }
-        };
-        console.log(payload)          
+        };          
 
         dsa.post('events', payload, function(result) {
             if(result.meta.success) {
