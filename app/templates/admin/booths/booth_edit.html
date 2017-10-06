@@ -12,6 +12,12 @@
                         <ul class="list-group list-group-unbordered">
                             <input type="hidden" class="form-control booth-user-id" id="booth-user-id">
                             <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="booth-name">Booth name:</label>
+                                        <input type="text" class="form-control booth-name" id="booth-summary">
+                                    </div>
+                                </li>
+                            <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="booth-summary">Booth summary:</label>
                                     <input type="text" class="form-control booth-summary" id="booth-summary">
@@ -46,6 +52,7 @@
         const booth_id = $(this).attr('id');
         
         payload = {
+            "name": $('.booth-name').val(),
             "summary": $('.booth-summary').val(),
             "points": $('.booth-points').val(),
             "stage_id": $('.booth-stages').val() > 0 ? parseInt($('.booth-stages').val()) : -1,  

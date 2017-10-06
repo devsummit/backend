@@ -62,6 +62,7 @@ class BoothService(BaseService):
 		try:
 			self.model_booth = db.session.query(Booth).filter_by(id=booth_id)
 			self.model_booth.update({
+				'name': payloads['name'],
 				'stage_id': payloads['stage_id'],
 				'points': payloads['points'],
 				'summary': payloads['summary']
@@ -111,6 +112,7 @@ class BoothService(BaseService):
 	def create(self, payloads):
 		response = ResponseBuilder()
 		self.model_booth = Booth()
+		self.model_booth.name = payloads['name']
 		self.model_booth.user_id = payloads['user_id']
 		self.model_booth.stage_id = payloads['stage_id']
 		self.model_booth.points = payloads['points']
