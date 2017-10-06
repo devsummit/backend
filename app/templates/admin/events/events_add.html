@@ -28,9 +28,14 @@
                                 <select class="event-types-add form-control">
                                 </select>
                             </li>
-                            <li class="list-group-item" id="participant-add">
+                            <li class="list-group-item" id="participant-add" style="display: none">
                                 <label for="event-participant-add">Participants:</label> <br />
-                                <select class="event-participants-add form-control" id="participant-select2" name="user[]" multiple="multiple" style="width:98%">
+                                <select class="event-participants-add form-control" id="participant-add-select">
+                                </select>
+                            </li>
+                            <li class="list-group-item" id="speaker-add">
+                                <label for="event-speaker-add">Speakers:</label> <br />
+                                <select class="event-speaker-add form-control" id="speaker-select2" name="user[]" multiple="multiple" style="width:100%">
                                 </select>
                             </li>
                         </ul>
@@ -47,9 +52,43 @@
 <!-- page script -->
 <script src="{{ url_for('static', filename='assets/dist/js/select2.js') }}"></script>
 <script>
-    var select2_data;
+    // Data and mapping for select2
+    
     dsa.get('users', function(result) {
-        this.select2_data = transformJSON(result);        
+        var select2_data = transformJSON(result);        
+        $('#speaker-select2').select2({
+            allowClear: true,
+            data: select2_data,
+            dropdownParent: $('#modal-add'),
+            width: 'resolve',
+            // minimumInputLength: 1,
+            // placeholder: 'Select the Participants',
+            // in case we need to do filtering by querying to the server use this ajax
+            // ajax: {
+            //     url : 'api/v1/users',
+            //     type: 'GET',
+            //     contentType: "application/json; charset=utf-8",
+            //     dataType   : "json",
+            //     headers: {
+            //         Authorization: dsa.acess_token()
+            //     },
+            //     processResults: function(result){
+            //         if(result['expired']) {
+            //             clearCredential();
+            //             window.location.href = '/login';
+            //         } else {
+            //             return {
+            //                 results: $.makeArray($.map(result.data, function(data) {
+            //                     return {
+            //                         text: data.username,
+            //                         id: data.id
+            //                     }                                    
+            //                 }))
+            //             }                         
+            //         }
+            //     }
+            // }                
+        });
     })
     
     function transformJSON (obj) {
@@ -64,45 +103,18 @@
         return arr;
         }
 
+
     // Change participants based on event type
     $('.event-types-add').on('change', function() {
-        if (this.value !== 'speaker') {
-            $('#participant-add').hide();
-        } else {
+        if (this.value == 'speaker') {
             $('#participant-add').show();
-            $('#participant-select2').select2({
-                allowClear: true,
-                data: select2_data,
-                dropdownParent: $('#modal-add'),
-                width: 'resolve',
-                // minimumInputLength: 1,
-                // placeholder: 'Select the Participants',
-                // in case we need to do filtering by querying to the server use this ajax
-                // ajax: {
-                //     url : 'api/v1/users',
-                //     type: 'GET',
-                //     contentType: "application/json; charset=utf-8",
-                //     dataType   : "json",
-                //     headers: {
-                //         Authorization: dsa.acess_token()
-                //     },
-                //     processResults: function(result){
-                //         if(result['expired']) {
-                //             clearCredential();
-                //             window.location.href = '/login';
-                //         } else {
-                //             return {
-                //                 results: $.makeArray($.map(result.data, function(data) {
-                //                     return {
-                //                         text: data.username,
-                //                         id: data.id
-                //                     }                                    
-                //                 }))
-                //             }                         
-                //         }
-                //     }
-                // }                
-            });
+            $('#speaker-add').hide();        
+        } else if (this.value == 'discuss panel') {
+            $('#participant-add').hide();
+            $('#speaker-add').show();
+        } else{
+            $('#participant-add').hide();
+            $('#speaker-add').hide();
         }
     });
 
@@ -113,20 +125,23 @@
 
     /* Saved event action */
     $('.btn-events-add').click(function(event){
-        let user_id_arr = $('#participant-select2').val();
-
-        if ($('.event-types-add').val() !== "speaker") {
+        event_type = $('.event-types-add').val()
+        if (event_type !== "speaker" || event_type !== "discuss panel") {
             user_id = null;
+        } else if (event_type === 'speaker') {
+            let user_id = $('#participant-add-select').val();
+        } else{
+            let user_id = $('#speaker-select2').val();
         }
-
         payload = {
             "data": {
-                "user_id": user_id_arr,
+                "user_id": user_id,
                 "title": $('.event-title-add').val(),
                 "information": $('.event-information-add').val(),
-                "type": $('.event-types-add').val() 
-            }          
+                "type": event_type 
+            }
         };
+        console.log(payload)          
 
         dsa.post('events', payload, function(result) {
             if(result.meta.success) {
