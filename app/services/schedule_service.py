@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.schedule import Schedule
 from app.models.booth import Booth
 from app.models.speaker import Speaker
+from app.models.panel_event import PanelEvent
 from app.configs.constants import EVENT_DATES
 from app.builders.response_builder import ResponseBuilder
 
@@ -19,12 +20,21 @@ class ScheduleService():
 			event = schedule.event
 			user = event.user
 			stage = schedule.stage
-			data['user'] = user.include_photos().as_dict() if user else {}
+			if event.type == 'discuss panel':
+				_result = []
+				pes = db.session.query(PanelEvent).filter_by(event_id=event.id).all()
+				for pe in pes:
+					_result.append(pe.user.include_photos().as_dict())
+				data['user'] = _result
+			else:
+				data['user'] = user.include_photos().as_dict() if user else {}
+
 			data['event'] = event.as_dict() if event else {}
 			data['stage'] = stage.as_dict() if stage else {}
 			speaker = None
-			if data['user'] and data['user']['role_id'] == 4:
-				speaker = db.session.query(Speaker).filter_by(user_id=data['user']['id']).first()
+			if event.type != 'discuss panel':
+				if data['user'] and data['user']['role_id'] == 4:
+					speaker = db.session.query(Speaker).filter_by(user_id=data['user']['id']).first()
 			
 			data['speaker'] = speaker.as_dict() if speaker else {}
 
@@ -67,6 +77,22 @@ class ScheduleService():
 
 	def show(self, id):
 		schedule = db.session.query(Schedule).filter_by(id=id).first()
+		data = schedule.as_dict()
+		event = schedule.event
+		data['event'] = event.as_dict()
+		if event.type == 'discuss panel':
+			_result_user = []
+			_result_speaker = []
+			pes = db.session.query(PanelEvent).filter_by(event_id=event.id).all()
+			for pe in pes:
+				user = pe.user.include_photos().as_dict()
+				speaker = db.session.query(Speaker).filter_by(user_id=pe.user.id).first()
+				user['speaker'] = speaker.as_dict()
+				_result_user.append(user)
+			data['user'] = _result_user
+		else:
+			data['user'] = event.user.include_photos().as_dict()
+
 		#  add includes
 		if schedule is None:
 			return {
@@ -74,12 +100,10 @@ class ScheduleService():
 				'data': None,
 				'message': 'Schedule not found'
 			}
-		included = self.get_includes(schedule)
 		return {
 			'error': False,
-			'data': schedule.as_dict(),
+			'data': data,
 			'message': 'Schedule retrieved successfully',
-			'included': included
 		}
 
 	def create(self, payloads):
