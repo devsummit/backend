@@ -217,7 +217,6 @@ class PaymentService():
         # get the token id first
         token_id = requests.get(url + 'card/register?' + 'card_number=' + payloads['card_number'] + '&card_exp_month=' + payloads['card_exp_month'] + '&card_exp_year=' + payloads['card_exp_year'] + '&card_cvv=' + payloads['card_cvv'] + '&bank=' + payloads['bank'] + '&secure=' + 'true' + '&gross_amount=' + str(payloads['gross_amount']) + '&client_key=' + payloads['client_key'], headers=self.headers)
         token_id = token_id.json()
-
         # prepare data
         data = {}
         if 'status_code' in token_id and token_id['status_code'] == '200':
@@ -487,10 +486,11 @@ class PaymentService():
         item_details = db.session.query(OrderDetails).filter_by(order_id=order['id']).all()
         for item in item_details:
             data = item.as_dict()
-            user_ticket = UserTicket()
-            user_ticket.user_id = order['user_id']
-            user_ticket.ticket_id = data['ticket_id']
-            db.session.add(user_ticket)
+            for i in range(0, item.count):
+                user_ticket = UserTicket()
+                user_ticket.user_id = order['user_id']
+                user_ticket.ticket_id = data['ticket_id']
+                db.session.add(user_ticket)
             db.session.commit()
 
     def get_order_details(self, order_id, referal=None):
