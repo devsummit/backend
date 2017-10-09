@@ -36,6 +36,7 @@ from app.services.overview_service import OverviewService
 from app.services.feed_report_service import FeedReportService
 from app.services.prize_list_service import PrizeListService
 from app.services.sponsor_template_service import SponsorTemplateService
+from app.services.package_management_service import PackageManagementService
 
 
 # instantiate service
@@ -76,3 +77,4 @@ overviewservice = OverviewService()
 feedreportservice = FeedReportService(10)
 prizelistservice = PrizeListService()
 sponsortemplateservice = SponsorTemplateService()
+packagemanagementservice = PackageManagementService()
