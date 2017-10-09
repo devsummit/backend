@@ -13,13 +13,13 @@
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-entry-cash-desc">Description:</label>
-                                    <input type="text" class="form-control" id="i-entry-cash-desc">
+                                    <input type="text" class="form-control" id="edit-entry-cash-desc">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-entry-cash-amount">Source Id:</label>
-                                    <select class="form-control" id="i-entry-cash-source-id">
+                                    <select class="form-control" id="edit-entry-cash-source-id">
                                         {% for source in sources %}
                                             <option id="source-id-{{ source.id }}" value={{ source.id }}>{{ source.bank }}({{ source.account_number }})-|{{ source.alias }}</option>
                                         {% endfor %}
@@ -29,13 +29,13 @@
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-entry-cash-amount">Debit:</label>
-                                    <input type="number" class="form-control" id="i-entry-cash-debit" step="0.01">
+                                    <input type="number" class="form-control" id="edit-entry-cash-debit" step="0.01">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-entry-cash-amount">Credit:</label>
-                                    <input type="number" class="form-control" id="i-entry-cash-credit" step="0.01">
+                                    <input type="number" class="form-control" id="edit-entry-cash-credit" step="0.01">
                                 </div>
                             </li>
                         </ul>
@@ -56,22 +56,21 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
+    $(document).ready(function(){
+
+        $('#edit-entry-cash-debit').keypress(function(){
+            $('#edit-entry-cash-credit').val(0)
+        })
+
+        $('#edit-entry-cash-credit').keypress(function(){
+            $('#edit-entry-cash-debit').val(0)
+        })
+
     $('#btn-edit-save').click(function (event) {
-        var id = $(this).attr('id');
-        var debit = $('#i-entry-cash-debit').val();
-        var credit = $('#i-entry-cash-credit').val();
-        var source_id = $('#i-entry-cash-source-id').val();
-
-        $('#i-entry-cash-credit').val(0);
-        $('#i-entry-cash-debit').val(0);
-
-        $('#i-entry-cash-debit').keypress(function(){
-            $('#i-entry-cash-credit').val(0)
-        })
-
-        $('#i-entry-cash-credit').keypress(function(){
-            $('#i-entry-cash-debit').val(0)
-        })
+        var  id = $(this).attr('id');
+        var debit = $('#edit-entry-cash-debit').val();
+        var credit = $('#edit-entry-cash-credit').val();
+        var source_id = $('#edit-entry-cash-source-id').val();
 
         if (credit == 0 || credit == null) {
             credit = 0
@@ -83,7 +82,7 @@
                 alert("don't send empty data!")
         }else{
         const payloads = {
-            "description": $('#i-entry-cash-desc').val(),
+            "description": $('#edit-entry-cash-desc').val(),
             "debit": debit,
             "credit": credit,
             "source_id": source_id
@@ -91,9 +90,10 @@
         dsa.patch('{{ globals["api_route"] }}/' + id, payloads, function (result) {
             if (result.meta.success) {
                 window.location = '/{{ globals["base_route"] }}';
-            }
-        });
-    }
+                }
+            });
+        }
+    })
 })
     $(function () {
         $('#data-list1').DataTable();
