@@ -84,10 +84,10 @@
             dsa.get(url, function (result) {
                 // bind result value in to modal-detail page 
                 const data = result['data']
-                $('#i-entry-cash-desc').val(data['description']);
-                $('#i-entry-cash-debit').val(data['debit']);
-                $('#i-entry-cash-credit').val(data['credit']);
-                $('#i-entry-cash-source-id').val(data['source_id']);
+                $('#edit-entry-cash-desc').val(data['description']);
+                $('#edit-entry-cash-debit').val(data['debit']);
+                $('#edit-entry-cash-credit').val(data['credit']);
+                $('#edit-entry-cash-source-id').val(data['source_id']);
             });
             $('#btn-edit-save').attr("id", id);
         });
