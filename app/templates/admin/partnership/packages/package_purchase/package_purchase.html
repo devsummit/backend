@@ -51,9 +51,7 @@
     </div>
 
     {% include "admin/partnership/packages/package_purchase/package_purchase_add.html" %} 
-    {% include "admin/redeem_codes/redeem_codes_edit.html" %}     
     {% include "admin/base/modal_delete.html" %}  
-    {% include "admin/redeem_codes/redeem_codes_detail.html" %}    
 
 {% endblock %} 
 {% block footer_link %}
@@ -63,48 +61,6 @@
     <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
     <!-- page script -->
     <script>
-
-        /* Display user Detail using user detail template*/
-        $('.redeemcodes-detail').click(function (event) {
-            event.preventDefault();
-            const ard_id = $(this).attr('id');
-            const id = ard_id.substring(4, ard_id.length);
-            dsa.get('redeemcodes/' + id, function (result) {
-                const redeemcode = result['data'];
-                let title = ''
-                if (redeemcode['codeable_type'] == 'booth' && redeemcode['user']){
-                    title = redeemcode['user']['first_name'] + ' ' + redeemcode['user']['last_name'] + ' ( ' + redeemcode['user']['username']+ ' ) '  
-                } else if (redeemcode['codeable_type'] == 'partner' && redeemcode['partner']) {
-                    title = redeemcode['partner']['name'] || '' 
-                }
-                $('.modal-title').html(redeemcode['codeable_type'].toUpperCase() + ' - ' + title);            
-                if (result.meta.success) {
-                    dsa.get(
-                        'redeemcodes?codeable_id=' + 
-                        redeemcode['codeable_id'] + 
-                        '&codeable_type=' + 
-                        redeemcode['codeable_type'], function(res){
-                            if(res.meta.success) {
-                                codes = res.data.map((val)=>{
-                                    return val.code
-                                })
-                                codesString = codes.join('-')
-                                $('.codes-data').html(codesString);
-                            }
-                        })
-                }
-            });
-            
-        });
-       
-        /* Delete specific redeem code */
-        $('.btn-redeemcode-delete').click(function (event) {
-            $('.modal-title').html('Are you sure want to delete this redeem code?');
-            const btd_id = $(this).attr('id');
-            const id = btd_id.substring(4, btd_id.length);
-            $('.btn-yes').attr("id", id);
-        });
-
         /* Add new redeem code*/
         $('.btn-add').click(function (event) {
             $('.modal-title').html('Purchase Package');
@@ -133,25 +89,6 @@
 
             });
         });
-
-
-        /* Edit specific redeem code*/
-        $('.btn-redeemcode-edit').click(function (event) {
-            $('.modal-title').html('Edit');
-            var selected_stage_id;
-            const btd_id = $(this).attr('id');
-            const id = btd_id.substring(4, btd_id.length);
-            dsa.get('redeemcodes/' + id, function (result) {
-                const data = result['data'];
-                $('.edit-count').val((data['count']));
-                $('.edit-codeable-type').val((data['codeable_type']));
-                $('.edit-codeable-id').val((data['codeable_id']));
-                $('.edit-code').val((data['code']));                
-                $('.btn-save-edit').attr("id", data['id']);
-            
-            });
-        })
-
 
         $(function () {
             $('#redeemcode-list1').DataTable({
