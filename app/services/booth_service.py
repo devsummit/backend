@@ -136,7 +136,7 @@ class BoothService(BaseService):
 		self.model_booth.user_id = None
 		self.model_booth.stage_id = None
 		self.model_booth.points = 0
-		self.model_booth.summary = None
+		self.model_booth.summary = ''
 		self.model_booth.logo_url = partner.photo
 		db.session.add(self.model_booth)
 		try:

@@ -148,6 +148,6 @@ class MainController(BaseController):
         return render_template('admin/partnership/packages/packages.html', packages=packages['data'])
 
     def getPackagePurchase(request):
-        partners = partnerservice.filter('companny', request)
+        partners = partnerservice.filter('company', request)
         packages = packagemanagementservice.get(request)
         return render_template('admin/partnership/packages/package_purchase/package_purchase.html', partners=partners['data'], packages=packages['data'])
