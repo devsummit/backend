@@ -3,8 +3,12 @@ import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from app.services.base_service import BaseService
+from app.services.booth_service import BoothService
+from app.services.redeem_code_service import RedeemCodeService
+from app.services.invoice_service import InvoiceService
 from app.builders.response_builder import ResponseBuilder
 from app.models.package_management import PackageManagement
+
 
 class PackageManagementService(BaseService):
 
@@ -68,3 +72,23 @@ class PackageManagementService(BaseService):
 		else:
 			data = 'Entry not found'
 			return response.set_data(None).set_message(data).set_error(True).build()
+
+	def purchase(self, redeem_payload, partner_payload):
+		response = ResponseBuilder()
+		redeemcodeservice = RedeemCodeService()
+		boothservice = BoothService(10)
+		invoiceservice = InvoiceService()
+		package = redeemcodeservice.purchase(redeem_payload)
+		partner = boothservice.purchase(partner_payload)
+		payload = {
+			'description': package['data']['name'],
+			'address': partner['data']['email'],
+			'invoiceable_type': 'partners',
+			'invoiceable_id': partner['data']['id'],
+			'total': package['data']['price']
+		}
+		result = invoiceservice.create(payload)
+
+		if result['error']:
+			return response.set_data(None).set_error(True).set_message('error when creating invoice').build()
+		return response.set_data(result).set_message('success').build()

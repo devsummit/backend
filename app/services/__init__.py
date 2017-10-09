@@ -34,6 +34,7 @@ from app.services.booth_gallery_service import BoothGalleryService
 from app.services.speaker_candidate_service import SpeakerCandidateService
 from app.services.overview_service import OverviewService
 from app.services.feed_report_service import FeedReportService
+from app.services.invoice_service import InvoiceService
 from app.services.prize_list_service import PrizeListService
 from app.services.sponsor_template_service import SponsorTemplateService
 from app.services.package_management_service import PackageManagementService
@@ -77,4 +78,5 @@ overviewservice = OverviewService()
 feedreportservice = FeedReportService(10)
 prizelistservice = PrizeListService()
 sponsortemplateservice = SponsorTemplateService()
+invoiceservice = InvoiceService()
 packagemanagementservice = PackageManagementService()

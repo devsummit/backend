@@ -142,7 +142,7 @@ class BoothService(BaseService):
 		try:
 			db.session.commit()
 			data = self.model_booth.as_dict()
-			return response.set_data(data).build()
+			return response.set_data(partner.as_dict()).build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
 			return response.set_data(data).set_error(True).build()

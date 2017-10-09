@@ -44,6 +44,7 @@ from app.controllers.feed_report_controller import FeedReportController
 from app.controllers.speaker_candidate_controller import SpeakerCandidateController
 from app.controllers.prize_list_controller import PrizeListController
 from app.controllers.sponsor_template_controller import SponsorTemplateController
+from app.controllers.invoice_controller import InvoiceController
 from app.controllers.package_management_controller import PackageManagementController
 
 from app.configs.constants import ROLE
@@ -141,9 +142,8 @@ def beacon(*args, **kwargs):
     elif(request.method == 'GET'):
         return BeaconController.index()
 
+
 # Beacon route by id
-
-
 @api.route('/beacons/<id>', methods=['PUT', 'PATCH', 'DELETE'])
 @token_required
 def beacon_id(id, *args, **kwargs):
@@ -152,17 +152,15 @@ def beacon_id(id, *args, **kwargs):
     elif(request.method == 'DELETE'):
         return BeaconController.delete(id)
 
+
 # Spot api
-
-
 @api.route('/spots', methods=['GET'])
 @token_required
 def spot(*args, **kwargs):
     return SpotController.index()
 
+
 # Spot route by id
-
-
 @api.route('/spots/<id>', methods=['PUT', 'PATCH'])
 @token_required
 def spot_id(id, *args, **kwargs):
@@ -170,7 +168,6 @@ def spot_id(id, *args, **kwargs):
 
 
 # Ticket Order API
-
 @api.route('/orders', methods=['GET', 'POST'])
 @token_required
 def orders(*args, **kwargs):
@@ -209,9 +206,8 @@ def orders_details_id(order_id, detail_id, *args, **kwargs):
     elif(request.method == 'DELETE'):
         return OrderDetailsController.delete(order_id, detail_id)
 
+
 # Events API
-
-
 @api.route('/events', methods=['GET'])
 def index():
     return EventController.index(request)
@@ -238,8 +234,6 @@ def delete(event_id):
 
 
 # Schedule api
-
-
 @api.route('/schedules', methods=['GET', 'POST'])
 @token_required
 def schedule(*args, **kwargs):
@@ -253,8 +247,6 @@ def schedule(*args, **kwargs):
 
 
 # Beacon route by id
-
-
 @api.route('/schedules/<id>', methods=['PUT', 'PATCH', 'DELETE', 'GET'])
 @token_required
 def schedule_id(id, *args, **kwargs):
@@ -267,8 +259,6 @@ def schedule_id(id, *args, **kwargs):
 
 
 # Speakers endpoint
-
-
 @api.route('/speakers', methods=['GET'])
 @token_required
 def speaker(*args, **kwargs):
@@ -284,9 +274,8 @@ def speaker_id(id, *args, **kwargs):
     elif(request.method == 'GET'):
         return SpeakerController.show(id)
 
+
 # Booth api
-
-
 @api.route('/booths', methods=['PUT', 'PATCH', 'GET', 'POST'])
 @token_required
 def booth(*args, **kwargs):
@@ -300,9 +289,8 @@ def booth(*args, **kwargs):
     elif(request.method == 'GET'):
         return BoothController.index(request)
 
+
 # Booth route by id
-
-
 @api.route('/booths/<booth_id>', methods=['GET', 'PUT', 'PATCH'])
 @token_required
 def booth_id(booth_id, *args, **kwargs):
@@ -317,12 +305,9 @@ def update_booth_logo(*args, **kwargs):
     user = kwargs['user'].as_dict()
     return BoothController.update_logo(request, user)
 
+
 # Point endpoint
-
-
 # booth images
-
-
 @api.route('/booths/galleries', methods=['GET', 'POST'])
 @token_required
 def booth_gallery(*args, **kwargs):
@@ -372,9 +357,8 @@ def transfer_points_log(*args, **kwargs):
     user = kwargs['user'].as_dict()
     return PointsController.transfer_point_log(request, user)
 
+
 # User Photo api
-
-
 @api.route('/user/photo', methods=['GET', 'POST', 'DELETE'])
 @token_required
 def user_photo(*args, **kwargs):
@@ -393,9 +377,8 @@ def user_photos(*args, **kwargs):
     if(request.method == 'GET'):
         return UserPhotoController.index()
 
+
 # Ticket Transfer endpoint
-
-
 @api.route('/tickets/transfer/logs', methods=['GET'])
 @token_required
 def ticket_transfer_logs(*args, **kwargs):
@@ -409,10 +392,9 @@ def ticket_transfer(*args, **kwargs):
     user = kwargs['user'].as_dict()
     return TicketTransferController.ticket_transfer(request, user)
 
+
 # Speaker Document api
 # UPLOAD FILES AND GET LIST OF FILES UPLOADED BY THE SPEAKER
-
-
 @api.route('/documents', methods=['POST', 'GET'])
 @token_required
 def speaker_document(*args, **kwargs):
@@ -430,9 +412,8 @@ def speaker_document_admin(*args, **kwargs):
     if(request.method == 'POST'):
         return SpeakerDocumentController.admin_create(request, user)
 
+
 # GET SPECIFIC FILE UPLOADED BY THE SPEAKER || DELETE SPECIFIC FILE
-
-
 @api.route('/documents/<id>', methods=['DELETE', 'GET', 'PUT', 'PATCH'])
 @token_required
 def _speaker_document(id, *args, **kwargs):
@@ -444,18 +425,16 @@ def _speaker_document(id, *args, **kwargs):
     elif(request.method == 'DELETE'):
         return SpeakerDocumentController.delete(user, id)
 
+
 # GET LIST OF FILES BASED ON USER ID
-
-
 @api.route('/speaker/<speaker_id>/documents', methods=['GET'])
 @token_required
 def speaker_document_user(speaker_id, *args, **kwargs):
     if(request.method == 'GET'):
         return SpeakerDocumentController._show(speaker_id)
 
+
 # Newsletter api
-
-
 @api.route('/newsletters', methods=['GET', 'POST'])
 def newsletter(*args, **kwargs):
     if(request.method == 'POST'):
@@ -463,9 +442,8 @@ def newsletter(*args, **kwargs):
     elif(request.method == 'GET'):
         return NewsletterController.index()
 
+
 # Newsletter route by id
-
-
 @api.route('/newsletters/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 def newsletter_id(id, *args, **kwargs):
     if(request.method == 'PUT' or request.method == 'PATCH'):
@@ -475,11 +453,9 @@ def newsletter_id(id, *args, **kwargs):
     elif(request.method == 'DELETE'):
         return NewsletterController.delete(id)
 
+
 # User ticket api
-
 # PATCH - ticket_id, receiver_id
-
-
 @api.route('/user/tickets', methods=['GET', 'PATCH', 'PUT'])
 @token_required
 def user_tickets(*args, **kwargs):
@@ -497,17 +473,14 @@ def check_in(*args, **kwargs):
 
 
 # Attendee api
-
-
 @api.route('/attendees', methods=['GET'])
 @token_required
 def attendees(*args, **kwargs):
     if(request.method == 'GET'):
         return AttendeeController.index(request)
 
+
 # Attendee route by id
-
-
 @api.route('/attendees/<id>', methods=['GET'])
 @token_required
 def attendees_id(id, *args, **kwargs):
@@ -516,25 +489,22 @@ def attendees_id(id, *args, **kwargs):
 
 
 # User list
-
 @api.route('/users', methods=['GET'])
 @token_required
 def users(*args, **kwargs):
     if(request.method == 'GET'):
         return UserController.index(request)
 
+
 # User detail/ route by id
-
-
 @api.route('/users/<id>', methods=['GET'])
 @token_required
 def user_id(id, *args, **kwargs):
     if(request.method == 'GET'):
         return UserController.show(id)
 
+
 # Add new User
-
-
 @api.route('/users', methods=['POST'])
 @token_required
 def add_user(*args, **kwargs):
@@ -543,25 +513,22 @@ def add_user(*args, **kwargs):
 
 
 # Edit User
-
 @api.route('/users/<id>', methods=['PUT'])
 @token_required
 def edit_user(id, *args, **kwargs):
     if(request.method == 'PUT'):
         return UserController.update(request, id)
 
+
 # Delete User
-
-
 @api.route('/users/<id>', methods=['DELETE'])
 @token_required
 def delete_user(id, *args, **kwargs):
     if(request.method == 'DELETE'):
         return UserController.delete(id)
 
+
 # Payment api
-
-
 @api.route('/payments', methods=['POST', 'GET'])
 @token_required
 def payment(*args, **kwargs):
@@ -600,9 +567,8 @@ def show_payment(payment_id, *args, **kwargs):
     else:
         return PaymentController.show_payment(payment_id)
 
+
 # Referal api
-
-
 @api.route('/referals', methods=['GET', 'POST'])
 @token_required
 def referal(*args, **kwargs):
@@ -611,9 +577,8 @@ def referal(*args, **kwargs):
     elif(request.method == 'GET'):
         return ReferalController.index()
 
+
 # Referal route by id
-
-
 @api.route('/referals/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @token_required
 def referal_id(id, *args, **kwargs):
@@ -626,7 +591,6 @@ def referal_id(id, *args, **kwargs):
 
 
 # get referal id
-
 @api.route('/referals/check', methods=['POST'])
 @token_required
 def check_referal(*args, **kwargs):
@@ -673,6 +637,18 @@ def get_entry_cash_log(*args, **kwargs):
         return EntryCashLogController.create(request)
     elif(request.method == 'GET'):
         return EntryCashLogController.index(request)
+
+
+@api.route('/invoices/<id>', methods=['GET'])
+@token_required
+def get_invoice(id, *args, **kwargs):
+    return InvoiceController.show(id)
+
+
+@api.route('/invoices', methods=['POST'])
+@token_required
+def post_invoice(*args, **kwargs):
+    return InvoiceController.create(request)
 
 
 @api.route('/entrycashlogs/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
@@ -729,6 +705,7 @@ def get_sponsor_template(*args, **kwargs):
     elif (request.method == 'POST'):
         return SponsorTemplateController.create(request)
 
+
 @api.route('/sponsors/template/<sponsor_id>', methods=['GET', 'PATCH', 'PUT'])
 @token_required
 def update_sponsor_template(sponsor_id, *args, **kwargs):
@@ -768,6 +745,7 @@ def feeds_id(id, *args, **kwargs):
     elif request.method == 'DELETE':
         return FeedController.delete(user, id)
 
+
 @api.route('/feeds', methods=['GET', 'POST'])
 @token_required
 def feeds(*args, **kwargs):
@@ -797,8 +775,6 @@ def notifications(*args, **kwargs):
 def notification_id(id, *args, **kwargs):
     if(request.method == 'GET'):
         return NotificationController.show(id)
-
-
 
 
 # Add redeem code API
@@ -916,6 +892,7 @@ def send_email(*args, **kwargs):
     else:
         return AdminController.send_email(request, user)
 
+
 # Feed report
 @api.route('/feeds/reports', methods=['GET', 'POST'])
 @token_required
@@ -926,10 +903,12 @@ def feed_report_get(*args, **kwargs):
         user = kwargs['user'].as_dict()
         return FeedReportController.create(request, user['id'])
 
+
 @api.route('/feeds/reports/<id>', methods=['GET'])
 @token_required
 def feed_report_show(id, *args, **kwargs):
     return FeedReportController.show(id)
+
 
 # Prize List API
 @api.route('/prizelist', methods=['GET', 'POST'])
@@ -939,6 +918,7 @@ def prize_list_general(*args, **kwargs):
         return PrizeListController.get(request)
     else:
         return PrizeListController.create(request)
+
 
 @api.route('/prizelist/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
 @token_required
@@ -950,6 +930,7 @@ def prize_list_id(id, *args, **kwargs):
     else:
         return PrizeListController.delete(id)
 
+
 @api.route('/package_management', methods=['GET', 'POST'])
 @token_required
 def package_management_general (*args, **kwargs):
@@ -957,6 +938,7 @@ def package_management_general (*args, **kwargs):
         return PackageManagementController.get(request)
     else:
         return PackageManagementController.create(request)
+
 
 @api.route('/package_management/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
 @token_required

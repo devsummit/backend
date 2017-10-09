@@ -98,7 +98,7 @@ class RedeemCodeService():
     def purchase(self, payloads):
         response = ResponseBuilder()
         codes = [r.code for r in db.session.query(RedeemCode.code).all()]
-        package = db.session.query(PackageManagement).filter_by(id=payloads['count']).first()
+        package = db.session.query(PackageManagement).filter_by(id=payloads['package_id']).first()
         payloads['count'] = package.quota
         for i in range(0, int(payloads['count'])):
             code = secrets.token_hex(4)
@@ -112,7 +112,7 @@ class RedeemCodeService():
 
             db.session.add(self.model_redeem_code)
             db.session.commit()
-        return response.set_message('Redeem code created successfully').set_data(None).set_error(False).build()
+        return response.set_message('Redeem code created successfully').set_data(package.as_dict()).set_error(False).build()
 
 
     def update(self, code, user):
