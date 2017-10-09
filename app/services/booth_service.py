@@ -3,6 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.booth import Booth
 from app.models.user_booth import UserBooth
 from app.models.user import User
+from app.models.partners import Partner
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from flask import request, current_app
@@ -117,6 +118,26 @@ class BoothService(BaseService):
 		self.model_booth.stage_id = payloads['stage_id']
 		self.model_booth.points = payloads['points']
 		self.model_booth.summary = payloads['summary']
+		self.model_booth.logo_url = payloads['logo_url']
+		db.session.add(self.model_booth)
+		try:
+			db.session.commit()
+			data = self.model_booth.as_dict()
+			return response.set_data(data).build()
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return response.set_data(data).set_error(True).build()
+
+	def purchase(self, payloads):
+		response = ResponseBuilder()
+		partner = db.session.query(Partner).filter_by(id=payloads['partner_id']).first()
+		self.model_booth = Booth()
+		self.model_booth.name = partner.name
+		self.model_booth.user_id = None
+		self.model_booth.stage_id = None
+		self.model_booth.points = 0
+		self.model_booth.summary = ''
+		self.model_booth.logo_url = partner.photo
 		db.session.add(self.model_booth)
 		try:
 			db.session.commit()
