@@ -1,7 +1,7 @@
 from app.controllers.base_controller import BaseController
 from app.services import packagemanagementservice
-from app.services import boothservice
-from app.services import redeemcodeservice
+
+
 class PackageManagementController(BaseController):
 	
 	@staticmethod
@@ -59,18 +59,15 @@ class PackageManagementController(BaseController):
 		package_id = request.json['package_id'] if 'package_id' in request.json else None
 		partner_id = request.json['partner_id'] if 'partner_id' in request.json else None
 
-		payloads = {
+		redeem_payloads = {
 			'codeable_type': 'partner',
 			'codeable_id': partner_id,
-			'count': package_id
+			'package_id': package_id
 		}
-		data = redeemcodeservice.purchase(payloads)
-
-		payloads={
+		partner_payloads={
 			'partner_id': partner_id
 		}
-		data = boothservice.purchase(payloads)
-		
+		data = packagemanagementservice.purchase(redeem_payloads, partner_payloads)
 		if data['error']:
 			return BaseController.send_error_api(data['data'], data['message'])
 		return BaseController.send_response_api(data['data'], data['message'])
