@@ -17,37 +17,7 @@
 <div class="box">
     <!-- /.box-header -->
     <div class="box-body">
-        <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
-        <table id="redeemcode-list1" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Package</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="main-tbody">
-                {% for redeemcode in redeemcodes %}
-                <tr>
-                    <td>
-                        {{ redeemcode['codeable_type']|e }}
-                    </td>
-                    <td>
-                        {% if redeemcode['codeable_type'] == 'booth' and redeemcode['user'] %} 
-                            {{ redeemcode['user']['first_name']|e + ' ' + redeemcode['user']['last_name']|e + ' ( ' + redeemcode['user']['username']|e + ' ) ' }} 
-                        {% elif redeemcode['codeable_type'] == 'partner' and redeemcode['partner'] %} 
-                            {{ redeemcode['partner']['name']|e }} 
-                        {% endif %}
-                    </td>
-                    <td>
-                        <button id='ard-{{ redeemcode["id"] }}' class="redeemcodes-detail btn btn-sm btn-info btn-redeemcode-edit" data-toggle="modal" data-target="#modal-detail">
-                            SHOW AVAILABLE CODES
-                        </button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Purchase Package</b></a>
     </div>
 
     {% include "admin/partnership/packages/package_purchase/package_purchase_add.html" %} 
