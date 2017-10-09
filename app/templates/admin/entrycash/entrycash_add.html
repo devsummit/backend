@@ -14,13 +14,13 @@
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-entry-cash-desc">Description:</label>
-                                    <input type="text" class="form-control" id="i-entry-cash-desc">
+                                    <input type="text" class="form-control" id="add-entry-cash-desc">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-entry-cash-amount">Source:</label>
-                                    <select class="form-control" id="i-entry-cash-source-id">
+                                    <select class="form-control" id="add-entry-cash-source-id">
                                         {% for source in sources %}
                                             <option id="source-id-{{ source.id }}" value={{ source.id }}>{{ source.bank }}({{ source.account_number }})|{{ source.alias }}</option>
                                         {% endfor %}
@@ -30,13 +30,13 @@
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-entry-cash-amount">Debit:</label>
-                                    <input type="number" class="form-control" id="i-entry-cash-debit" step="0.01">
+                                    <input type="number" placeholder="0" class="form-control" id="add-entry-cash-debit" step="0.01">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-entry-cash-amount">Credit:</label>
-                                    <input type="number" class="form-control" id="i-entry-cash-credit" step="0.01">
+                                    <input type="number" placeholder="0" class="form-control" id="add-entry-cash-credit" step="0.01">
                                 </div>
                             </li>
                         </ul>
@@ -58,29 +58,36 @@
 <!-- page script -->
 <script>
     $(document).ready(function () {
+
+        $('#add-entry-cash-debit').keypress(function(){
+            $('#add-entry-cash-credit').val(0)
+        })
+
+        $('#add-entry-cash-credit').keypress(function(){
+            $('#add-entry-cash-debit').val(0)
+        })
+
         $('#add-form').on('submit', function (e) {
             e.preventDefault();
             var target = $(this);
-            var credit = target.find('#i-entry-cash-credit').val();
-            var debit = target.find('#i-entry-cash-debit').val();
+            var credit = target.find('#add-entry-cash-credit').val();
+            var debit = target.find('#add-entry-cash-debit').val();
 
-            if (credit == 0 || credit == null) {
-                credit = 0
-            } else if (debit == 0 || debit == null) {
-                debit = 0
-            }
-
+            if (credit == 0 && debit == 0){
+                alert("don't send empty data!")
+            }else{
             payload = {
-                "description": target.find('#i-entry-cash-desc').val(),
+                "description": target.find('#add-entry-cash-desc').val(),
                 "debit": debit,
                 "credit": credit,
-                "source_id": target.find('#i-entry-cash-source-id').val()
+                "source_id": target.find('#add-entry-cash-source-id').val()
             };
              dsa.post('{{ globals["api_route"] }}', payload, function (result) {
                 if (result.meta.success) {
                     window.location = '/{{ globals["base_route"] }}';
                 }
             });
-        })
+        }
     })
+})
 </script>
