@@ -21,6 +21,7 @@ from app.services import overviewservice
 from app.services import feedreportservice
 from app.services import feedservice
 from app.services import sponsortemplateservice
+from app.services import packagemanagementservice
 
 
 class MainController(BaseController):
@@ -141,3 +142,7 @@ class MainController(BaseController):
     def getSponsorPost(request):
         sponsortemplates = sponsortemplateservice.get(request)
         return render_template('admin/communication/sponsor_post.html', sponsortemplates=sponsortemplates['data'])
+
+    def getPackageManagement(request):
+        packages = packagemanagementservice.get(request)
+        return render_template('admin/partnership/packages/packages.html', packages=packages['data'])
