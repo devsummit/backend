@@ -62,12 +62,26 @@
         var credit = $('#i-entry-cash-credit').val();
         var source_id = $('#i-entry-cash-source-id').val();
 
+        $('#i-entry-cash-credit').val(0);
+        $('#i-entry-cash-debit').val(0);
+
+        $('#i-entry-cash-debit').keypress(function(){
+            $('#i-entry-cash-credit').val(0)
+        })
+
+        $('#i-entry-cash-credit').keypress(function(){
+            $('#i-entry-cash-debit').val(0)
+        })
+
         if (credit == 0 || credit == null) {
             credit = 0
         } else if (debit == 0 || debit == null) {
             debit = 0
         }
 
+        if (credit == 0 && debit == 0){
+                alert("don't send empty data!")
+        }else{
         const payloads = {
             "description": $('#i-entry-cash-desc').val(),
             "debit": debit,
@@ -79,7 +93,8 @@
                 window.location = '/{{ globals["base_route"] }}';
             }
         });
-    })
+    }
+})
     $(function () {
         $('#data-list1').DataTable();
     })
