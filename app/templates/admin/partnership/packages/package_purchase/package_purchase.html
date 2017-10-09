@@ -1,0 +1,74 @@
+{% extends "admin/base/index.html" %} 
+{% block title %}
+<title> Redeem code list </title>
+{% endblock %} 
+{% set globals={'base_route': 'package-purchase', 'api_route': 'redeemcodes'} %} 
+{% block header_link %}
+
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Package Purchase Management
+    <small>List of registered purchased package</small>
+</h1>
+{% endblock %} {% block breadcrumb %}
+<li class="active">Package Purchase</li>
+{% endblock %} {% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <div class="box-body">
+        <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Purchase Package</b></a>
+    </div>
+
+    {% include "admin/partnership/packages/package_purchase/package_purchase_add.html" %} 
+    {% include "admin/base/modal_delete.html" %}  
+
+{% endblock %} 
+{% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+    <!-- page script -->
+    <script>
+        /* Add new redeem code*/
+        $('.btn-add').click(function (event) {
+            $('.modal-title').html('Purchase Package');
+            let select = $('.add-partner-name');
+            select.find('option').remove()
+            dsa.get('partners?type=company', function(result) {
+                console.log(result, 'cuk');
+                result.data.map(function (item) {
+                    let option = document.createElement('option');
+                    option.innerHTML = item.name + ' (email: ' + item.email + ')';
+                    option.value = item.id;
+                    select.append(option);
+                });
+
+            });
+
+            let select_package = $('.add-packages-select');
+            select.find('option').remove()
+            dsa.get('package_management', function(result) {
+                result.data.map(function (item) {
+                    let option = document.createElement('option');
+                    option.innerHTML = item.name + ' (quota: ' + item.quota + ')' + ' - IDR. ' + item.price.toLocaleString();
+                    option.value = item.id;
+                    select_package.append(option);
+                });
+
+            });
+        });
+
+        $(function () {
+            $('#redeemcode-list1').DataTable({
+                columnDefs: [{
+                    targets: [-1],
+                    orderable: false,
+                }]
+            });
+        })
+
+    </script>
+
+    {% endblock %}

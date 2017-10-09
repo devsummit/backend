@@ -38,13 +38,18 @@
                     {% for booth in booths %}
                     <tr>
                         <td>
-                            {{ booth.user.first_name.title() }} {{ booth.user.last_name.title() }}
+                            {% if booth.user %}
+                                {{ booth.user.first_name.title() }} {{ booth.user.last_name.title() }}
+                            {% else %}
+                                -
+                            {% endif %}
+                            
                         </td>
                         <td>
                             {{ booth.name }}
                         </td>
                         <td>
-                            {{ booth.user.email }}
+                            {{ booth.user.email|e }}
                         </td>
                         <td>
                             {{ booth.summary }}

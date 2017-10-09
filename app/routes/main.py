@@ -165,3 +165,11 @@ def sponsor_feed():
 def sponsor_post():
     return MainController.getSponsorPost(request)
 
+@main.route('/packages')
+def package_management():
+    return MainController.getPackageManagement(request)
+
+@main.route('/package-purchase')
+def package_purchase():
+    return MainController.getPackagePurchase(request)
+

@@ -37,6 +37,7 @@ from app.services.feed_report_service import FeedReportService
 from app.services.invoice_service import InvoiceService
 from app.services.prize_list_service import PrizeListService
 from app.services.sponsor_template_service import SponsorTemplateService
+from app.services.package_management_service import PackageManagementService
 
 
 # instantiate service
@@ -78,3 +79,4 @@ feedreportservice = FeedReportService(10)
 prizelistservice = PrizeListService()
 sponsortemplateservice = SponsorTemplateService()
 invoiceservice = InvoiceService()
+packagemanagementservice = PackageManagementService()

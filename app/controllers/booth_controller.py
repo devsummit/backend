@@ -62,19 +62,18 @@ class BoothController(BaseController):
         name = request.json['name'] if 'name' in request.json else ''
         user_id = request.json['user_id'] if 'user_id' in request.json else None
         stage_id = request.json['stage_id'] if 'stage_id' in request.json else None
-        points = request.json['points'] if 'points' in request.json else None
+        points = request.json['points'] if 'points' in request.json else 0
         summary = request.json['summary'] if 'summary' in request.json else None
+        logo_url = request.json['logo_url'] if 'logo_url' in request.json else ''
 
-        if user_id and stage_id and points and summary:
-            payloads = {
-                'name': name,
-                'user_id': user_id,
-                'stage_id': stage_id,
-                'points': points,
-                'summary': summary
-            }
-        else:
-            return BaseController.send_error_api(None, 'field is not complete')
+        payloads = {
+            'name': name,
+            'user_id': user_id,
+            'stage_id': stage_id,
+            'points': points,
+            'summary': summary,
+            'logo_url': logo_url
+        }
 
         result = boothservice.create(payloads)
 
