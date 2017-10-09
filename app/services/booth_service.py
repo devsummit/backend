@@ -117,6 +117,7 @@ class BoothService(BaseService):
 		self.model_booth.stage_id = payloads['stage_id']
 		self.model_booth.points = payloads['points']
 		self.model_booth.summary = payloads['summary']
+		self.model_booth.logo_url = payloads['logo_url']
 		db.session.add(self.model_booth)
 		try:
 			db.session.commit()
