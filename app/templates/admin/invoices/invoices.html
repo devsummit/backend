@@ -56,7 +56,7 @@
                             {{ invoice.description|e }}
                         </td>
                         <td>
-                            {{ invoice.total|e }}
+                            {{ "IDR. {:,.2f}".format(invoice.total)|e }}
                         </td>
                         <td>
                             {{ invoice.created_at|e }}
