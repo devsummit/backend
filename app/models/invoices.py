@@ -31,5 +31,6 @@ class Invoice(db.Model, BaseModel):
     updated_at = db.Column(db.DateTime)
 
     def __init__(self):
+        self.id = 'dsp-' + datetime.datetime.now().strftime("%Y%m%d.%H%M%S%f")
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()

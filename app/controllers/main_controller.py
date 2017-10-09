@@ -21,6 +21,7 @@ from app.services import overviewservice
 from app.services import feedreportservice
 from app.services import feedservice
 from app.services import sponsortemplateservice
+from app.services import invoiceservice
 
 
 class MainController(BaseController):
@@ -74,6 +75,10 @@ class MainController(BaseController):
     def getEvents():
         events = eventservice.index(request)
         return render_template('admin/events/events.html', events=events['data'])
+
+    def getInvoice():
+        invoices = invoiceservice.get()
+        return render_template('admin/invoices/invoices.html', invoices=invoices['data'])
 
     def getStages():
         stages = stageservice.get()
