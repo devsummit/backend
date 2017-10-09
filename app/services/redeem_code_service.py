@@ -80,10 +80,6 @@ class RedeemCodeService():
 
     def create(self, payloads):
         response = ResponseBuilder()
-        if payloads['count'] is not None:
-            package = db.session.query(PackageManagement).filter_by(id=payloads['count']).first()
-            print(package)
-            payloads['count'] = package.quota
         codes = [r.code for r in db.session.query(RedeemCode.code).all()]
         for i in range(0, int(payloads['count'])):
             code = secrets.token_hex(4)
@@ -98,6 +94,26 @@ class RedeemCodeService():
             db.session.add(self.model_redeem_code)
             db.session.commit()
         return response.set_message('Redeem code created successfully').set_data(None).set_error(False).build()
+
+    def purchase(self, payloads):
+        response = ResponseBuilder()
+        codes = [r.code for r in db.session.query(RedeemCode.code).all()]
+        package = db.session.query(PackageManagement).filter_by(id=payloads['count']).first()
+        payloads['count'] = package.quota
+        for i in range(0, int(payloads['count'])):
+            code = secrets.token_hex(4)
+            while (code in codes):
+                code = secrets.token_hex(4)
+            self.model_redeem_code = RedeemCode()
+            self.model_redeem_code.codeable_type = payloads['codeable_type']
+            self.model_redeem_code.codeable_id = payloads['codeable_id']
+            self.model_redeem_code.code = code
+            self.model_redeem_code.used = False
+
+            db.session.add(self.model_redeem_code)
+            db.session.commit()
+        return response.set_message('Redeem code created successfully').set_data(None).set_error(False).build()
+
 
     def update(self, code, user):
         response = ResponseBuilder()

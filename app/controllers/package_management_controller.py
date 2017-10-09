@@ -58,25 +58,18 @@ class PackageManagementController(BaseController):
 	def package_purchase(request):
 		package_id = request.json['package_id'] if 'package_id' in request.json else None
 		partner_id = request.json['partner_id'] if 'partner_id' in request.json else None
-		name = request.json['name'] if 'name' in request.json else None
-		logo_url = request.json['logo_url'] if 'logo_url' in request.json else None
 
 		payloads = {
 			'codeable_type': 'partner',
 			'codeable_id': partner_id,
 			'count': package_id
 		}
-		data = redeemcodeservice.create(payloads)
+		data = redeemcodeservice.purchase(payloads)
 
 		payloads={
-			'user_id': None,
-			'stage_id': None,
-			'points': 0,
-			'summary': None,
-			'name': name,
-			'logo_url': logo_url
+			'partner_id': partner_id
 		}
-		data = boothservice.create(payloads)
+		data = boothservice.purchase(payloads)
 		
 		if data['error']:
 			return BaseController.send_error_api(data['data'], data['message'])
