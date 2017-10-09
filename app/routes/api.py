@@ -967,3 +967,9 @@ def package_management_id(id, *args, **kwargs):
         return PackageManagementController.update(id, request)
     else:
         return PackageManagementController.delete(id)
+
+@api.route('/package_purchase', methods=['POST'])
+@token_required
+def package_purchase(*args, **kwargs):
+    if (request.method == 'POST'):
+        return BoothController.create(request)
