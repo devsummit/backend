@@ -14,7 +14,7 @@
                                     <div class="form-group">
                                         <label for="partner-name">Partner Name:</label>
                                         <select class="add-partner-name form-control">
-                                            </select>
+                                        </select>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
@@ -24,19 +24,8 @@
                                             </select>
                                     </div>
                                 </li>
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="event-information--control bfh-number" value="5">
-                                        <form class="example form-inline">
-                                            <p>Quota</p>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control add-count" value="5">
-                                            </div>
-                                        </form>
-                                    </div>
-                                </li>
                             </ul>
-                            <a href="#" class="btn btn-primary btn-block btn-package-save" id="-"><b>Save</b></a>
+                            <a href="#" class="btn btn-primary btn-block btn-package-purchase" id="-"><b>Save</b></a>
                         </div>
                         <!-- /.box-body -->
                     </div>
@@ -52,4 +41,21 @@
     <!-- /.modal -->
     <!-- page script -->
     <script>
+        $('.btn-package-purchase').click(function (event) {
+            const package_id = $('.add-packages-select').find(":selected").val();
+            const partner_id = $('.add-partner-name').find(":selected").val();
+            if(confirm('Purchase this package?')){
+                let payloads = {
+                    package_id,
+                    partner_id
+                };
+                dsa.post('package_purchase', payloads, function (result) {
+                    if (result.meta.success) {
+                        window.location = "/package-purchase";
+                    }
+                });
+            } else {
+                alert('cancel purchasing the package');
+            }
+        });
     </script>
