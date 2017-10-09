@@ -16,7 +16,7 @@ class Booth(db.Model, BaseModel):
 	user_id = db.Column(
 		db.String(40),
 		db.ForeignKey('users.id'),
-		nullable=False
+		nullable=True
 	)
 	user = db.relationship('User')
 	stage_id = db.Column(

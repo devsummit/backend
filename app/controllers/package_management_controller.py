@@ -1,6 +1,7 @@
 from app.controllers.base_controller import BaseController
 from app.services import packagemanagementservice
-
+from app.services import boothservice
+from app.services import redeemcodeservice
 class PackageManagementController(BaseController):
 	
 	@staticmethod
@@ -53,6 +54,35 @@ class PackageManagementController(BaseController):
 		else:
 			return BaseController.send_error_api({}, 'payload is invalid')
 
+	@staticmethod
+	def package_purchase(request):
+		package_id = request.json['package_id'] if 'package_id' in request.json else None
+		partner_id = request.json['partner_id'] if 'partner_id' in request.json else None
+		name = request.json['name'] if 'name' in request.json else None
+		logo_url = request.json['logo_url'] if 'logo_url' in request.json else None
+
+		payloads = {
+			'codeable_type': 'partner',
+			'codeable_id': partner_id,
+			'count': package_id
+		}
+		data = redeemcodeservice.create(payloads)
+
+		payloads={
+			'user_id': None,
+			'stage_id': None,
+			'points': 0,
+			'summary': None,
+			'name': name,
+			'logo_url': logo_url
+		}
+		data = boothservice.create(payloads)
+		
+		if data['error']:
+			return BaseController.send_error_api(data['data'], data['message'])
+		return BaseController.send_response_api(data['data'], data['message'])
+
+		
 	@staticmethod
 	def delete(id):
 		data = packagemanagementservice.delete(id)

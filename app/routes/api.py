@@ -972,4 +972,4 @@ def package_management_id(id, *args, **kwargs):
 @token_required
 def package_purchase(*args, **kwargs):
     if (request.method == 'POST'):
-        return BoothController.create(request)
+        return PackageManagementController.package_purchase(request)

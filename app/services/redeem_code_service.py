@@ -14,6 +14,7 @@ from app.models.user_booth import UserBooth
 from app.models.user_ticket import UserTicket
 from app.models.partners import Partner
 from app.models.user import User
+from app.models.package_management import PackageManagement
 
 
 class RedeemCodeService():
@@ -79,6 +80,10 @@ class RedeemCodeService():
 
     def create(self, payloads):
         response = ResponseBuilder()
+        if payloads['count'] is not None:
+            package = db.session.query(PackageManagement).filter_by(id=payloads['count']).first()
+            print(package)
+            payloads['count'] = package.quota
         codes = [r.code for r in db.session.query(RedeemCode.code).all()]
         for i in range(0, int(payloads['count'])):
             code = secrets.token_hex(4)
