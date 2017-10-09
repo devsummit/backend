@@ -44,6 +44,7 @@ from app.controllers.feed_report_controller import FeedReportController
 from app.controllers.speaker_candidate_controller import SpeakerCandidateController
 from app.controllers.prize_list_controller import PrizeListController
 from app.controllers.sponsor_template_controller import SponsorTemplateController
+from app.controllers.package_management_controller import PackageManagementController
 
 from app.configs.constants import ROLE
 
@@ -948,3 +949,21 @@ def prize_list_id(id, *args, **kwargs):
         return PrizeListController.update(id, request)
     else:
         return PrizeListController.delete(id)
+
+@api.route('/package_management', methods=['GET', 'POST'])
+@token_required
+def package_management_general (*args, **kwargs):
+    if (request.method == 'GET'):
+        return PackageManagementController.get(request)
+    else:
+        return PackageManagementController.create(request)
+
+@api.route('/package_management/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def package_management_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return PackageManagementController.show(id)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):
+        return PackageManagementController.update(id, request)
+    else:
+        return PackageManagementController.delete(id)
