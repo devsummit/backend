@@ -44,6 +44,7 @@ from app.controllers.feed_report_controller import FeedReportController
 from app.controllers.speaker_candidate_controller import SpeakerCandidateController
 from app.controllers.prize_list_controller import PrizeListController
 from app.controllers.sponsor_template_controller import SponsorTemplateController
+from app.controllers.invoice_controller import InvoiceController
 
 from app.configs.constants import ROLE
 
@@ -672,6 +673,18 @@ def get_entry_cash_log(*args, **kwargs):
         return EntryCashLogController.create(request)
     elif(request.method == 'GET'):
         return EntryCashLogController.index(request)
+
+
+@api.route('/invoices/<id>', methods=['GET'])
+@token_required
+def get_invoice(id, *args, **kwargs):
+    return InvoiceController.show(id)
+
+
+@api.route('/invoices', methods=['POST'])
+@token_required
+def post_invoice(*args, **kwargs):
+    return InvoiceController.create(request)
 
 
 @api.route('/entrycashlogs/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
