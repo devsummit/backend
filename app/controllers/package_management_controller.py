@@ -1,7 +1,5 @@
 from app.controllers.base_controller import BaseController
 from app.services import packagemanagementservice
-import simplejson as json
-
 
 class PackageManagementController(BaseController):
 	
@@ -10,8 +8,6 @@ class PackageManagementController(BaseController):
 		package_managements = packagemanagementservice.get(request)
 		if package_managements['error']:
 			return BaseController.send_error(package_managements['data'], package_managements['message'])
-		for index in range(len(package_managements['data'])):
-			package_managements['data'][index]['price'] = json.dumps(package_managements['data'][index]['price'])
 		return BaseController.send_response_api(package_managements['data'], package_managements['message'], package_managements['included'])
 
 	@staticmethod
