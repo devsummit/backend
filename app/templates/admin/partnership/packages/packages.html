@@ -2,7 +2,7 @@
 
 {% block title %} <title> Packages list </title>  {% endblock %}
 
-{% set globals={'base_route': 'partners', 'api_route': 'partners'} %}
+{% set globals={'base_route': 'packages', 'api_route': 'package_management'} %}
 
 {% block header_link %}
     <!-- DataTables -->
@@ -37,23 +37,22 @@
                 </tr>
                 </thead>
                 <tbody>
-                    {% for partner in partners %}
+                    {% for package in packages %}
                     <tr>
                         <td>
-                            <a href="http://{{ partner.website }}" id='atd-{{ partner.id }}' class="partner-name">
-                            {{ partner.name }}</a> 
-                        </td>
-                        <td class='partner-email'>
-                            {{ partner.email|e }}
+                            {{ package.name }}</a> 
                         </td>
                         <td>
-                            {{ partner.website|e }}
+                            {{ package.price |e }}
                         </td>
                         <td>
-                            <button id='btd-{{ partner.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                            {{ package.quota |e }}
+                        </td>
+                        <td>
+                            <button id='btd-{{ package.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
-                            <button id='btd-{{ partner.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                            <button id='btd-{{ package.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 Delete
                             </button>
                         </td>
@@ -66,7 +65,7 @@
         {% include "admin/base/modal_delete.html" %}
         {% include "admin/base/modal_email.html" %}
         {% include "admin/partnership/packages/package_add.html" %}
-        {% include "admin/partnership/partners/partner_add.html" %}
+        {% include "admin/partnership/packages/package_edit.html" %}
 {% endblock %}
 
 {% block footer_link %}
@@ -84,45 +83,22 @@
         $('.modal-title').html('Edit');
         const bte_id = $(this).attr('id');
         const id = bte_id.substring(4, bte_id.length);
-        let select = $(".e-partner-type");
-        select.find('option').remove();
-        dsa.get('partners/' + id, function(result) {
+        dsa.get('package_management/' + id, function(result) {
             // bind result value in to account_detail.html 
             const data = result['data'];
-            $('.e-partner-name').val(data['name']);
-            $('.e-partner-email').val(data['email']);
-            selected_type = data['type'];
-            $('.e-partner-website').val(data['website']);
-            PARTNER_TYPES.map(function(type) {
-                let option = document.createElement('option');
-                option.innerHTML = type;
-                option.value = type;
-
-                // Set selected option
-                if (type === selected_type) {
-                    option.selected = true;
-                }
-
-                select.append(option);
-            });
-            $("#e-img-upload").attr("src", 'static/' + data['photo']);
-            $('.e-partner-photo').val(data['photo'] ? data['photo'] : '-');
+            $('#e-package-name').val(data['name']);
+            $('#e-package-price').val(data['price']);
+            $('#e-package-quota').val(data['quota']);
         });
-        $('.btn-edit-save').attr("id", id);
+        $('.btn-package-update').attr("id", id);
     });
 
     $('.btn-add').click(function(event){
         $('.modal-title').html('Add New Package');
     });
 
-    $('.btn-email').click(function(event){
-        $('.modal-title').html('Devsummit Email Form');
-        const email = $('.partner-email').html().trim();
-        $('.email-receiver').val(email);
-    })
-
     $('.btn-delete').click(function(event){
-        $('.modal-title').html('Are you sure want to delete this package?');
+        $('.modal-title').html('Are you sure want to delete this package ?');
         const btd_id = $(this).attr('id');
         const id = btd_id.substring(4, btd_id.length);
         $('.btn-yes').attr("id", id);
