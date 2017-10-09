@@ -108,6 +108,30 @@
         /* Add new redeem code*/
         $('.btn-add').click(function (event) {
             $('.modal-title').html('Purchase Package');
+            let select = $('.add-partner-name');
+            select.find('option').remove()
+            dsa.get('partners?type=company', function(result) {
+                console.log(result, 'cuk');
+                result.data.map(function (item) {
+                    let option = document.createElement('option');
+                    option.innerHTML = item.name + ' (email: ' + item.email + ')';
+                    option.value = item.id;
+                    select.append(option);
+                });
+
+            });
+
+            let select_package = $('.add-packages-select');
+            select.find('option').remove()
+            dsa.get('package_management', function(result) {
+                result.data.map(function (item) {
+                    let option = document.createElement('option');
+                    option.innerHTML = item.name + ' (quota: ' + item.quota + ')' + ' - IDR. ' + item.price.toLocaleString();
+                    option.value = item.id;
+                    select_package.append(option);
+                });
+
+            });
         });
 
 
