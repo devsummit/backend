@@ -58,6 +58,10 @@ class TicketTransferService():
 
 			db.session.commit()
 			data = transferlog.as_dict()
+			for key in data.keys():
+				if key in ['receiver', 'sender']:
+					temp_dict = data[key].as_dict()
+					data[key] = temp_dict 
 			return response.set_data(data).set_message('ticket transfered successfully').build()
 
 		except SQLAlchemyError as e:
