@@ -27,7 +27,7 @@
         $('.btn-yes').click(function(event){
             event.preventDefault();
             const id = $('.btn-yes').attr('id');
-            dsa.delete('{{ globals["api_route"] }}' + '/' + id, function(result) {
+            dsa.delete('feeds' + '/' + id +'/ban', function(result) {
                 $('.modal-title').html(result['meta']['message']);
                 if(result.meta.success) {
                     window.location = '{{ globals["base_route"] }}';

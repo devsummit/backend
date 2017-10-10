@@ -2,7 +2,7 @@
 
 <title> Feed Reports List</title> {% endblock %} 
 
-{% set globals={'base_route': 'feed/reports', 'api_route': 'feed/reports'} %} {% block header_link %}
+{% set globals={'base_route': 'report-feed', 'api_route': 'feed/reports'} %} {% block header_link %}
 <!-- DataTables -->
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
 <h1>
@@ -34,7 +34,7 @@
                 {% for report in reportfeeds %}
                 <tr>
                     <td>
-                        {{ report.id|e }}
+                        {{ report.feed_id|e }}
                     </td>
                     <td>
                         {{ report.username|e }}
@@ -48,7 +48,7 @@
                         {% endfor %}
                     </td>                    
                     <td>
-                        <button id='bte-{{ report.user_id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                        <button id='bte-{{ report.feed_id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
                                 BAN
                             </button>                        
                     </td>
