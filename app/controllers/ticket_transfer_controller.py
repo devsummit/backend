@@ -12,12 +12,12 @@ class TicketTransferController(BaseController):
 			# admin
 			result = tickettransferservice.get_logs()
 		elif user['role_id'] == ROLE['user']:
-			# attendee
+			# user
 			result = tickettransferservice.get_logs(user['id'])
 		else:
 			return BaseController.send_error_api(None, 'resource not accessible for this type of user')
-
-		return BaseController.send_response_api(BaseModel.as_list(result), 'logs retrieved succesfully')
+		
+		return BaseController.send_response_api(result, 'logs retrieved succesfully')
 
 	def ticket_transfer(request, user):
 		receiver = request.json['receiver'] if 'receiver' in request.json else None
