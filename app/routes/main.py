@@ -173,3 +173,6 @@ def package_management():
 def package_purchase():
     return MainController.getPackagePurchase(request)
 
+@main.route('/ticket-transfer-logs')
+def ticket_transfer_logs():
+    return MainController.getTransferLog(request)
