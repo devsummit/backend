@@ -127,9 +127,13 @@ class FeedService(BaseService):
 		else:
 			return None
 
-	def bannedfeeds(self, feed_id, user):
+	def bannedfeeds(self, feed_id):
 		response = ResponseBuilder()
 		self.model_feed = db.session.query(Feed).filter_by(id=feed_id)
+		if self.model_feed.first() is None:
+			return response.set_error(True).set_message('feed not found').build()
+		if self.model_feed.first().deleted_at is not None:
+			return response.set_error(True).set_message('feed already banned').build()
 		self.model_feed.update({
 			'deleted_at':datetime.datetime.now()
 		})

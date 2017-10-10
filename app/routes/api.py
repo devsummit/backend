@@ -766,7 +766,7 @@ def feeds_banned(feed_id, *args, **kwargs):
     if (user['role_id'] != ROLE['admin']):
         return 'unauthorized'
     else: 
-        return FeedController.bannedfeeds(user, feed_id)
+        return FeedController.bannedfeeds(feed_id)
 
 @api.route('/notifications', methods=['GET', 'POST'])
 @token_required
