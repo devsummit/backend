@@ -126,3 +126,16 @@ class FeedService(BaseService):
 			return current_app.config['SAVE_FEED_PHOTO_DEST'] + filename
 		else:
 			return None
+
+	def bannedfeeds(self, feed_id, user):
+		response = ResponseBuilder()
+		self.model_feed = db.session.query(Feed).filter_by(id=feed_id)
+		self.model_feed.update({
+			'deleted_at':datetime.datetime.now()
+		})
+		try:
+			db.session.commit()
+			return response.set_data(None).set_message('Success').build()
+		except SQLAlchemyError as e:
+			data = e.orig.args
+			return response.set_data(data).set_error(True).build()

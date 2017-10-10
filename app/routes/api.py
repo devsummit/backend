@@ -759,6 +759,14 @@ def feeds(*args, **kwargs):
         socketio.emit('feeds', data.data.decode(), broadcast=True)
         return data
 
+@api.route('/feeds/<feed_id>/ban', methods=['DELETE'])
+@token_required
+def feeds_banned(feed_id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (user['role_id'] != ROLE['admin']):
+        return 'unauthorized'
+    else: 
+        return FeedController.bannedfeeds(user, feed_id)
 
 @api.route('/notifications', methods=['GET', 'POST'])
 @token_required

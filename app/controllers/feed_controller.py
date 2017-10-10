@@ -56,3 +56,10 @@ class FeedController(BaseController):
 		if result['error']:
 			return BaseController.send_error_api(result['data'], result['message'])
 		return BaseController.send_response_api(result['data'], result['message'])
+
+	@staticmethod
+	def bannedfeeds(user, feed_id):
+		result = feedservice.bannedfeeds(user, feed_id)
+		if result['error']:
+			return BaseController.send_error_api(result['data'], result['message'])
+		return BaseController.send_response_api(result['data'], result['message'])
