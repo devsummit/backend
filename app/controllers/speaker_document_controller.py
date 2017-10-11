@@ -104,12 +104,14 @@ class SpeakerDocumentController(BaseController):
             document_data = request.files['document_data']
             summary = request.form['summary'] if 'summary' in request.form else ''
             title = request.form['title'] if 'title' in request.form else ''
+            is_used = request.form['is_used'] if 'is_used' in request.form else 0
             if document_data and speaker_id:
                 payloads = {
                     'document_data': document_data,
                     'speaker_id': speaker_id,
                     'title': title,
-                    'summary': summary
+                    'summary': summary,
+                    'is_used': is_used
                 }
             else:
                 return BaseController.send_error_api(None, 'field is not complete')
