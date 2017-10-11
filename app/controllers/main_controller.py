@@ -1,5 +1,6 @@
 from flask import render_template, request
 from app.controllers.base_controller import BaseController
+from app.models.base_model import BaseModel
 from app.services import attendeeservice
 from app.services import paymentservice
 from app.services import ticketservice
@@ -23,6 +24,7 @@ from app.services import feedservice
 from app.services import sponsortemplateservice
 from app.services import invoiceservice
 from app.services import packagemanagementservice
+from app.services import tickettransferservice
 
 
 class MainController(BaseController):
@@ -156,3 +158,7 @@ class MainController(BaseController):
         partners = partnerservice.filter('company', request)
         packages = packagemanagementservice.get(request)
         return render_template('admin/partnership/packages/package_purchase/package_purchase.html', partners=partners['data'], packages=packages['data'])
+
+    def getTransferLog(request):
+        logs = tickettransferservice.get_logs()
+        return render_template('admin/ticket-transfer-log/ticket-transfer-log.html', logs=logs)
