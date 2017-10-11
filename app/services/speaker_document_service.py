@@ -10,6 +10,7 @@ from app.models.base_model import BaseModel
 from app.models.speaker import Speaker
 from app.models.user import User
 from app.builders.response_builder import ResponseBuilder
+from app.configs.constants import ROLE
 
 
 app = Flask(__name__)
@@ -41,11 +42,13 @@ class SpeakerDocumentService():
             data = 'data not found'
             return response.set_message(data).set_data(None).build()
 
-    def shows(self, speaker_id):
+    def shows(self, user, speaker_id):
         response = ResponseBuilder()
         speaker = db.session.query(Speaker).filter_by(id=speaker_id).first()
-        speaker_document = db.session.query(
-            SpeakerDocument).filter_by(speaker_id=speaker_id).order_by(SpeakerDocument.created_at.desc()).all()
+        if user['role_id'] is ROLE['user']:
+            speaker_document = db.session.query(SpeakerDocument).filter_by(speaker_id=speaker_id, is_used=1).order_by(SpeakerDocument.created_at.desc()).all()
+        elif user['role_id'] is ROLE['speaker']:  
+            speaker_document = db.session.query(SpeakerDocument).filter_by(speaker_id=speaker_id).order_by(SpeakerDocument.created_at.desc()).all()
         _results = []
         if speaker_document is not None:
             speaker_document = BaseModel.as_list(speaker_document)

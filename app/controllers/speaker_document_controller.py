@@ -21,8 +21,8 @@ class SpeakerDocumentController(BaseController):
         return BaseController.send_response_api(_speaker_documents['data'], _speaker_documents['message'])
 
     @staticmethod
-    def _show(speaker_id):
-        speaker_documents = speakerdocumentservice.shows(speaker_id)
+    def _show(user, speaker_id):
+        speaker_documents = speakerdocumentservice.shows(user, speaker_id)
         if speaker_documents['error']:
             return BaseController.send_error_api(speaker_documents['data'], speaker_documents['message'])
         return BaseController.send_response_api(speaker_documents['data'], speaker_documents['message'])
