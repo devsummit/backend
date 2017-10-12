@@ -68,6 +68,10 @@ class SponsorService(BaseService):
         sponsor = db.session.query(Sponsor).filter_by(id=id).first()
         data = sponsor.as_dict() if sponsor else None
         if data:
+            if data['attachment']:
+                data['attachment'] = Helper().url_helper(data['attachment'], current_app.config['GET_DEST'])
+            else:
+                data['attachment'] = "https://museum.wales/media/40374/thumb_480/empty-profile-grey.jpg"
             return response.set_data(data).build()
         return response.set_error(True).set_message('data not found').set_data(None).build()
 
