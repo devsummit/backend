@@ -39,7 +39,9 @@ class SponsorService(BaseService):
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
         for entry in result['data']:
-            if entry['attachment'] is None:
+            if entry['attachment']:
+                entry['attachment'] = Helper().url_helper(entry['attachment'], current_app.config['GET_DEST'])
+            else:
                 entry['attachment'] = "https://museum.wales/media/40374/thumb_480/empty-profile-grey.jpg"
         return result
 
@@ -71,7 +73,7 @@ class SponsorService(BaseService):
 
     def create(self, payload):
         response = ResponseBuilder()
-        attachment = self.save_file(payload['attachment']) if payload['attachment'] is not None else None 
+        attachment = self.save_file(payload['attachment']) if payload['attachment'] is not None else None
         sponsor = Sponsor()
         sponsor.name = payload['name']
         sponsor.phone = payload['phone']
