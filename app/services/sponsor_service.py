@@ -103,25 +103,33 @@ class SponsorService(BaseService):
             return response.set_data(data).set_error(True).build()
 
     def update(self, id, payload):
+        print(payload, "payload")
         response = ResponseBuilder()
         sponsor = db.session.query(Sponsor).filter_by(id=id)
         data = sponsor.first().as_dict() if sponsor.first() else None
         if data['attachment'] is not None and payload['attachment']:
-                os.remove(current_app.config['STATIC_DEST'] + data['attachment'])
+                Helper().silent_remove(current_app.config['STATIC_DEST'] + data['attachment'])
         if data is None:
             return response.set_error(True).set_message('data not found').set_data(None).build()
         if data['stage'] != payload['stage']:
             log = SponsorInteractionLog()
-            _from = SPONSOR_STAGES[data['stage']] if data['stage'] else 'None'
-            _to = SPONSOR_STAGES[str(payload['stage'])] if payload['stage'] else 'None'
+            _from = SPONSOR_STAGES[data['stage']] if data['stage'] else None
+            _to = SPONSOR_STAGES[str(payload['stage'])] if payload['stage'] else None
             log.description = 'Admin move stage from: ' + _from + ' to: ' + _to
             log.sponsor_id = id
             db.session.add(log)
 
         if (data['type'] != payload['type']):
             log = SponsorInteractionLog()
-            _from = SPONSOR_TYPES[data['type']] if data['type'] else 'None'
-            _to = SPONSOR_TYPES[str(payload['type'])] if payload['type'] else 'None'
+            if data['type'] not in ['null', None]:
+                _from = SPONSOR_TYPES[data['type']]
+            else: 
+                _from = 'None'
+            if payload['type'] not in ['null', None]:
+                _to = SPONSOR_TYPES[str(payload['type'])] if payload['type'] != 'null' else None
+            else:
+                _to = 'None'
+
             log.description = 'Admin move stage from: ' + _from + ' to: ' + _to
             log.sponsor_id = id
             db.session.add(log)
@@ -157,7 +165,7 @@ class SponsorService(BaseService):
         if sponsor.first():
             sponsor_dict = sponsor.first().as_dict()
             if sponsor_dict['attachment'] is not None:
-                os.remove(current_app.config['STATIC_DEST'] + sponsor_dict['attachment'])
+                Helper().silent_remove(current_app.config['STATIC_DEST'] + sponsor_dict['attachment'])
             sponsor.delete()
             db.session.commit()
             return response.set_message('data deleted').set_data(None).build()
