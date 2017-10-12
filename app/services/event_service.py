@@ -33,7 +33,14 @@ class EventService(BaseService):
             return response.set_data(None).set_error(True).set_message('Event not found').build()
 
         data = self.events_model.first().as_dict()
-        data['user'] = self.events_model.first().user.as_dict() if self.events_model.first().user else None
+        if data['type'] == "discuss panel":
+            users = []
+            panel_event = db.session.query(PanelEvent).filter_by(event_id=data['id']).all()
+            for panel in panel_event:
+                users.append(panel.user.include_photos().as_dict())
+                data['user'] = users
+        else:
+            data['user'] = self.events_model.first().user.as_dict()
         return response.set_data(data).build()
 
     def create(self, payloads):
