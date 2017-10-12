@@ -16,12 +16,13 @@ class SponsorController(BaseController):
 
     @staticmethod
     def create(request):
-        name = request.json['name'] if 'name' in request.json else None
-        email = request.json['email'] if 'email' in request.json else None
-        phone = request.json['phone'] if 'phone' in request.json else None
-        note = request.json['note'] if 'note' in request.json else ''
-        type = request.json['type'] if 'type' in request.json else None
-        stage = request.json['stage'] if 'stage' in request.json else None
+        name = request.form['name'] if 'name' in request.form else None
+        email = request.form['email'] if 'email' in request.form else None
+        phone = request.form['phone'] if 'phone' in request.form else None
+        note = request.form['note'] if 'note' in request.form else ''
+        type = request.form['type'] if 'type' in request.form else None
+        stage = request.form['stage'] if 'stage' in request.form else None
+        attachment = request.files['attachment'] if 'attachment' in request.files else None
         if name and (email or phone):
             payloads = {
                 'name': name,
@@ -29,7 +30,8 @@ class SponsorController(BaseController):
                 'phone': phone,
                 'note': note,
                 'type': type,
-                'stage': stage
+                'stage': stage,
+                'attachment': attachment
             }
         else:
             BaseController.send_error_api(None, 'payload is invalid')
@@ -43,12 +45,13 @@ class SponsorController(BaseController):
 
     @staticmethod
     def update(id, request):
-        name = request.json['name'] if 'name' in request.json else None
-        email = request.json['email'] if 'email' in request.json else None
-        phone = request.json['phone'] if 'phone' in request.json else None
-        note = request.json['note'] if 'note' in request.json else None
-        type = request.json['type'] if 'type' in request.json else None
-        stage = request.json['stage'] if 'stage' in request.json else None
+        name = request.form['name'] if 'name' in request.form else None
+        email = request.form['email'] if 'email' in request.form else None
+        phone = request.form['phone'] if 'phone' in request.form else None
+        note = request.form['note'] if 'note' in request.form else None
+        type = request.form['type'] if 'type' in request.form else None
+        stage = request.form['stage'] if 'stage' in request.form else None
+        attachment = request.files['attachment'] if 'attachment' in request.files else None
 
         payloads = {
             'name': name,
@@ -56,7 +59,8 @@ class SponsorController(BaseController):
             'phone': phone,
             'note': note,
             'type': type,
-            'stage': stage
+            'stage': stage,
+            'attachment': attachment
         }
 
         result = sponsorservice.update(id, payloads)

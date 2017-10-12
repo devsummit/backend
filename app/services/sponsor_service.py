@@ -1,3 +1,4 @@
+import os
 import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -11,6 +12,11 @@ from app.services.base_service import BaseService
 from app.models.base_model import BaseModel
 from app.builders.response_builder import ResponseBuilder
 from sqlalchemy import and_
+from flask import current_app
+from PIL import Image
+from app.configs.constants import IMAGE_QUALITY
+from app.services.helper import Helper 
+from werkzeug import secure_filename
 
 
 class SponsorService(BaseService):
@@ -32,6 +38,9 @@ class SponsorService(BaseService):
         paginate = super().transform()
         response = ResponseBuilder()
         result = response.set_data(paginate['data']).set_links(paginate['links']).build()
+        for entry in result['data']:
+            if entry['attachment'] is None:
+                entry['attachment'] = "https://museum.wales/media/40374/thumb_480/empty-profile-grey.jpg"
         return result
 
     def get_logs(self, id):
@@ -62,6 +71,7 @@ class SponsorService(BaseService):
 
     def create(self, payload):
         response = ResponseBuilder()
+        attachment = self.save_file(payload['attachment']) if payload['attachment'] is not None else None 
         sponsor = Sponsor()
         sponsor.name = payload['name']
         sponsor.phone = payload['phone']
@@ -69,6 +79,7 @@ class SponsorService(BaseService):
         sponsor.note = payload['note']
         sponsor.stage = str(payload['stage']) if payload['stage'] else '1'  # default to one as lead
         sponsor.type = str(payload['type']) or '4' if sponsor.stage == '3' else None  # default to four if stage is official
+        sponsor.attachment = attachment
         db.session.add(sponsor)
 
         try:
@@ -89,6 +100,8 @@ class SponsorService(BaseService):
         response = ResponseBuilder()
         sponsor = db.session.query(Sponsor).filter_by(id=id)
         data = sponsor.first().as_dict() if sponsor.first() else None
+        if data['attachment'] is not None and payload['attachment']:
+                os.remove(current_app.config['STATIC_DEST'] + data['attachment'])
         if data is None:
             return response.set_error(True).set_message('data not found').set_data(None).build()
         if data['stage'] != payload['stage']:
@@ -111,10 +124,11 @@ class SponsorService(BaseService):
 
         if SPONSOR_STAGES[str(payload['stage'])] is not SPONSOR_STAGES['3']:
             new_data['type'] = None
-
+        if payload['attachment']:
+            attachment = self.save_file(payload['attachment']) if payload['attachment'] is not None else None
+            new_data['attachment'] = attachment
         new_data['updated_at'] = datetime.datetime.now()
         sponsor.update(new_data)
-
         try:
             db.session.commit()
             #when update sponsor to official, automatically create sponsor_template
@@ -135,7 +149,22 @@ class SponsorService(BaseService):
         response = ResponseBuilder()
         sponsor = db.session.query(Sponsor).filter_by(id=id)
         if sponsor.first():
+            sponsor_dict = sponsor.first().as_dict()
+            if sponsor_dict['attachment'] is not None:
+                os.remove(current_app.config['STATIC_DEST'] + sponsor_dict['attachment'])
             sponsor.delete()
             db.session.commit()
             return response.set_message('data deleted').set_data(None).build()
         return response.set_message('data not found').set_error(True).build()
+
+    def save_file(self, file, id=None):
+        image = Image.open(file, 'r')
+        if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
+            if (Helper().allowed_file(file.filename, ['jpg', 'jpeg', 'png'])):
+                image = image.convert("RGB")
+            filename = secure_filename(file.filename)
+            filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
+            image.save(os.path.join(current_app.config['POST_SPONSOR_PIC_DEST'], filename), quality=IMAGE_QUALITY, optimize=True)
+            return current_app.config['SAVE_SPONSOR_PIC_DEST'] + filename
+        else:
+            return None

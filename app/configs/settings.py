@@ -47,6 +47,9 @@ SAVE_PRIZE_LIST_DEST = 'images/prize_lists/'
 # booth gallery
 POST_BOOTH_GALL_DEST = 'app/static/images/booths/galleries/'
 SAVE_BOOTH_GALL_DEST = 'images/booths/galleries/'
+# sponsor picture
+POST_SPONSOR_PIC_DEST = 'app/static/images/sponsor/'
+SAVE_SPONSOR_PIC_DEST = 'images/sponsor/'
 
 GET_DEST = 'static/'
 STATIC_DEST = 'app/static/'
