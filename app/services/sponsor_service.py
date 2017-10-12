@@ -87,7 +87,6 @@ class SponsorService(BaseService):
         sponsor.type = str(payload['type']) or '4' if sponsor.stage == '3' else None  # default to four if stage is official
         sponsor.attachment = attachment
         db.session.add(sponsor)
-        print(payload)
         try:
             db.session.commit()
             #add sponsor_template
@@ -95,6 +94,7 @@ class SponsorService(BaseService):
                 sponsor = db.session.query(Sponsor).filter_by(stage=3).order_by(desc(Sponsor.id)).first()
                 sponsor_template = SponsorTemplate()
                 sponsor_template.sponsor_id = sponsor.id
+                sponsor_template.attachment = sponsor.attachment
                 db.session.add(sponsor_template)
                 db.session.commit()
             return response.set_data(sponsor.as_dict()).set_message('Data created succesfully').build()
@@ -103,7 +103,6 @@ class SponsorService(BaseService):
             return response.set_data(data).set_error(True).build()
 
     def update(self, id, payload):
-        print(payload, "payload")
         response = ResponseBuilder()
         sponsor = db.session.query(Sponsor).filter_by(id=id)
         data = sponsor.first().as_dict() if sponsor.first() else None
@@ -147,12 +146,15 @@ class SponsorService(BaseService):
             db.session.commit()
             #when update sponsor to official, automatically create sponsor_template
             if new_data['stage'] in [3, '3']:
-                sponsor_update = Sponsor()
-                sponsor_update = db.session.query(Sponsor).filter(and_(Sponsor.stage == 3, Sponsor.id == id)).first()
-                sponsor_template = SponsorTemplate()
-                sponsor_template.sponsor_id = sponsor_update.id
-                db.session.add(sponsor_template)
-                db.session.commit()
+                check_sponsor_template = db.session.query(SponsorTemplate).filter_by(sponsor_id=id).first()
+                if check_sponsor_template is None:
+                    sponsor_update = Sponsor()
+                    sponsor_update = db.session.query(Sponsor).filter(and_(Sponsor.stage == 3, Sponsor.id == id)).first()
+                    sponsor_template = SponsorTemplate()
+                    sponsor_template.sponsor_id = sponsor_update.id
+                    sponsor_template.attachment = sponsor_update.attachment
+                    db.session.add(sponsor_template)
+                    db.session.commit()
             return response.set_data(sponsor.first().as_dict()).build()
 
         except SQLAlchemyError as e:
