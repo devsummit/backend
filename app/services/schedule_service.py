@@ -26,8 +26,8 @@ class ScheduleService():
 				pes = db.session.query(PanelEvent).filter_by(event_id=event.id).all()
 				for pe in pes:
 					_result.append(pe.user.include_photos().as_dict())
-					includes = db.session.query(Speaker).filter_by(user_id=pe.user_id).first()
-					_speaker.append(includes.as_dict())
+					speaker = db.session.query(Speaker).filter_by(user_id=pe.user_id).first()
+					_speaker.append(speaker.as_dict())
 
 				data['user'] = _result
 				for n in range(0, len(data['user'])):
