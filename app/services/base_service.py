@@ -1,4 +1,5 @@
 import sys
+from flask import current_app
 from app.models import db
 from app.models.attendee import Attendee  # noqa
 from app.models.booth import Booth  # noqa
@@ -7,6 +8,7 @@ from app.models.ambassador import Ambassador  # noqa
 from app.models.user import User  #noqa
 from app.models.sponsor import Sponsor #noqa
 from app.models.panel_event import PanelEvent 
+from app.services.helper import Helper 
 
 
 class BaseService():
@@ -59,6 +61,10 @@ class BaseService():
             elif 'sponsor' in item.type:
                 sponsor = db.session.query(Sponsor).filter_by(id=item.sponsor_id).first()        
                 data['user'] = sponsor.as_dict()
+                if data['user']['attachment'] is not None:
+                    data['user']['attachment'] = Helper().url_helper(data['user']['attachment'], current_app.config['GET_DEST'])
+                else:
+                    data['user']['attachment'] = 'https://museum.wales/media/40374/thumb_480/empty-profile-grey.jpg'
             _results.append(data)
         self.paginated['data'] = _results
         return self.paginated
