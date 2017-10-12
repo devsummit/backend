@@ -38,6 +38,14 @@
                                 <select class="form-control" id="i-sponsor-type">
                                 </select>
                             </li>
+                            <li>
+                                <div class="form-group">
+                                    <label for="sponsor-photo">Sponsor Logo:</label>
+                                     <input class="input-file sponsor-photo" id="i-fileInput" type="file" name="file">
+                                     <img id='i-img-upload' style="width: 300px; height: 200px" />
+                                </div>
+                            </li>
+
                             <li class="list-group-item">
                                 <div class="form-group">
                                     <label for="i-sponsor-note">Note:</label>
@@ -79,33 +87,40 @@
         let sponsor_type = $('#i-sponsor-stage').val() !== '3' ?
                              null : parseInt($('#i-sponsor-type').val());
 
-        let payloads = {
-            name: $('#i-sponsor-name').val(),
-            email: $('#i-sponsor-email').val(),
-            phone: $('#i-sponsor-phone').val(),
-            note: $('#i-sponsor-note').val(),
-            type: sponsor_type,
-            stage: parseInt($('#i-sponsor-stage').val())
-        }
-
-        dsa.post('sponsors', payloads, function (result) {
-            if (result.meta.success) {
+        const id = $(this).attr('id');
+        const formdata = new FormData();
+        formdata.append('attachment', $('#i-fileInput')[0].files[0])
+        formdata.append('name', $('#i-sponsor-name').val())
+        formdata.append('email', $('#i-sponsor-email').val())
+        formdata.append('phone', $('#i-sponsor-phone').val())
+        formdata.append('note', $('#i-sponsor-note').val())
+        formdata.append('type', sponsor_type)
+        formdata.append('stage', $('#i-sponsor-stage').val())
+        dsa.postForm('sponsors', formdata, function(result) {
+            if(result.meta.success) {
+                $('.i-sponsor-name').val('');
+                $('.i-sponsor-email').val('');
+                $('.i-sponsor-phone').val('');
+                $('.i-sponsor-note').val('');
+                $("#i-img-upload").attr("src", '');
+                $('.sponsor-photo').val('');
                 window.location = "/sponsors";
             }
         });
     });
 
-    function readCreateURL(input) {
+    function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
                 $('#i-img-upload').attr('src', e.target.result);
             }
+            
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    $("#i-fileInput").change(function () {
-        readCreateURL(this);
+    $("#i-fileInput").change(function(){
+        readURL(this);
     });
 </script>

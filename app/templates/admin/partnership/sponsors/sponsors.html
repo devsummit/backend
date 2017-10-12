@@ -37,6 +37,7 @@
                         <th>Phone</th>
                         <th>Note</th>
                         <th>Type</th>
+                        <th>Logo</th>
                         <th>Stage</th>
                         <th>Action</th>
                     </tr>
@@ -62,6 +63,9 @@
                             {% else %}
                                 -
                             {% endif %}
+                        </td>
+                        <td>
+                            <img src="{{sponsor.attachment|e}}" height="120px" width="100px" alt='sponsor photo'>
                         </td>
                         <td>
                             {{ sponsor_stages[sponsor.stage]|title }}
@@ -107,7 +111,7 @@
             $('.modal-title').html('Edit Sponsor');
             const bte_id = $(this).attr('id');
             const id = bte_id.substring(4, bte_id.length);
-            let select = $('#sponsor-stage');
+            let select = $('#e-sponsor-stage');
             select.find('option').remove();
 
             let selected_sponsor_type;
@@ -119,10 +123,11 @@
                 selected_sponsor_stage = data['stage']
                 selected_sponsor_type = data['type']
 
-                $('#sponsor-name').val(data['name']);
-                $('#sponsor-email').val(data['email']);
-                $('#sponsor-phone').val(data['phone']);
-                $('#sponsor-note').val(data['note']);
+                $('#e-sponsor-name').val(data['name']);
+                $('#e-sponsor-email').val(data['email']);
+                $('#e-sponsor-phone').val(data['phone']);
+                $('#e-sponsor-note').val(data['note']);
+                $("#e-img-upload").attr("src", data['attachment']);
 
                 SPONSOR_STAGES.map(function (stage) {
                     let option = document.createElement('option');
@@ -137,7 +142,7 @@
                     select.append(option);
                 });
 
-                let sponsor_type_select_edit = $("#sponsor-type");
+                let sponsor_type_select_edit = $("#e-sponsor-type");
                 sponsor_type_select_edit.find('option').remove();
 
                 SPONSOR_TYPES.map(function (type) {
@@ -154,9 +159,9 @@
                 });
 
                 if (parseInt(data['stage']) === 3) {
-                    $('#sponsor-type-wrap').show();
+                    $('#e-sponsor-type-wrap').show();
                 } else {
-                    $('#sponsor-type-wrap').hide();
+                    $('#e-sponsor-type-wrap').hide();
                 }
             });
 

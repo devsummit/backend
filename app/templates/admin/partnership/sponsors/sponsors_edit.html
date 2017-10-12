@@ -12,37 +12,44 @@
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="sponsor-name">Sponsor Name:</label>
-                                    <input type="text" class="form-control" id="sponsor-name">
+                                    <label for="e-sponsor-name">Sponsor Name:</label>
+                                    <input type="text" class="form-control" id="e-sponsor-name">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="sponsor-email">Email:</label>
-                                    <input type="text" class="form-control" id="sponsor-email">
+                                    <label for="e-sponsor-email">Email:</label>
+                                    <input type="text" class="form-control" id="e-sponsor-email">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="sponsor-phone">Phone:</label>
-                                    <input type="text" class="form-control" id="sponsor-phone">
+                                    <label for="e-sponsor-phone">Phone:</label>
+                                    <input type="text" class="form-control" id="e-sponsor-phone">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="sponsor-stage">Stage:</label>
-                                    <select class="form-control" id="sponsor-stage"></select>
+                                    <label for="e-sponsor-stage">Stage:</label>
+                                    <select class="form-control" id="e-sponsor-stage"></select>
                                 </div>
                             </li>
-                            <li class="list-group-item" style="display: none;" id="sponsor-type-wrap">
-                                <label for="sponsor-type">Type:</label>
-                                <select class="form-control" id="sponsor-type">
+                            <li class="list-group-item" style="display: none;" id="e-sponsor-type-wrap">
+                                <label for="e-sponsor-type">Type:</label>
+                                <select class="form-control" id="e-sponsor-type">
                                 </select>
                             </li>
+                            <li>
+                                <div class="form-group">
+                                    <label for="e-sponsor-photo">Sponsor Logo:</label>
+                                     <input class="input-file e-sponsor-photo" id="e-fileInput" type="file" name="file">
+                                     <img id='e-img-upload' style="width: 300px; height: 200px" />
+                                </div>
+                            </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="sponsor-note">Note:</label>
-                                    <textarea type="text" class="form-control" id="sponsor-note"></textarea>
+                                    <label for="e-sponsor-note">Note:</label>
+                                    <textarea type="text" class="form-control" id="e-sponsor-note"></textarea>
                                 </div>
                             </li>
                         </ul>
@@ -63,36 +70,54 @@
 <!-- /.modal -->
 <!-- page script -->
 <script>
-    $('#sponsor-stage').on('change', function() {
+    $('#e-sponsor-stage').on('change', function() {
         if (this.value !== '3') {
-            $('#sponsor-type-wrap').hide();
+            $('#e-sponsor-type-wrap').hide();
         } else {
-            $('#sponsor-type-wrap').show();
+            $('#e-sponsor-type-wrap').show();
         }
     })
 
     /* Save edit account */
     $('.btn-edit-save').click(function (event) {
-        let sponsor_type = $('#sponsor-stage').val() !== '3' ?
-                             null : parseInt($('#sponsor-type').val());
+        let sponsor_type = $('#e-sponsor-stage').val() !== '3' ?
+                             null : parseInt($('#e-sponsor-type').val());
 
         const id = $(this).attr('id');
-
-        let payloads = {
-            name: $('#sponsor-name').val(),
-            email: $('#sponsor-email').val(),
-            phone: $('#sponsor-phone').val(),
-            note: $('#sponsor-note').val(),
-            type: sponsor_type,
-            stage: parseInt($('#sponsor-stage').val())
-        }
-
-        // console.log('Payload: ', payloads);
-
-        dsa.patch('sponsors/' + id, payloads, function(result) {
-            if (result.meta.success) {
+        const formdata = new FormData();
+        formdata.append('attachment', $('#e-fileInput')[0].files[0])
+        formdata.append('name', $('#e-sponsor-name').val())
+        formdata.append('email', $('#e-sponsor-email').val())
+        formdata.append('phone', $('#e-sponsor-phone').val())
+        formdata.append('note', $('#e-sponsor-note').val())
+        formdata.append('type', sponsor_type);
+        formdata.append('stage', $('#e-sponsor-stage').val());
+        dsa.patchForm('sponsors/' + id, formdata, function(result) {
+            if(result.meta.success) {
+                $('#e-sponsor-name').val('');
+                $('#e-sponsor-email').val('');
+                $('#e-sponsor-phone').val('');
+                $('#e-sponsor-note').val('');
+                $("#e-img-upload").attr("src", '');
+                $('#e-sponsor-photo').val('');
                 window.location = "/sponsors";
             }
         });
+
     })
+
+    function readURLEdit(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#e-img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $("#e-fileInput").change(function(){
+        console.log('cuk')
+        readURLEdit(this);
+    });
 </script>
