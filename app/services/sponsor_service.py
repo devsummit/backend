@@ -87,11 +87,11 @@ class SponsorService(BaseService):
         sponsor.type = str(payload['type']) or '4' if sponsor.stage == '3' else None  # default to four if stage is official
         sponsor.attachment = attachment
         db.session.add(sponsor)
-
+        print(payload)
         try:
             db.session.commit()
             #add sponsor_template
-            if payload['stage'] == 3:
+            if payload['stage'] in [3, '3']:
                 sponsor = db.session.query(Sponsor).filter_by(stage=3).order_by(desc(Sponsor.id)).first()
                 sponsor_template = SponsorTemplate()
                 sponsor_template.sponsor_id = sponsor.id
@@ -146,7 +146,7 @@ class SponsorService(BaseService):
         try:
             db.session.commit()
             #when update sponsor to official, automatically create sponsor_template
-            if new_data['stage'] == 3:
+            if new_data['stage'] in [3, '3']:
                 sponsor_update = Sponsor()
                 sponsor_update = db.session.query(Sponsor).filter(and_(Sponsor.stage == 3, Sponsor.id == id)).first()
                 sponsor_template = SponsorTemplate()
