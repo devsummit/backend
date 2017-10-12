@@ -54,40 +54,13 @@
 <script>
     // Data and mapping for select2
     
-    dsa.get('users', function(result) {
+    dsa.get('speakers', function(result) {
         var select2_data = transformJSON(result);        
         $('#speaker-select2').select2({
             allowClear: true,
             data: select2_data,
             dropdownParent: $('#modal-add'),
-            width: 'resolve',
-            // minimumInputLength: 1,
-            // placeholder: 'Select the Participants',
-            // in case we need to do filtering by querying to the server use this ajax
-            // ajax: {
-            //     url : 'api/v1/users',
-            //     type: 'GET',
-            //     contentType: "application/json; charset=utf-8",
-            //     dataType   : "json",
-            //     headers: {
-            //         Authorization: dsa.acess_token()
-            //     },
-            //     processResults: function(result){
-            //         if(result['expired']) {
-            //             clearCredential();
-            //             window.location.href = '/login';
-            //         } else {
-            //             return {
-            //                 results: $.makeArray($.map(result.data, function(data) {
-            //                     return {
-            //                         text: data.username,
-            //                         id: data.id
-            //                     }                                    
-            //                 }))
-            //             }                         
-            //         }
-            //     }
-            // }                
+            width: 'resolve',             
         });
     })
     
@@ -96,8 +69,8 @@
             const arr = [];
             $.map(data, function(item) {
                     arr.push({
-                        text: item.username,
-                        id: item.id
+                        text: item.user.username,
+                        id: item.user.id
                     })                                                
             })
         return arr;
