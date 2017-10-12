@@ -430,8 +430,9 @@ def _speaker_document(id, *args, **kwargs):
 @api.route('/speaker/<speaker_id>/documents', methods=['GET'])
 @token_required
 def speaker_document_user(speaker_id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
-        return SpeakerDocumentController._show(speaker_id)
+        return SpeakerDocumentController._show(user, speaker_id)
 
 
 # Newsletter api
