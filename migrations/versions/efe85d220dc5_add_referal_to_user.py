@@ -19,12 +19,12 @@ depends_on = None
 def upgrade():
     op.add_column('users', sa.Column('referal_count', sa.Integer))
     op.add_column('users', sa.Column('have_refered', sa.Integer))
-    op.alter_column('users', 'referal', 
-        new_column_name='referer',
+    op.alter_column('users', 'referer', 
+        new_column_name='referal',
         existing_type=sa.String(40))
 
 
 def downgrade():
     op.drop_column('users', 'referal_count')
     op.drop_column('users', 'have_refered')
-    op.alter_column('users', 'referer', new_column_name='referal', existing_type=sa.String(40))
+    op.alter_column('users', 'referal', new_column_name='referer', existing_type=sa.String(40))
