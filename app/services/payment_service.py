@@ -553,7 +553,8 @@ class PaymentService():
 			payment = Payment()
 			payment.order_id = payload['order_id']
 			payment.transaction_id = payload['transaction_id']
-			payment.gross_amount = payload['amount']
+			payment.gross_amount = paypal_details_amount
+			payment.payment_type = 'paypal'
 			payment.transaction_status = "captured"			
 			try:				
 				db.session.add(payment)
