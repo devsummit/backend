@@ -36,7 +36,7 @@ class OrderVerificationController(BaseController):
 	def show(id, request):
 		orderverification = orderverificationservice.show(id)
 		return BaseController.send_response_api(orderverification['data'], orderverification['message'])	
-	
+
 	
 	@staticmethod
 	def update(id, request):

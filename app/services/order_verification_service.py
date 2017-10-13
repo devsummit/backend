@@ -36,7 +36,7 @@ class OrderVerificationService(BaseService):
 		orderverification = OrderVerification()
 		orderverification.user_id = payload['user_id']
 		orderverification.order_id = payload['order_id']
-		orderverification.payment_proof = payment_proof
+		orderverification.payment_proof = Helper().url_helper(payment_proof, current_app.config['GET_DEST'])
 		db.session.add(orderverification)
 		try:
 			db.session.commit()
@@ -47,7 +47,7 @@ class OrderVerificationService(BaseService):
 
 	def show(self, id):
 		response = ResponseBuilder()
-		orderverification = db.session.query(OrderVerification).filter_by(id=id).first()
+		orderverification = db.session.query(OrderVerification).filter_by(order_id=id).first()
 		data = orderverification.as_dict() if orderverification else None
 		if data:
 			if data['payment_proof']:
@@ -56,6 +56,7 @@ class OrderVerificationService(BaseService):
 				data['payment_proof'] = ""
 			return response.set_data(data).build()
 		return response.set_error(True).set_message('data not found').set_data(None).build()
+
 
 	def update(self, id, payload):
 		response = ResponseBuilder()
