@@ -2,6 +2,7 @@ import oauth2 as oauth
 import json
 import requests
 import datetime
+import secrets
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -448,12 +449,24 @@ class UserService(BaseService):
 		response = ResponseBuilder()
 		try:
 			self.model_user = User()
+			if payloads['referal'] is not None:
+				referal = db.session.query(User).filter_by(referal=payloads['referal'])
+				referal_count = referal.first().referal_count
+				if referal_count is not 10:
+					referal_count += 1
+					referal.update({
+						'referal_count': referal_count,
+						'have_refered': 1
+					})
+					db.session.commit()
+					self.model_user.referal_count = 1
 			self.model_user.first_name = payloads['first_name']
 			self.model_user.last_name = payloads['last_name']
 			self.model_user.email = payloads['email']
 			self.model_user.username = payloads['username']
 			self.model_user.role_id = payloads['role_id']
 			self.model_user.hash_password('supersecret')
+			self.model_user.referal = self.generate_referal_code(3)
 			db.session.add(self.model_user)
 			db.session.commit()
 			data = self.model_user.as_dict()
@@ -528,3 +541,14 @@ class UserService(BaseService):
 		except SQLAlchemyError as e:
 			data = e.args
 			return response.set_error(True).set_message(data).build()
+	
+	def generate_referal_code(self, count):
+		check_codes = db.session.query(User).all()
+		for check_code in check_codes:
+			check_code.referal
+		code = secrets.token_hex(count)
+		if code is not check_code.referal:
+			return code.upper()
+		else:
+			code = secrets.token_hex(count)
+			return code.upper()
