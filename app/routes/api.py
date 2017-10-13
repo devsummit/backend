@@ -559,6 +559,11 @@ def status(id, *args, **kwargs):
     if (request.method == 'PATCH' or request.method == 'PUT'):
         return PaymentController.status(id)
 
+@api.route('/payments/confirm', methods=['POST'])
+@token_required
+def confirm_payment(*args, **kwargs):
+    return PaymentController.confirm(request)
+
 
 @api.route('/payments/<payment_id>', methods=['GET'])
 @token_required
