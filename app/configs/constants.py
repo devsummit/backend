@@ -45,6 +45,10 @@ VA_NUMBER = {
     'bni': '119800'
 }
 
+PAYPAL = {
+    'payee': 'shi77.andy-facilitator@gmail.com'
+}
+
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
 # Change these consts to devsummit later
 MERCHANT_ID = 'M1066775'

@@ -4,21 +4,25 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
+from app.models.order_details import OrderDetails
 from app.models.user import User
+from app.models.payment import Payment
 from app.models.order_verification import OrderVerification
 from app.models.base_model import BaseModel
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
+from app.services.user_ticket_service import UserTicketService
 from flask import current_app
 from PIL import Image
 from app.configs.constants import IMAGE_QUALITY
 from app.services.helper import Helper 
 from werkzeug import secure_filename
 
+
 class OrderVerificationService(BaseService):
 	
 	def get(self):
-		orderverifications = BaseModel.as_list(db.session.query(OrderVerification).all())
+		orderverifications = BaseModel.as_list(db.session.query(OrderVerification).filter_by(is_used=0).all())
 		for entry in orderverifications:
 			if entry['payment_proof']:
 				entry['payment_proof'] = Helper().url_helper(entry['payment_proof'], current_app.config['GET_DEST'])
@@ -103,5 +107,27 @@ class OrderVerificationService(BaseService):
 		else:
 			return None
 
-
-
+	def verify(self, id):
+		response = ResponseBuilder()
+		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
+		orderverification = orderverification_query.first()
+		if orderverification.is_used is not 1:
+			user = db.session.query(User).filter_by(id=orderverification.user_id).first()
+			items = db.session.query(OrderDetails).filter_by(order_id=orderverification.order_id).all()
+			for item in items:
+				for i in range(0, item.count):
+					payload = {}
+					payload['user_id'] = user.id
+					payload['ticket_id'] = item.ticket_id
+					UserTicketService().create(payload)
+			orderverification_query.update({
+				'is_used': 1
+			})
+			payment_query = db.session.query(Payment).filter_by(order_id=orderverification.order_id)
+			payment_query.update({
+				'transaction_status': 'capture'
+			})
+			db.session.commit()
+			return response.set_data(None).set_message('ticket created').build()
+		else:
+			return response.set_data(None).set_message('This payment has already verified').build()

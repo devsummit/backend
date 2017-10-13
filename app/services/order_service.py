@@ -1,14 +1,71 @@
 from app.models import db
+import paypalrestsdk
+import datetime
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
 from app.models.ticket import Ticket
 from app.models.payment import Payment
 from app.models.referal import Referal
+from app.configs.constants import PAYPAL  # noqa
 from app.models.order_details import OrderDetails
 
 
 class OrderService():
+
+	def __init__(self):
+		paypalrestsdk.configure({
+			  "mode": "sandbox", # sandbox or live
+			  "client_id": "ASPYNQMNEqYGkjNZ1nWG-MK8fB3qWgohghF0-o2POgl79_VRzUvxzu5Gy40htA1Jjt-f_iMUJ8iS2NAI",
+			  "client_secret": "EIIT0Y9MnxArXnYCEVSMoXBoit8rwK00eYxTjPB0v2fGhqkjJ9eLUsvyB2n4tQjUVpgujul8-99wlYnS" 
+		})
+
+
+	def paypalorder(self, payload):
+		order_details = payload['order_details']
+		ord_det = []
+		for order in order_details:
+			item = {}
+			ticket = db.session.query(Ticket).filter_by(id=order['ticket_id']).first().as_dict()
+			item['name'] = ticket['ticket_type']
+			item['quantity'] = str(order['count'])
+			item['currency'] = payload['currency']
+			item['price'] = ticket['price']
+
+			ord_det.append(item)
+
+		payment = paypalrestsdk.Payment({
+			"intent": "order",
+			"payer": {
+				"payment_method": "paypal"
+			},
+			"transactions": [{
+				"amount": {
+					"currency":payload['currency'],
+					"total": payload['gross_amount']
+				},
+				"payee": {
+					"email": PAYPAL['payee']
+				},
+				"description": "Devsummit ticket purchase.",
+				"item_list": {
+					"items": ord_det
+				}, 
+			}],
+			"redirect_urls": {
+				"return_url": "http://localhost:5000/payment/execute",
+		        "cancel_url": "http://localhost:5000/"
+		    }})
+		result = payment.create()
+		if result:
+			self.get_paypal_detail(payment.id)
+		else:
+			print(payment.error)
+		return payment
+
+	def get_paypal_detail(self, id):
+		payment = paypalrestsdk.Payment.find(id)
+		return payment
 
 	def get(self, user_id):
 		orders = db.session.query(Order).filter_by(user_id=user_id).order_by(Order.created_at.desc()).all()
@@ -62,6 +119,19 @@ class OrderService():
 				db.session.add(order_item)
 				db.session.commit()
 				order_items.append(order_item.as_dict())
+			if payloads['payment_type'] == 'offline':
+				gross_amount = (item['count'] * ticket.price)
+				payment = Payment()
+				payment.order_id = order_id
+				payment.payment_type = 'offline'
+				payment.gross_amount = gross_amount
+				payment.transaction_time = datetime.datetime.now()
+				payment.transaction_status = 'pending'
+				db.session.add(payment)
+				db.session.commit()	
+			
+				# if payloads['payment_type'] == 'paypal':
+					# self.paypalorder(payloads)
 			# save all items
 			return {
 				'error': False,

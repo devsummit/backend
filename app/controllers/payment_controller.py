@@ -319,3 +319,21 @@ class PaymentController(BaseController):
                 digit = digit - 9
             sum = sum + digit
         return ((sum % 10) == 0)
+
+    @staticmethod
+    def confirm(request):
+        transaction_id = request.json['transaction_id'] if 'transaction_id' in request.json else None
+        amount = request.json['amount'] if 'amount' in request.json else None
+        order_id = request.json['order_id'] if 'order_id' in request.json else None
+        if transaction_id and amount and order_id:
+            payload = {
+                'transaction_id' : transaction_id,
+                'amount' : amount,
+                'order_id' : order_id
+            }
+            result = paymentservice.confirm(payload)
+            if result['error']:
+                return BaseController.send_error_api(result['data'], result['message'])
+            return BaseController.send_response_api(result['data'], result['message'])
+        else:
+            return BaseController.send_error_api(None, 'payload is invalid')
