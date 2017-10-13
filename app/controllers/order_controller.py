@@ -1,7 +1,6 @@
 from app.controllers.base_controller import BaseController
 from app.services import orderservice
 
-
 class OrderController(BaseController):
 
 	@staticmethod
@@ -21,6 +20,7 @@ class OrderController(BaseController):
 
 	@staticmethod
 	def create(request, user):
+		print('create')
 		user_id = user['id']
 		order_details = request.json['order_details'] if 'order_details' in request.json else None
 		referal_code = request.json['referal_code'] if 'referal_code' in request.json else None
@@ -36,17 +36,17 @@ class OrderController(BaseController):
 			'order_details': order_details,
 			'referal_code': referal_code 
 		}
-
-		result = orderservice.create(payloads)
 		
-		if payment_type is 'paypal':
+		if payment_type == 'paypal':
 			payloads = {
-				'currency': currency,
-				'gross_amount': gross_amount,
+				'currency': 'USD',
+				'gross_amount': '400000',
 				'order_details': order_details,
-				'payment_type': payment_type
 			}
 			result = orderservice.paypalorder(payloads, user)
+			return 's'
+		else:
+			result = orderservice.create(payloads)
 
 		if not result['error']:
 			return BaseController.send_response_api(result['data'], 'order succesfully created', result['included'])
@@ -59,3 +59,4 @@ class OrderController(BaseController):
 		if order['error']:
 			return BaseController.send_response_api(None, 'order not found')
 		return BaseController.send_response_api(None, 'order with id: ' + id + ' has been succesfully deleted')
+

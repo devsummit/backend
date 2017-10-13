@@ -1,4 +1,5 @@
 from app.models import db
+import paypalrestsdk
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
@@ -9,6 +10,55 @@ from app.models.order_details import OrderDetails
 
 
 class OrderService():
+
+	def __init__(self):
+		paypalrestsdk.configure({
+			  "mode": "sandbox", # sandbox or live
+			  "client_id": "ASPYNQMNEqYGkjNZ1nWG-MK8fB3qWgohghF0-o2POgl79_VRzUvxzu5Gy40htA1Jjt-f_iMUJ8iS2NAI",
+			  "client_secret": "EIIT0Y9MnxArXnYCEVSMoXBoit8rwK00eYxTjPB0v2fGhqkjJ9eLUsvyB2n4tQjUVpgujul8-99wlYnS" 
+		})
+
+
+	def paypalorder(self, payload, user):
+		order_details = payload['order_details']
+		ord_det = []
+		for order in order_details:
+			item = {}
+			ticket = db.session.query(Ticket).filter_by(id=order['ticket_id']).first().as_dict()
+			item['name'] = ticket['ticket_type']
+			item['quantity'] = str(order['count'])
+			item['currency'] = payload['currency']
+			item['price'] = ticket['price']
+
+			ord_det.append(item)
+
+		payment = paypalrestsdk.Payment({
+			"intent": "order",
+			"payer": {
+				"payment_method": "paypal"
+			},
+			"transactions": [{
+				"amount": {
+					"currency":payload['currency'],
+					"total": payload['gross_amount']
+				},
+				"payee": {
+					"email": 'shi77.andy-facilitator@gmail.com'
+				},
+				"description": "Devsummit ticket purchase.",
+				"item_list": {
+					"items": ord_det
+				}, 
+			}],
+			"redirect_urls": {
+				"return_url": "http://localhost:5000/payment/execute",
+		        "cancel_url": "http://localhost:5000/"
+		    }})
+		if payment.create():
+		  print("order created successfully")
+		else:
+		  print(payment.error)
+		return payment
 
 	def get(self, user_id):
 		orders = db.session.query(Order).filter_by(user_id=user_id).order_by(Order.created_at.desc()).all()
