@@ -87,7 +87,7 @@
     }
 
     var dsa = {}
-    
+    dsa.clearCredential = clearCredential
     /* Request service To Api */
     dsa.get = function(url, onSuccess=null) {
         $.ajax(ajaxObj(url, 'GET', null, onSuccess));

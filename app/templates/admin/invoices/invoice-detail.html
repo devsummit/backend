@@ -44,24 +44,15 @@
             Authorization: dsa.acess_token()
             },
             success    : function(result){
-                if(result['expired']) {
-                    clearCredential();
+                if(!result['data'] || result['expired']) {
+                    dsa.clearCredential();
                     window.location.href = '/login';
                 } else {
-                    fetchData = result
+                    onDataLoaded(result)
                 }
             }
         })
-
-    var normalizeData = function(data) {
-      if(!data) {
-        return null
-      }
-      normalized = data
-      normalized.data.total = normalized.data.total.toLocaleString('id', {style: 'currency', currency: 'IDR'})
-      return normalized
-    }
-    var invoiceData = normalizeData(fetchData)
+    var invoiceData
     var Invoice = {
       oncreate: function() {
         if (printState.printed) {
@@ -144,7 +135,7 @@
       if (!printState.printed) {
         return m('.buttons w-100 pa6 ph3', [
                   m('button.btn-email f2 f3-ns dib mr1 fr link dim br3 ph2 pv2 mb2 dib black bg-orange', {href:"#"}, "send to email"),
-                  m('a.btn-pdf f2 f3-ns dib mr1 fr link dim br3 ph4 pv2 mb2 dib black bg-gold', {href:"#!/printed"}, "pdf"),
+                  m('a.btn-pdf f2 f3-ns dib mr1 fr link dim br3 ph4 pv2 mb2 dib black bg-gold', {href:"#!/printed", target: "blank"}, "pdf"),
                   m('button.btn-print f2 f3-ns dib mr1 fr link dim br3 ph4 pv2 mb2 dib white bg-navy', {href:"#"}, "print"),
                 ])
       }
@@ -152,14 +143,23 @@
     }
 
     var openPDFGenerator =  function() {
-      var generatorPage;
-      var strWindowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
-      generatorPage = window.open("https://www.sejda.com/html-to-pdf?save-link", "PRINT INVOICE", strWindowFeatures);
+      window.location.href = "https://www.sejda.com/html-to-pdf?save-link"
     }
 
-    m.route(document.body, "/print", {
-      "/print": ()=>{window.printState = {printed: false}; return Invoice},
-      "/printed": ()=>{window.printState = {printed: true}; return Invoice},
-    })
+    var onDataLoaded = function(fetchData) {
+      const normalizeData = function(data) {
+        if(!data) {
+          return null
+        }
+        var normalized = data
+        normalized.data.total = normalized.data.total.toLocaleString('id', {style: 'currency', currency: 'IDR'})
+        return normalized
+      }
+      invoiceData = normalizeData(fetchData)
+      m.route(document.body, "/print", {
+        "/print": ()=>{window.printState = {printed: false}; return Invoice},
+        "/printed": ()=>{window.printState = {printed: true}; return Invoice},
+      })
+    }
   })
 </script>
