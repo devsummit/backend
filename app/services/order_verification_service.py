@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.order import Order
 from app.models.order_details import OrderDetails
 from app.models.user import User
+from app.models.payment import Payment
 from app.models.order_verification import OrderVerification
 from app.models.base_model import BaseModel
 from app.services.base_service import BaseService
@@ -121,6 +122,10 @@ class OrderVerificationService(BaseService):
 					UserTicketService().create(payload)
 			orderverification_query.update({
 				'is_used': 1
+			})
+			payment_query = db.session.query(Payment).filter_by(order_id=orderverification.order_id)
+			payment_query.update({
+				'transaction_status': 'capture'
 			})
 			db.session.commit()
 			return response.set_data(None).set_message('ticket created').build()

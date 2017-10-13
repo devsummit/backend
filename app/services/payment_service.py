@@ -554,10 +554,14 @@ class PaymentService():
 		for order in order_details:
 			check_total += order.price * order.count	
 		if check_total == paypal_details_amount:
+			payment_exist = db.session.query(Payment).filter_by(transaction_id=payload['transaction_id']).first()
+			if payment_exist:
+				return response.set_data(None).set_message('Payment had been completed!').set_error(True).build()
 			payment = Payment()
 			payment.order_id = payload['order_id']
 			payment.transaction_id = payload['transaction_id']
 			payment.gross_amount = payload['amount']
+			payment.payment_type = 'paypal'
 			payment.transaction_status = "captured"			
 			try:				
 				db.session.add(payment)
