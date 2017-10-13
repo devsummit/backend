@@ -83,6 +83,9 @@ class MainController(BaseController):
         invoices = invoiceservice.get()
         return render_template('admin/invoices/invoices.html', invoices=invoices['data'])
 
+    def showInvoice(id):
+        return render_template('admin/invoices/invoice-detail.html', invoice_id=id)
+
     def getStages():
         stages = stageservice.get()
         return render_template('admin/stages/stages.html', stages=stages)

@@ -62,17 +62,15 @@
                             {{ invoice.created_at|e }}
                         </td>
                         <td>
-                            <button id='btd-{{ invoice.id }}' type="button" class="btn btn-sm btn-info btn-detail" data-toggle="modal" data-target="#modal-detail">
+                            <a id='btd-{{ invoice.id }}' class="btn btn-sm btn-info btn-detail" href="/invoices/{{ invoice.id }}">
                                 Detail
-                            </button>
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        {% include "admin/invoices/invoice_detail.html" %}    
-
 
 {% endblock %}
 
