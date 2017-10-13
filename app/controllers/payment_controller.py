@@ -47,6 +47,7 @@ class PaymentController(BaseController):
         payment_type = request.json['payment_type'] if 'payment_type' in request.json else None
         gross_amount = request.json['gross_amount'] if 'gross_amount' in request.json else None
         bank = request.json['bank'] if 'bank' in request.json else None
+        payment_type = request.json['payment_type'] if 'payment_type' in request.json else None
         order_id = request.json['order_id'] if 'order_id' in request.json else None
         if(payment_type and payment_type == 'bank_transfer'):
 
@@ -56,7 +57,8 @@ class PaymentController(BaseController):
                         'payment_type': payment_type,
                         'gross_amount': gross_amount,
                         'bank': bank,
-                        'order_id': order_id
+                        'order_id': order_id,
+                        'payment_type': payment_type
                     }
                 else:
                     return BaseController.send_error_api(None, 'field is not complete')
