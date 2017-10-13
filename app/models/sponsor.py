@@ -9,7 +9,7 @@ class Sponsor(db.Model, BaseModel):
 	__tablename__ = 'sponsors'
 
 	# visible fields
-	visible = ['id', 'name', 'email', 'phone', 'note', 'type', 'stage', 'attachment', 'created_at', 'updated_at']
+	visible = ['id', 'name', 'email', 'phone', 'note', 'type', 'stage', 'attachment', 'url', 'callback_url', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -20,6 +20,8 @@ class Sponsor(db.Model, BaseModel):
 	type = db.Column(db.String)
 	stage = db.Column(db.String)
 	attachment = db.Column(db.String)
+	url = db.Column(db.String)
+	callback_url = db.Column(db.String)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 

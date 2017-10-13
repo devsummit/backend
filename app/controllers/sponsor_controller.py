@@ -23,6 +23,9 @@ class SponsorController(BaseController):
         type = request.form['type'] if 'type' in request.form else None
         stage = request.form['stage'] if 'stage' in request.form else None
         attachment = request.files['attachment'] if 'attachment' in request.files else None
+        url = request.form['url'] if 'url' in request.form else ''
+        callback_url = request.form['callback_url'] if 'callback_url' in request.form else ''
+
         if name and (email or phone):
             payloads = {
                 'name': name,
@@ -31,7 +34,9 @@ class SponsorController(BaseController):
                 'note': note,
                 'type': type,
                 'stage': stage,
-                'attachment': attachment
+                'attachment': attachment,
+                'callback_url': callback_url,
+                'url': url
             }
         else:
             BaseController.send_error_api(None, 'payload is invalid')
@@ -52,6 +57,8 @@ class SponsorController(BaseController):
         type = request.form['type'] if 'type' in request.form else None
         stage = request.form['stage'] if 'stage' in request.form else None
         attachment = request.files['attachment'] if 'attachment' in request.files else None
+        url = request.form['url'] if 'url' in request.form else None
+        callback_url = request.form['callback_url'] if 'callback_url' in request.form else None
 
         payloads = {
             'name': name,
@@ -60,7 +67,9 @@ class SponsorController(BaseController):
             'note': note,
             'type': type,
             'stage': stage,
-            'attachment': attachment
+            'attachment': attachment,
+            'callback_url': callback_url,
+            'url': url
         }
 
         result = sponsorservice.update(id, payloads)

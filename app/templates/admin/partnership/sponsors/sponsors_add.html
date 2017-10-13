@@ -52,6 +52,19 @@
                                     <textarea type="text" class="form-control" id="i-sponsor-note"></textarea>
                                 </div>
                             </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-url">Url:</label>
+                                    <textarea type="text" class="form-control" id="i-sponsor-url"></textarea>
+                                </div>
+                            </li>
+
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-callback-url">Callback url:</label>
+                                    <textarea type="text" class="form-control" id="i-sponsor-callback-url"></textarea>
+                                </div>
+                            </li>
                         </ul>
                         <a href="#" class="btn btn-primary btn-block btn-sponsor-save" id="-"><b>Save</b></a>
 
@@ -94,6 +107,8 @@
         formdata.append('email', $('#i-sponsor-email').val())
         formdata.append('phone', $('#i-sponsor-phone').val())
         formdata.append('note', $('#i-sponsor-note').val())
+        formdata.append('url', $('#i-sponsor-url').val())
+        formdata.append('callback_url', $('#i-sponsor-callback-url').val())
         formdata.append('type', sponsor_type)
         formdata.append('stage', $('#i-sponsor-stage').val())
         dsa.postForm('sponsors', formdata, function(result) {

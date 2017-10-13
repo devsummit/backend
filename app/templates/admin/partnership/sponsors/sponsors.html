@@ -36,6 +36,8 @@
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Note</th>
+                        <th>Url</th>
+                        <th>Callback url</th>
                         <th>Type</th>
                         <th>Logo</th>
                         <th>Stage</th>
@@ -56,6 +58,12 @@
                         </td>
                         <td>
                             {{ sponsor.note|e }}
+                        </td>
+                        <td>
+                            {{ sponsor.url|e }}
+                        </td>
+                        <td>
+                            {{ sponsor.callback_url|e }}
                         </td>
                         <td>
                             {% if sponsor.type %}
@@ -127,6 +135,8 @@
                 $('#e-sponsor-email').val(data['email']);
                 $('#e-sponsor-phone').val(data['phone']);
                 $('#e-sponsor-note').val(data['note']);
+                $('#e-sponsor-url').val(data['url']);
+                $('#e-sponsor-callback-url').val(data['callback_url']);
                 $("#e-img-upload").attr("src", data['attachment']);
 
                 SPONSOR_STAGES.map(function (stage) {
