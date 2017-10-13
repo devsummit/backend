@@ -540,12 +540,17 @@ class PaymentService():
 		db.session.commit()
 
 	def get_paypal_detail(self, id):
-		payment = paypalrestsdk.Payment.find(id)
+		try:
+			payment = paypalrestsdk.Payment.find(id)
+		except paypalrestsdk.ResourceNotFound as error:
+			payment = False
 		return payment
 
 	def confirm(self, payload):
 		response = ResponseBuilder()
 		paypal_details = self.get_paypal_detail(payload['transaction_id'])
+		if paypal_details == False:
+			return response.set_error(True).set_message('Transaction id not found').set_data(None).build()
 		paypal_details_amount = int(paypal_details['transactions'][0]['amount']['total'].split('.')[0])
 		order_ = db.session.query(Order).filter_by(id=payload['order_id']).first()
 		user = order_.user
