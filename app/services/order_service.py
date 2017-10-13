@@ -114,8 +114,8 @@ class OrderService():
 				db.session.add(order_item)
 				db.session.commit()
 				order_items.append(order_item.as_dict())
-				if payloads['payment_type'] == 'paypal':
-					self.paypalorder(payloads)
+				# if payloads['payment_type'] == 'paypal':
+					# self.paypalorder(payloads)
 			# save all items
 			return {
 				'error': False,

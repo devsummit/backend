@@ -35,16 +35,6 @@ class OrderController(BaseController):
 			'referal_code': referal_code 
 		}
 		
-		if payment_type == 'paypal':
-			payloads = {
-				'currency': 'USD',
-				'gross_amount': gross_amount,
-				'order_details': order_details,
-				'user_id': user_id,
-				'referal_code': referal_code,
-				'payment_type': payment_type
-			}
-
 		result = orderservice.create(payloads)
 
 		if not result['error']:
