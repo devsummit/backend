@@ -46,6 +46,7 @@ from app.controllers.prize_list_controller import PrizeListController
 from app.controllers.sponsor_template_controller import SponsorTemplateController
 from app.controllers.invoice_controller import InvoiceController
 from app.controllers.package_management_controller import PackageManagementController
+from app.controllers.order_verification_controller import OrderVerificationController
 
 from app.configs.constants import ROLE
 
@@ -964,3 +965,22 @@ def package_management_id(id, *args, **kwargs):
 def package_purchase(*args, **kwargs):
     if (request.method == 'POST'):
         return PackageManagementController.package_purchase(request)
+
+@api.route('/order-verification', methods=['GET', 'POST'])
+@token_required
+def order_verification_general (*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (request.method == 'GET'):
+        return OrderVerificationController.index(request, user)
+    else:
+        return OrderVerificationController.create(request)
+
+@api.route('/order-verification/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
+@token_required
+def order_verification_id(id, *args, **kwargs):
+    if (request.method == 'GET'):
+        return OrderVerificationController.show(id, request)
+    elif (request.method == 'PUT' or request.method == 'PATCH'):
+        return OrderVerificationController.update(id, request)
+    else:
+        return OrderVerificationController.delete(id)
