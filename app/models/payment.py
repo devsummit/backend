@@ -46,7 +46,7 @@ class Payment(db.Model, BaseModel):
         bank = db.Column(db.String)
         fraud_status = db.Column(db.String)
         va_number = db.Column(db.String)
-        currency = db.Column(db.Float)
+        currency = db.Column(db.String)
         created_at = db.Column(db.DateTime)
         updated_at = db.Column(db.DateTime)
         expired_at = db.Column(db.DateTime)

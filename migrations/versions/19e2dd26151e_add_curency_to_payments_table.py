@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column('payments', sa.Column('currency', sa.Float))
+    op.add_column('payments', sa.Column('currency', sa.String(255)))
 
 
 def downgrade():
