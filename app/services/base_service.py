@@ -79,7 +79,7 @@ class BaseService():
                 for pe in panel_event:
                     users.append(pe.user.include_photos().as_dict())
                 data['user'] = users
-            else:
+            elif item.type == 'speaker':
                 data['user'] = item.user.include_photos().as_dict()
             _results.append(data)
         self.paginated['data'] = _results
