@@ -3,6 +3,9 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.referal import Referal
+from app.models.user import User
+from app.builders.response_builder import ResponseBuilder
+from app.services.user_ticket_service import UserTicketService
 
 
 class ReferalService():
@@ -36,6 +39,25 @@ class ReferalService():
 				'data': {'sql_error': True},
 				'message': data
 			}
+
+
+	def reward_referal(self, user):
+		response = ResponseBuilder()
+		if user['referal_count'] < 10:
+			return response.set_data(None).set_message('Not sufficient referal count').set_error(True).build()
+		if user['referal_count'] > 10:
+			return response.set_data(None).set_message('You have taken your reward').set_error(True).build()
+		payload = {}
+		payload['user_id'] = user['id']
+		payload['ticket_id'] = 1
+		update_user = db.session.query(User).filter_by(id=user['id'])
+		update_user.update({
+			'referal_count': 11
+		})
+		db.session.commit()
+		UserTicketService().create(payload)
+		return response.set_data(None).set_message('You have successfully redeemed your reward').build()
+
 
 	def update(self, payloads, id):
 		try:
