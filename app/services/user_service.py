@@ -47,6 +47,8 @@ class UserService(BaseService):
 		return response.set_data(data).build()
 
 	def register(self, payloads):
+		user_refcount = 0
+		user_havref = 0
 		response = ResponseBuilder()
 		# payloads validation
 		if payloads is None:
@@ -84,22 +86,22 @@ class UserService(BaseService):
 					payload['ticket_id'] = 1						
 					receiver_id = referer_detail['id']
 					sender_id = 1
+					user_refcount = 1
+					user_havref = 1
 					# only send notification if count less than 10
 					if referer.referal_count < 10:
 						type = "Referral Notification"
 						message = "%s has registered referring you, your total referals count is: %d" % (payloads['username'], referer.referal_count)
-						print(message)
-						# FCMService().send_single_notification(type, message, receiver_id, sender_id)
+						FCMService().send_single_notification(type, message, receiver_id, sender_id)
 					# else count==10, send notif and create new ticket
 					else:
 						type = "Free Ticket Notification"
 						message = "Congratulation! You have been referred 10 times! You've got one free ticket, please check it on 'my ticket' menu"
-						print(message)
-						# FCMService().send_single_notification(type, message, receiver_id, sender_id)
+						FCMService().send_single_notification(type, message, receiver_id, sender_id)
 						UserTicketService().create(payload)
 
-		if referer is not None and referer.referal_count >= 10:
-			return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
+			if referer is not None and referer.referal_count >= 10:
+				return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
 
 		if payloads['email'] is not None:
 			try:
@@ -110,7 +112,9 @@ class UserService(BaseService):
 				self.model_user.username = payloads['username']
 				self.model_user.role_id = payloads['role']
 				self.model_user.social_id = payloads['social_id']
-
+				self.model_user.referal = self.generate_referal_code(3)
+				self.model_user.referal_count = user_refcount
+				self.model_user.have_refered = user_havref
 				if payloads['provider'] == 'email': 
 					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
