@@ -57,9 +57,13 @@ class OrderService():
 		    }})
 		result = payment.create()
 		if result:
-			print(payment.state)
+			self.get_paypal_detail(payment.id)
 		else:
 			print(payment.error)
+		return payment
+
+	def get_paypal_detail(self, id):
+		payment = paypalrestsdk.Payment.find(id)
 		return payment
 
 	def get(self, user_id):
