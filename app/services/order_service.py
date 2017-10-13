@@ -119,16 +119,17 @@ class OrderService():
 				db.session.add(order_item)
 				db.session.commit()
 				order_items.append(order_item.as_dict())
-				if payloads['payment_type'] == 'offline':
-					gross_amount = (item['count'] * ticket.price)
-					payment = Payment()
-					payment.order_id = order_id
-					payment.payment_type = 'offline'
-					payment.gross_amount = gross_amount
-					payment.transaction_time = datetime.datetime.now()
-					payment.transaction_status = 'pending'
-					db.session.add(payment)
-					db.session.commit()	
+			if payloads['payment_type'] == 'offline':
+				gross_amount = (item['count'] * ticket.price)
+				payment = Payment()
+				payment.order_id = order_id
+				payment.payment_type = 'offline'
+				payment.gross_amount = gross_amount
+				payment.transaction_time = datetime.datetime.now()
+				payment.transaction_status = 'pending'
+				db.session.add(payment)
+				db.session.commit()	
+			
 				# if payloads['payment_type'] == 'paypal':
 					# self.paypalorder(payloads)
 			# save all items
