@@ -22,6 +22,7 @@ class OrderController(BaseController):
 	def create(request, user_id):
 		order_details = request.json['order_details'] if 'order_details' in request.json else None
 		referal_code = request.json['referal_code'] if 'referal_code' in request.json else None
+		payment_type = request.json['payment_type'] if 'payment_type' in request.json else None
 
 		if order_details is None or len(order_details) < 1:
 			return BaseController.send_error_api({'payload_invalid': True}, 'payload is invalid')
@@ -29,7 +30,8 @@ class OrderController(BaseController):
 		payloads = {
 			'user_id': user_id,
 			'order_details': order_details,
-			'referal_code': referal_code 
+			'referal_code': referal_code,
+			'payment_type': payment_type
 		}
 		
 		result = orderservice.create(payloads)
