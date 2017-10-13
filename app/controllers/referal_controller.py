@@ -62,6 +62,13 @@ class ReferalController(BaseController):
 			return BaseController.send_error_api(result['data'], result['message'])	
 
 	@staticmethod
+	def reward_referal(user):
+		referal = referalservice.reward_referal(user)
+		if referal['error']:
+			return BaseController.send_error_api(referal['data'], referal['message'])
+		return BaseController.send_response_api(referal['data'], referal['message'])
+
+	@staticmethod
 	def delete(id):
 		referal = referalservice.delete(id)
 		if referal['error']:
