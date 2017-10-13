@@ -50,6 +50,9 @@ SAVE_BOOTH_GALL_DEST = 'images/booths/galleries/'
 # sponsor picture
 POST_SPONSOR_PIC_DEST = 'app/static/images/sponsor/'
 SAVE_SPONSOR_PIC_DEST = 'images/sponsor/'
+# payment proof
+POST_PAYMENT_PROOF_DEST = 'app/static/images/payment_proof/'
+SAVE_PAYMENT_PROOF_DEST = 'images/payment_proof/'
 
 GET_DEST = 'static/'
 STATIC_DEST = 'app/static/'
