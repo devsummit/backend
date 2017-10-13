@@ -15,9 +15,9 @@ class OrderService():
 
 	def __init__(self):
 		paypalrestsdk.configure({
-			  "mode": "sandbox", # sandbox or live
-			  "client_id": "ASPYNQMNEqYGkjNZ1nWG-MK8fB3qWgohghF0-o2POgl79_VRzUvxzu5Gy40htA1Jjt-f_iMUJ8iS2NAI",
-			  "client_secret": "EIIT0Y9MnxArXnYCEVSMoXBoit8rwK00eYxTjPB0v2fGhqkjJ9eLUsvyB2n4tQjUVpgujul8-99wlYnS" 
+			  "mode": PAYPAL['mode'], # sandbox or live
+			  "client_id": PAYPAL['client_id'],
+			  "client_secret": PAYPAL['client_secret']
 		})
 
 
@@ -53,8 +53,8 @@ class OrderService():
 				}, 
 			}],
 			"redirect_urls": {
-				"return_url": "http://localhost:5000/payment/execute",
-		        "cancel_url": "http://localhost:5000/"
+				"return_url": PAYPAL['return_url'],
+		        "cancel_url": PAYPAL['cancel_url']
 		    }})
 		result = payment.create()
 		if result:

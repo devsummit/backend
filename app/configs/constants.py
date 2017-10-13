@@ -46,7 +46,12 @@ VA_NUMBER = {
 }
 
 PAYPAL = {
-    'payee': 'shi77.andy-facilitator@gmail.com'
+    'mode': "sandbox",
+    'client_id': "ASPYNQMNEqYGkjNZ1nWG-MK8fB3qWgohghF0-o2POgl79_VRzUvxzu5Gy40htA1Jjt-f_iMUJ8iS2NAI",
+    'client_secret': "EIIT0Y9MnxArXnYCEVSMoXBoit8rwK00eYxTjPB0v2fGhqkjJ9eLUsvyB2n4tQjUVpgujul8-99wlYnS",
+    'payee': 'shi77.andy-facilitator@gmail.com',
+    'return_url': 'http://localhost:5000/payment/execute'
+    'cancel_url': 'http://localhost:5000/'
 }
 
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
