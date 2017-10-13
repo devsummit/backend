@@ -456,11 +456,11 @@ class UserService(BaseService):
 				if referal_count is not 10:
 					referal_count += 1
 					referal.update({
-						'referal_count': referal_count,
-						'have_refered': 1
+						'referal_count': referal_count
 					})
 					db.session.commit()
 					self.model_user.referal_count = 1
+					self.model_user.have_refered = 1
 			self.model_user.first_name = payloads['first_name']
 			self.model_user.last_name = payloads['last_name']
 			self.model_user.email = payloads['email']
