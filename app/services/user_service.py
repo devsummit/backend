@@ -2,6 +2,7 @@ import oauth2 as oauth
 import json
 import requests
 import datetime
+import secrets
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -46,6 +47,8 @@ class UserService(BaseService):
 		return response.set_data(data).build()
 
 	def register(self, payloads):
+		user_refcount = 0
+		user_havref = 0
 		response = ResponseBuilder()
 		# payloads validation
 		if payloads is None:
@@ -67,14 +70,38 @@ class UserService(BaseService):
 		check_referer = None
 		if 'referer' in payloads and payloads['referer']:
 			check_referer = db.session.query(User).filter_by(
-					referer=payloads['referer']).all()
+					referal=payloads['referer'])
 			#if the check_referer return empty list, must be first time referred
-			if not check_referer:
-				count_referer = 1
-			else:
-				count_referer = len(BaseModel.as_list(check_referer))
-		if check_referer is not None and count_referer >= 10:
-			return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
+			referer = check_referer.first()
+			if referer:
+				check_referer.update({
+					'referal_count': referer.referal_count + 1
+					})
+				db.session.commit()
+				# checking referer add full day ticket if reach 10 counts
+				if referer.referal_count > 0:
+					referer_detail = db.session.query(User).filter_by(referal=payloads['referer']).first().as_dict()
+					payload = {}
+					payload['user_id'] = referer_detail['id']
+					payload['ticket_id'] = 1						
+					receiver_id = referer_detail['id']
+					sender_id = 1
+					user_refcount = 1
+					user_havref = 1
+					# only send notification if count less than 10
+					if referer.referal_count < 10:
+						type = "Referral Notification"
+						message = "%s has registered referring you, your total referals count is: %d" % (payloads['username'], referer.referal_count)
+						FCMService().send_single_notification(type, message, receiver_id, sender_id)
+					# else count==10, send notif and create new ticket
+					else:
+						type = "Free Ticket Notification"
+						message = "Congratulation! You have been referred 10 times! You've got one free ticket, please check it on 'my ticket' menu"
+						FCMService().send_single_notification(type, message, receiver_id, sender_id)
+						UserTicketService().create(payload)
+
+			if referer is not None and referer.referal_count >= 10:
+				return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
 
 		if payloads['email'] is not None:
 			try:
@@ -85,39 +112,14 @@ class UserService(BaseService):
 				self.model_user.username = payloads['username']
 				self.model_user.role_id = payloads['role']
 				self.model_user.social_id = payloads['social_id']
-				# checking if referer role_id = 7
-				if payloads['referer'] is not None:
-					referer_role_id = db.session.query(User).filter_by(username=payloads['referer']).first()
-					if referer_role_id is not None and referer_role_id.as_dict()['role_id'] == 7:
-						self.model_user.referer = payloads['referer']
+				self.model_user.referal = self.generate_referal_code(3)
+				self.model_user.referal_count = user_refcount
+				self.model_user.have_refered = user_havref
 				if payloads['provider'] == 'email': 
 					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
 				db.session.commit()
 				data = self.model_user.as_dict()
-
-				# checking referer add full day ticket if reach 10 counts
-				if payloads['referer'] is not None:
-					check_referer_count = db.session.query(User).filter_by(referer=payloads['referer']).all()
-					if check_referer_count is not None and len(check_referer_count) > 0:
-						referer_detail = db.session.query(User).filter_by(username=payloads['referer']).first().as_dict()
-						count = len(check_referer_count)
-						payload = {}
-						payload['user_id'] = referer_detail['id']
-						payload['ticket_id'] = 1						
-						receiver_id = referer_detail['id']
-						sender_id = 1
-						# only send notification if count less than 10
-						if count < 10:
-							type = "Referral Notification"
-							message = "%s has registered referring you, your total referals count is: %d" % (payloads['username'], count)
-							FCMService().send_single_notification(type, message, receiver_id, sender_id)
-						# else count==10, send notif and create new ticket
-						else:
-							type = "Free Ticket Notification"
-							message = "Congratulation! You have been referred 10 times! You've got one free ticket, please check it on 'my ticket' menu"
-							FCMService().send_single_notification(type, message, receiver_id, sender_id)
-							UserTicketService().create(payload)
 
 				return response.set_error(False).set_data(data).set_message('User created successfully').build()
 
@@ -448,12 +450,26 @@ class UserService(BaseService):
 		response = ResponseBuilder()
 		try:
 			self.model_user = User()
+			if payloads['referal'] is not None:
+				referal = db.session.query(User).filter_by(referal=payloads['referal'])
+				referal_count = referal.first().referal_count
+				if referal_count is not 10:
+					referal_count += 1
+					referal.update({
+						'referal_count': referal_count
+					})
+					db.session.commit()
+					self.model_user.referal_count = 1
+					self.model_user.have_refered = 1
+				elif referal_count > 10:
+					return response.set_data(None).set_message('this referal code has exceeded its limit').set_error(True).build()
 			self.model_user.first_name = payloads['first_name']
 			self.model_user.last_name = payloads['last_name']
 			self.model_user.email = payloads['email']
 			self.model_user.username = payloads['username']
 			self.model_user.role_id = payloads['role_id']
 			self.model_user.hash_password('supersecret')
+			self.model_user.referal = self.generate_referal_code(3)
 			db.session.add(self.model_user)
 			db.session.commit()
 			data = self.model_user.as_dict()
@@ -467,6 +483,34 @@ class UserService(BaseService):
 		except SQLAlchemyError as e:
 			data = e.args
 			return response.set_data(None).set_message(data).set_error(True).build()
+
+	def redeemreferal(self, payloads, id):
+		response = ResponseBuilder()
+		user = db.session.query(User).filter_by(id=id)
+		user_referal = user.first().referal
+		if user_referal in payloads['referal']:
+			return response.set_data(None).set_message('dont redeem your own code').set_error(True).build()
+		user_have_refered = user.first().have_refered
+		if user_have_refered is 1:
+			return response.set_data(None).set_message('you cant redeem referal again').set_error(True).build()
+		referal = db.session.query(User).filter_by(referal=payloads['referal'])
+		referal_count = referal.first().referal_count
+		if referal_count is not 10:
+			referal_count += 1
+			referal.update({
+				'referal_count': referal_count
+			})
+			user_referal_count = user.first().referal_count
+			user_referal_count += 1
+			user.update({
+				'referal_count': user_referal_count,
+				'have_refered': 1
+			})
+			db.session.commit()
+			result = db.session.query(User).filter_by(id=id).first()
+			return response.set_data(result.as_dict()).build()
+		else:
+			return response.set_data(None).set_message('this referal code has exceeded its limit').set_error(True).build()
 
 	def include_role_data(self, user):
 		if (user['role_id'] is ROLE['speaker']):
@@ -528,3 +572,14 @@ class UserService(BaseService):
 		except SQLAlchemyError as e:
 			data = e.args
 			return response.set_error(True).set_message(data).build()
+	
+	def generate_referal_code(self, count):
+		check_codes = db.session.query(User).all()
+		for check_code in check_codes:
+			check_code.referal
+		code = secrets.token_hex(count)
+		if code is not check_code.referal:
+			return code.upper()
+		else:
+			code = secrets.token_hex(count)
+			return code.upper()

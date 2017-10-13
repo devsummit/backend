@@ -579,6 +579,13 @@ def referal(*args, **kwargs):
         return ReferalController.index()
 
 
+@api.route('/referals/reward', methods=['POST'])
+@token_required
+def reward_referal(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    return ReferalController.reward_referal(user);
+
+
 # Referal route by id
 @api.route('/referals/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @token_required
@@ -596,6 +603,12 @@ def referal_id(id, *args, **kwargs):
 @token_required
 def check_referal(*args, **kwargs):
     return ReferalController.check(request)
+
+@api.route('/referals/submit', methods=['POST'])
+@token_required
+def submit_required(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    return UserController.redeemreferal(request, user['id'])
 
 
 @api.route('/me', methods=['GET'])
