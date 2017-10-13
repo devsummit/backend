@@ -14,9 +14,9 @@ class OrderController(BaseController):
 	@staticmethod
 	def show(id):
 		order = orderservice.show(id)
-		if order is None:
-			return BaseController.send_error_api(None, 'order not found')
-		return BaseController.send_response_api(order.as_dict(), 'order retrieved successfully')
+		if order['error']:
+			return BaseController.send_error_api(order['data'], order['message'])
+		return BaseController.send_response_api(order['data'], order['message'])
 
 	@staticmethod
 	def create(request, user_id):

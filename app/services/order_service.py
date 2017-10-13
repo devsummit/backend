@@ -1,14 +1,18 @@
 from app.models import db
+from flask import current_app
+from app.services.helper import Helper 
 import paypalrestsdk
 import datetime
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
+from app.builders.response_builder import ResponseBuilder
 from app.models.ticket import Ticket
 from app.models.payment import Payment
 from app.models.referal import Referal
 from app.configs.constants import PAYPAL  # noqa
 from app.models.order_details import OrderDetails
+from app.models.order_verification import OrderVerification
 
 
 class OrderService():
@@ -21,47 +25,47 @@ class OrderService():
 		})
 
 
-	def paypalorder(self, payload):
-		order_details = payload['order_details']
-		ord_det = []
-		for order in order_details:
-			item = {}
-			ticket = db.session.query(Ticket).filter_by(id=order['ticket_id']).first().as_dict()
-			item['name'] = ticket['ticket_type']
-			item['quantity'] = str(order['count'])
-			item['currency'] = payload['currency']
-			item['price'] = ticket['price']
+	# def paypalorder(self, payload):
+	# 	order_details = payload['order_details']
+	# 	ord_det = []
+	# 	for order in order_details:
+	# 		item = {}
+	# 		ticket = db.session.query(Ticket).filter_by(id=order['ticket_id']).first().as_dict()
+	# 		item['name'] = ticket['ticket_type']
+	# 		item['quantity'] = str(order['count'])
+	# 		item['currency'] = payload['currency']
+	# 		item['price'] = ticket['price']
 
-			ord_det.append(item)
+	# 		ord_det.append(item)
 
-		payment = paypalrestsdk.Payment({
-			"intent": "order",
-			"payer": {
-				"payment_method": "paypal"
-			},
-			"transactions": [{
-				"amount": {
-					"currency":payload['currency'],
-					"total": payload['gross_amount']
-				},
-				"payee": {
-					"email": PAYPAL['payee']
-				},
-				"description": "Devsummit ticket purchase.",
-				"item_list": {
-					"items": ord_det
-				}, 
-			}],
-			"redirect_urls": {
-				"return_url": PAYPAL['return_url'],
-		        "cancel_url": PAYPAL['cancel_url']
-		    }})
-		result = payment.create()
-		if result:
-			self.get_paypal_detail(payment.id)
-		else:
-			print(payment.error)
-		return payment
+	# 	payment = paypalrestsdk.Payment({
+	# 		"intent": "order",
+	# 		"payer": {
+	# 			"payment_method": "paypal"
+	# 		},
+	# 		"transactions": [{
+	# 			"amount": {
+	# 				"currency":payload['currency'],
+	# 				"total": payload['gross_amount']
+	# 			},
+	# 			"payee": {
+	# 				"email": PAYPAL['payee']
+	# 			},
+	# 			"description": "Devsummit ticket purchase.",
+	# 			"item_list": {
+	# 				"items": ord_det
+	# 			}, 
+	# 		}],
+	# 		"redirect_urls": {
+	# 			"return_url": PAYPAL['return_url'],
+	# 	        "cancel_url": PAYPAL['cancel_url']
+	# 	    }})
+	# 	result = payment.create()
+	# 	if result:
+	# 		self.get_paypal_detail(payment.id)
+	# 	else:
+	# 		print(payment.error)
+	# 	return payment
 
 	def get_paypal_detail(self, id):
 		payment = paypalrestsdk.Payment.find(id)
@@ -90,8 +94,18 @@ class OrderService():
 		return results
 
 	def show(self, id):
-		order = db.session.query(Order).filter_by(id=id).first()
-		return order
+		response = ResponseBuilder()
+		order_raw = db.session.query(Order).filter_by(id=id).first()
+		if order_raw is None:
+			return response.set_error(True).set_message('Order not found').set_data(None).build()
+		order = order_raw.as_dict()
+		order_verification = db.session.query(OrderVerification).filter_by(order_id=id).first()
+		if order_verification:
+			order['verification'] = order_verification.as_dict()
+			order['verification']['payment_proof'] =  Helper().url_helper(order_verification.payment_proof , current_app.config['GET_DEST']) if order_verification.payment_proof else "https://museum.wales/media/40374/thumb_480/empty-profile-grey.jpg"
+		else:
+			order['verification'] = None
+		return response.set_data(order).set_message('Order retrieved').build()
 
 	def create(self, payloads):
 		self.model_order = Order()
