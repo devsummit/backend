@@ -551,6 +551,8 @@ class PaymentService():
 		user = order_.user
 		order_details = db.session.query(OrderDetails).filter_by(order_id=payload['order_id']).all()
 		check_total = 0
+		if order_ is None:
+			return response.set_error(True).set_data(None).set_message('Order not found').build()
 		for order in order_details:
 			check_total += order.price * order.count	
 		if check_total == paypal_details_amount:
@@ -560,7 +562,7 @@ class PaymentService():
 			payment = Payment()
 			payment.order_id = payload['order_id']
 			payment.transaction_id = payload['transaction_id']
-			payment.gross_amount = payload['amount']
+			payment.gross_amount = paypal_details_amount
 			payment.payment_type = 'paypal'
 			payment.transaction_status = "captured"			
 			try:				
@@ -568,10 +570,7 @@ class PaymentService():
 				db.session.commit()
 			except SQLAlchemyError as e:
 				data = e.orig.args
-				return {
-					'error': True,
-					'data': data
-				}
+				return response.set_data(None).set_message(data).set_error(True).build()
 			
 			for order in order_details:
 				for i in range(0, order.count):
@@ -581,4 +580,4 @@ class PaymentService():
 					UserTicketService().create(payload)
 			return response.set_data(None).set_message('Purchase Completed').build()
 		else:
-			return response.set_error(True).set_message('Paypal payment did not match').build()
+			return response.set_error(True).set_message('Paypal amount did not match').build()
