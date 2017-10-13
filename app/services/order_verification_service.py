@@ -21,7 +21,7 @@ from werkzeug import secure_filename
 class OrderVerificationService(BaseService):
 	
 	def get(self):
-		orderverifications = BaseModel.as_list(db.session.query(OrderVerification).all())
+		orderverifications = BaseModel.as_list(db.session.query(OrderVerification).filter_by(is_used=0).all())
 		for entry in orderverifications:
 			if entry['payment_proof']:
 				entry['payment_proof'] = Helper().url_helper(entry['payment_proof'], current_app.config['GET_DEST'])
@@ -108,13 +108,21 @@ class OrderVerificationService(BaseService):
 
 	def verify(self, id):
 		response = ResponseBuilder()
-		orderverification = db.session.query(OrderVerification).filter_by(id=id).first()
-		user = db.session.query(User).filter_by(id=orderverification.user_id).first()
-		items = db.session.query(OrderDetails).filter_by(order_id=orderverification.order_id).all()
-		for item in items:
-			for i in range(0, item.count):
-				payload = {}
-				payload['user_id'] = user.id
-				payload['ticket_id'] = item.ticket_id
-				UserTicketService().create(payload)
-		return response.set_data(None).set_message('ticket created').build()
+		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
+		orderverification = orderverification_query.first()
+		if orderverification.is_used is not 1:
+			user = db.session.query(User).filter_by(id=orderverification.user_id).first()
+			items = db.session.query(OrderDetails).filter_by(order_id=orderverification.order_id).all()
+			for item in items:
+				for i in range(0, item.count):
+					payload = {}
+					payload['user_id'] = user.id
+					payload['ticket_id'] = item.ticket_id
+					UserTicketService().create(payload)
+			orderverification_query.update({
+				'is_used': 1
+			})
+			db.session.commit()
+			return response.set_data(None).set_message('ticket created').build()
+		else:
+			return response.set_data(None).set_message('This payment has already verified').build()

@@ -8,7 +8,7 @@ class OrderVerification(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'order_verifications'
 	# displayed fields
-	visible = ['id', 'user_id', 'order_id', 'payment_proof', 'created_at', 'updated_at']
+	visible = ['id', 'user_id', 'order_id', 'payment_proof', 'is_used', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -23,6 +23,7 @@ class OrderVerification(db.Model, BaseModel):
 	payment_proof = db.Column(
 		db.String
 	)
+	is_used = db.Column(db.Integer, default=0)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
