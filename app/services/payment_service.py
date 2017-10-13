@@ -9,6 +9,7 @@ from app.models.payment import Payment
 from app.models.order_details import OrderDetails
 from app.models.order import Order
 from app.models.user_ticket import UserTicket
+from app.services.user_ticket_service import UserTicketService
 from app.builders.response_builder import ResponseBuilder
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 from app.configs.constants import VA_NUMBER
@@ -543,8 +544,11 @@ class PaymentService():
 		return payment
 
 	def confirm(self, payload):
+		response = ResponseBuilder()
 		paypal_details = self.get_paypal_detail(payload['transaction_id'])
 		paypal_details_amount = int(paypal_details['transactions'][0]['amount']['total'].split('.')[0])
+		order_ = db.session.query(Order).filter_by(id=payload['order_id']).first()
+		user = order_.user
 		order_details = db.session.query(OrderDetails).filter_by(order_id=payload['order_id']).all()
 		check_total = 0
 		for order in order_details:
@@ -564,12 +568,13 @@ class PaymentService():
 					'error': True,
 					'data': data
 				}
+			
 			for order in order_details:
 				for i in range(0, order.count):
 					payload = {}
 					payload['user_id'] = user.id
 					payload['ticket_id'] = order.ticket_id
-					UserTicketService().create(payload)			
+					UserTicketService().create(payload)
 			return response.set_data(None).set_message('Purchase Completed').build()
 		else:
 			return response.set_error(True).set_message('Paypal payment did not match').build()

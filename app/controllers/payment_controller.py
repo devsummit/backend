@@ -331,6 +331,9 @@ class PaymentController(BaseController):
                 'amount' : amount,
                 'order_id' : order_id
             }
-            return paymentservice.confirm(payload)
+            result = paymentservice.confirm(payload)
+            if result['error']:
+                return BaseController.send_error_api(result['data'], result['message'])
+            return BaseController.send_response_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api('payload is invalid')
+            return BaseController.send_error_api(None, 'payload is invalid')
