@@ -173,11 +173,10 @@ def spot_id(id, *args, **kwargs):
 @token_required
 def orders(*args, **kwargs):
     user_id = kwargs['user'].id
-    user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
         return OrderController.index(user_id)
     elif(request.method == 'POST'):
-        return OrderController.create(request, user)
+        return OrderController.create(request, user_id)
 
 
 @api.route('/orders/<id>', methods=['DELETE', 'GET'])

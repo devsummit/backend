@@ -19,9 +19,7 @@ class OrderController(BaseController):
 		return BaseController.send_response_api(order.as_dict(), 'order retrieved successfully')
 
 	@staticmethod
-	def create(request, user):
-		print('create')
-		user_id = user['id']
+	def create(request, user_id):
 		order_details = request.json['order_details'] if 'order_details' in request.json else None
 		referal_code = request.json['referal_code'] if 'referal_code' in request.json else None
 		payment_type = request.json['payment_type'] if 'payment_type' in request.json else None
@@ -40,13 +38,14 @@ class OrderController(BaseController):
 		if payment_type == 'paypal':
 			payloads = {
 				'currency': 'USD',
-				'gross_amount': '400000',
+				'gross_amount': gross_amount,
 				'order_details': order_details,
+				'user_id': user_id,
+				'referal_code': referal_code,
+				'payment_type': payment_type
 			}
-			result = orderservice.paypalorder(payloads, user)
-			return 's'
-		else:
-			result = orderservice.create(payloads)
+
+		result = orderservice.create(payloads)
 
 		if not result['error']:
 			return BaseController.send_response_api(result['data'], 'order succesfully created', result['included'])

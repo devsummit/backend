@@ -6,6 +6,7 @@ from app.models.order import Order
 from app.models.ticket import Ticket
 from app.models.payment import Payment
 from app.models.referal import Referal
+from app.configs.constants import PAYPAL  # noqa
 from app.models.order_details import OrderDetails
 
 
@@ -19,7 +20,7 @@ class OrderService():
 		})
 
 
-	def paypalorder(self, payload, user):
+	def paypalorder(self, payload):
 		order_details = payload['order_details']
 		ord_det = []
 		for order in order_details:
@@ -43,7 +44,7 @@ class OrderService():
 					"total": payload['gross_amount']
 				},
 				"payee": {
-					"email": 'shi77.andy-facilitator@gmail.com'
+					"email": PAYPAL['payee']
 				},
 				"description": "Devsummit ticket purchase.",
 				"item_list": {
@@ -54,10 +55,11 @@ class OrderService():
 				"return_url": "http://localhost:5000/payment/execute",
 		        "cancel_url": "http://localhost:5000/"
 		    }})
-		if payment.create():
-		  print("order created successfully")
+		result = payment.create()
+		if result:
+			print(payment.state)
 		else:
-		  print(payment.error)
+			print(payment.error)
 		return payment
 
 	def get(self, user_id):
@@ -112,6 +114,8 @@ class OrderService():
 				db.session.add(order_item)
 				db.session.commit()
 				order_items.append(order_item.as_dict())
+				if payloads['payment_type'] == 'paypal':
+					self.paypalorder(payloads)
 			# save all items
 			return {
 				'error': False,
