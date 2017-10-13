@@ -56,7 +56,12 @@
     var Invoice = {
       oncreate: function() {
         if (printState.printed) {
-          openPDFGenerator()
+          if (printState.output==='pdf') {
+            openPDFGenerator()
+          }
+          if (printState.output==='print') {
+            printDocument()
+          }
         }
       },
       view: function() {
@@ -134,9 +139,9 @@
     var Buttons = function() {
       if (!printState.printed) {
         return m('.buttons w-100 pa6 ph3', [
-                  m('button.btn-email f2 f3-ns dib mr1 fr link dim br3 ph2 pv2 mb2 dib black bg-orange', {href:"#"}, "send to email"),
-                  m('a.btn-pdf f2 f3-ns dib mr1 fr link dim br3 ph4 pv2 mb2 dib black bg-gold', {href:"#!/printed", target: "blank"}, "pdf"),
-                  m('button.btn-print f2 f3-ns dib mr1 fr link dim br3 ph4 pv2 mb2 dib white bg-navy', {href:"#"}, "print"),
+                  m('a.btn-email f2 f3-ns dib mr1 fr link dim br3 ph2 pv2 mb2 dib black bg-orange pointer', {onclick: ()=>{sendEmail(invoiceData['included']['email'])}}, "email"),
+                  m('a.btn-pdf f2 f3-ns dib mr1 fr link dim br3 ph4 pv2 mb2 dib black bg-gold pointer', {href:"#!/topdf", target: "blank"}, "pdf"),
+                  m('a.btn-print f2 f3-ns dib mr1 fr link dim br3 ph4 pv2 mb2 dib white bg-navy pointer', {href:"#!/toprint", target: "blank"}, "print"),
                 ])
       }
       return m('div',"")
@@ -145,7 +150,12 @@
     var openPDFGenerator =  function() {
       window.location.href = "https://www.sejda.com/html-to-pdf?save-link"
     }
-
+    var printDocument = function() {
+      window.print()
+    }
+    var sendEmail = function(email) {
+      window.open(`mailto:${email}?subject=Devsummit Invoice&body=This is the invoice for devsummit partnership, thank you`);
+    }
     var onDataLoaded = function(fetchData) {
       const normalizeData = function(data) {
         if(!data) {
@@ -158,7 +168,8 @@
       invoiceData = normalizeData(fetchData)
       m.route(document.body, "/print", {
         "/print": ()=>{window.printState = {printed: false}; return Invoice},
-        "/printed": ()=>{window.printState = {printed: true}; return Invoice},
+        "/topdf": ()=>{window.printState = {output:'pdf', printed: true}; return Invoice},
+        "/toprint": ()=>{window.printState = {output:'print', printed: true}; return Invoice},
       })
     }
   })
