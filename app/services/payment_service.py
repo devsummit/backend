@@ -548,16 +548,19 @@ class PaymentService():
 
 	def confirm(self, payload):
 		response = ResponseBuilder()
+		transaction_exist = db.session.query(Payment).filter_by(transaction_id=payload['transaction_id']).first()
+		if transaction_exist:
+			return response.set_error(True).set_message('this transaction have been used before').set_data(None).build()
 		paypal_details = self.get_paypal_detail(payload['transaction_id'])
 		if paypal_details == False:
 			return response.set_error(True).set_message('Transaction id not found').set_data(None).build()
 		paypal_details_amount = int(paypal_details['transactions'][0]['amount']['total'].split('.')[0])
 		order_ = db.session.query(Order).filter_by(id=payload['order_id']).first()
+		if order_ is None:
+			return response.set_error(True).set_data(None).set_message('Order not found').build()
 		user = order_.user
 		order_details = db.session.query(OrderDetails).filter_by(order_id=payload['order_id']).all()
 		check_total = 0
-		if order_ is None:
-			return response.set_error(True).set_data(None).set_message('Order not found').build()
 		for order in order_details:
 			check_total += order.price * order.count	
 		if check_total == paypal_details_amount:
