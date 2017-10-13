@@ -1,11 +1,14 @@
 import datetime
+from flask import current_app
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
+from app.services.helper import Helper 
 # import model class
 from app.models.order_details import OrderDetails
 from app.models.payment import Payment
 from app.models.ticket import Ticket
 from app.models.order import Order
+from app.models.order_verification import OrderVerification
 
 
 class OrderDetailsService():
@@ -14,11 +17,17 @@ class OrderDetailsService():
 		_results = []
 		order_details = db.session.query(OrderDetails).filter_by(order_id=order_id).all()
 		order = db.session.query(Order).filter_by(id=order_id).first()
+		order_verification = db.session.query(OrderVerification).filter_by(order_id=order_id).first()
 		payment = db.session.query(Payment).filter_by(order_id=order_id).first()
 		payment = payment.as_dict() if payment is not None else None
 		included = {}
 		included['referal'] = order.referal.as_dict() if order.referal else None
 		included['payment'] = payment
+		if order_verification:
+			included['verification'] = order_verification.as_dict()
+			included['verification']['payment_proof'] =  Helper().url_helper(order_verification.payment_proof , current_app.config['GET_DEST']) if order_verification.payment_proof else "https://museum.wales/media/40374/thumb_480/empty-profile-grey.jpg"
+		else:
+			included['verification'] = None
 		for detail in order_details:
 			order = detail.order.as_dict()
 			data = detail.as_dict()
