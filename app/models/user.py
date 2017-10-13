@@ -20,7 +20,7 @@ class User(db.Model, BaseModel):
     __tablename__ = 'users'
     # displayed fields
     visible = ['id', 'first_name', 'last_name', 'role_id', 'social_id', 'points',
-               'username', 'email', 'photos', 'fcmtoken', 'created_at', 'updated_at', 'referer']
+               'username', 'email', 'photos', 'fcmtoken', 'created_at', 'updated_at', 'referer', 'referal_count', 'have_refered']
 
     # columns definitions
     id = db.Column(db.Integer, primary_key=True)
@@ -43,6 +43,8 @@ class User(db.Model, BaseModel):
     referer = db.Column(db.String)
     fcmtoken = db.Column(db.String)
     points = db.Column(db.Integer, default=0)
+    referal_count = db.Column(db.Integer, default=0)
+    have_refered = db.Column(db.Integer, default=0)
 
     def __init__(self):
         self.created_at = datetime.datetime.now()
