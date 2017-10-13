@@ -461,6 +461,8 @@ class UserService(BaseService):
 					db.session.commit()
 					self.model_user.referal_count = 1
 					self.model_user.have_refered = 1
+				elif referal_count > 10:
+					return response.set_data(None).set_message('this referal code has exceeded its limit').set_error(True).build()
 			self.model_user.first_name = payloads['first_name']
 			self.model_user.last_name = payloads['last_name']
 			self.model_user.email = payloads['email']
@@ -481,6 +483,34 @@ class UserService(BaseService):
 		except SQLAlchemyError as e:
 			data = e.args
 			return response.set_data(None).set_message(data).set_error(True).build()
+
+	def redeemreferal(self, payloads, id):
+		response = ResponseBuilder()
+		user = db.session.query(User).filter_by(id=id)
+		user_referal = user.first().referal
+		if user_referal in payloads['referal']:
+			return response.set_data(None).set_message('dont redeem your own code').set_error(True).build()
+		user_have_refered = user.first().have_refered
+		if user_have_refered is 1:
+			return response.set_data(None).set_message('you cant redeem referal again').set_error(True).build()
+		referal = db.session.query(User).filter_by(referal=payloads['referal'])
+		referal_count = referal.first().referal_count
+		if referal_count is not 10:
+			referal_count += 1
+			referal.update({
+				'referal_count': referal_count
+			})
+			user_referal_count = user.first().referal_count
+			user_referal_count += 1
+			user.update({
+				'referal_count': user_referal_count,
+				'have_refered': 1
+			})
+			db.session.commit()
+			result = db.session.query(User).filter_by(id=id).first()
+			return response.set_data(result.as_dict()).build()
+		else:
+			return response.set_data(None).set_message('this referal code has exceeded its limit').set_error(True).build()
 
 	def include_role_data(self, user):
 		if (user['role_id'] is ROLE['speaker']):

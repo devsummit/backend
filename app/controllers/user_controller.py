@@ -81,6 +81,22 @@ class UserController(BaseController):
             return BaseController.send_error_api(None, result['data'])
 
     @staticmethod
+    def redeemreferal(request, id):
+        referal = request.json['referal'] if 'referal' in request.json else None
+        if referal:
+            payloads = {
+                'referal': referal
+            }
+        else:
+            return BaseController.send_error_api(None, 'field is not complete')
+
+        result = userservice.redeemreferal(payloads, id)
+        if result['error']:
+            return BaseController.send_error_api(result['data'], result['message'])
+        else:
+            return BaseController.send_response_api(result['data'], result['message'])
+
+    @staticmethod
     def redeemcode(request, user):
         code = request.json['redeem_code'] if 'redeem_code' in request.json else None
         if (user['role_id'] != 7):
