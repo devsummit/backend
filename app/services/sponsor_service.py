@@ -86,6 +86,8 @@ class SponsorService(BaseService):
         sponsor.stage = str(payload['stage']) if payload['stage'] else '1'  # default to one as lead
         sponsor.type = str(payload['type']) or '4' if sponsor.stage == '3' else None  # default to four if stage is official
         sponsor.attachment = attachment
+        sponsor.url = payload['url']
+        sponsor.callback_url = payload['callback_url']
         db.session.add(sponsor)
         try:
             db.session.commit()
@@ -141,6 +143,8 @@ class SponsorService(BaseService):
             attachment = self.save_file(payload['attachment']) if payload['attachment'] is not None else None
             new_data['attachment'] = attachment
         new_data['updated_at'] = datetime.datetime.now()
+        new_data['url'] = payload['url']
+        new_data['callback_url'] = payload['callback_url']
         sponsor.update(new_data)
         try:
             db.session.commit()
