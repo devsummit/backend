@@ -973,11 +973,13 @@ def package_management_id(id, *args, **kwargs):
     else:
         return PackageManagementController.delete(id)
 
+
 @api.route('/package_purchase', methods=['POST'])
 @token_required
 def package_purchase(*args, **kwargs):
     if (request.method == 'POST'):
         return PackageManagementController.package_purchase(request)
+
 
 @api.route('/order-verification', methods=['GET', 'POST'])
 @token_required
@@ -988,6 +990,7 @@ def order_verification_general (*args, **kwargs):
     else:
         return OrderVerificationController.create(request)
 
+
 @api.route('/order-verification/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
 @token_required
 def order_verification_id(id, *args, **kwargs):
@@ -997,3 +1000,12 @@ def order_verification_id(id, *args, **kwargs):
         return OrderVerificationController.update(id, request)
     else:
         return OrderVerificationController.delete(id)
+
+
+@api.route('/order-verification/<id>/verify', methods=['POST'])
+@token_required
+def verify_payment(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if user['role_id'] == ROLE['admin']:
+        return OrderVerificationController.verify(id, request)
+    return 'Unauthorized'

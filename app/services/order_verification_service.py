@@ -4,16 +4,19 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
+from app.models.order_details import OrderDetails
 from app.models.user import User
 from app.models.order_verification import OrderVerification
 from app.models.base_model import BaseModel
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
+from app.services.user_ticket_service import UserTicketService
 from flask import current_app
 from PIL import Image
 from app.configs.constants import IMAGE_QUALITY
 from app.services.helper import Helper 
 from werkzeug import secure_filename
+
 
 class OrderVerificationService(BaseService):
 	
@@ -103,5 +106,15 @@ class OrderVerificationService(BaseService):
 		else:
 			return None
 
-
-
+	def verify(self, id):
+		response = ResponseBuilder()
+		orderverification = db.session.query(OrderVerification).filter_by(id=id).first()
+		user = db.session.query(User).filter_by(id=orderverification.user_id).first()
+		items = db.session.query(OrderDetails).filter_by(order_id=orderverification.order_id).all()
+		for item in items:
+			for i in range(0, item.count):
+				payload = {}
+				payload['user_id'] = user.id
+				payload['ticket_id'] = item.ticket_id
+				UserTicketService().create(payload)
+		return response.set_data(None).set_message('ticket created').build()
