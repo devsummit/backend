@@ -35,23 +35,24 @@ class OrderVerificationService(BaseService):
 		orderverification_query = db.session.query(OrderVerification).filter_by(order_id=payload['order_id'])
 		orderverification = orderverification_query.first()
 		payment_proof = self.save_file(payload['payment_proof']) if payload['payment_proof'] is not None else None
-		payment_saved_path = Helper().url_helper(payment_proof, current_app.config['GET_DEST'])
 		if orderverification:
 			if orderverification.payment_proof is not None:
 				Helper().silent_remove(current_app.config['STATIC_DEST'] + orderverification.payment_proof)
 			orderverification_query.update({
-				'payment_proof': payment_saved_path,
+				'payment_proof': payment_proof,
 				'updated_at': datetime.datetime.now()
 			})
 		else:
 			orderverification = OrderVerification()
 			orderverification.user_id = payload['user_id']
 			orderverification.order_id = payload['order_id']
-			orderverification.payment_proof = payment_saved_path
+			orderverification.payment_proof = payment_proof
 			db.session.add(orderverification)
 		try:
 			db.session.commit()
-			return response.set_data(orderverification.as_dict()).set_message('Data created succesfully').build()
+			result = orderverification.as_dict()
+			result['payment_proof'] = Helper().url_helper(result['payment_proof'], current_app.config['GET_DEST'])
+			return response.set_data(result).set_message('Data created succesfully').build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
 			return response.set_data(data).set_error(True).build()
