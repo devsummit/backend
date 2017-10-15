@@ -14,13 +14,12 @@ class OrderVerificationController(BaseController):
 		return BaseController.send_response_api(order_verification_details, 'order verification details retrieved successfully')
 
 	@staticmethod
-	def create(request):
+	def create(request, user):
 		payment_proof = request.files['payment_proof'] if 'payment_proof' in request.files else ''
-		user_id = request.form['user_id'] if 'user_id' in request.form else ''
 		order_id = request.form['order_id'] if 'order_id' in request.form else ''
-		if payment_proof and user_id and order_id:
+		if payment_proof and order_id:
 			payloads = {
-				'user_id': user_id,
+				'user_id': user['id'],
 				'order_id': order_id,
 				'payment_proof': payment_proof
 			}

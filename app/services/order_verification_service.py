@@ -32,12 +32,23 @@ class OrderVerificationService(BaseService):
 
 	def create(self, payload):
 		response = ResponseBuilder()
+		orderverification_query = db.session.query(OrderVerification).filter_by(order_id=payload['order_id'])
+		orderverification = orderverification_query.first()
 		payment_proof = self.save_file(payload['payment_proof']) if payload['payment_proof'] is not None else None
-		orderverification = OrderVerification()
-		orderverification.user_id = payload['user_id']
-		orderverification.order_id = payload['order_id']
-		orderverification.payment_proof = Helper().url_helper(payment_proof, current_app.config['GET_DEST'])
-		db.session.add(orderverification)
+		payment_saved_path = Helper().url_helper(payment_proof, current_app.config['GET_DEST'])
+		if orderverification:
+			if orderverification.payment_proof is not None:
+				Helper().silent_remove(current_app.config['STATIC_DEST'] + orderverification.payment_proof)
+			orderverification_query.update({
+				'payment_proof': payment_saved_path,
+				'updated_at': datetime.datetime.now()
+			})
+		else:
+			orderverification = OrderVerification()
+			orderverification.user_id = payload['user_id']
+			orderverification.order_id = payload['order_id']
+			orderverification.payment_proof = payment_saved_path
+			db.session.add(orderverification)
 		try:
 			db.session.commit()
 			return response.set_data(orderverification.as_dict()).set_message('Data created succesfully').build()
