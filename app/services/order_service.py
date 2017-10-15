@@ -165,6 +165,12 @@ class OrderService():
 	def delete(self, id):
 		self.model_order = db.session.query(Order).filter_by(id=id)
 		if self.model_order.first() is not None:
+			self.model_order_details = db.session.query(OrderDetails).filter_by(order_id=self.model_order.first().id)
+			self.model_order_payment = db.session.query(Payment).filter_by(order_id=self.model_order.first().id)
+			self.model_order_details.delete()
+			self.model_order_payment.delete()
+			db.session.commit()
+
 			# delete row
 			self.model_order.delete()
 			db.session.commit()
