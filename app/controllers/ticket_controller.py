@@ -52,6 +52,7 @@ class TicketController(BaseController):
 		type = request.form['type'] if 'type' in request.form else ''
 		proposal_url = request.files['proposal_url'] if 'proposal_url' in request.files else None
 		usd_price = request.form['usd_price'] if 'usd_price' in request.form else None
+		quota = request.form['quota'] if 'quota' in request.form else None
 
 		if ticket_type and price:
 			payloads = {
@@ -60,7 +61,8 @@ class TicketController(BaseController):
 				'information': information,
 				'type': type,
 				'proposal_url': proposal_url,
-				'usd_price': usd_price
+				'usd_price': usd_price,
+				'quota': quota
 			}
 		else:
 			return BaseController.send_error_api(None, 'field is not complete')

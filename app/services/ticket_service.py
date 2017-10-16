@@ -119,6 +119,7 @@ class TicketService():
 				'information': payloads['information'],
 				'type': payloads['type'],
 				'usd_price': payloads['usd_price'],
+				'quota': payloads['quota'],
 				'proposal_url': proposal_url,
 				'updated_at': datetime.datetime.now()
 			})
