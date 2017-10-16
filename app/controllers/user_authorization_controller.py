@@ -136,10 +136,14 @@ class UserAuthorizationController(BaseController):
             return BaseController.send_response_api({'payload_invalid': True}, 'payloads not valid')
 
         result = userservice.register(payloads)
-        if not result['error']:
-            return BaseController.send_response_api(result['data'], 'user succesfully registered')
+
+        if isinstance(result,dict):
+            if result['error']:
+                return BaseController.send_error_api(result['data'], result['message'])
         else:
-            return BaseController.send_error_api(result['data'], result['message'])
+            token = userservice.save_token()
+            user = userservice.include_role_data(result.include_photos().as_dict())
+            return BaseController.send_response_api({'access_token': token['data'].access_token, 'refresh_token': token['data'].refresh_token}, 'User created successfully', user)
 
     @staticmethod
     def change_name(request, user):

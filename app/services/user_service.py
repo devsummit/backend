@@ -119,10 +119,8 @@ class UserService(BaseService):
 					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
 				db.session.commit()
-				data = self.model_user.as_dict()
-
-				return response.set_error(False).set_data(data).set_message('User created successfully').build()
-
+				data = self.model_user
+				return data
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return response.set_error(True).set_message('SQL error').set_data(data).build()
