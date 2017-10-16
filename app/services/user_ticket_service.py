@@ -93,6 +93,7 @@ class UserTicketService():
         new_user_ticket = UserTicket()
         new_user_ticket.user_id = payload['user_id']
         new_user_ticket.ticket_id = payload['ticket_id']
+
         db.session.add(new_user_ticket)
         try:
             db.session.commit()

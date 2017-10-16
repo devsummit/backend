@@ -22,13 +22,17 @@ from werkzeug import secure_filename
 class OrderVerificationService(BaseService):
 	
 	def get(self):
-		orderverifications = BaseModel.as_list(db.session.query(OrderVerification).filter_by(is_used=0).all())
+		orderverifications = db.session.query(OrderVerification).filter_by(is_used=0).all()
+		_result = []
 		for entry in orderverifications:
-			if entry['payment_proof']:
-				entry['payment_proof'] = Helper().url_helper(entry['payment_proof'], current_app.config['GET_DEST'])
+			data = entry.as_dict()
+			if data['payment_proof']:
+				data['payment_proof'] = Helper().url_helper(data['payment_proof'], current_app.config['GET_DEST'])
 			else:
-				entry['payment_proof'] = ""
-		return orderverifications
+				data['payment_proof'] = ""
+			data['user'] = entry.user.include_photos().as_dict()
+			_result.append(data)
+		return _result
 
 	def create(self, payload):
 		response = ResponseBuilder()

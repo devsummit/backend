@@ -25,7 +25,7 @@ var Verification = {
         })
         .then(function(result) {
             if(result.meta.success) {
-                alert('Verification success tiket have been created!')
+                alert('Verification success ticket have been created!')
                 Verification.current.is_used = true
             }
         })
