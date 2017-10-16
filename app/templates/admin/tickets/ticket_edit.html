@@ -24,10 +24,31 @@
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
+                                    <label for="ticket-price">Ticket USD price:</label>
+                                    <input type="text" class="form-control ticket-usd-price" id="ticket-usd-price">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
                                     <label for="ticket-information">Ticket information:</label>
                                     <input type="text" class="form-control ticket-information" id="ticket-information">
                                 </div>
                             </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-ticket-type">Ticket Type:</label>
+                                    <select class="form-control type-edit" id="edit-type">
+                                            <option id="1" value="user">User</option>
+                                            <option id="2" value="exhibitor">Exhibitor</option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li class="list-group-item proposal-edit">
+                                    <div class="form-group">
+                                        <label for="i-photo">Proposal Url:</label>
+                                        <input class="input-file e-proposal" id="e-proposal" type="file" name="file" accept=".ppt,.pptx,.pdf">
+                                    </div>
+                                </li>
                         </ul>
                         <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
 
@@ -47,17 +68,30 @@
 <!-- page script -->
 <script>
     /* Display Attendee Detail */
-    $('.btn-save').click(function(event) {
-        const id = $(this).attr('id');
-        payload = {
-            "ticket_type": $('.ticket-type').val(),
-            "price": $('.ticket-price').val(),
-            "information": $('.ticket-information').val()
-        };
-        dsa.patch('tickets/' + id, payload, function(result) {
 
-            console.log(result, 'saved');
-            if (result.meta.success) {
+    $('.type-edit').change(function(){
+        var val = $('.type-edit').val();
+        if (val === 'exhibitor'){
+            $('.proposal-edit').show()
+        }else if(val === 'user'){
+            $('.proposal-edit').hide()
+        }
+    })
+
+    $('.btn-save').click(function(event){
+        const id = $(this).attr('id');
+        console.log(id)
+        var form = $('#upload-proposal')[0];
+        const formdata = new FormData(form);
+        formdata.append('ticket_type', $('.ticket-type').val());
+        formdata.append('price', $('.ticket-price').val());
+        formdata.append('usd_price', $('.ticket-usd-price').val());
+        formdata.append('information', $('.ticket-information').val());
+        formdata.append('type', $('.type-edit').val());
+        formdata.append('proposal_url', $('#e-proposal')[0].files[0])
+        console.log($('.add-ticket-type').val())
+        dsa.patchForm('tickets/' + id, formdata, function(result) {
+            if(result.meta.success) {
                 window.location = "/tickets";
             }
         });

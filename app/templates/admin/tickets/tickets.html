@@ -30,6 +30,7 @@
                     <th>Ticket type</th>
                     <th>Price</th>
                     <th>Information</th>
+                    <th>Type</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -44,6 +45,9 @@
                         </td>
                         <td>
                             {{ ticket.information }}
+                        </td>
+                        <td>
+                            {{ ticket.type }}
                         </td>
                          <td>
                             <button id='bte-{{ ticket.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
@@ -76,7 +80,7 @@
 <script>
     /* Edit ticket */
     $('.btn-edit').click(function(event){
-        $('.modal-title').html('Edit');
+        $('.modal-title').html('Edit Ticket');
 
         const bte_id = $(this).attr('id');
         const id = bte_id.substring(4, bte_id.length);
@@ -86,6 +90,8 @@
             $('.ticket-type').val(data['ticket_type']);
             $('.ticket-price').val(data['price']);
             $('.ticket-information').val(data['information']);
+            $('.ticket-usd-price').val(data['usd_price']);
+            $('.type-edit').val(data['type']);
             $('.btn-save').attr("id", data['id']);
         });
     })

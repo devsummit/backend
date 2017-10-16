@@ -85,6 +85,7 @@ class TicketService():
 		self.model_ticket.price = payloads['price']
 		self.model_ticket.information = payloads['information']
 		self.model_ticket.type = payloads['type']
+		self.model_ticket.usd_price = payloads['usd_price']
 		if payloads['type'] == 'exhibitor' or payloads['type'] == 'Exhibitor':
 			proposal_url = self.save_file(payloads['proposal_url']) if payloads['proposal_url'] is not None else None
 			self.model_ticket.proposal_url = proposal_url
@@ -114,6 +115,7 @@ class TicketService():
 				'price': payloads['price'],
 				'information': payloads['information'],
 				'type': payloads['type'],
+				'usd_price': payloads['usd_price'],
 				'proposal_url': proposal_url,
 				'updated_at': datetime.datetime.now()
 			})
