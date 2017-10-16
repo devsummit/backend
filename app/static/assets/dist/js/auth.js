@@ -49,7 +49,7 @@
     });
 
     const ajaxObjForm = (url, methodType, payloads, onSuccess) => ({
-        url : 'api/v1/'+url,
+        url : window.location.origin + '/api/v1/'+url,
         type: methodType,
         data: payloads,
         processData: false,

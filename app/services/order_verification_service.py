@@ -44,7 +44,8 @@ class OrderVerificationService(BaseService):
 			})
 		else:
 			orderverification = OrderVerification()
-			orderverification.user_id = payload['user_id']
+			order = db.session.query(Order).filter_by(id=payload['order_id']).first()
+			orderverification.user_id = order.user_id
 			orderverification.order_id = payload['order_id']
 			orderverification.payment_proof = payment_proof
 			db.session.add(orderverification)
@@ -139,6 +140,10 @@ class OrderVerificationService(BaseService):
 			payment_query = db.session.query(Payment).filter_by(order_id=orderverification.order_id)
 			payment_query.update({
 				'transaction_status': 'capture'
+			})
+			completed_order = db.session.query(Order).filter_by(id=orderverification.order_id)
+			completed_order.update({
+				'status': 'paid'
 			})
 			db.session.commit()
 			return response.set_data(None).set_message('ticket created').build()

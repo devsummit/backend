@@ -194,3 +194,13 @@ def package_purchase():
 @main.route('/ticket-transfer-logs')
 def ticket_transfer_logs():
     return MainController.getTransferLog(request)
+
+
+@main.route('/payment-verification')
+def verification_list():
+    return MainController.verification_list()
+
+
+@main.route('/payment-verification/submit-proof')
+def submit_proof():
+    return MainController.submit_proof(request)

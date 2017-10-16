@@ -993,7 +993,7 @@ def order_verification_general (*args, **kwargs):
     if (request.method == 'GET'):
         return OrderVerificationController.index(request, user)
     else:
-        return OrderVerificationController.create(request, user)
+        return OrderVerificationController.create(request)
 
 
 @api.route('/order-verification/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])

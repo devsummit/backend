@@ -586,6 +586,11 @@ class PaymentService():
 					payload['user_id'] = user.id
 					payload['ticket_id'] = order.ticket_id
 					UserTicketService().create(payload)
+			confirmed_order = db.session.query(Order).filter_by(id=payment.order_id)
+			confirmed_order.update({
+				'status': 'paid'
+			})
+			db.session.commit()
 			return response.set_data(None).set_message('Purchase Completed').build()
 		else:
 			return response.set_error(True).set_message('Paypal amount did not match').build()
