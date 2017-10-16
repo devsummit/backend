@@ -149,6 +149,7 @@ class UserAuthorizationController(BaseController):
     @staticmethod
     def refresh_me(user):
         token, res_user = userservice.get_user_info(user)
+        user = userservice.include_role_data(res_user)
         if token is None:
             BaseController.send_error_api(None, 'user not found')
         return BaseController.send_response_api({'access_token': token['access_token'], 'refresh_token': token['refresh_token']}, 'User data retrieved', res_user)
