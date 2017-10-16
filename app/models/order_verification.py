@@ -23,6 +23,8 @@ class OrderVerification(db.Model, BaseModel):
 	payment_proof = db.Column(
 		db.String
 	)
+	user = db.relationship('User')
+	order = db.relationship('Order')
 	is_used = db.Column(db.Integer, default=0)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
