@@ -1,4 +1,6 @@
 import datetime
+import os
+from flask import current_app
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
@@ -6,6 +8,7 @@ from app.models.ticket import Ticket
 from app.models.payment import Payment
 from app.models.order_details import OrderDetails
 from app.configs.constants import SLOT
+from app.services.helper import Helper 
 
 
 class TicketService():
@@ -53,9 +56,12 @@ class TicketService():
 		_results = []
 		for ticket in tickets:
 			data = ticket.as_dict()
+			if data['proposal_url'] is not None:
+				data['proposal_url'] = Helper().url_helper(data['proposal_url'], current_app.config['GET_PROPOSAL_DOC_DEST'])
 			_results.append(data)
 		count_data = self.include_ticket_left(_results)
 		_results = self.include_count_data(count_data, _results)
+		
 		return {
 			'error': False,
 			'data': _results,
@@ -78,10 +84,16 @@ class TicketService():
 		self.model_ticket.ticket_type = payloads['ticket_type']
 		self.model_ticket.price = payloads['price']
 		self.model_ticket.information = payloads['information']
+		self.model_ticket.type = payloads['type']
+		if payloads['type'] == 'exhibitor' or payloads['type'] == 'Exhibitor':
+			proposal_url = self.save_file(payloads['proposal_url']) if payloads['proposal_url'] is not None else None
+			self.model_ticket.proposal_url = proposal_url
 		db.session.add(self.model_ticket)
 		try:
 			db.session.commit()
 			data = self.model_ticket.as_dict()
+			if payloads['type'] == 'exhibitor' or payloads['type'] == 'Exhibitor':
+				data['proposal_url'] = Helper().url_helper(data['proposal_url'], current_app.config['GET_PROPOSAL_DOC_DEST'])
 			return {
 				'error': False,
 				'data': data
@@ -96,10 +108,13 @@ class TicketService():
 	def update(self, payloads, id):
 		try:
 			self.model_ticket = db.session.query(Ticket).filter_by(id=id)
+			proposal_url = self.save_file(payloads['proposal_url']) if payloads['proposal_url'] is not None else None
 			self.model_ticket.update({
 				'ticket_type': payloads['ticket_type'],
 				'price': payloads['price'],
 				'information': payloads['information'],
+				'type': payloads['type'],
+				'proposal_url': proposal_url,
 				'updated_at': datetime.datetime.now()
 			})
 			db.session.commit()
@@ -131,3 +146,11 @@ class TicketService():
 				'error': True,
 				'data': data
 			}
+
+	def save_file(self, file, id=None):
+		if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_PROPOSAL_DOC_EXTENSIONS']):
+			filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
+			file.save(os.path.join(current_app.config['POST_PROPOSAL_DOC_DEST'], filename))
+			return current_app.config['SAVE_PROPOSAL_DOC_DEST'] + filename
+		else:
+			return None

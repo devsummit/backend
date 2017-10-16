@@ -18,15 +18,21 @@ class TicketController(BaseController):
 
 	@staticmethod
 	def create(request):
-		ticket_type = request.json['ticket_type'] if 'ticket_type' in request.json else None
-		price = request.json['price'] if 'price' in request.json else None
-		information = request.json['information'] if 'information' in request.json else ''
+		ticket_type = request.form['ticket_type'] if 'ticket_type' in request.form else None
+		price = request.form['price'] if 'price' in request.form else None
+		information = request.form['information'] if 'information' in request.form else ''
+		type = request.form['type'] if 'type' in request.form else ''
+		proposal_url = request.files['proposal_url'] if 'proposal_url' in request.files else None
+		usd_price = request.form['usd_price'] if 'usd_price' in request.form else None
 
 		if ticket_type and price:
 			payloads = {
 				'ticket_type': ticket_type,
 				'price': price,
-				'information': information
+				'information': information,
+				'type': type,
+				'proposal_url': proposal_url,
+				'usd_price': usd_price
 			}
 		else:
 			return BaseController.send_error_api(None, 'field is not complete')
@@ -40,14 +46,21 @@ class TicketController(BaseController):
 
 	@staticmethod
 	def update(request, id):
-		ticket_type = request.json['ticket_type'] if 'ticket_type' in request.json else None
-		price = request.json['price'] if 'price' in request.json else None
-		information = request.json['information'] if 'information' in request.json else ''
+		ticket_type = request.form['ticket_type'] if 'ticket_type' in request.form else None
+		price = request.form['price'] if 'price' in request.form else None
+		information = request.form['information'] if 'information' in request.form else ''
+		type = request.form['type'] if 'type' in request.form else ''
+		proposal_url = request.files['proposal_url'] if 'proposal_url' in request.files else None
+		usd_price = request.form['usd_price'] if 'usd_price' in request.form else None
+
 		if ticket_type and price:
 			payloads = {
 				'ticket_type': ticket_type,
 				'price': price,
-				'information': information
+				'information': information,
+				'type': type,
+				'proposal_url': proposal_url,
+				'usd_price': usd_price
 			}
 		else:
 			return BaseController.send_error_api(None, 'field is not complete')

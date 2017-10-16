@@ -53,6 +53,13 @@ SAVE_SPONSOR_PIC_DEST = 'images/sponsor/'
 # payment proof
 POST_PAYMENT_PROOF_DEST = 'app/static/images/payment_proof/'
 SAVE_PAYMENT_PROOF_DEST = 'images/payment_proof/'
+#PROPOSAL DOC
+POST_PROPOSAL_DOC_DEST = 'app/static/documents/proposals/'
+SAVE_PROPOSAL_DOC_DEST = 'documents/proposals/'
+GET_PROPOSAL_DOC_DEST = 'static/'
+STATIC_DEST = 'app/static/'
+# These are the extentions that we are accepting to be upload
+ALLOWED_PROPOSAL_DOC_EXTENSIONS = set(['pdf', 'ppt'])
 
 GET_DEST = 'static/'
 STATIC_DEST = 'app/static/'
