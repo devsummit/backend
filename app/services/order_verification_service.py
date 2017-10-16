@@ -8,14 +8,19 @@ from app.models.order_details import OrderDetails
 from app.models.user import User
 from app.models.payment import Payment
 from app.models.order_verification import OrderVerification
+from app.models.ticket import Ticket
 from app.models.base_model import BaseModel
+from app.models.booth import Booth
+from app.models.user_booth import UserBooth
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from app.services.user_ticket_service import UserTicketService
+from app.services.redeem_code_service import RedeemCodeService
 from flask import current_app
 from PIL import Image
-from app.configs.constants import IMAGE_QUALITY
-from app.services.helper import Helper 
+from app.configs.constants import IMAGE_QUALITY, ROLE
+from app.services.helper import Helper
+from app.configs.constants import TICKET_TYPES
 from werkzeug import secure_filename
 
 
@@ -125,19 +130,50 @@ class OrderVerificationService(BaseService):
 		else:
 			return None
 
+	def create_booth(self, user):
+		booth = Booth()
+		booth.name = 'Your booth name here'
+		booth.user_id = user.id
+		booth.points = 0
+		booth.summary = ''
+		booth.logo_url = None
+		booth.stage_id = None
+		db.session.add(booth)
+		db.session.commit()
+		userbooth = UserBooth()
+		userbooth.user_id = user.id
+		userbooth.booth_id = booth.id
+		db.session.add(userbooth)
+		db.session.commit()
+
 	def verify(self, id):
 		response = ResponseBuilder()
 		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
 		orderverification = orderverification_query.first()
 		if orderverification.is_used is not 1:
-			user = db.session.query(User).filter_by(id=orderverification.user_id).first()
+			user_query = db.session.query(User).filter_by(id=orderverification.user_id)
+			user = user_query.first()
 			items = db.session.query(OrderDetails).filter_by(order_id=orderverification.order_id).all()
-			for item in items:
-				for i in range(0, item.count):
-					payload = {}
-					payload['user_id'] = user.id
-					payload['ticket_id'] = item.ticket_id
-					UserTicketService().create(payload)
+			if items[0].ticket.type == TICKET_TYPES['exhibitor']:
+				payload = {}
+				payload['user_id'] = user.id
+				payload['ticket_id'] = items[0].ticket_id
+				UserTicketService().create(payload)
+				self.create_booth(user)
+				user_query.update({
+					'role_id': ROLE['booth']
+				})
+				redeem_payload = {}
+				redeem_payload['ticket_id'] = items[0].ticket_id
+				redeem_payload['codeable_id'] = user.id
+				RedeemCodeService().purchase_user_redeems(redeem_payload)
+			else:
+				for item in items:
+					for i in range(0, item.count):
+						payload = {}
+						payload['user_id'] = user.id
+						payload['ticket_id'] = item.ticket_id
+						UserTicketService().create(payload)
 			orderverification_query.update({
 				'is_used': 1
 			})
@@ -150,6 +186,6 @@ class OrderVerificationService(BaseService):
 				'status': 'paid'
 			})
 			db.session.commit()
-			return response.set_data(None).set_message('ticket created').build()
+			return response.set_data(None).set_message('ticket purchased').build()
 		else:
 			return response.set_data(None).set_message('This payment has already verified').build()

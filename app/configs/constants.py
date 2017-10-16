@@ -7,6 +7,11 @@ ROLE = {
     'partner': 8
 }
 
+TICKET_TYPES = {
+    'user': 'user',
+    'exhibitor': 'exhibitor'
+}
+
 SLOT = {
 	'community': 400,
 	'commercial': 3600

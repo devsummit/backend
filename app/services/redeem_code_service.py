@@ -7,6 +7,7 @@ from app.builders.response_builder import ResponseBuilder
 from app.models.access_token import AccessToken
 
 from app.models.redeem_code import RedeemCode
+from app.models.ticket import Ticket
 from app.models.base_model import BaseModel
 from app.models.booth import Booth
 from app.models.attendee import Attendee
@@ -113,6 +114,26 @@ class RedeemCodeService():
             db.session.add(self.model_redeem_code)
             db.session.commit()
         return response.set_message('Redeem code created successfully').set_data(package.as_dict()).set_error(False).build()
+
+
+    def purchase_user_redeems(self, payloads):
+        response = ResponseBuilder()
+        codes = [r.code for r in db.session.query(RedeemCode.code).all()]
+        ticket = db.session.query(Ticket).filter_by(id=payloads['ticket_id']).first()
+        for i in range(0, ticket.quota):
+            code = secrets.token_hex(4)
+            while (code in codes):
+                print(code)
+                code = secrets.token_hex(4)
+            self.model_redeem_code = RedeemCode()
+            self.model_redeem_code.codeable_type = 'user'
+            self.model_redeem_code.codeable_id = payloads['codeable_id']
+            self.model_redeem_code.code = code
+            self.model_redeem_code.used = False
+
+            db.session.add(self.model_redeem_code)
+            db.session.commit()
+        return response.set_message('Redeem code created successfully').set_data(None).set_error(False).build()
 
 
     def update(self, code, user):
