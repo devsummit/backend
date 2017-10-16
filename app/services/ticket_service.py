@@ -7,49 +7,49 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.ticket import Ticket
 from app.models.payment import Payment
 from app.models.order_details import OrderDetails
-from app.configs.constants import SLOT
+from app.configs.constants import SLOT, TICKET_TYPES
 from app.services.helper import Helper 
 
 
 class TicketService():
 
-	def get_items(self, payment):
-		result = [0, 0, 0, 0, 0]
-		order_details = db.session.query(OrderDetails).filter_by(order_id=payment['order_id']).all()
-		for item in order_details:
-			data = item.as_dict()
-			result[data['ticket_id'] - 1] += data['count']
-		return result
+	# def get_items(self, payment):
+	# 	result = [0, 0, 0, 0, 0]
+	# 	order_details = db.session.query(OrderDetails).filter_by(order_id=payment['order_id']).all()
+	# 	for item in order_details:
+	# 		data = item.as_dict()
+	# 		result[data['ticket_id'] - 1] += data['count']
+	# 	return result
 
-	def count_ticket_left(self, payments):
-		reserved = [0, 0, 0, 0, 0]
-		paid = [0, 0, 0, 0, 0]
-		for payment in payments:
-			data = payment.as_dict()
-			if data['transaction_status'] is 'deny':
-				continue
+	# def count_ticket_left(self, payments):
+	# 	reserved = [0, 0, 0, 0, 0]
+	# 	paid = [0, 0, 0, 0, 0]
+	# 	for payment in payments:
+	# 		data = payment.as_dict()
+	# 		if data['transaction_status'] is 'deny':
+	# 			continue
 
-			count_data = self.get_items(data)
-			for i in range(0, 5):
-				if data['transaction_status'] == 'capture':
-					paid[i] += count_data[i]
-				else:
-					reserved[i] += count_data[i]
+	# 		count_data = self.get_items(data)
+	# 		for i in range(0, 5):
+	# 			if data['transaction_status'] == 'capture':
+	# 				paid[i] += count_data[i]
+	# 			else:
+	# 				reserved[i] += count_data[i]
 
-		return {'reserved': reserved, 'paid': paid}
+	# 	return {'reserved': reserved, 'paid': paid}
 
-	def include_ticket_left(self, tickets):
-		total_amount = [SLOT['commercial'], SLOT['commercial'], SLOT['commercial'], SLOT['commercial'], SLOT['community']]
-		payments = db.session.query(Payment).all()
-		data = self.count_ticket_left(payments)
-		for i in range(0, 5):
-			total_amount[i] -= data['reserved'][i]
-			total_amount[i] -= data['paid'][i]
-		return {
-			'total_amount': total_amount, 
-			'reserved': data['reserved'],
-			'paid': data['paid']
-		} 
+	# def include_ticket_left(self, tickets):
+	# 	total_amount = [SLOT['commercial'], SLOT['commercial'], SLOT['commercial'], SLOT['commercial'], SLOT['community']]
+	# 	payments = db.session.query(Payment).all()
+	# 	data = self.count_ticket_left(payments)
+	# 	for i in range(0, 5):
+	# 		total_amount[i] -= data['reserved'][i]
+	# 		total_amount[i] -= data['paid'][i]
+	# 	return {
+	# 		'total_amount': total_amount, 
+	# 		'reserved': data['reserved'],
+	# 		'paid': data['paid']
+	# 	} 
 
 	def get(self):
 		tickets = db.session.query(Ticket).all()
@@ -59,8 +59,6 @@ class TicketService():
 			if data['proposal_url'] is not None:
 				data['proposal_url'] = Helper().url_helper(data['proposal_url'], current_app.config['GET_PROPOSAL_DOC_DEST'])
 			_results.append(data)
-		count_data = self.include_ticket_left(_results)
-		_results = self.include_count_data(count_data, _results)
 		
 		return {
 			'error': False,
@@ -68,16 +66,19 @@ class TicketService():
 			'message': 'Ticket retrieved succesfully'
 		}
 
-	def include_count_data(self, count_data, results):
-		for i in range(0, 5):
-			results[i]['reserved'] = count_data['reserved'][i]
-			results[i]['paid'] = count_data['paid'][i]
-			results[i]['available'] = count_data['total_amount'][i]
-		return results
+	# def include_count_data(self, count_data, results):
+	# 	for i in range(0, 5):
+	# 		results[i]['reserved'] = count_data['reserved'][i]
+	# 		results[i]['paid'] = count_data['paid'][i]
+	# 		results[i]['available'] = count_data['total_amount'][i]
+	# 	return results
 
 	def show(self, id):
 		ticket = db.session.query(Ticket).filter_by(id=id).first()
-		return ticket
+		result = ticket.as_dict()
+		if result['proposal_url']:
+			result['proposal_url'] = Helper().url_helper(result['proposal_url'], current_app.config['GET_PROPOSAL_DOC_DEST'])
+		return result
 
 	def create(self, payloads):
 		self.model_ticket = Ticket()
@@ -86,15 +87,17 @@ class TicketService():
 		self.model_ticket.information = payloads['information']
 		self.model_ticket.type = payloads['type']
 		self.model_ticket.usd_price = payloads['usd_price']
-		if payloads['type'] == 'exhibitor' or payloads['type'] == 'Exhibitor':
-			proposal_url = self.save_file(payloads['proposal_url']) if payloads['proposal_url'] is not None else None
-			self.model_ticket.proposal_url = proposal_url
+		if payloads['type'] == TICKET_TYPES['exhibitor']:
+			if payloads['proposal_url']:
+				proposal_url = self.save_file(payloads['proposal_url']) if payloads['proposal_url'] is not None else None
+				self.model_ticket.proposal_url = proposal_url
 		db.session.add(self.model_ticket)
 		try:
 			db.session.commit()
 			data = self.model_ticket.as_dict()
-			if payloads['type'] == 'exhibitor' or payloads['type'] == 'Exhibitor':
+			if payloads['type'] == TICKET_TYPES['exhibitor'] and data['proposal_url']:
 				data['proposal_url'] = Helper().url_helper(data['proposal_url'], current_app.config['GET_PROPOSAL_DOC_DEST'])
+				print(data['proposal_url'])
 			return {
 				'error': False,
 				'data': data

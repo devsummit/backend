@@ -14,7 +14,7 @@ class TicketController(BaseController):
 		ticket = ticketservice.show(id)
 		if ticket is None:
 			return BaseController.send_error_api(None, 'ticket not found')
-		return BaseController.send_response_api(ticket.as_dict(), 'ticket retrieved successfully')
+		return BaseController.send_response_api(ticket, 'ticket retrieved successfully')
 
 	@staticmethod
 	def create(request):
