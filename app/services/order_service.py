@@ -129,9 +129,7 @@ class OrderService():
 				order_item.order_id = order_id
 				# get ticket data
 				ticket = self.get_ticket(item['ticket_id'])
-				if payloads['payment_type'] == 'offline':
-					order_item.price = ticket.price
-				elif payloads['payment_type'] == 'paypal':
+				if payloads['payment_type'] == 'paypal':
 					order_item.price = ticket.usd_price
 				else:
 					order_item.price = ticket.price
