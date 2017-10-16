@@ -24,6 +24,9 @@ def seed():
 @manager.command
 def productionseed():
     ProductionSeed.run()
+@manager.command
+def tickettweakseed():
+    TicketTweakSeed().run()
 
 
 if __name__ == "__main__":
