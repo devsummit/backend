@@ -17,6 +17,7 @@ manager.add_command("clean", Clean())
 # Seeder
 from seeders.seed import Seed
 from seeders.production_seed import ProductionSeed
+from seeders.ticket_tweak_seeder import TicketTweakSeeder
 
 @manager.command
 def seed():
@@ -24,6 +25,9 @@ def seed():
 @manager.command
 def productionseed():
     ProductionSeed.run()
+@manager.command
+def tickettweakseed():
+    TicketTweakSeeder().run()
 
 
 if __name__ == "__main__":
