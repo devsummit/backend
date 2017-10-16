@@ -1,0 +1,68 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Payment Verification List </title>  {% endblock %}
+
+{% block header_link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/tachyons.min.css') }}">
+<script src="{{ url_for('static', filename='assets/dist/js/mithril.js') }}"></script>
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Payment Verification
+        <small>Verify payment proof</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Payment Verification List</li>
+{% endblock %}
+
+{% block content %}
+    <script src="{{url_for('static', filename='src/payment_verification/verification-model.js')}}"></script>
+    <div id="root"></div>
+    <script>
+        var root = document.getElementById('root')
+        var VerificationList = function() {
+            return {
+                oninit: function() {
+                    Verification.loadList()
+                },
+                view: function() {
+                    return m('.pa4', 
+                        m('.overflow-auto', [
+                            m('table.f3 w-100 center', {cellspacing: "0"}, [
+                                m('thead', 
+                                    m('tr.stripe-dark', [
+                                        m('th.fw6 tl pa3 bg-white', "User ID"),
+                                        m('th.fw6 tl pa3 bg-white', "Order ID"),
+                                        m('th.fw6 tl pa3 bg-white', "Pyment Proof"),
+                                        m('th.fw6 tl pa3 bg-white', "Date Issued"),
+                                        m('th.fw6 tl pa3 bg-white', "Is Used"),
+                                    ])
+                                ),
+                                m('tbody', 
+                                    m('tr.stripe-dark dim', Verification.list.map((item) => {
+                                        return [m('td.pa3', item.user_id),
+                                            m('td.pa3', item.order_id),
+                                            m('td.pa3', item.payment_proof),
+                                            m('td.pa3', item.crated_at),
+                                            m('td.pa3', item.is_used)]
+                                    }))
+                                )
+                            ])
+                        ])
+                    )
+                }
+            }
+        }
+        m.mount(root, VerificationList)
+    </script>
+{% endblock %}
+
+{% block footer_link %}
+<!-- page script -->
+<script>
+</script>
+{% endblock %}
