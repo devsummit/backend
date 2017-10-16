@@ -66,7 +66,7 @@
                                                 m('a.link bg-blue pa3 br2 pointer', 
                                                     {onclick: () => {
                                                         page = "detail"
-                                                        detail = item
+                                                        Verification.current = Object.assign({}, item)
                                                     }},
                                                     "edit"
                                                 )
@@ -84,12 +84,36 @@
                 return m('div', [
                     m('button.fr mr5 pa3 bg-orange br2 bn',
                         {onclick: () => {
+                            Verification.loadList()
                             page = "list"
                         }},
                         "Back to List"
                     ),
-                    m('.pa3', [
-                        m('f2', detail.order_id)
+                    m('.pa3 cf mw9 center bg-white br2', [
+                        m('h3.b', "Order ID:", m('h4', Verification.current.order_id)),
+                        m('h3.b', "User ID:", m('h4', Verification.current.user_id)),
+                        m('h3.b', "Date Issued:", m('h4', Verification.current.created_at)),
+                        m('.cf', [
+                            m('h3.b', "Payment Proof:"),
+                            m('h4', Verification.current.payment_proof),
+                            m('a.link', 
+                                {href: Verification.current.payment_proof, target: "blank"}, 
+                                m('img.mw6', {src: Verification.current.payment_proof})
+                            )
+                        ]),
+                        m('div.pa3', 
+                            m('h3.b', "Verified"),
+                            m(`i.${Verification.current.is_used ? "dark-green" : "dark-red"} bn br2 fa fa-3x ${Verification.current.is_used ? "fa-check-circle" : "fa-square-o"}`),
+                        ),
+                        m('.buttons', [
+                            m('a.fr link pa3 ph5 bg-dark-green white br2 pointer', 
+                                {onclick: () => {
+                                    // Verification.current = Object.assign({}, detail)
+                                    Verification.save()
+                                }},
+                                "Verify"
+                            )
+                        ])
                     ])
                 ])
             }
