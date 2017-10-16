@@ -7,14 +7,17 @@ from app.models import db
 # import model class
 from app.models.payment import Payment
 from app.models.order_details import OrderDetails
+from app.models.user import User
 from app.models.order import Order
+from app.models.booth import Booth
+from app.models.user_booth import UserBooth
 from app.models.user_ticket import UserTicket
 from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
 from app.builders.response_builder import ResponseBuilder
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 from app.configs.constants import VA_NUMBER
-from app.configs.constants import TICKET_TYPES
+from app.configs.constants import TICKET_TYPES, ROLE
 
 
 class PaymentService():
@@ -581,13 +584,14 @@ class PaymentService():
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return response.set_data(None).set_message(data).set_error(True).build()
-			items = db.session.query(OrderDetails).filter_by(order_id=orderverification.order_id).first()
+			items = db.session.query(OrderDetails).filter_by(order_id=payment.order_id).first()
 			if items.ticket.type == TICKET_TYPES['exhibitor']:
 				payload = {}
 				payload['user_id'] = user.id
-				payload['ticket_id'] = items[0].ticket_id
+				payload['ticket_id'] = items.ticket_id
 				UserTicketService().create(payload)
 				self.create_booth(user)
+				user_query = db.session.query(User).filter_by(id=user.id)
 				user_query.update({
 					'role_id': ROLE['booth']
 				})
@@ -610,11 +614,11 @@ class PaymentService():
 						payload['user_id'] = user.id
 						payload['ticket_id'] = order.ticket_id
 						UserTicketService().create(payload)
-				confirmed_order = db.session.query(Order).filter_by(id=payment.order_id)
-				confirmed_order.update({
-					'status': 'paid'
-				})
-				db.session.commit()
+			confirmed_order = db.session.query(Order).filter_by(id=payment.order_id)
+			confirmed_order.update({
+				'status': 'paid'
+			})
+			db.session.commit()
 			return response.set_data(None).set_message('Purchase Completed').build()
 		else:
 			return response.set_error(True).set_message('Paypal amount did not match').build()
