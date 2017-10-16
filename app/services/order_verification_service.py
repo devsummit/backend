@@ -141,6 +141,10 @@ class OrderVerificationService(BaseService):
 			payment_query.update({
 				'transaction_status': 'capture'
 			})
+			completed_order = db.session.query(Order).filter_by(id=orderverification.order_id)
+			completed_order.update({
+				'status': 'paid'
+			})
 			db.session.commit()
 			return response.set_data(None).set_message('ticket created').build()
 		else:
