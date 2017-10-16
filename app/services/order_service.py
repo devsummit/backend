@@ -129,10 +129,10 @@ class OrderService():
 				order_item.order_id = order_id
 				# get ticket data
 				ticket = self.get_ticket(item['ticket_id'])
-				if payloads['payment_type'] == 'offline':
-					order_item.price = ticket.price
-				else:
+				if payloads['payment_type'] == 'paypal':
 					order_item.price = ticket.usd_price
+				else:
+					order_item.price = ticket.price
 				db.session.add(order_item)
 				db.session.commit()
 				order_items.append(order_item.as_dict())
