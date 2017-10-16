@@ -24,6 +24,12 @@
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
+                                    <label for="e-ticket-quota">Ticket quota:</label>
+                                    <input type="text" class="form-control e-ticket-quota" id="e-ticket-quota">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
                                     <label for="ticket-price">Ticket USD price:</label>
                                     <input type="text" class="form-control ticket-usd-price" id="ticket-usd-price">
                                 </div>
@@ -88,6 +94,7 @@
         formdata.append('usd_price', $('.ticket-usd-price').val());
         formdata.append('information', $('.ticket-information').val());
         formdata.append('type', $('.type-edit').val());
+        formdata.append('quota', $('.e-ticket-quota').val());
         formdata.append('proposal_url', $('#e-proposal')[0].files[0])
         console.log($('.add-ticket-type').val())
         dsa.patchForm('tickets/' + id, formdata, function(result) {
