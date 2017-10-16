@@ -169,5 +169,5 @@ class MainController(BaseController):
     def verification_list():
         return render_template('admin/payment_verification/verification_list.html')
 
-    def submit_proof():
+    def submit_proof(request):
         return render_template('admin/payment_verification/submit_proof.html')

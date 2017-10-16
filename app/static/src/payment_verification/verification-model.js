@@ -11,7 +11,6 @@ var Verification = {
         })
         .then(function(result) {
             Verification.list = result.data
-            console.log(Verification.list)
         })
     }
 }
