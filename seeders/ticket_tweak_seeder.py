@@ -13,7 +13,7 @@ class TicketTweakSeeder():
     @staticmethod
     def run():
         print("tweaking ticket type...")
-        for i in range (0,5):
+        for i in range (1,6):
             ticket = db.session.query(Ticket).filter_by(id=i)
             ticket.update({
                 'updated_at': datetime.datetime.now(),
