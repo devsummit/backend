@@ -33,6 +33,13 @@ class UserService(BaseService):
 		self.perpage = perpage
 
 
+	def get_user_info(self, user):
+		response = ResponseBuilder()
+		access_token = db.session.query(AccessToken).filter_by(user_id=user.id).first()
+		if access_token is None:
+			return response.set_error(True).set_data(None).set_message('user is not logged in').build()
+		return access_token.as_dict(), access_token.user.include_photos().as_dict()
+
 	def get_booth_by_uid(self, user_id):
 		response = ResponseBuilder()
 

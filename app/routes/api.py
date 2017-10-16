@@ -47,6 +47,7 @@ from app.controllers.sponsor_template_controller import SponsorTemplateControlle
 from app.controllers.invoice_controller import InvoiceController
 from app.controllers.package_management_controller import PackageManagementController
 from app.controllers.order_verification_controller import OrderVerificationController
+from app.controllers.user_authorization_controller import UserAuthorizationController
 
 from app.configs.constants import ROLE
 
@@ -377,6 +378,13 @@ def user_photo(*args, **kwargs):
 def user_photos(*args, **kwargs):
     if(request.method == 'GET'):
         return UserPhotoController.index()
+
+
+@api.route('/me/refresh', methods=['POST'])
+@token_required
+def refresh_me(*args, **kwargs):
+    user = kwargs['user']
+    return UserAuthorizationController.refresh_me(user)
 
 
 # Ticket Transfer endpoint
