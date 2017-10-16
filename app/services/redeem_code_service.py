@@ -46,7 +46,7 @@ class RedeemCodeService():
                 if user is not None:
                     user = user.as_dict()
                     data['user'] = user
-            elif data['codeable_type'] == 'partner':
+            elif data['codeable_type'] in ['partner', 'user']:
                 partner = db.session.query(Partner).filter_by(id=data['codeable_id']).first()
                 partner = partner.as_dict()
                 data['partner'] = partner
