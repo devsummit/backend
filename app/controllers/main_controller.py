@@ -165,3 +165,9 @@ class MainController(BaseController):
     def getTransferLog(request):
         logs = tickettransferservice.get_logs()
         return render_template('admin/ticket-transfer-log/ticket-transfer-log.html', logs=logs)
+    
+    def verification_list():
+        return render_template('admin/payment_verification/verification_list.html')
+
+    def submit_proof():
+        return render_template('admin/payment_verification/submit_proof.html')
