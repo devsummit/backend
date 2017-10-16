@@ -44,7 +44,8 @@ class OrderVerificationService(BaseService):
 			})
 		else:
 			orderverification = OrderVerification()
-			orderverification.user_id = payload['user_id']
+			order = db.session.query(Order).filter_by(id=payload['order_id']).first()
+			orderverification.user_id = order.user_id
 			orderverification.order_id = payload['order_id']
 			orderverification.payment_proof = payment_proof
 			db.session.add(orderverification)
