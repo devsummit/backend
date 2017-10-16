@@ -34,6 +34,7 @@ class TicketController(BaseController):
 				'proposal_url': proposal_url,
 				'usd_price': usd_price
 			}
+			print(payloads)
 		else:
 			return BaseController.send_error_api(None, 'field is not complete')
 

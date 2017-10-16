@@ -24,6 +24,12 @@
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
+                                    <label for="ticket-price">Ticket USD price:</label>
+                                    <input type="text" class="form-control ticket-usd-price" id="ticket-usd-price">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
                                     <label for="ticket-information">Ticket information:</label>
                                     <input type="text" class="form-control ticket-information" id="ticket-information">
                                 </div>
@@ -79,6 +85,7 @@
         const formdata = new FormData(form);
         formdata.append('ticket_type', $('.ticket-type').val());
         formdata.append('price', $('.ticket-price').val());
+        formdata.append('usd_price', $('.ticket-usd-price').val());
         formdata.append('information', $('.ticket-information').val());
         formdata.append('type', $('.type-edit').val());
         formdata.append('proposal_url', $('#e-proposal')[0].files[0])
@@ -86,8 +93,6 @@
         dsa.patchForm('tickets/' + id, formdata, function(result) {
             if(result.meta.success) {
                 window.location = "/tickets";
-            }else{
-                console.log(result)
             }
         });
     })

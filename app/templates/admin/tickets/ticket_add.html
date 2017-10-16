@@ -25,6 +25,12 @@
                                     </li>
                                     <li class="list-group-item">
                                         <div class="form-group">
+                                            <label for="ticket-price">Ticket USD price:</label>
+                                            <input type="text" class="form-control add-ticket-usd-price" id="ticket-usd-price">
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="form-group">
                                             <label for="ticket-information">Ticket information:</label>
                                             <input type="text" class="form-control add-ticket-information" id="ticket-information">
                                         </div>
@@ -80,6 +86,7 @@
         const formdata = new FormData(form);
         formdata.append('ticket_type', $('.add-ticket-type').val());
         formdata.append('price', $('.add-ticket-price').val());
+        formdata.append('usd_price', $('.add-ticket-usd-price').val());
         formdata.append('information', $('.add-ticket-information').val());
         formdata.append('type', $('#add-type').val());
         formdata.append('proposal_url', $('#i-proposal')[0].files[0])
