@@ -16,6 +16,6 @@ class TicketTweakSeeder():
             ticket = db.session.query(Ticket).filter_by(id=i)
             ticket.update({
                 'updated_at': datetime.datetime.now(),
-                'type': 'exhibitor'
+                'type': 'user'
             })
             db.session.commit()
