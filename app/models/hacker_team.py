@@ -12,7 +12,7 @@ class HackerTeam(db.Model, BaseModel):
 
     # columns definitions
     id = db.Column(
-        db.String, 
+        db.Integer, 
         primary_key=True
     )
     name = db.Column(

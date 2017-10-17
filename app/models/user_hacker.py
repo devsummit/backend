@@ -4,7 +4,7 @@ from app.models.base_model import BaseModel
 from app.models import db
 
 
-class HackerTeam(db.Model, BaseModel):
+class UserHacker(db.Model, BaseModel):
     # table name
     __tablename__ = 'user_hackers'
     # displayed fields
@@ -12,12 +12,12 @@ class HackerTeam(db.Model, BaseModel):
 
     # columns definitions
     id = db.Column(
-        db.String, 
+        db.Integer, 
         primary_key=True
     )
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id')
+        db.ForeignKey('users.id'),
         nullable=False
     )
     hacker_team_id = db.Column(
