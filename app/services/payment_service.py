@@ -620,7 +620,7 @@ class PaymentService():
 				'status': 'paid'
 			})
 			db.session.commit()
-			send_notification = FCMService().send_single_notification('Payment Status', 'Payment Verified', user.id, user_id)
+			send_notification = FCMService().send_single_notification('Payment Status', 'Payment Confirmed', user.id, user_id)
 			return response.set_data(None).set_message('Purchase Completed').build()
 		else:
 			return response.set_error(True).set_message('Paypal amount did not match').build()
