@@ -30,10 +30,10 @@ class UserTicketController(BaseController):
 
     @staticmethod
     def check_in(request):
-        user_ticket_id = request.json['user_ticket_id'] if 'user_ticket_id' in request.json else None
-        if (user_ticket_id is None):
+        ticket_code = request.json['ticket_code'] if 'ticket_code' in request.json else None
+        if (ticket_code is None):
             BaseController.send_error_api({'payload_invalid': True}, 'payload is not valid')
-        result = userticketservice.check_in(user_ticket_id)
+        result = userticketservice.check_in(ticket_code)
 
         if 'error' in result and result['error']:
             return BaseController.send_error_api(result['data'], result['message'])

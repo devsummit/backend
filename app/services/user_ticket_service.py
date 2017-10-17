@@ -9,8 +9,8 @@ from app.builders.response_builder import ResponseBuilder
 
 class UserTicketService():
 
-    def check_in(self, user_ticket_id):
-        exist = db.session.query(UserTicket).filter_by(id=user_ticket_id).first()
+    def check_in(self, ticket_code):
+        exist = db.session.query(UserTicket).filter_by(ticket_code=ticket_code).first()
         if exist is None:
             return {
                 'data': {'exist': False},
@@ -19,7 +19,7 @@ class UserTicketService():
 
         ticket = exist.ticket
         if ticket.ticket_type == 'full':
-            checked_in = db.session.query(CheckIn).filter_by(user_ticket_id=user_ticket_id)
+            checked_in = db.session.query(CheckIn).filter_by(user_ticket_id=exist.id)
             if checked_in.first() is not None:
                 # update updated at
                 checked_in.update({
@@ -40,14 +40,14 @@ class UserTicketService():
                         'message': data
                     }
             # else check in
-            return self.create_checkin(user_ticket_id)
+            return self.create_checkin(exist.id)
 
         # else if ticket type is daily
-        checked_in = db.session.query(CheckIn).filter_by(user_ticket_id=user_ticket_id).first()
+        checked_in = db.session.query(CheckIn).filter_by(user_ticket_id=exist.id).first()
         # check if ticket id already in checkin
         if checked_in is None:
             # checkin user
-            return self.create_checkin(user_ticket_id)
+            return self.create_checkin(exist.id)
 
         # else return user already checked in, ticket is expired
         return {
