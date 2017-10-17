@@ -602,7 +602,7 @@ class PaymentService():
 				redeem_payload['ticket_id'] = items.ticket_id
 				redeem_payload['codeable_id'] = user.id
 				RedeemCodeService().purchase_user_redeems(redeem_payload)
-			if items.ticket.type == TICKET_TYPES['hackaton']:
+			elif items.ticket.type == TICKET_TYPES['hackaton']:
 				payload = {}
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items.ticket_id
