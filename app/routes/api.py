@@ -571,7 +571,8 @@ def status(id, *args, **kwargs):
 @api.route('/payments/confirm', methods=['POST'])
 @token_required
 def confirm_payment(*args, **kwargs):
-    return PaymentController.confirm(request)
+    user_id = kwargs['user'].id
+    return PaymentController.confirm(request, user_id)
 
 
 @api.route('/payments/<payment_id>', methods=['GET'])
@@ -1019,7 +1020,7 @@ def order_verification_id(id, *args, **kwargs):
 @api.route('/order-verification/<id>/verify', methods=['POST'])
 @token_required
 def verify_payment(id, *args, **kwargs):
-    user = kwargs['user'].as_dict()
+    user_id = kwargs['user'].id
     if user['role_id'] == ROLE['admin']:
-        return OrderVerificationController.verify(id, request)
+        return OrderVerificationController.verify(id, request, user_id)
     return 'Unauthorized'

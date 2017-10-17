@@ -15,6 +15,7 @@ from app.models.user_ticket import UserTicket
 from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
 from app.builders.response_builder import ResponseBuilder
+from app.services.fcm_service import FCMService
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 from app.configs.constants import VA_NUMBER
 from app.configs.constants import TICKET_TYPES, ROLE
@@ -551,7 +552,7 @@ class PaymentService():
 			payment = False
 		return payment
 
-	def confirm(self, payload):
+	def confirm(self, payload, user_id):
 		response = ResponseBuilder()
 		transaction_exist = db.session.query(Payment).filter_by(transaction_id=payload['transaction_id']).first()
 		if transaction_exist:
@@ -619,6 +620,7 @@ class PaymentService():
 				'status': 'paid'
 			})
 			db.session.commit()
+			send_notification = FCMService().send_single_notification('Payment Status', 'Payment Verified', user.id, user_id)
 			return response.set_data(None).set_message('Purchase Completed').build()
 		else:
 			return response.set_error(True).set_message('Paypal amount did not match').build()

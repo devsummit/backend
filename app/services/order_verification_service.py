@@ -16,6 +16,7 @@ from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
+from app.services.fcm_service import FCMService
 from flask import current_app
 from PIL import Image
 from app.configs.constants import IMAGE_QUALITY, ROLE
@@ -146,7 +147,7 @@ class OrderVerificationService(BaseService):
 		db.session.add(userbooth)
 		db.session.commit()
 
-	def verify(self, id):
+	def verify(self, id, user_id):
 		response = ResponseBuilder()
 		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
 		orderverification = orderverification_query.first()
@@ -186,6 +187,7 @@ class OrderVerificationService(BaseService):
 				'status': 'paid'
 			})
 			db.session.commit()
+			send_notification = FCMService().send_single_notification('Payment Status', 'Payment Verified', user.id, user_id)
 			return response.set_data(None).set_message('ticket purchased').build()
 		else:
 			return response.set_data(None).set_message('This payment has already verified').build()
