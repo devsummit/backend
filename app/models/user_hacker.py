@@ -25,6 +25,8 @@ class UserHacker(db.Model, BaseModel):
         db.ForeignKey('hacker_teams.id'),
         nullable=False
     )
+    user = db.relationship('User')
+    hacker_team = db.relationship('HackerTeam')
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
 
