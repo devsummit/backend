@@ -16,6 +16,7 @@ from app.models.user_booth import UserBooth
 from app.models.user_ticket import UserTicket
 from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
+from app.services.logs_service import LogsService
 from app.builders.response_builder import ResponseBuilder
 from app.services.fcm_service import FCMService
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
@@ -486,6 +487,7 @@ class PaymentService():
 				})
 
 				db.session.commit()
+				LogsService().create_log(user['username'] + "'s payment has been Updated")
 				if (payment.first().as_dict()['transaction_status'] == 'expire'):
 					# on payment success
 					self.save_paid_ticket(order)
@@ -640,6 +642,7 @@ class PaymentService():
 			})
 			db.session.commit()
 			send_notification = FCMService().send_single_notification('Payment Status', 'Your payment has been confirmed', user.id, ROLE['admin'])
+			LogsService().create_log(user['username'] + "'s payment has been confirmed")
 			return response.set_data(None).set_message('Purchase Completed').build()
 		else:
 			return response.set_error(True).set_message('Paypal amount did not match').build()
