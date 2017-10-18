@@ -119,12 +119,9 @@
           }
           
           dsa.request('auth/vercaptcha', 'POST', {captchaToken: captchaToken}, function(valid) {
-            console.log("****", valid)
             if (valid) {
-              console.log("====", payloads)
               dsa.login(payloads, function(success, result){
                 if(success) {
-                console.log("-----", success)
                   showInfo('label-success', 'Login success');
                   window.location.href = '/';
                 } else {
