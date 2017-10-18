@@ -1,4 +1,5 @@
-from flask import Blueprint, request
+import requests
+from flask import Blueprint, request, jsonify
 from app.middlewares.authentication import token_required
 
 
@@ -8,11 +9,20 @@ from app.controllers.admin_controller import AdminController
 
 auth = Blueprint('auth', __name__)
 
+@auth.route('/vercaptcha', methods=['POST'])
+def vercaptcha():
+	token = request.json['captchaToken']
+	data = {
+			'secret': '6Lf23jQUAAAAAHQGkLrQSfq4eNPOfu1lrAt-Hh_d',
+			'response': token
+	}
+	r = requests.post('https://www.google.com/recaptcha/api/siteverify', data = data)
+	success = r.json()['success']
+	return jsonify(success)
 
 @auth.route('/login', methods=['POST'])
 def login():
 	return UserAuthorizationController.login(request)
-
 
 @auth.route('/register', methods=['POST'])
 def register():

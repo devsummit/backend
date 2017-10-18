@@ -10,7 +10,7 @@ from app.builders.response_builder import ResponseBuilder
 from app.models.ticket import Ticket
 from app.models.payment import Payment
 from app.models.referal import Referal
-from app.configs.constants import PAYPAL  # noqa
+from app.configs.constants import PAYPAL, ROLE  # noqa
 from app.models.order_details import OrderDetails
 from app.models.order_verification import OrderVerification
 
@@ -107,7 +107,10 @@ class OrderService():
 			order['verification'] = None
 		return response.set_data(order).set_message('Order retrieved').build()
 
-	def create(self, payloads):
+	def create(self, payloads, user):
+		response = ResponseBuilder()
+		if user['role_id'] == ROLE['hackaton']:
+			return response.set_data(None).set_message('You cant buy ticket hackaton twice').set_error(True).build()
 		self.model_order = Order()
 		order_details = payloads['order_details']
 		self.model_order.user_id = payloads['user_id']

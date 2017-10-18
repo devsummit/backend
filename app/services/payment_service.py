@@ -10,11 +10,14 @@ from app.models.order_details import OrderDetails
 from app.models.user import User
 from app.models.order import Order
 from app.models.booth import Booth
+from app.models.hacker_team import HackerTeam
+from app.models.user_hacker import UserHacker
 from app.models.user_booth import UserBooth
 from app.models.user_ticket import UserTicket
 from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
 from app.builders.response_builder import ResponseBuilder
+from app.services.fcm_service import FCMService
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 from app.configs.constants import VA_NUMBER
 from app.configs.constants import TICKET_TYPES, ROLE
@@ -550,11 +553,12 @@ class PaymentService():
 	def get_paypal_detail(self, id):
 		try:
 			payment = paypalrestsdk.Payment.find(id)
+			print(payment)
 		except paypalrestsdk.ResourceNotFound as error:
 			payment = False
 		return payment
 
-	def confirm(self, payload):
+	def confirm(self, payload, user_id):
 		response = ResponseBuilder()
 		transaction_exist = db.session.query(Payment).filter_by(transaction_id=payload['transaction_id']).first()
 		if transaction_exist:
@@ -602,6 +606,22 @@ class PaymentService():
 				redeem_payload['ticket_id'] = items.ticket_id
 				redeem_payload['codeable_id'] = user.id
 				RedeemCodeService().purchase_user_redeems(redeem_payload)
+			if items.ticket.type == TICKET_TYPES['hackaton']:
+				payload = {}
+				payload['user_id'] = user.id
+				payload['ticket_id'] = items.ticket_id
+				UserTicketService.create(payload)
+				self.create_hackaton_team(user)
+				user_query = db.session.query(User).filter_by(id=user.id)
+				user_query.update({
+					'role_id': ROLE['hackaton']
+				})
+				hacker_team = db.session.query(HackerTeam).order_by(HackerTeam.created_at.desc()).first()
+				redeem_payload = {}
+				redeem_payload['codeable_type'] = TICKET_TYPES['hackaton']
+				redeem_payload['codeable_id'] = hacker_team.id,
+				redeem_payload['count'] = items.ticket.quota
+				RedeemCodeService().create(redeem_payload)
 
 				# user_role = db.session.query(User).filter_by(id=user.id)
 				# user_role.update({
@@ -622,6 +642,7 @@ class PaymentService():
 				'status': 'paid'
 			})
 			db.session.commit()
+			send_notification = FCMService().send_single_notification('Payment Status', 'Your payment has been confirmed', user.id, ROLE['admin'])
 			return response.set_data(None).set_message('Purchase Completed').build()
 		else:
 			return response.set_error(True).set_message('Paypal amount did not match').build()
@@ -641,3 +662,20 @@ class PaymentService():
 		userbooth.booth_id = booth.id
 		db.session.add(userbooth)
 		db.session.commit()
+
+	def create_hackaton_team(self, user):
+		hacker_team = HackerTeam()
+		hacker_team.name = 'Your Hacker Team name'
+		hacker_team.logo = ''
+		hacker_team.project_name = 'Project Name'
+		hacker_team.project_url = 'Project Link'
+		hacker_team.theme = ''
+		db.session.add(hacker_team)
+		db.session.commit()
+		hackteam = db.session.query(HackerTeam).order_by(HackerTeam.created_at.desc()).first()
+		userhacker = UserHacker()
+		userhacker.user_id = user.id
+		userhacker.hacker_team_id = hackteam.id
+		db.session.add(userhacker)
+		db.session.commit()
+		
