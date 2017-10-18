@@ -14,6 +14,19 @@
 <body>
     <script src="{{ url_for('static', filename='assets/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/dist/js/auth.js') }}"></script>
+    <script type="text/javascript">
+      var captchaToken = ""
+      var verifyCallback = function(response) {
+        captchaToken = response
+      };
+      var onloadCallback = function() {
+        grecaptcha.render('captcha', {
+          'sitekey' : '6Lf23jQUAAAAAP47SpwZNq6yP6h9y0w_hd9Wn42z',
+          'callback': verifyCallback,
+          'theme': 'light'
+        });
+      };
+    </script>
     <script>
       // check if user login, redirect to dashboard 
       if (dsa.isLogin()) {
@@ -57,6 +70,10 @@
                     </div>
                   </div>
                 </fieldset>
+                <div id="captcha"></div>
+                <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+                    async defer>
+                </script>
               </form>
           </div>
         </div>
@@ -100,15 +117,24 @@
             password: $('input[name=password]').val(),
             admin: true
           }
-
-          dsa.login(payloads, function(success, result){
-            if(success) {
-              showInfo('label-success', 'Login success');
-              window.location.href = '/';
+          
+          dsa.request('auth/vercaptcha', 'POST', {captchaToken: captchaToken}, function(valid) {
+            console.log("****", valid)
+            if (valid) {
+              console.log("====", payloads)
+              dsa.login(payloads, function(success, result){
+                if(success) {
+                console.log("-----", success)
+                  showInfo('label-success', 'Login success');
+                  window.location.href = '/';
+                } else {
+                  showInfo('label-danger', result.meta.message);
+                }
+              });
             } else {
-              showInfo('label-danger', result.meta.message);
+              showInfo('label-danger', "Captcha not Valid!");
             }
-          });
+          })
           
         });
       });
