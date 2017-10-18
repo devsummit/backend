@@ -6,6 +6,7 @@ from app.models.referal import Referal
 from app.models.user import User
 from app.builders.response_builder import ResponseBuilder
 from app.services.user_ticket_service import UserTicketService
+from app.services.logs_service import LogsService
 
 
 class ReferalService():
@@ -55,6 +56,7 @@ class ReferalService():
 			'referal_count': 11
 		})
 		db.session.commit()
+		LogsService().create_log(user['username'] + " has been redeemed a reward")
 		UserTicketService().create(payload)
 		return response.set_data(None).set_message('You have successfully redeemed your reward').build()
 
