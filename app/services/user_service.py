@@ -81,6 +81,8 @@ class UserService(BaseService):
 			#if the check_referer return empty list, must be first time referred
 			referer = check_referer.first()
 			if referer:
+				if referer.referal_count >= 10:
+					return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
 				check_referer.update({
 					'referal_count': referer.referal_count + 1
 					})
@@ -103,12 +105,9 @@ class UserService(BaseService):
 					# else count==10, send notif and create new ticket
 					else:
 						type = "Free Ticket Notification"
-						message = "Congratulation! You have been referred 10 times! You've got one free ticket, please check it on 'my ticket' menu"
+						message = "Congratulation! You have been referred 10 times! You've can get one free ticket, please click on claim button to claim your reward"
 						FCMService().send_single_notification(type, message, receiver_id, sender_id)
-						UserTicketService().create(payload)
 
-			if referer is not None and referer.referal_count >= 10:
-				return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
 
 		if payloads['email'] is not None:
 			try:
