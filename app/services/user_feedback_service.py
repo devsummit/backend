@@ -11,11 +11,10 @@ class UserFeedbackService(BaseService):
     def index(self):
         response = ResponseBuilder()
         user_feedbacks = db.session.query(UserFeedback).all()
-        results = []
-        if user_feedbacks:
-            for feedback in user_feedbacks:
-                data = feedback.as_dict()
-                results.append(data)
+        results = []        
+        for feedback in user_feedbacks:
+            data = feedback.as_dict()
+            results.append(data)
         return response.set_data(results).set_message('User feedback entries retrieved successfully').build()
 
     def create(self, payloads):
