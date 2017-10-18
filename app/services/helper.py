@@ -13,7 +13,7 @@ class Helper():
     @staticmethod
     def allowed_file(file_name, config):
         return '.' in file_name and \
-            file_name.rsplit('.', 1)[1] in config
+            file_name.rsplit('.', 1)[1] in config.lower()
 
     # Timestamp string maker
     @staticmethod
