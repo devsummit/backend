@@ -49,6 +49,7 @@ from app.controllers.package_management_controller import PackageManagementContr
 from app.controllers.order_verification_controller import OrderVerificationController
 from app.controllers.user_authorization_controller import UserAuthorizationController
 from app.controllers.hackaton_controller import HackatonController
+from app.controllers.user_feedback_controller import UserFeedbackController
 
 from app.configs.constants import ROLE
 
@@ -1036,3 +1037,18 @@ def get_hackaton_team(*args, **kwargs):
     if user['role_id'] == ROLE['admin'] or user['role_id'] == ROLE['hackaton']:
         return HackatonController.get_team(request, user)
     return 'Unauthorized'
+
+# User Feedback API
+
+@api.route('/user-feedback', methods=['GET', 'POST'])
+@token_required
+def user_feedback (*args, **kwargs):
+    if (request.method == 'GET'):
+        return UserFeedbackController.index()
+    else:
+        return UserFeedbackController.create(request)
+
+@api.route('/user-feedback/<id>', methods=['GET'])
+@token_required
+def user_feedback_show (id, *args, **kwargs):
+    return UserFeedbackController.show(id) 

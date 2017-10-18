@@ -40,6 +40,7 @@ from app.services.sponsor_template_service import SponsorTemplateService
 from app.services.package_management_service import PackageManagementService
 from app.services.order_verification_service import OrderVerificationService
 from app.services.hackaton_service import HackatonService
+from app.services.user_feedback_service import UserFeedbackService
 
 # instantiate service
 userservice = UserService(10)  # number of item per page
@@ -83,3 +84,4 @@ invoiceservice = InvoiceService()
 packagemanagementservice = PackageManagementService()
 orderverificationservice = OrderVerificationService()
 hackatonservice = HackatonService()
+userfeedbackservice = UserFeedbackService()
