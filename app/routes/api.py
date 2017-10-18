@@ -1020,7 +1020,7 @@ def order_verification_id(id, *args, **kwargs):
 @api.route('/order-verification/<id>/verify', methods=['POST'])
 @token_required
 def verify_payment(id, *args, **kwargs):
-    user_id = kwargs['user'].id
+    user = kwargs['user'].as_dict()
     if user['role_id'] == ROLE['admin']:
-        return OrderVerificationController.verify(id, request, user_id)
+        return OrderVerificationController.verify(id, request)
     return 'Unauthorized'

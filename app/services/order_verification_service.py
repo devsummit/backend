@@ -12,6 +12,8 @@ from app.models.ticket import Ticket
 from app.models.base_model import BaseModel
 from app.models.booth import Booth
 from app.models.user_booth import UserBooth
+from app.models.hacker_team import HackerTeam
+from app.models.user_hacker import UserHacker
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from app.services.user_ticket_service import UserTicketService
@@ -147,7 +149,23 @@ class OrderVerificationService(BaseService):
 		db.session.add(userbooth)
 		db.session.commit()
 
-	def verify(self, id, user_id):
+	def create_hackaton (self, user):
+		hacker_team = HackerTeam()
+		hacker_team.name = 'Your team name here'
+		hacker_team.logo = None
+		hacker_team.project_name = 'Your project name here'
+		hacker_team.project_url = None
+		hacker_team.theme = None
+		db.session.add(hacker_team)
+		db.session.commit()
+		userhacker = UserHacker()
+		userhacker.user_id = user.id
+		userhacker.hacker_team_id = hacker_team.id
+		db.session.add(userhacker)
+		db.session.commit()
+		return hacker_team.id
+
+	def verify(self, id):
 		response = ResponseBuilder()
 		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
 		orderverification = orderverification_query.first()
@@ -168,6 +186,20 @@ class OrderVerificationService(BaseService):
 				redeem_payload['ticket_id'] = items[0].ticket_id
 				redeem_payload['codeable_id'] = user.id
 				RedeemCodeService().purchase_user_redeems(redeem_payload)
+			elif items[0].ticket.type == TICKET_TYPES['hackaton']:
+				payload = {}
+				payload['user_id'] = user.id
+				payload['ticket_id'] = items[0].ticket_id
+				UserTicketService().create(payload)
+				hackerteam_id = self.create_hackaton(user)
+				user_query.update({
+					'role_id': ROLE['hackaton']
+				})
+				redeem_payload = {}
+				redeem_payload['codeable_type'] = TICKET_TYPES['hackaton']
+				redeem_payload['codeable_id'] = hackerteam_id
+				redeem_payload['count'] = items[0].ticket.quota
+				RedeemCodeService().create(redeem_payload)
 			else:
 				for item in items:
 					for i in range(0, item.count):
@@ -187,7 +219,7 @@ class OrderVerificationService(BaseService):
 				'status': 'paid'
 			})
 			db.session.commit()
-			send_notification = FCMService().send_single_notification('Payment Status', 'Payment Verified', user.id, user_id)
+			send_notification = FCMService().send_single_notification('Payment Status', 'Your payment has been verified', user.id, ROLE['admin'])
 			return response.set_data(None).set_message('ticket purchased').build()
 		else:
 			return response.set_data(None).set_message('This payment has already verified').build()

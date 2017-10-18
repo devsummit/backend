@@ -64,8 +64,8 @@ class OrderVerificationController(BaseController):
 
 
 	@staticmethod
-	def verify(id, request, user_id):
-		data = orderverificationservice.verify(id, user_id)
+	def verify(id, request):
+		data = orderverificationservice.verify(id)
 		if data['error']:
 			return BaseController.send_error_api(data['data'], data['message'])
 		return BaseController.send_response_api(data['data'], data['message'])
