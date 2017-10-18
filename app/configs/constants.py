@@ -2,6 +2,7 @@ ROLE = {
     'admin': 1,
     'booth': 3,
     'speaker': 4,
+    'hackaton': 5,
     'ambassador': 6,
     'user': 7,
     'partner': 8
@@ -9,7 +10,8 @@ ROLE = {
 
 TICKET_TYPES = {
     'user': 'user',
-    'exhibitor': 'exhibitor'
+    'exhibitor': 'exhibitor',
+    'hackaton': 'hackaton'
 }
 
 SLOT = {
