@@ -1,0 +1,129 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Payment Verification List </title>  {% endblock %}
+
+{% block header_link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/tachyons.min.css') }}">
+<script src="{{ url_for('static', filename='assets/dist/js/mithril.js') }}"></script>
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Payment Verification
+        <small>List</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Payment Verification List</li>
+{% endblock %}
+
+{% block content %}
+    <script src="{{url_for('static', filename='src/payment_verification/verification-model.js')}}"></script>
+    <div id="root"></div>
+    <script>
+        var root = document.getElementById('root')
+        var page = 'list'
+        var detail = {}
+        var VerificationPage = function() {
+            return {
+                oninit: function() {
+                    Verification.loadList()
+                },
+                view: function() {
+                    if(page==='list') {
+                        return m(VerificationList)
+                    } else {
+                        return m(VerificationDetail)
+                    }
+                }
+            }
+        }
+        var VerificationList = {
+            view: function() {
+                return m('.pa4', 
+                        m('.overflow-auto', [
+                            m('table.f3 w-100 center', {cellspacing: "0"}, [
+                                m('thead', 
+                                    m('tr.stripe-dark', [
+                                        m('th.fw6 tl pa3 bg-white', "Name"),
+                                        m('th.fw6 tl pa3 bg-white', "Email"),
+                                        m('th.fw6 tl pa3 bg-white', "Order ID"),
+                                        m('th.fw6 tl pa3 bg-white', "Date Issued"),
+                                        m('th.fw6 tl pa3 bg-white', "Verified"),
+                                        m('th.fw6 tl pa3 bg-white', "Action"),
+                                    ])
+                                ),
+                                m('tbody', Verification.list.map((item) => {
+                                        return m('tr.stripe-dark dim', [
+                                            m('td.pa3', item.user.first_name + ' ' + item.user.last_name),
+                                            m('td.pa3', item.user.email),
+                                            m('td.pa3', item.order_id),
+                                            m('td.pa3', item.created_at),
+                                            m('td.pa3', item.is_used ? "true" : "false"),
+                                            m('td.pa3', 
+                                                m('a.link bg-blue pa3 br2 pointer', 
+                                                    {onclick: () => {
+                                                        page = "detail"
+                                                        Verification.current = Object.assign({}, item)
+                                                    }},
+                                                    "edit"
+                                                )
+                                            )
+                                        ])
+                                    })
+                                )
+                            ])
+                        ])
+                    )
+            }
+        }
+        var VerificationDetail = {
+            view: function() {
+                return m('div', [
+                    m('button.fr mr5 pa3 bg-orange br2 bn',
+                        {onclick: () => {
+                            Verification.loadList()
+                            page = "list"
+                        }},
+                        "Back to List"
+                    ),
+                    m('.pa3 cf mw9 center bg-white br2', [
+                        m('h3.b', "Order ID:", m('h4', Verification.current.order_id)),
+                        m('h3.b', "User ID:", m('h4', Verification.current.user_id)),
+                        m('h3.b', "Date Issued:", m('h4', Verification.current.created_at)),
+                        m('.cf', [
+                            m('h3.b', "Payment Proof:"),
+                            m('h4', Verification.current.payment_proof),
+                            m('a.link', 
+                                {href: Verification.current.payment_proof, target: "blank"}, 
+                                m('img.mw6', {src: Verification.current.payment_proof})
+                            )
+                        ]),
+                        m('div.pa3', 
+                            m('h3.b', "Verified"),
+                            m(`i.${Verification.current.is_used ? "dark-green" : "dark-red"} bn br2 fa fa-3x ${Verification.current.is_used ? "fa-check-circle" : "fa-square-o"}`),
+                        ),
+                        m('.buttons', [
+                            m('a.fr link pa3 ph5 bg-dark-green white br2 pointer', 
+                                {onclick: () => {
+                                    // Verification.current = Object.assign({}, detail)
+                                    Verification.save()
+                                }},
+                                "Verify"
+                            )
+                        ])
+                    ])
+                ])
+            }
+        }
+        m.mount(root, VerificationPage)
+    </script>
+{% endblock %}
+
+{% block footer_link %}
+<!-- page script -->
+<script>
+</script>
+{% endblock %}

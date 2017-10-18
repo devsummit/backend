@@ -1,0 +1,141 @@
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-name">Sponsor Name:</label>
+                                    <input type="text" class="form-control" id="i-sponsor-name">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-email">Email:</label>
+                                    <input type="text" class="form-control" id="i-sponsor-email">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-phone">Phone:</label>
+                                    <input type="text" class="form-control" id="i-sponsor-phone">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <label for="i-sponsor-stage">Stage:</label>
+                                <select class="form-control" id="i-sponsor-stage">
+                                </select>
+                            </li>
+                            <li class="list-group-item" style="display: none;" id="i-sponsor-type-wrap">
+                                <label for="i-sponsor-type">Type:</label>
+                                <select class="form-control" id="i-sponsor-type">
+                                </select>
+                            </li>
+                            <li>
+                                <div class="form-group">
+                                    <label for="sponsor-photo">Sponsor Logo:</label>
+                                     <input class="input-file sponsor-photo" id="i-fileInput" type="file" name="file">
+                                     <img id='i-img-upload' style="width: 300px; height: 200px" />
+                                </div>
+                            </li>
+
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-note">Note:</label>
+                                    <textarea type="text" class="form-control" id="i-sponsor-note"></textarea>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-url">Url:</label>
+                                    <textarea type="text" class="form-control" id="i-sponsor-url"></textarea>
+                                </div>
+                            </li>
+
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-sponsor-callback-url">Callback url:</label>
+                                    <textarea type="text" class="form-control" id="i-sponsor-callback-url"></textarea>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-sponsor-save" id="-"><b>Save</b></a>
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    $('#i-sponsor-stage').on('change', function() {
+        if (this.value !== '3') {
+            $('#i-sponsor-type-wrap').hide();
+        } else {
+            $('#i-sponsor-type-wrap').show();
+        }
+    })
+
+    // Used for capitalize words
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    $('.btn-sponsor-save').click(function (event) {
+        let sponsor_type = $('#i-sponsor-stage').val() !== '3' ?
+                             null : parseInt($('#i-sponsor-type').val());
+
+        const id = $(this).attr('id');
+        const formdata = new FormData();
+        formdata.append('attachment', $('#i-fileInput')[0].files[0])
+        formdata.append('name', $('#i-sponsor-name').val())
+        formdata.append('email', $('#i-sponsor-email').val())
+        formdata.append('phone', $('#i-sponsor-phone').val())
+        formdata.append('note', $('#i-sponsor-note').val())
+        formdata.append('url', $('#i-sponsor-url').val())
+        formdata.append('callback_url', $('#i-sponsor-callback-url').val())
+        formdata.append('type', sponsor_type)
+        formdata.append('stage', $('#i-sponsor-stage').val())
+        dsa.postForm('sponsors', formdata, function(result) {
+            if(result.meta.success) {
+                $('.i-sponsor-name').val('');
+                $('.i-sponsor-email').val('');
+                $('.i-sponsor-phone').val('');
+                $('.i-sponsor-note').val('');
+                $("#i-img-upload").attr("src", '');
+                $('.sponsor-photo').val('');
+                window.location = "/sponsors";
+            }
+        });
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#i-img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#i-fileInput").change(function(){
+        readURL(this);
+    });
+</script>

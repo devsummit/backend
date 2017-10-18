@@ -1,0 +1,43 @@
+<div class="modal fade" id="modal-logs">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="table-responsive-vertical shadow-z-1">
+                <div class="modal-body">
+                    <div class="box box-primary">
+                        <div class="box-body box-profile">
+    <!-- Table starts here -->
+                <table id="table" class="table table-hover table-mc-light-blue">
+                <thead>
+                    <tr>
+                    <th>Sponsor ID</th>
+                    <th>Description</th>
+                    <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody class="log-modal">
+                    <tr>
+                    </tr>
+                </tbody>
+                </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  <script>
+    /* Save edit account */
+        $('.btn-sl').click(function(event){
+            $('.modal-title').html('Show Logs');
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            dsa.get('sponsors/'+id+ '/logs',function(result){
+                const logs = result.data;
+                $('.log-modal').empty();
+                logs.map(function(log, index) {
+                    $('.log-modal').append('<tr><td>' + (index + 1) + '</td><td> ' + log.description + ' </td><td>' + log.created_at + '</td></tr>');
+                });
+            });
+        })
+</script>

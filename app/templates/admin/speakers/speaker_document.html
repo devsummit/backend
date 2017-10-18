@@ -1,0 +1,73 @@
+<div class="modal fade" id="modal-document">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <form id="upload-document" enctype="multipart/form-data">
+                                        <label for="speaker-document-summary">Title</label>
+                                        <input type="text" name="document_title" class="form-control" id="i-title">
+                                        <label for="speaker-document-summary">Summary</label>
+                                        <input type="text" name="document_summary" class="form-control" id="i-summary">
+                                        <label for="speaker-document">Upload Document</label>
+                                        <input type="file" name="document_data" class="form-control" id="document" accept=".ppt,.pptx,.pdf">
+                                        <label for="speaker-document-summary">Use in the Event?</label>
+                                        <div name="document_is_used" id="i-is_used">
+                                            <label for="radio-yes" style="padding-right:200px">
+                                                <input type="radio" name="is_used" value=1 />
+                                                Yes
+                                            </label>
+                                            <label for="radio-no">
+                                                <input type="radio" name="is_used" value=0 checked />
+                                                No
+                                            </label>
+                                        </div>                               
+                                    </form>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-add" id="-"><b>Add</b></a>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Save edited data */
+    $('.btn-add').click(function (event) {
+        const id = $(this).attr('id').split(' ');
+        const title = $('#i-title').val();
+        const summary = $('#i-summary').val();
+        const is_used = $('input[name=is_used]:checked').val()        
+        var form = $('#upload-document')[0];
+        var payloads = new FormData(form);
+        payloads.append('document_data', $('#document')[0].files[0])
+        payloads.append('speaker_id', id[1])
+        payloads.append('title', title)
+        payloads.append('summary', summary)
+        payloads.append('is_used', is_used)        
+        dsa.postForm('document_speaker_admin', payloads, function (result) {
+            if (result.meta.success) {
+                window.location = "/speakers";
+            }
+        });
+    })
+
+</script>

@@ -1,0 +1,37 @@
+<div class="modal fade" id="modal-payment-authorize">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <input type="hidden" id="payment-authorize-payload">
+
+                    <div class="box-body box-profile">
+                        <a href="#" class="btn btn-warning btn-block btn-yes" id="btd-yes"><b>Confirm</b></a>
+                        <button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- page script -->
+<script>
+    /* Authorize payment confirm action */
+    $('.btn-yes').click(function (event) {
+        const payload = JSON.parse($('#payment-authorize-payload').val());
+        dsa.post('payments/authorize', payload, function (result) {
+            if (result.meta.success) {
+                location.reload()
+            } else {
+                alert(result.meta.message)
+                location.reload()
+            }
+        });
+    })
+
+</script>

@@ -1,0 +1,100 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Attendees list </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Attendees
+        <small>List of registered attendees</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Attendees</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <table id="attendee-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Attendee Name</th>
+                    <th>Email</th>
+                    <th>Points</th>
+                    <th>Registered At</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for attendee in attendees %}
+                    <tr>
+                        <td>
+                            <a href="" id='atd-{{ attendee.id }}' class="attendees-name">{{ attendee.user['last_name'] + ', ' + attendee.user['first_name']|e }}</a> 
+                        </td>
+                        <td>
+                            {{ attendee.user['email']|e }}
+                        </td>
+                        <td>
+                            {{ attendee['points']|e }}
+                        </td>
+                        <td>
+                            {{ attendee.user['created_at']|e }}
+                        </td>
+                        <td>
+                            <button id='btd-{{ attendee.id }}' type="button" class="btn btn-sm btn-info btn-detail" data-toggle="modal" data-target="#modal-detail">
+                                Detail
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include "admin/attendees/attendee_detail.html" %}
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    $('.attendees-name').click(function(event){
+        event.preventDefault();
+        const atd_id = $(this).attr('id');
+        const id = atd_id.substring(4, atd_id.length);
+        $('#btd-'+id).click();
+    });
+    /* Display Attendee Detail */
+    $('.btn-detail').click(function(event){
+        const btd_id = $(this).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        dsa.get('attendees/' + id, function(result) {
+            // bind result value in to attendee_detail.html 
+            const data = result['data'];
+            if (data['user']['photos']) {
+                $('.attendee-picture').attr('src', data['user']['photos'][0]['url']);
+            }
+            $('.attendee-name').html(data['user']['first_name'] + ' ' + data['user']['last_name']);
+            $('.attendee-email').html(data['user']['email']);
+            $('.attendee-registered_at').html(data['user']['created_at']);
+            $('.attendee-points').html(data['points']); 
+        });
+    })
+    $(function () {
+        $('#attendee-list1').DataTable();
+    })
+</script>
+
+{% endblock %}

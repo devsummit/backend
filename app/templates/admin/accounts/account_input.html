@@ -1,0 +1,236 @@
+<div class="modal fade" id="modal-input">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs" id="form-tabs" >
+                    <li class="tab1-input active"><a id="a-tab1-input" href="#tab1-input" data-toggle="tab" aria-expanded="true">Accounts Informations</a></li>
+                    <li class="tab2-input"><a class="a-tab2-input" id="a-tab2-input" href="#tab2-input" data-toggle="tab" aria-expanded="false">Other Datas</a></li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane tab1-input active" id="tab1-input">
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="account-firstname">First Name:</label>
+                                <input type="text" class="form-control account-firstname" id="account-firstname">
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="account-lastname">Last Name:</label>
+                                    <input type="text" class="form-control account-lastname" id="account-lastname">
+                                </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="account-email">Email:</label>
+                                <input type="text" class="form-control account-email" id="account-email">
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="account-username">Username:</label>
+                                <input type="text" class="form-control account-username" id="account-username">
+                            </div>
+                        </li>
+                        <li style="display:none" class="list-group-item">
+                            <div class="form-group">
+                                <label for="account-role_id">Role:</label>
+                                <input type="text" class="form-control account-role_id" id="account-role_id">
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label>Select</label>
+                                <select class="form-control" id="account-input-select-role">
+                                    <!-- roles here taken from jinja global-env which initiated in app __init__ file -->
+                                    {% for role, i in roles.items() %}
+                                        <option id='input-role{{ i }}' value={{ i }}>{{ role }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-pane tab2-input" id="tab2-input">
+                    {% include "admin/accounts/ambassador.html" %}
+                    {% include "admin/accounts/attendee.html" %}
+                    {% include "admin/accounts/speaker.html" %}
+                    {% include "admin/accounts/booth.html" %}
+                </div>
+            </div>                    
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-primary btn-input-save" id="-"><b>Save</b></a>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Build includes payload function */
+    const buildIncludesPayload = function(role) {        
+        switch (role) {
+            case 'attendee':
+                var points = $('#attendee-points').val();
+                payload = {
+                    name: 'Attendee',
+                    points: points ? points : 0
+                }
+                break;
+            case 'booth':
+                var points = $('#booth-points').val();
+                const stage_id = $('#booth-stageid').val() > 0 ? parseInt($('#booth-stageid').val()) : null
+
+                payload = {
+                    name: 'Booth',
+                    stage_id: stage_id,
+                    points: points ? points : 0,
+                    summary: $('#booth-summary').val()
+                }
+                break;
+            case 'speaker':
+                payload = {
+                    name: 'Speaker',
+                    job: $('#speaker-job').val(),
+                    summary: $('#speaker-summary').val(),
+                    information: $('#speaker-information').val(),
+                    type:$('#speaker-type').val()
+                }
+                break;
+            case 'ambassador':
+                payload = {
+                    name: 'Ambassador',
+                    informations: $('#ambassador-informations').val(),
+                    institution: $('#ambassador-institution').val()
+                }
+                break;
+            default:
+                break;
+        }
+        return payload
+    }
+
+    var saveEdit = function(id) {
+        const role = $('#account-input-select-role').find(":selected").text();
+        const role_id = $('#account-input-select-role').find(":selected").val();
+        var payload = {
+            "first_name": $('.account-firstname').val(),
+            "last_name": $('.account-lastname').val(),
+            "email": $('.account-email').val(),
+            "username": $('.account-username').val(),
+            "role_id": role_id            
+        };
+        if(role!=='admin' && role!=='user') {
+            payload['includes'] = buildIncludesPayload(role);
+            
+        };
+        dsa.patch('{{ globals["api_route"] }}/' + id, payload, function(result) {            
+            if(result.meta.success) {
+                window.location = '/{{ globals["base_route"] }}';
+            }
+        });
+    }
+
+    var saveAdd = function() {
+        const role = $('#account-input-select-role').find(":selected").text();
+        const role_id = $('#account-input-select-role').find(":selected").val();
+        var payload = {
+            "first_name": $('.account-firstname').val(),
+            "last_name": $('.account-lastname').val(),
+            "email": $('.account-email').val(),
+            "username": $('.account-username').val(),
+            "role_id": $('#account-input-select-role').find(":selected").val()
+        };
+
+        if(role!=='admin' && role!=='partner' && role !=='user') {
+            payload['includes'] = buildIncludesPayload(role);           
+        };
+
+        dsa.post('{{ globals["api_route"] }}', payload, function(result) {            
+            if(result.meta.success) {
+                window.location = '/{{ globals["base_route"] }}';
+            }
+        });
+    }
+
+    /* Save account */   
+    $('.btn-input-save').click(function(event){
+        if ($('.btn-input-save').html() == 'NEXT') {
+            $('.tab1-input').removeClass('active');
+            $('.tab2-input').addClass('active');
+            $('.btn-input-save').html('SAVE');
+            return
+        }
+        if($('.modal-title').html() === 'EDIT') {
+            const id = $(this).attr('id');
+            saveEdit(id);
+        } else {
+            saveAdd();
+        }
+    });
+    
+    /* Tab change event */
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href") // activated tab
+        var btnCaption = target=='#tab1-input' ? "NEXT" : "SAVE"
+        $('.btn-input-save').html(btnCaption);
+    });
+
+    /* Role dropdown select change */
+    $("#account-input-select-role").change(function (event) {
+        role = $('#account-input-select-role').find(":selected").text();
+        if (role == 'speaker') {
+            let select = $(".speaker-types-edit");
+            select.find('option').remove();
+            SPEAKER_TYPES.map(function (type) {
+                // add to select
+                let option = document.createElement('option');
+                option.innerHTML = capitalizeFirstLetter(type);
+                option.value = type;
+                if (type === 'keynote') {
+                    option.selected = true;
+                }
+                $(".speaker-types-edit").append(option);
+            });
+        } else if (role === 'booth') {
+            let select = $(".booth-stage-id");
+            select.find('option').remove();
+
+            dsa.get('stages', function(result){
+                var stages = result['data'];
+
+                let option = document.createElement('option');
+                option.innerHTML = 'No stage';
+                option.value = -1;
+                select.append(option);
+
+                stages.map(function (stage) {
+                    // add to select
+                    let option = document.createElement('option');
+                    option.innerHTML = capitalizeFirstLetter(stage.name);
+                    option.value = stage.id;
+
+                    select.append(option);
+                })
+            })
+        }
+        // change role name to title case and display as tab caption
+        $(".a-tab2-input").html(UCFL(role) + ' Informations');
+        
+        // display related tab
+        $('.tab2-fields').css('display', 'none');
+        $('#tab-'+role+'-fields').css('display', 'block');
+    });
+</script>

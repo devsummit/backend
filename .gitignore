@@ -1,16 +1,16 @@
-.DS_Store
-/vendor
-/node_modules
-/public/storage
-Homestead.yaml
-Homestead.json
+*.pyc
+*.pyo
+*.db
+
+# virtual environment
+env/
+env/*
+
 .env
-*.sqlite
-/bower_components
-public/uploads
-/scripts
-*.save
-*.log
-*backup-*
-storage/stack
-*.html
+
+# pycache
+__pycache__
+
+.vscode/
+app/static/images/partners/
+app/static/images/

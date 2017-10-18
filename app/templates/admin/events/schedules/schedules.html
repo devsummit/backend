@@ -1,0 +1,244 @@
+{% extends "admin/base/index.html" %} {% block title %}
+<title> Schedules list </title> {% endblock %} {% block header_link %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Schedules
+    <small>List of registered schedules</small>
+</h1>
+{% endblock %} {% block breadcrumb %}
+<li class="active">Schedules</li>
+{% endblock %} {% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <div class="box-body">
+        <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+        <table id="schedule-list1" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Event Title</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="main-tbody">
+                {% for schedule in schedules %}
+                <tr>
+                    <td>
+                        <a href="" id='ate-{{ schedule.event["id"] }}' class="schedules-title" data-toggle="modal" data-target="#modal-event">  {{ schedule.event['title']|e }}</a>
+
+                    </td>
+                    <td>
+                        <a href="" id='atu-{{ schedule.user["id"] }}' class="schedules-name" data-toggle="modal" data-target="#modal-detail">{{ schedule.user['last_name']|e + ' ' + schedule.user['first_name']|e }}</a>
+                    </td>
+                    <td>
+                        {{ schedule.event["type"]|e }}
+                    </td>
+                    <td>
+                        {{ schedule['time_start']|e }}
+                    </td>
+                    <td>
+                        {{ schedule['time_end']|e }}
+                    </td>
+                    <td>
+                        <button id='bte-{{ schedule["id"] }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                        </button>
+                        <button id='btd-{{ schedule["id"] }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include "admin/users/user_detail.html" ignore missing %} {% include "admin/events/event_detail.html" ignore missing %}
+    {% include "admin/events/schedules/schedule_edit.html" %} {% include "admin/events/schedules/schedule_delete.html" %}
+    {% include "admin/events/schedules/schedule_add.html" %} {% endblock %} {% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/moment/moment.js') }}"></script>
+    <!-- page script -->
+    <script>
+        /* Display user Detail using user detail template*/
+        $('.schedules-name').click(function (event) {
+            event.preventDefault();
+            const ate_id = $(this).attr('id');
+            const id = ate_id.substring(4, ate_id.length);
+            dsa.get('users/' + id, function (result) {
+                // bind result value in to user_detail.html 
+                const data = result['data'];
+                if (data['photos'].length > 0) {
+                    $('.user-picture').attr('src', data['photos'][0]['url']);
+                }
+                $('.user-name').html(data['first_name'] + ' ' + data['last_name']);
+                $('.user-email').html(data['email']);
+                $('.user-registered_at').html(data['created_at']);
+                $('.user-social-id').html(data['social_id']);
+                $('.user-username').html(data['username']);
+            });
+        });
+
+
+        /* Display event Detail using user detail template*/
+        $('.schedules-title').click(function (event) {
+            event.preventDefault();
+            const atu_id = $(this).attr('id');
+            const id = atu_id.substring(4, atu_id.length);
+            dsa.get('events/' + id, function (result) {
+                // bind result value in to user_detail.html 
+                const data = result['data'];
+                $('.event-id').html(data['id']);
+                $('.event-title').html(data['title']);
+                $('.event-type').html(data['type']);
+                $('.event-information').html(data['information']);
+                $('.event-created-at').html(data['created_at']);
+                $('.event-updated-at').html(data['updated_at']);
+            });
+        });
+
+        /* Delete specific schedule */
+        $('.btn-delete').click(function (event) {
+            $('.modal-title').html('Delete');
+
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            $('.btn-yes').attr("id", id);
+        })
+
+        /* Add new schedule*/
+        $('.btn-add').click(function (event) {
+            $('.modal-title').html('Add New Schedule');
+
+            dsa.get('events', function (result) {
+                const events = result['data'];
+                var select = $(".add-schedule-events")
+                events.map(function (response) {
+                    // add to select
+                    var option = document.createElement('option');
+                    option.innerHTML = response.title
+                    option.value = response.id;
+                    select.append(option)
+
+                });
+            });
+
+            dsa.get('stages', function (result) {
+                const stages = result['data'];
+                var select = $(".add-schedule-stages")
+                stages.map(function (response) {
+                    // add to select
+                    var option = document.createElement('option');
+                    option.innerHTML = response.name
+                    option.value = response.id;
+                    select.append(option)
+                });
+            });
+
+        });
+
+        /* Edit specific schedule*/
+        $('.btn-edit').click(function (event) {
+            $('.modal-title').html('Edit');
+            var selected_stage_id;
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            dsa.get('schedules/' + id, function (result) {
+                // bind result value in to attendee_detail.html 
+                const data = result['data'];
+                selected_stage_id = data['stage_id'];
+                selected_event_id = data['event_id'];
+                $('.edit-date').val(moment(new Date(data['time_start'])).format("YYYY-MM-DD"));
+                $('.edit-time-start').val(moment(data['time_start']).format("HH:mm:ss"));
+                $('.edit-time-end').val(moment(data['time_end']).format("HH:mm:ss"));
+                $('.btn-save-edit').attr("id", data['id']);
+            });
+
+            dsa.get('stages', function (result) {
+                const stages = result['data'];
+                var select = $(".edit-schedule-stages")
+                stages.map(function (response) {
+                    // add to select
+                    var option = document.createElement('option');
+                    option.innerHTML = response.name
+                    option.value = response.id;
+                    // if id === current stage id, set as selected
+                    if (response.id == selected_stage_id) {
+                        option.selected = true
+                    }
+                    select.append(option)
+                });
+            });
+
+            dsa.get('events', function (result) {
+                const stages = result['data'];
+                var select = $(".edit-schedule-events")
+                stages.map(function (response) {
+                    // add to select
+                    var option = document.createElement('option');
+                    option.innerHTML = response.title
+                    option.value = response.id;
+                    // if id === current stage id, set as selected
+                    if (response.id == selected_event_id) {
+                        option.selected = true
+                    }
+                    select.append(option)
+                });
+            });
+
+        })
+
+        $('#modal-edit').on('hidden.bs.modal', function (e) {
+            $('.edit-schedule-events').html("")
+            $('.edit-schedule-stages').html("")
+        })
+        $('#modal-add').on('hidden.bs.modal', function (e) {
+            $('.add-schedule-events').html("")
+            $('.add-schedule-stages').html("")
+        })
+
+        $(function () {
+            $('#schedule-list1').DataTable({
+                dom: 'l<"#add">frtip'
+            });
+            $('<label/>').text('Filter').appendTo('#add')
+            $select = $('<select class="form-control input-sm filter-schedule" id="schedule-filter" />').appendTo('#add')
+            $('<option/>').val('default').text('All day').appendTo($select);
+            $('<option/>').val('day-1').text('Day 1').appendTo($select);
+            $('<option/>').val('day-2').text('Day 2').appendTo($select);
+            $('<option/>').val('day-3').text('Day 3').appendTo($select);
+
+            const current = (getUrlVars(window.location.pathname))
+
+            if (current) {
+                $("#schedule-filter").val(current.replace("#",""));
+            }
+
+            $('#schedule-filter').on('change', function () {
+                $("#main-tbody").empty();
+                const selected = ($('.filter-schedule').val())
+                const url = selected == 'default' ? 'schedules' : 'schedules' + '?filter=' + selected
+                console.log(url)
+                window.location.href = url;
+
+            })
+        })
+
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars[hash[0]];
+        }
+    </script>
+
+    {% endblock %}

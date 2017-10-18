@@ -1,0 +1,96 @@
+## Attendee [/api/v1/attendees]
+
+Available include: `user`
+
+### Get list of attendee [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta 
+            - count: `10` (number)
+            - total: `10` (number)
+            - message: `Attendees successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[AttendeeResponse])
+        + links 
+            - first: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=0` (string, nullable)
+            - last: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=10` (string, nullable)
+            - next: `https://localhost:5000/api/v1/attendees?page[limit]=10&page[offset]=10` (string, nullable)
+            - prev: `null` (string, nullable)
+
+
+### Get Attendee by id [GET /api/v1/attendees/{attendee_id}]
+
++ Parameters 
+
+    - attendee_id: `1` (number, required) - Valid attendee id
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta 
+            - message: `Attendee successfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[AttendeeResponse])
+        + included 
+            - user (array[UserResponse])
+
+### Edit Attendee by id [PATCH /api/v1/attendees/{attendee_id}]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
+    + Attributes
+        + data (Attendee)
+
+
++ Parameters
+    
+    - attendee_id: `1` (number, required) - Valid attendee id
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta 
+            - message: `Attendee data succesfully updated` (string)
+            - success: `true` (boolean)
+        + data (array[AttendeeResponse])
+
+### Get points log [GET /api/v1/pointslog]
+
++ Request (application/json)
+    
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer :[Gist](data/token.apib)
+
++ Response 200 (application/json)
+
+    + Attributes (BaseResponse)
+        + meta 
+            - message: `Points log data succesfully retrieved` (string)
+            - success: `true` (boolean)
+        + data (array[PointsLogResponse])
+        + included 
+            - sender (array[BoothResponse])
+            - receiver (array[AttendeeResponse])

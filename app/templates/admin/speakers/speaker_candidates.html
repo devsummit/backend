@@ -1,0 +1,385 @@
+{% extends "admin/base/index.html" %}
+
+{% block header_link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/SpeakerCandidateKanban.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div id='kanban-board'>
+    <div class='sortable-wrapper box box-danger'>
+            <div>
+                <a class="btn box-header bg-red" id="btn-new-propect">
+                    <i class="fa fa-plus-square"></i> NEW PROSPECT
+                </a>
+            </div>
+            <!-- <div class="box-header bg-red">PROSPECTS</div> -->
+            <div class='sortable box box-danger' id="div-prospect" style="border:1px solid #CFC9C9; min-height: 600px; max-height: 100%">
+                {% for candidate in candidates %} 
+                {% if(candidate['stage']=="prospect") %}
+                <div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                {% endif %} 
+                {% endfor %}
+            </div>
+        </div>
+        <div class='sortable-wrapper box box-warning'>
+            <div class="box-header bg-yellow">LEADS</div>
+            <div class='sortable' id="div-lead" style="border:1px solid #CFC9C9; min-height: 600px; max-height: 100%">
+                {% for candidate in candidates %} {% if(candidate['stage']=="lead") %}
+                <div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-{{ candidate["id"] }}'>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                {% endif %} {% endfor %}
+            </div>
+        </div>
+        <div class='sortable-wrapper box box-success' draggable= false>
+            <div class="box-header bg-green">OFFICIALS</div>
+            <div class='sortable' id="div-official" style="border:1px solid #CFC9C9; min-height: 600px; max-height: 100%">
+                {% for candidate in candidates %} 
+                {% if(candidate['stage']=="official") %}
+                <div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-{{ candidate["id"] }}' draggable= false>{{ candidate['first_name'] + " " + candidate['last_name'] }}</div>
+                {% endif %} 
+                {% endfor %}
+            </div>
+        </div>
+        <button type="button" class="btn btn-warning" id="btn-show-modal" data-toggle="modal" data-target="#modal-candidate" style="display: none">
+                Launch Modal
+        </button>
+    </div>
+
+    {% include "admin/speakers/speaker_candidate_modal.html" ignore missing %}
+
+
+{% endblock %}
+
+{% block footer_link %}
+
+    <script>
+        const updateCandidate = function (id, payload, callback) {
+            dsa.request('/api/v1/speaker-candidates/' + id, 'PATCH', payload, function (result) {
+                if (!id) {
+                    callback('id not define, check the ui');
+                } else {
+                    callback(result);
+                }
+            });
+        }
+
+        const updateCandidateStage = function(candidateID, candidate, fromStage, payloadStage) {
+            var stageName = payloadStage['stage'];
+            updateCandidate(candidateID, payloadStage, function (result) {
+                //display logs tab
+                var new_log = defineNewLog(fromStage, stageName);
+                $('#log-message').val(new_log);
+                bindDataToModal('info', candidate);
+                showLogs(candidateID, function (result) {
+                    renderLogs(result['data']);
+                });
+                showModalTab('tab2-input');
+            });
+        }
+
+        const showCandidate = function (id, callback) {
+            dsa.request('/api/v1/speaker-candidates/' + id, 'GET', null, function (result) {
+                if (!id) {
+                    callback('id not define, check the ui');
+                } else {
+                    callback(result);
+                }
+            })
+        }
+
+        const createCandidate = function (payload, callback) {
+            dsa.request('/api/v1/speaker-candidates', 'POST', payload, function (result) {
+                callback(result);
+            })
+        }
+
+        const showLogs = function (id, callback) {
+            dsa.request('api/v1/speaker-candidate-logs/' + id, 'GET', null, function (result) {
+                callback(result);
+            })
+        }
+        const postNewLog = function (method, payload, callback) {
+            dsa.request('api/v1/speaker-candidate-logs', method, payload, function (result) {
+                callback(result);
+            })
+        }
+
+        const showModalTab = function (tabClass) {
+            $(".tab1-input").removeClass('active');
+            $(".tab2-input").removeClass('active');
+            $("." + tabClass).addClass('active');
+            if (tabClass === "tab2-input") {
+                $("#btn-modal-save1").css('display', 'none');
+                $("#alert-modal-candidate").css('display', 'none');
+            } else {
+                $("#btn-modal-save1").css('display', '');
+                $("#alert-modal-candidate").css('display', '');
+            }
+            $("#btn-show-modal").click();
+        }
+
+        const bindDataToModal = function (type, data) {
+            if (type == 'info') {
+                for (var key in data) {
+                    $('#data-' + key).val(data[key]);
+                }
+            } else {
+
+            }
+        }
+
+        const clearModalInput = function () {
+            $('.input-active').val("");
+            $('#log-message').val("");
+        }
+
+        const modalFormValidation = function () {
+            var OK = true;
+            $('.form-group').removeClass('has-error');
+            $('.alert-modal-candidate').removeClass('alert-info');
+            $('.alert-modal-candidate').removeClass('alert-danger');
+            $('.alert-modal-candidate').removeClass('alert-success');
+
+            var v1 = ($('#data-first_name').val()!==""),
+                v2 = ($('#data-last_name').val()!==""),
+                v3 = ($('#data-email').val()!=="");
+            if (!v1) {
+                $('.div-first_name').addClass('has-error');
+                OK = false;
+            }
+            if (!v2) {
+                $('.div-last_name').addClass('has-error');
+                OK = false;
+            }
+            if (!v3) {
+                $('.div-email').addClass('has-error');
+                OK = false;
+            }
+            if(!OK){
+                $('.alert-modal-candidate').addClass('alert-danger');
+                $('.alert-modal-candidate').html('There is required field that empty');
+            }
+            return OK;
+        }
+        
+        const resetAlertInfo = function() {
+            $('.alert-modal-candidate').removeClass('alert-danger');
+            $('.alert-modal-candidate').removeClass('alert-success');
+            $('.alert-modal-candidate').addClass('alert-info');
+            $('.alert-modal-candidate').html('Please fill the information of the Candidate');
+        }
+
+        const getPayloadFromInputModal = function () {
+            var payloads = {};
+            $(".input-active").each(function () {
+                payloads[$(this).attr("name")] = $(this).val();
+            });
+            return payloads
+        }
+
+        const defineNewLog = function (from, to) {
+            var user = dsa.getUser();
+            var new_log = "@" + user['username'] + " changed this candidate stage from " + from + " to " + to;
+            return new_log;
+        }
+
+        const renderLogs = function (logs) {
+            $('.div-logs').empty();
+            logs.map((log) => {
+                var log_item = '<h4><span class="label label-success">' + log['created_at'] + '</span>';
+                log_item += '<span class="label label-dafault text-black">' + log['message'] + '</span></h4>';
+                $('.div-logs').append(log_item);
+            })
+        }
+
+        const registerUserAsSpeaker =  function(payload, onSuccess, onError) {
+            dsa.register(payload.data, function (stat, res) {
+                if (stat && res.meta.success) {
+                    var speakerPayload = {
+                        "role_id": '4'
+                    };
+                    speakerPayload['includes'] = payload.includes; 
+                    speakerPayload['includes']['name'] = 'Speaker';
+                    dsa.patch('grantrole/' + res.data.id, speakerPayload, function (result) {
+                        if (result.meta.success) {
+                            onSuccess(result);
+                        } else {
+                            onError(result.meta.message);
+                        }
+                    });
+                } else {
+                    onError(result.meta.message);
+                }
+            });
+        }
+
+        $(function () {
+            var boardWidth = $('#kanban-board').width();
+            var $columns = $('.sortable-wrapper');
+            var columnCount = $columns.length;
+            var columnMargin = 10;
+            $columns.width(Math.floor((boardWidth - (columnMargin * (columnCount + 1))) / columnCount));
+
+            $(".sortable").sortable({
+                revert: true,
+                placeholder: 'drag-place-holder',
+                forcePlaceholderSize: true,
+                connectWith: ".sortable",
+                helper: function (event, element) { return $(element).clone().addClass('dragging'); },
+                start: function (e, ui) { ui.item.show().addClass('ghost') },
+                stop: function (e, ui) { ui.item.show().removeClass('ghost') },
+                cursor: 'move'
+            })
+                .disableSelection();
+
+            $(".sortable").droppable({
+                drop: function (event, ui) {
+                    var stageName = $(this)[0].getAttribute("id").replace('div-', '');
+                    var candidateID = ui["draggable"][0].getAttribute("id").replace('cnd-', '');
+                    sessionStorage.setItem('candidate_id', candidateID);
+                    var payloadStage = {
+                        stage: stageName
+                    }
+                    showCandidate(candidateID, function (result) {
+                        if (result['meta']['success']) {
+                            var candidate = result['data'];
+                            var fromStage = result['data']['stage'];
+                            if(fromStage !== 'official') {
+                                if(stageName==='official') {
+                                    var payloadUser = {}
+                                    payloadUser['data'] = {
+                                        "first_name": candidate.first_name,
+                                        "last_name": candidate.last_name,
+                                        "username": emailUsername(candidate.email),
+                                        "password": emailUsername(candidate.email),
+                                        "email": candidate.email
+                                    }
+                                    payloadUser['includes'] = {
+                                        job: candidate.job || "",
+                                        summary: candidate.summary || "",
+                                        information: candidate.information || ""
+                                    }
+                                    registerUserAsSpeaker(payloadUser,
+                                        //onSuccess
+                                        function(result) {
+                                            // we can do something for result, but we just need to update stage
+                                            updateCandidateStage(candidateID, candidate, fromStage, payloadStage);    
+                                        },
+                                        //onError
+                                        function(error) {
+                                            alert('something going wrong: ' + error);
+                                        }
+                                    );
+                                } else {
+                                    updateCandidateStage(candidateID, candidate, fromStage, payloadStage);
+                                }
+                                
+                            } else {
+                                location.reload()
+                            }
+                        } 
+                        
+                    })
+                }
+            });
+
+            /* Generate username from email */
+            function emailUsername(emailAddress) {
+                var chunk = emailAddress.match(/^(.+)@/); 
+                if (!chunk) {
+                    return "speaker" + sessionStorage.getItem('candidate_id');
+                }
+                return chunk[1];
+            }
+
+            /* Candidate Click */
+            $(".candidate-item").click(function (event) {
+                var candidateID = event.currentTarget.id.replace('cnd-', '');
+                sessionStorage.setItem('candidate_id', candidateID);
+                // get the candidate infos
+                var candidate = {}
+                showCandidate(candidateID, function (result) {
+                    var result = result['data'];
+                    for (var key in result) {
+                        candidate[key] = result[key]
+                    }
+                    clearModalInput();
+                    bindDataToModal('info', candidate);
+                    showLogs(candidateID, function (result) {
+                        renderLogs(result['data']);
+                    })
+                    // display information tab
+                    resetAlertInfo();
+                    showModalTab('tab1-input');
+                });
+            });
+
+            /* Tab change event */
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).attr("href") // activated tab
+                if (target == "#tab2-input") {
+                    $("#btn-modal-save1").css('display', 'none');
+                } else {
+                    $("#btn-modal-save1").css('display', '');
+                }
+            });
+
+            /* btn-modal-save1 click */
+            $('#btn-modal-save1').click(function () {
+                if (!modalFormValidation()) {
+                    return;
+                }
+                var data = getPayloadFromInputModal();
+                var candidateID = sessionStorage.getItem('candidate_id');
+                if (candidateID) {
+                    updateCandidate(candidateID, data, function (result) {
+                        var new_name = [result['data']['first_name'], result['data']['last_name']].join(' ');
+                        $('#cnd-' + candidateID).html(new_name);
+                        $('.alert-modal-candidate').addClass('alert-success');
+                        $('.alert-modal-candidate').html('Candidate information updated');
+                    });
+                } else {
+                    data['stage'] = "prospect";
+                    createCandidate(data, function (result) {
+                        if (result['meta']['success']) {
+                            var new_name = [result['data']['first_name'], result['data']['last_name']].join(' ');
+                            var new_id = result['data']['id'];
+                            var new_candidate_item = `<div class='ui-state-default candidate-item btn btn-block btn-flat bg-gray' id='cnd-${new_id}'>  ${new_name} </div>`;
+                            $('#div-prospect').append(new_candidate_item);
+                            $('.alert-modal-candidate').addClass('alert-success');
+                            $('.alert-modal-candidate').html('New Candidate has been added');
+                            clearModalInput();
+                        }
+                    });
+                }
+            });
+
+            /* btn-new-propect click */
+            $('#btn-new-propect').click(function () {
+                // delete candidateID from storage, ad this is  new candidate
+                sessionStorage.removeItem('candidate_id');
+                clearModalInput();
+                $('#data-stage').val('prospect');
+                resetAlertInfo();
+                showModalTab('tab1-input');
+            });
+
+            /* btn-submit-log click */
+            $('#btn-submit-log').click(function () {
+                var candidateID = sessionStorage.getItem('candidate_id');
+                var new_log = {
+                    candidate_id: candidateID,
+                    message: $('#log-message').val()
+                };
+                postNewLog('POST', new_log, function (result) {
+                    showLogs(candidateID, function (result) {
+                        if (result['meta']['success']) {
+                            renderLogs(result['data']);
+                        }
+                    })
+                })
+            })
+        });
+    </script>
+
+    {% endblock %}

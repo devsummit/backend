@@ -1,0 +1,177 @@
+{% extends "admin/base/index.html" %} 
+{% block title %}
+<title> Redeem code list </title>
+{% endblock %} 
+{% set globals={'base_route': 'redeemcodes', 'api_route': 'redeemcodes'} %} 
+{% block header_link %}
+
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Redeem Codes
+    <small>List of registered redeem codes</small>
+</h1>
+{% endblock %} {% block breadcrumb %}
+<li class="active">Redeem Codes</li>
+{% endblock %} {% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <div class="box-body">
+        <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+        <table id="redeemcode-list1" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <!-- <th>Code</th>
+                    <th>Used</th> -->
+                    <!-- <th>Last Update</th> -->
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="main-tbody">
+                {% for redeemcode in redeemcodes %}
+                <tr>
+                    <td>
+                        {{ redeemcode['codeable_type']|e }}
+                    </td>
+                    <td>
+                        <!-- <a href="" id='ard-{{ redeemcode["id"] }}' class="redeemcodes-detail" data-toggle="modal" data-target="#modal-detail">   -->
+                        {% if redeemcode['codeable_type'] == 'booth' and redeemcode['user'] %} 
+                            {{ redeemcode['user']['first_name']|e + ' ' + redeemcode['user']['last_name']|e + ' ( ' + redeemcode['user']['username']|e + ' ) ' }} 
+                        {% elif redeemcode['codeable_type'] in ['partner', 'user'] %} 
+                            {{ redeemcode['partner']['name']|e }} 
+                        {% endif %}
+                    
+                        <!-- </a> -->
+                    </td>
+                    <!-- <td>
+                        {{ redeemcode['code']|e }}
+                    </td>
+                    <td>
+                        {{ redeemcode['used']|e }}
+                    </td> -->
+                    <!-- <td>
+                        {{ redeemcode['updated_at']|e }}
+                    </td> -->
+                    <td>
+                        <!-- <button id='bte-{{ redeemcode["id"] }}' type="button" class="btn btn-sm btn-info btn-redeemcode-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                        </button> -->
+                        <button id='ard-{{ redeemcode["id"] }}' class="redeemcodes-detail btn btn-sm btn-info btn-redeemcode-edit" data-toggle="modal" data-target="#modal-detail">
+                            SHOW AVAILABLE CODES
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "admin/redeem_codes/redeem_codes_add.html" %} 
+    {% include "admin/redeem_codes/redeem_codes_edit.html" %}     
+    {% include "admin/base/modal_delete.html" %}  
+    {% include "admin/redeem_codes/redeem_codes_detail.html" %}    
+
+{% endblock %} 
+{% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+    <!-- page script -->
+    <script>
+
+        /* Display user Detail using user detail template*/
+        $('.redeemcodes-detail').click(function (event) {
+            event.preventDefault();
+            const ard_id = $(this).attr('id');
+            const id = ard_id.substring(4, ard_id.length);
+            dsa.get('redeemcodes/' + id, function (result) {
+                const redeemcode = result['data'];
+                let title = ''
+                if (redeemcode['codeable_type'] == 'booth' && redeemcode['user']){
+                    title = redeemcode['user']['first_name'] + ' ' + redeemcode['user']['last_name'] + ' ( ' + redeemcode['user']['username']+ ' ) '  
+                } else if (redeemcode['codeable_type'] == 'partner' && redeemcode['partner']) {
+                    title = redeemcode['partner']['name'] || '' 
+                }
+                $('.modal-title').html(redeemcode['codeable_type'].toUpperCase() + ' - ' + title);            
+                if (result.meta.success) {
+                    dsa.get(
+                        'redeemcodes?codeable_id=' + 
+                        redeemcode['codeable_id'] + 
+                        '&codeable_type=' + 
+                        redeemcode['codeable_type'], function(res){
+                            if(res.meta.success) {
+                                codes = res.data.map((val)=>{
+                                    return val.code
+                                })
+                                codesString = codes.join('-')
+                                $('.codes-data').html(codesString);
+                            }
+                        })
+                }
+            });
+            
+        });
+       
+        /* Delete specific redeem code */
+        $('.btn-redeemcode-delete').click(function (event) {
+            $('.modal-title').html('Are you sure want to delete this redeem code?');
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            $('.btn-yes').attr("id", id);
+        });
+
+        /* Add new redeem code*/
+        $('.btn-add').click(function (event) {
+            $('.modal-title').html('Add New Redeem Code');
+            $(".add-codeable-type").find('option').remove();
+            ROLES.map(function (type) {
+                // add to select
+                let option = document.createElement('option');
+
+                option.innerHTML = capitalizeFirstLetter(type);
+                option.value = type;
+
+                if (type === '') {
+                    option.selected = true;
+                }
+
+                $(".add-codeable-type").append(option);
+            });
+
+            $('#add-codeable-id').hide();
+        });
+
+
+        /* Edit specific redeem code*/
+        $('.btn-redeemcode-edit').click(function (event) {
+            $('.modal-title').html('Edit');
+            var selected_stage_id;
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            dsa.get('redeemcodes/' + id, function (result) {
+                const data = result['data'];
+                $('.edit-count').val((data['count']));
+                $('.edit-codeable-type').val((data['codeable_type']));
+                $('.edit-codeable-id').val((data['codeable_id']));
+                $('.edit-code').val((data['code']));                
+                $('.btn-save-edit').attr("id", data['id']);
+            
+            });
+        })
+
+
+        $(function () {
+            $('#redeemcode-list1').DataTable({
+                columnDefs: [{
+                    targets: [-1],
+                    orderable: false,
+                }]
+            });
+        })
+
+    </script>
+
+    {% endblock %}

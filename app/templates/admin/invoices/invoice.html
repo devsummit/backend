@@ -1,0 +1,25 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Invoice </title>  {% endblock %}
+
+{% block page_header %}
+{{ super() }}
+<h1>
+    Invoice
+    <small>Generate Invoice</small>
+</h1>
+{% endblock %}
+
+{% block breadcrumb %}
+<li class="active">Invoices</li>
+{% endblock %}
+
+{% block content %}
+  <div id="root">
+    <!-- our invoice view will mounted here -->
+  </div>
+{% endblock %}
+
+{% block footer_link %}
+  {% include "admin/invoices/invoice-detail.html"%}
+{% endblock %}

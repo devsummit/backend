@@ -1,0 +1,112 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Packages list </title>  {% endblock %}
+
+{% set globals={'base_route': 'packages', 'api_route': 'package_management'} %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Packages Management
+        <small>List of packages</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Packages</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+        
+        <div class="box-body">
+            <table id="package-list" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Package Name</th>
+                    <th>Price</th>
+                    <th>Quota</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for package in packages %}
+                    <tr>
+                        <td>
+                            {{ package.name }}</a> 
+                        </td>
+                        <td>
+                            {{ package.price |e }}
+                        </td>
+                        <td>
+                            {{ package.quota |e }}
+                        </td>
+                        <td>
+                            <button id='btd-{{ package.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                            <button id='btd-{{ package.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include "admin/base/modal_delete.html" %}
+        {% include "admin/base/modal_email.html" %}
+        {% include "admin/partnership/packages/package_add.html" %}
+        {% include "admin/partnership/packages/package_edit.html" %}
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+
+
+<!-- page script -->
+<script>
+    /* Display Attendee Detail */
+
+    $('.btn-edit').click(function(event){
+        $('.modal-title').html('Edit');
+        const bte_id = $(this).attr('id');
+        const id = bte_id.substring(4, bte_id.length);
+        dsa.get('package_management/' + id, function(result) {
+            // bind result value in to account_detail.html 
+            const data = result['data'];
+            $('#e-package-name').val(data['name']);
+            $('#e-package-price').val(data['price']);
+            $('#e-package-quota').val(data['quota']);
+        });
+        $('.btn-package-update').attr("id", id);
+    });
+
+    $('.btn-add').click(function(event){
+        $('.modal-title').html('Add New Package');
+    });
+
+    $('.btn-delete').click(function(event){
+        $('.modal-title').html('Are you sure want to delete this package ?');
+        const btd_id = $(this).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        $('.btn-yes').attr("id", id);
+    });
+
+    $(function () {
+        $('#package-list').DataTable();
+    })
+</script>
+
+{% endblock %}

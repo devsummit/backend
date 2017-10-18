@@ -1,0 +1,60 @@
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-package-name">Package Name:</label>
+                                    <input type="text" class="form-control" id="i-package-name">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-package-price">Price:</label>
+                                    <input type="number" class="form-control" id="i-package-price">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-package-quota">Quota:</label>
+                                    <input type="number" class="form-control" id="i-package-quota">
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-package-save" id="-"><b>Save</b></a>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    $('.btn-package-save').click(function (event) {
+        let payloads = {
+            name: $('#i-package-name').val(),
+            price: $('#i-package-price').val(),
+            quota: $('#i-package-quota').val()
+        };
+        dsa.post('package_management', payloads, function (result) {
+            if (result.meta.success) {
+                window.location = "/packages";
+            }
+        });
+    });
+</script>

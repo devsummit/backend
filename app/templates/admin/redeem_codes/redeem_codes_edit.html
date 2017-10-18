@@ -1,0 +1,72 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <input class="edit-codeable-type" hidden>
+                            <input class="edit-codeable-id" hidden>
+                            <input class="edit-code" disabled>
+                            
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="event-information--control bfh-number" value="5">
+                                        <form class="example form-inline">
+                                            <p>Quota</p>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control edit-count" value="5">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </li>
+                            </ul>
+                            <a href="#" class="btn btn-primary btn-block btn-save-edit" id="-"><b>Update Quota</b></a>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- page script -->
+    <!-- <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+            <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script> -->
+    
+    
+    
+    <script>
+        /* Display Attendee Detail */
+        $('.btn-save-edit').click(function (event) {
+            const id = $(this).attr('id');
+            payload = {
+                'codeable_type': $('.edit-codeable-type').val(),
+                'codeable_id': $('.edit-codeable-id').val(),
+                'count': $('.edit-count').val()
+            };
+
+            dsa.patch('redeemcodes/' + id, payload, function (result) {
+                if (result.meta.success) {
+                    location.reload()
+                }
+            });
+        })
+
+
+        // Used for capitalize words
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+    </script>

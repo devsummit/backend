@@ -1,0 +1,189 @@
+<div class="modal fade" id="modal-grant">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs" id="form-tabs">
+                        <li class="tab1-grant active"><a id="a-tab1-grant" href="#tab1-grant" data-toggle="tab" aria-expanded="true">Accounts Informations</a></li>
+                        <li class="tab2-grant"><a class="a-tab2-grant" id="a-tab2-grant" href="#tab2-grant" data-toggle="tab" aria-expanded="false">Other Datas</a></li>
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane tab1-grant active" id="tab1-grant">
+                        <ul class="list-group list-group-unbordered">
+                            <li style="display:none" class="list-group-item">
+                                <div class="form-group">
+                                    <label for="account-role_id">Role:</label>
+                                    <input type="text" class="form-control account-role_id" id="account-role_id">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label>Select</label>
+                                    <select class="form-control" id="account-grant-select-role">
+                                    <!-- roles here taken from jinja global-env which initiated in app __init__ file -->
+                                    {% for role, i in roles.items() %}
+                                        <option id='input-role{{ i }}' value={{ i }}>{{ role }}</option>
+                                    {% endfor %}
+                                </select>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-pane tab2-grant" id="tab2-grant">
+                        {% include "admin/accounts/grant/ambassador_grant.html" %} 
+                        {% include "admin/accounts/grant/attendee_grant.html" %} 
+                        {% include "admin/accounts/grant/speaker_grant.html"%} 
+                        {% include "admin/accounts/grant/booth_grant.html" %} 
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary btn-input-save" id="-"><b>Save</b></a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+<script>
+    /* Build includes payload function */
+    const buildIncludesGrantPayload = function (role) {
+        switch (role) {
+            case 'attendee':
+                var points = $('#grant_attendee-points').val();
+                payload = {
+                    name: 'Attendee',
+                    points: points ? points : 0
+                }
+                break;
+            case 'booth':
+                var points = $('#grant_booth-points').val();
+                const stage_id = $('#grant-booth-stageid').val() > 0 ? parseInt($('#grant-booth-stageid').val()) : null
+                payload = {
+                    name: 'Booth',
+                    booth_name: $('#grant-booth-name').val(),
+                    stage_id: stage_id,
+                    points: points ? points : 0,
+                    summary: $('#grant_booth-summary').val()
+                }
+                break;
+            case 'speaker':
+                payload = {
+                    name: 'Speaker',
+                    job: $('#grant_speaker-job').val(),
+                    summary: $('#grant_speaker-summary').val(),
+                    information: $('#grant_speaker-information').val(),
+                    type: $('#grant-speaker-type').val()
+                }
+                break;
+            case 'ambassador':
+                payload = {
+                    name: 'Ambassador',
+                    informations: $('#grant_ambassador-informations').val(),
+                    institution: $('#grant_ambassador-institution').val()
+                }
+                break;
+            default:
+                break;
+        }
+        return payload
+    }
+
+    var saveGrant = function (id) {
+        const role = $('#account-grant-select-role').find(":selected").text();
+        const role_id = $('#account-grant-select-role').find(":selected").val();
+        var payload = {
+            "role_id": $('#account-grant-select-role').find(":selected").val()
+        };
+        if (role !== 'admin') {
+            payload['includes'] = buildIncludesGrantPayload(role);
+        };
+        dsa.patch('grantrole/' + id, payload, function (result) {
+            if (result.meta.success) {
+               window.location = '/accounts';
+            }
+        });
+    }
+
+    /* Save account */
+    $('.btn-input-save').click(function (event) {
+        if ($('.btn-input-save').html() == 'NEXT') {
+            $('.tab1-grant').removeClass('active');
+            $('.tab2-grant').addClass('active');
+            $('.btn-input-save').html('SAVE');
+            return
+        }
+        if ($('.modal-title').html() === 'GRANT') {
+            const id = $(this).attr('id');
+            saveGrant(id);
+        }
+    });
+
+    /* Tab change event */
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href") // activated tab
+        var btnCaption = target == '#tab1-input' ? "NEXT" : "SAVE"
+        $('.btn-input-save').html(btnCaption);
+    });
+
+    /* Role dropdown select change */
+    $("#account-grant-select-role").change(function (event) {
+        role = $('#account-grant-select-role').find(":selected").text();
+        if (role == 'speaker') {
+            let select = $(".speaker-types-add");
+            select.find('option').remove();
+            SPEAKER_TYPES.map(function (type) {
+                // add to select
+                let option = document.createElement('option');
+                option.innerHTML = capitalizeFirstLetter(type);
+                option.value = type;
+                if (type === 'keynote') {
+                    option.selected = true;
+                }
+                $(".speaker-types-add").append(option);
+            });
+        } else if (role === 'booth') {
+            let select = $("#grant-booth-stageid");
+            select.find('option').remove();
+
+            dsa.get('stages', function(result){
+                var stages = result['data'];
+
+                let option = document.createElement('option');
+                option.innerHTML = 'No stage';
+                option.value = -1;
+                select.append(option);
+
+                stages.map(function (stage) {
+                    // add to select
+                    let option = document.createElement('option');
+                    option.innerHTML = capitalizeFirstLetter(stage.name);
+                    option.value = stage.id;
+
+                    select.append(option);
+                })
+            })
+        }
+
+        // change role name to title case and display as tab caption
+        $(".a-tab2-grant").html(UCFL(role) + ' Informations');
+        // display related tab
+        $('.tab2-fields').css('display', 'none');
+        $('.' + role + '-fields').css('display', 'block');
+    });
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+</script>

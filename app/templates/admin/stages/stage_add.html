@@ -1,0 +1,61 @@
+<div class="modal fade" id="modal-add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="i-name">Stage Name:</label>
+                                        <input type="text" class="form-control i-name" id="i-name">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                        <div class="form-group">
+                                            <label for="i-stage-type">Stage Type:</label>
+                                            <input type="text" class="form-control i-stage-type" id="i-stage-type">
+                                        </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="i-information">Information:</label>
+                                        <input type="text" class="form-control i-information" id="i-information">
+                                    </div>
+                                </li>
+                            </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-add-save" id="-"><b>Save</b></a>
+        
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    $('.btn-add-save').click(function(event){
+        const payload = {
+            "name": $('.i-name').val(),
+            "stage_type": $('.i-stage-type').val(),
+            "information": $('.i-information').val()
+        };
+        dsa.post('{{ globals["api_route"] }}', payload, function(result) {
+            if(result.meta.success) {
+                window.location = '/{{ globals["base_route"] }}';
+            }
+        });
+    });
+</script>

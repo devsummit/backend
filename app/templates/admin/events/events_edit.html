@@ -1,0 +1,100 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="event-title">Event title:</label>
+                                <input type="text" class="form-control event-title" id="event-title">
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="event-information">Event information:</label>
+                                <input type="text" class="form-control event-information" id="event-information">
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <label for="event-type">Event type:</label>
+                            <select class="event-types form-control">
+                            </select>
+                        </li>
+                        <li class="list-group-item" id="participant">
+                            <label for="event-participant">Participants:</label>
+                            <select class="event-participants form-control">
+                            </select>
+                        </li>
+                    </ul>
+                    <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Change participant based on event type
+    $('.event-types').on('change', function() {
+        const user_id = $('#participant').find(":selected").val();
+
+        if (this.value !== 'speaker') {
+            $('#participant').hide();
+        } else {
+            let participant = $(".event-participants");
+            participant.find('option').remove();
+            $('#participant').show();
+
+            dsa.get('speakers', function(result) {
+                result.data.map(function(res) {
+                    let option = document.createElement('option');
+
+                    option.innerHTML = `${res.user.first_name} ${res.user.last_name}`;
+                    option.value = res.user.id;
+
+                    // Set selected option
+                    if (res.user.id === user_id) {
+                        option.selected = true;
+                    }
+
+                    participant.append(option);
+                })
+            });
+        }
+    })
+
+    /* Save edited data */
+    $('.btn-save').click(function(event){
+        const id = $(this).attr('id');
+        let user_id = $('#participant').find(":selected").val();
+
+        if ($('.event-types').val() !== "speaker") {
+            user_id = null;
+        }
+
+        payload = {
+            "data": {
+                "user_id": user_id || null,
+                "title": $('.event-title').val(),
+                "information": $('.event-information').val(),
+                "type": $('.event-types').val() 
+            }          
+        };
+
+        dsa.patch('events/' + id, payload, function(result) {
+            if(result.meta.success) {
+                window.location = "/events";
+            }
+        });
+    })
+</script>

@@ -1,0 +1,109 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="ticket-type">Ticket type:</label>
+                                    <input type="text" class="form-control ticket-type" id="ticket-type">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="ticket-price">Ticket price:</label>
+                                    <input type="text" class="form-control ticket-price" id="ticket-price">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="e-ticket-quota">Ticket quota:</label>
+                                    <input type="text" class="form-control e-ticket-quota" id="e-ticket-quota">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="ticket-price">Ticket USD price:</label>
+                                    <input type="text" class="form-control ticket-usd-price" id="ticket-usd-price">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="ticket-information">Ticket information:</label>
+                                    <input type="text" class="form-control ticket-information" id="ticket-information">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="i-ticket-type">Ticket Type:</label>
+                                    <select class="form-control type-edit" id="edit-type">
+                                            <option id="1" value="user">User</option>
+                                            <option id="2" value="exhibitor">Exhibitor</option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li class="list-group-item proposal-edit">
+                                    <div class="form-group">
+                                        <label for="i-photo">Proposal Url:</label>
+                                        <input class="input-file e-proposal" id="e-proposal" type="file" name="file" accept=".ppt,.pptx,.pdf">
+                                    </div>
+                                </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Display Attendee Detail */
+
+    $('.type-edit').change(function(){
+        var val = $('.type-edit').val();
+        if (val === 'exhibitor'){
+            $('.proposal-edit').show()
+        }else if(val === 'user'){
+            $('.proposal-edit').hide()
+        }
+    })
+
+    $('.btn-save').click(function(event){
+        const id = $(this).attr('id');
+        console.log(id)
+        var form = $('#upload-proposal')[0];
+        const formdata = new FormData(form);
+        formdata.append('ticket_type', $('.ticket-type').val());
+        formdata.append('price', $('.ticket-price').val());
+        formdata.append('usd_price', $('.ticket-usd-price').val());
+        formdata.append('information', $('.ticket-information').val());
+        formdata.append('type', $('.type-edit').val());
+        formdata.append('quota', $('.e-ticket-quota').val());
+        formdata.append('proposal_url', $('#e-proposal')[0].files[0])
+        console.log($('.add-ticket-type').val())
+        dsa.patchForm('tickets/' + id, formdata, function(result) {
+            if(result.meta.success) {
+                window.location = "/tickets";
+            }
+        });
+    })
+    $(function() {
+        $('#attendee-list1').DataTable();
+    })
+</script>

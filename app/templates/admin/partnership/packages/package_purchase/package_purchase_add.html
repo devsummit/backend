@@ -1,0 +1,61 @@
+<div class="modal fade" id="modal-add">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Default title</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box box-primary">
+                        <div class="box-body box-profile">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="partner-name">Partner Name:</label>
+                                        <select class="add-partner-name form-control">
+                                        </select>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="packages">Select Package:</label>
+                                        <select class="add-packages-select form-control">
+                                            </select>
+                                    </div>
+                                </li>
+                            </ul>
+                            <a href="#" class="btn btn-primary btn-block btn-package-purchase" id="-"><b>Save</b></a>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- page script -->
+    <script>
+        $('.btn-package-purchase').click(function (event) {
+            const package_id = $('.add-packages-select').find(":selected").val();
+            const partner_id = $('.add-partner-name').find(":selected").val();
+            if(confirm('Purchase this package?')){
+                let payloads = {
+                    package_id,
+                    partner_id
+                };
+                dsa.post('package_purchase', payloads, function (result) {
+                    if (result.meta.success) {
+                        window.location = "/package-purchase";
+                    }
+                });
+            } else {
+                alert('cancel purchasing the package');
+            }
+        });
+    </script>

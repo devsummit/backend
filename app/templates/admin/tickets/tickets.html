@@ -1,0 +1,116 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Tickets list </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Tickets
+        <small>List of registered attendees</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Attendees</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <table id="attendee-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Ticket type</th>
+                    <th>Price</th>
+                    <th>Information</th>
+                    <th>Type</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets.data %}
+                    <tr>
+                        <td>
+                            {{ ticket.ticket_type }}
+                        </td>
+                        <td>
+                            {{ ticket.price }}
+                        </td>
+                        <td>
+                            {{ ticket.information }}
+                        </td>
+                        <td>
+                            {{ ticket.type }}
+                        </td>
+                         <td>
+                            <button id='bte-{{ ticket.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                            <button id='btd-{{ ticket.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <tr>
+                <a href="#" class="btn btn-primary btn-block btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+            </tr>
+        </div>
+
+         {% include "admin/tickets/ticket_edit.html" %}
+         {% include "admin/tickets/ticket_delete.html" %}
+         {% include "admin/tickets/ticket_add.html" %}
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    /* Edit ticket */
+    $('.btn-edit').click(function(event){
+        $('.modal-title').html('Edit Ticket');
+
+        const bte_id = $(this).attr('id');
+        const id = bte_id.substring(4, bte_id.length);
+        dsa.get('tickets/' + id, function(result) {
+            // bind result value in to attendee_detail.html 
+            const data = result['data'];
+            $('.ticket-type').val(data['ticket_type']);
+            $('.ticket-price').val(data['price']);
+            $('.ticket-information').val(data['information']);
+            $('.ticket-usd-price').val(data['usd_price']);
+            $('.e-ticket-quota').val(data['quota']);
+            $('.type-edit').val(data['type']);
+            $('.btn-save').attr("id", data['id']);
+        });
+    })
+
+    $('.btn-add').click(function(event){
+        $('.modal-title').html('Add New Ticket');
+    });
+
+    $('.btn-delete').click(function(event){
+        $('.modal-title').html('Delete');
+
+        const btd_id = $(this).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        $('.btn-yes').attr("id", id);
+    })
+    $(function () {
+        $('#attendee-list1').DataTable();
+    })
+</script>
+
+{% endblock %}

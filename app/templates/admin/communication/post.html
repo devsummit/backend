@@ -1,0 +1,81 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Post Feed </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Post
+        <small>Broadcast post feed to our beloved users</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Post Feed Broadcast</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <div class="form-group">
+                <label for="post-content">Post Content:</label>
+                <input type="text" class="form-control post-content" id="post-content">
+            </div>
+            <div class="form-group">
+                <label for="post-photo">Attachment:</label>
+                 <input class="input-file post-photo" id="fileInput" type="file" name="file">
+                 <img id='img-upload' style="width: 300px; height: 200px" />
+            </div>
+            <a href="#" class="btn btn-primary btn-block btn-send">Send</b></a>
+        </div>
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    $('.btn-send').click(function(event){
+        const id = $(this).attr('id');
+        const formdata = new FormData();
+        formdata.append('attachment', $('#fileInput')[0].files[0])
+        formdata.append('message', $('.post-content').val())
+        if (confirm('confirm send to users?')) {
+            dsa.postForm('feeds', formdata, function(result) {
+                if(result.meta.success) {
+                    alert('Post sent');
+                    $('.post-content').val('');
+                    $("#img-upload").attr("src", '');
+                    $('.post-photo').val('');
+                }
+            });
+        }
+    })
+
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#fileInput").change(function(){
+        readURL(this);
+    });
+</script>
+
+{% endblock %}

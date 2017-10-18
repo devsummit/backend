@@ -1,0 +1,113 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %}
+    <title> Sponsor Template </title>
+{% endblock %}
+    
+{% set globals={'base_route': 'sponsors/template/', 'api_route': 'sponsors/template/'} %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+
+    <h1>
+        Sponsors Template
+        <small>List of Sponsors template</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Sponsors Template</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <div class="box-body">
+            <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+
+            <table id="sponsors-list1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Sponsor Name</th>
+                        <th>Message</th>
+                        <th>Attachment</th>
+                        <th>Webssite Promo</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sponsor in sponsortemplates %}
+                    <tr>
+                        <td>
+                            {{ sponsor.sponsor.name }}
+                        </td>
+                        <td style="max-width:200px; word-wrap:break-word;">
+                            {{ sponsor.message }}
+                        </td>
+                        <td>
+                            {%if sponsor.attachment%}
+                                <img src="static/{{sponsor.attachment|e}}" height="120px" width="100px" alt='sponsor attachment'>
+                            {% else %}
+                                <img src="static/images/partners/empty-profile-grey.jpg" height="120px" width="100px" alt='no attachment'>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ sponsor.redirect_url }}
+                        </td>
+                        <td>
+                            <button id='btl-{{ sponsor.sponsor_id }}' type="button" class="btn btn-sm btn-info btn-edit-template" data-toggle="modal" data-target="#modal-edit-template">
+                                Edit Feed
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% include "admin/base/modal_delete.html" %} 
+    {% include "admin/sponsor_template/sponsor_template_edit.html" %}
+{% endblock %}
+
+{% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+
+    <!-- page script -->
+    <script>
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        $('.btn-edit-template').click(function (event){
+            $('.modal-title').html('Create Template');
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            $('.btn-save-template').attr('id',+ id);
+            
+            dsa.get('sponsors/template/' + id, function(result){
+                const data = result['data']
+                $('#e-message').val(data['message'])
+                $('#e-redirect-url').val(data['redirect_url'])
+                $("#e-img-upload").attr("src", data['attachment']);
+                $('#e-attachment').val(data['attachment'] ? data['attachment'] : '-');
+            })
+        })
+
+        $(function () {
+            $('#sponsors-list1').DataTable({
+                columnDefs: [{
+                    targets: [ -1 ],
+                    orderable: false,
+                }]
+            });
+        })
+    </script>
+{% endblock %}

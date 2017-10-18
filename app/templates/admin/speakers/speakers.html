@@ -1,0 +1,122 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %}
+    <title> Speakers list </title>
+{% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Speakers
+        <small>List of speakers</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>Events</li>
+    <li class="active">Speakers</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <div class="box-body">
+            <table id="speaker-list" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Speaker</th>
+                    <th>Job</th>
+                    <th>Summary</th>
+                    <th>Information</th>
+                    <th>Type</th>                    
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for speaker in speakers %}
+                    <tr>
+                        <td>
+                            {{ speaker.user.first_name|e }} {{ speaker.user.last_name|e }}
+                        </td>
+                        <td>
+                            {{ speaker.job|e }}
+                        </td>
+                        <td>
+                            {{ speaker.summary|e }}
+                        </td>
+                        <td>
+                            {{ speaker.information|e }}
+                        </td>
+                        <td>
+                            {{ speaker.type|e }}
+                        </td>
+                        <td class="text-center">
+                            <button id='bte-{{ speaker.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                            <button id='bte-{{ speaker.id }}' type="button" class="btn btn-sm btn-info btn-document" data-toggle="modal" data-target="#modal-document">
+                                Add Document
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include "admin/users/user_detail.html" %}
+        {% include "admin/speakers/speaker_edit.html" %}
+        {% include "admin/speakers/speaker_document.html" %}
+
+{% endblock %}
+
+{% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+    <!-- page script -->
+    <script>
+        /* Edit speaker detail */
+        $('.btn-edit').click(function(event){
+            $('.modal-title').html('Edit Speaker');
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+
+            dsa.get('speakers/' + id, function(result) {
+                // bind result value in to speaker_detail.html 
+                const data = result['data'];
+
+                $('.speaker-job').val(data['job']);
+                $('.speaker-summary').val(data['summary']);
+                $('.speaker-information').val(data['information']);
+                $('.btn-save').attr("id", `${data['id']} ${data['user_id']}`);
+            });
+        })
+
+        $('.btn-document').click(function (event) {
+            $('.modal-title').html('Add Document');
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+
+            dsa.get('speakers/' + id, function (result) {
+                // bind result value in to speaker_detail.html 
+                const data = result['data'];
+                $('.btn-add').attr("id", `${data['id']} ${data['user_id']}`);
+            });
+        })
+
+        $(function () {
+            $('#speaker-list').DataTable({
+                columnDefs: [{
+                    targets: [ -1 ],
+                    orderable: false,
+                }]
+            });
+        })
+    </script>
+{% endblock %}

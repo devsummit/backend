@@ -1,0 +1,98 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> invoice list </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Invoices
+        <small>List of invoices</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Invoices</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <table id="invoice-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Invoice Id</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Description</th>
+                    <th>Total</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td>
+                            {{  invoice.id|e }}
+                        </td>
+                        <td>
+                            name here
+                        </td>
+                        <td>
+                            email here
+                        </td>
+                        <td>
+                            {{ invoice.address|e }}
+                        </td>
+                        <td>
+                            {{ invoice.description|e }}
+                        </td>
+                        <td>
+                            {{ "IDR. {:,.2f}".format(invoice.total)|e }}
+                        </td>
+                        <td>
+                            {{ invoice.created_at|e }}
+                        </td>
+                        <td>
+                            <a id='btd-{{ invoice.id }}' class="btn btn-sm btn-info btn-detail" href="/invoices/{{ invoice.id }}">
+                                Detail
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    /* Display user Detail using user detail template*/
+    $('.btn-detail').click(function(event){
+        const btd_id = $(this).attr('id');
+        const id = btd_id.substring(4, btd_id.length);
+        dsa.get('invoices/' + id, function(result) {
+            console.log(result, 'result')
+            /*to be implemented for generating invoice*/
+
+        });
+    })
+    $(function () {
+        $('#invoice-list1').DataTable();
+    })
+</script>
+{% endblock %}

@@ -1,0 +1,137 @@
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Default title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="e-sponsor-name">Sponsor Name:</label>
+                                    <input type="text" class="form-control" id="e-sponsor-name">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="e-sponsor-email">Email:</label>
+                                    <input type="text" class="form-control" id="e-sponsor-email">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="e-sponsor-phone">Phone:</label>
+                                    <input type="text" class="form-control" id="e-sponsor-phone">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="e-sponsor-stage">Stage:</label>
+                                    <select class="form-control" id="e-sponsor-stage"></select>
+                                </div>
+                            </li>
+                            <li class="list-group-item" style="display: none;" id="e-sponsor-type-wrap">
+                                <label for="e-sponsor-type">Type:</label>
+                                <select class="form-control" id="e-sponsor-type">
+                                </select>
+                            </li>
+                            <li>
+                                <div class="form-group">
+                                    <label for="e-sponsor-photo">Sponsor Logo:</label>
+                                     <input class="input-file e-sponsor-photo" id="e-fileInput" type="file" name="file">
+                                     <img id='e-img-upload' style="width: 300px; height: 200px" />
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="e-sponsor-note">Note:</label>
+                                    <textarea type="text" class="form-control" id="e-sponsor-note"></textarea>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                        <label for="e-sponsor-url">Url:</label>
+                                    <textarea type="text" class="form-control" id="e-sponsor-url"></textarea>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <label for="e-sponsor-callback-url">Callback url:</label>
+                                    <textarea type="text" class="form-control" id="e-sponsor-callback-url"></textarea>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-edit-save" id="-"><b>Save</b></a>
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    $('#e-sponsor-stage').on('change', function() {
+        if (this.value !== '3') {
+            $('#e-sponsor-type-wrap').hide();
+        } else {
+            $('#e-sponsor-type-wrap').show();
+        }
+    })
+
+    /* Save edit account */
+    $('.btn-edit-save').click(function (event) {
+        let sponsor_type = $('#e-sponsor-stage').val() !== '3' ?
+                             null : parseInt($('#e-sponsor-type').val());
+
+        const id = $(this).attr('id');
+        const formdata = new FormData();
+        formdata.append('attachment', $('#e-fileInput')[0].files[0])
+        formdata.append('name', $('#e-sponsor-name').val())
+        formdata.append('email', $('#e-sponsor-email').val())
+        formdata.append('phone', $('#e-sponsor-phone').val())
+        formdata.append('note', $('#e-sponsor-note').val())
+        formdata.append('url', $('#e-sponsor-url').val())
+        formdata.append('callback_url', $('#e-sponsor-callback-url').val())
+        formdata.append('type', sponsor_type);
+        formdata.append('stage', $('#e-sponsor-stage').val());
+        dsa.patchForm('sponsors/' + id, formdata, function(result) {
+            if(result.meta.success) {
+                $('#e-sponsor-name').val('');
+                $('#e-sponsor-email').val('');
+                $('#e-sponsor-phone').val('');
+                $('#e-sponsor-note').val('');
+                $("#e-img-upload").attr("src", '');
+                $('#e-sponsor-photo').val('');
+                window.location = "/sponsors";
+            }
+        });
+
+    })
+
+    function readURLEdit(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#e-img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $("#e-fileInput").change(function(){
+        console.log('cuk')
+        readURLEdit(this);
+    });
+</script>

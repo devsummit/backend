@@ -1,0 +1,193 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %}
+    <title> Events list </title>
+{% endblock %}
+
+{% set globals={'base_route': 'events', 'api_route': 'events'} %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Events
+        <small>List of events</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>Events</li>
+    <li class="active">Events</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <div class="box-body">
+            <a href="#" class="btn btn-primary btn-add" style="margin-bottom: 12px;" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+
+            <table id="event-list" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Participant</th>
+                    <th>Title</th>
+                    <th>Information</th>
+                    <th>Type</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr>
+                        <td>
+                            {% if event.user_id %}
+                                {{ event.user.first_name.title() }} {{ event.user.last_name.title() }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ event.title }}
+                        </td>
+                        <td>
+                            {{ event.information }}
+                        </td>
+                        <td>
+                            {{ event.type.title() }}
+                        </td>
+                        <td class="text-center">
+                            <button id='bte-{{ event.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
+                                Edit
+                            </button>
+                            <button id='btd-{{ event.id }}' type="button" class="btn btn-sm btn-info btn-events-delete" data-toggle="modal" data-target="#modal-delete">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include "admin/events/events_edit.html" %}
+        {% include "admin/events/events_add.html" %}
+        {% include "admin/base/modal_delete.html" %} 
+{% endblock %}
+
+{% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+
+    <!-- page script -->
+    <script>
+        // Delete button action
+        $('.btn-events-delete').click(function (event) {
+            $('.modal-title').html('Are you sure want to delete this event?');
+            const btd_id = $(this).attr('id');
+            const id = btd_id.substring(4, btd_id.length);
+            $('.btn-yes').attr("id", id);
+        });
+
+        // Add button action
+        $('.btn-add').click(function(event){
+            $('.modal-title').html('Add New Event');
+            $(".event-types-add").find('option').remove();
+
+            EVENT_TYPES.map(function(type) {
+                // add to select
+                let option = document.createElement('option');
+
+                option.innerHTML = capitalizeFirstLetter(type);
+                option.value = type;
+
+                if (type === 'discuss panel') {
+                    option.selected = true;
+                }
+
+                $(".event-types-add").append(option);
+            });
+
+            $('#participant-add').hide();
+        });
+
+        /* Edit event action */
+        $('.btn-edit').click(function(event){
+            $('.modal-title').html('Edit Event');
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+            let selected_type;
+            let selected_participant;
+
+            dsa.get('events/' + id, function(result) {
+                // bind result value in to event_detail.html 
+                const data = result['data'];
+                selected_type = data['type'];
+                selected_participant = data['user_id']
+
+                $('.event-title').val(data['title']);
+                $('.event-information').val(data['information']);
+                $('.btn-save').attr("id", id);
+
+                let select = $(".event-types");
+                select.find('option').remove();
+
+                EVENT_TYPES.map(function(type) {
+                    // add to select
+                    let option = document.createElement('option');
+
+                    option.innerHTML = capitalizeFirstLetter(type);
+                    option.value = type;
+
+                    // Set selected option
+                    if (type === selected_type) {
+                        option.selected = true;
+                    }
+
+                    select.append(option);
+                });
+                
+                let participant = $(".event-participants");
+                participant.find('option').remove();
+                $('#participant').show();
+
+                if (selected_type !== 'speaker') {
+                    $('#participant').hide();
+                } else {
+                    dsa.get('speakers', function(result) {
+                        result.data.map(function(res) {
+                            let option = document.createElement('option');
+
+                            option.innerHTML = capitalizeFirstLetter(res.user.first_name) + ' ' + capitalizeFirstLetter(res.user.last_name);
+                            option.value = res.user.id;
+
+                            // Set selected option
+                            if (res.user.id === selected_participant) {
+                                option.selected = true;
+                            }
+
+                            participant.append(option);
+                        })
+                    });
+                }
+            });
+        })
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        $(function () {
+            $('#event-list').DataTable({
+                columnDefs: [{
+                    targets: [ -1 ],
+                    orderable: false,
+                }]
+            });
+        })
+    </script>
+{% endblock %}

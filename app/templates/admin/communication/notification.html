@@ -1,0 +1,61 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Notification </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+<h1>
+        {{ super() }}
+        Notification
+        <small>Send Notification To Our User</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Notification</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <div class="form-group">
+                <label for="notification">Notification title:</label>
+                <input type="text" class="form-control notification-title" id="notification-title">
+            </div>
+            <div class="form-group">
+                <label for="notification">Notification Content:</label>
+                <input type="text" class="form-control notification-content" id="notification-content">
+            </div>
+            <button class="btn btn-primary btn-block btn-authorize" data-toggle="modal" data-target="#modal-authorize">Send</button>
+        </div>
+
+{% include "admin/communication/notification_authorize.html" %}
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+
+    $('.btn-authorize').click(function(event){
+        $('.modal-title').html('Authorize');
+        const title = $('.notification-title').val()
+        const content = $('.notification-content').val()
+        
+        const admin = dsa.getUser();
+        $('#title').val(title);
+        $('#content').val(content)
+        $('#username').val(admin['username']);
+    })
+</script>
+
+{% endblock %}
