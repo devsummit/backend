@@ -4,6 +4,7 @@ from app.services.helper import Helper
 import paypalrestsdk
 import datetime
 from sqlalchemy.exc import SQLAlchemyError
+from app.services.logs_service import LogsService
 # import model class
 from app.models.order import Order
 from app.builders.response_builder import ResponseBuilder
@@ -148,7 +149,9 @@ class OrderService():
 				payment.transaction_time = datetime.datetime.now()
 				payment.transaction_status = 'pending'
 				db.session.add(payment)
-				db.session.commit()	
+				db.session.commit()
+
+			LogsService().create_log("Ticket order from " + user['username'] + (" has been processed"))
 			
 				# if payloads['payment_type'] == 'paypal':
 					# self.paypalorder(payloads)
@@ -173,6 +176,8 @@ class OrderService():
 			self.model_order_details.delete()
 			self.model_order_payment.delete()
 			db.session.commit()
+
+			logsservice().create_log("Ticket order from " + user['username'] + " has been deleted")
 
 			# delete row
 			self.model_order.delete()
