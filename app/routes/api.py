@@ -1,10 +1,12 @@
 '''
 put api route in here
 '''
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, json
 
 # import middlewares
 from app.middlewares.authentication import token_required
+from app.models import mail
+from app.services.email_service import EmailService
 from app.models import socketio
 from flask_socketio import emit
 
@@ -1023,3 +1025,12 @@ def verify_payment(id, *args, **kwargs):
     if user['role_id'] == ROLE['admin']:
         return OrderVerificationController.verify(id, request)
     return 'Unauthorized'
+
+
+@api.route('/mail/send', methods=['POST'])
+def send_mailgun():
+    emailservice = EmailService()
+    email = emailservice.set_recipient("shi88.andy@gmail.com").set_body('cuk').build()
+    print(email.as_string(), 'cuk')
+    mail.send(email)
+    return 'jancuk'
