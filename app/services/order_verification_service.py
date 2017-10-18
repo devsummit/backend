@@ -15,6 +15,7 @@ from app.models.user_booth import UserBooth
 from app.models.hacker_team import HackerTeam
 from app.models.user_hacker import UserHacker
 from app.services.base_service import BaseService
+from app.services.logs_service import LogsService
 from app.builders.response_builder import ResponseBuilder
 from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
@@ -101,6 +102,7 @@ class OrderVerificationService(BaseService):
 				'updated_at': datetime.datetime.now()
 			})
 			db.session.commit()
+			LogsService().create_log(user['username'] + "'s payment has been updated")
 			data = orderverification.first()
 			return response.set_data(data.as_dict()).build()
 		except SQLAlchemyError as e:
@@ -220,6 +222,7 @@ class OrderVerificationService(BaseService):
 			})
 			db.session.commit()
 			send_notification = FCMService().send_single_notification('Payment Status', 'Your payment has been verified', user.id, ROLE['admin'])
+			LogsService().create_log(user['username'] + "'s payment has been verified")
 			return response.set_data(None).set_message('ticket purchased').build()
 		else:
 			return response.set_data(None).set_message('This payment has already verified').build()
