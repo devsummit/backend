@@ -1027,10 +1027,10 @@ def verify_payment(id, *args, **kwargs):
     return 'Unauthorized'
 
 
+# Delete this route when no further test is needed.
 @api.route('/mail/send', methods=['POST'])
 def send_mailgun():
     emailservice = EmailService()
-    email = emailservice.set_recipient("shi88.andy@gmail.com").set_body('cuk').build()
-    print(email.as_string(), 'cuk')
+    email = emailservice.set_recipient("shi88.andy@gmail.com").set_subject('Order Notification').set_sender('noreply@devsummit.io').set_html('<b>Hallo andy</b>').build()
     mail.send(email)
-    return 'jancuk'
+    return 'email sent'
