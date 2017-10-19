@@ -9,6 +9,7 @@ from app.models.user import User
 from app.models import db
 from app.services.email_service import EmailService
 from app.models import socketio
+from app.builders.response_builder import ResponseBuilder
 from flask_socketio import emit
 
 # controllers import
@@ -1038,17 +1039,30 @@ def send_mailgun():
 
 @api.route('/mail/reset-password', methods=['POST'])
 def mail_reset_password():
+    response = ResponseBuilder()
     email = request.json['email'] if 'email' in request.json else None
     user = db.session.query(User).filter_by(email=email).first()
     if user is not None:
         token = user.generate_auth_token(1800)
         token = token.decode("utf-8") 
         emailservice = EmailService()
-        email = emailservice.set_recipient(email).set_subject('Password Reset').set_sender('noreply@devsummit.io').set_html("<h4>You've just tried to reset your password from</h4><h4>click here to reset your password</h4><a href='http://localhost:5000/reset-password?action=reset_password&token=%s'>http://localhost:5000/reset-password?action=reset_password&token=%s</a>" %(token, token)).build()
+        email = emailservice.set_recipient(email).set_subject('Password Reset').set_sender('noreply@devsummit.io').set_html("<h4>You've just tried to reset your password from</h4><h4>click here to reset your password</h4><a href='%sreset-password?action=reset_password&token=%s'>http://localhost:5000/reset-password?action=reset_password&token=%s</a>" %(request.url_root, token, token)).build()
         mail.send(email)
-        return 'send password reset success'
+        return jsonify({
+            'data': None,
+            'meta': {
+                'message': 'Send reset password success, you can check your email now',
+                'success': True
+            }
+        })
     else:
-        return 'please send email which registered into your account before'
+        return jsonify({
+            'data': None,
+            'meta': {
+                'message': 'Please send email which registered into your account before',
+                'success': True
+            }
+        })
 
 @api.route('/reset_password', methods=['POST'])
 def reset_password(*args, **kwargs):

@@ -351,7 +351,7 @@ class UserService(BaseService):
 				'password': generate_password_hash(payloads['new_password'])
 			})
 			db.session.commit()
-			return response.set_data(user.as_dict()).set_message('Reset Password success').build()
+			return response.set_data(user.as_dict()).set_message('Reset Password success, You can logged in with new password').build()
 		else:
 			return response.set_data(None).set_message('Reset Password failed or token expired').build()
 
