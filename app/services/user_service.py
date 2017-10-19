@@ -54,7 +54,7 @@ class UserService(BaseService):
 
 		return response.set_data(data).build()
 
-	def register(self, payloads):
+	def register(self, payloads, user):
 		user_refcount = 0
 		user_havref = 0
 		response = ResponseBuilder()
@@ -89,7 +89,7 @@ class UserService(BaseService):
 					})
 				db.session.commit()
 				
-				LogsService().create_log("%s has been referred" % (payloads['username']))
+				LogsService().create_log("referred by: " + user['username'])
 				
 				# checking referer add full day ticket if reach 10 counts
 				if referer.referal_count > 0:
