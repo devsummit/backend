@@ -52,6 +52,8 @@ from app.controllers.invoice_controller import InvoiceController
 from app.controllers.package_management_controller import PackageManagementController
 from app.controllers.order_verification_controller import OrderVerificationController
 from app.controllers.user_authorization_controller import UserAuthorizationController
+from app.controllers.hackaton_controller import HackatonController
+from app.controllers.user_feedback_controller import UserFeedbackController
 
 from app.configs.constants import ROLE
 
@@ -177,11 +179,12 @@ def spot_id(id, *args, **kwargs):
 @api.route('/orders', methods=['GET', 'POST'])
 @token_required
 def orders(*args, **kwargs):
+    user = kwargs['user'].as_dict()
     user_id = kwargs['user'].id
     if(request.method == 'GET'):
         return OrderController.index(user_id)
     elif(request.method == 'POST'):
-        return OrderController.create(request, user_id)
+        return OrderController.create(request, user)
 
 
 @api.route('/orders/<id>', methods=['DELETE', 'GET'])
@@ -575,7 +578,8 @@ def status(id, *args, **kwargs):
 @api.route('/payments/confirm', methods=['POST'])
 @token_required
 def confirm_payment(*args, **kwargs):
-    return PaymentController.confirm(request)
+    user_id = kwargs['user'].id
+    return PaymentController.confirm(request, user_id)
 
 
 @api.route('/payments/<payment_id>', methods=['GET'])
