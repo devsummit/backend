@@ -88,7 +88,9 @@ class UserService(BaseService):
 					'referal_count': referer.referal_count + 1
 					})
 				db.session.commit()
+				
 				LogsService().create_log("%s has been referred" % (payloads['username']))
+				
 				# checking referer add full day ticket if reach 10 counts
 				if referer.referal_count > 0:
 					referer_detail = db.session.query(User).filter_by(referal=payloads['referer']).first().as_dict()
