@@ -61,6 +61,10 @@ PAYPAL = {
     'cancel_url': 'http://localhost:5000/'
 }
 
+SLACK = {
+    'hook': 'https://hooks.slack.com/services/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'
+}
+
 MIDTRANS_API_BASE_URL = 'https://api.sandbox.midtrans.com/v2/'
 # Change these consts to devsummit later
 MERCHANT_ID = 'M1066775'
