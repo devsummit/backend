@@ -34,7 +34,7 @@ class OrderService():
 	# 		ticket = db.session.query(Ticket).filter_by(id=order['ticket_id']).first().as_dict()
 	# 		item['name'] = ticket['ticket_type']
 	# 		item['quantity'] = str(order['count'])
-	# 		item['currency'] = payload['currency']
+	# 		item['currency'] = "USD"
 	# 		item['price'] = ticket['price']
 
 	# 		ord_det.append(item)
@@ -46,8 +46,8 @@ class OrderService():
 	# 		},
 	# 		"transactions": [{
 	# 			"amount": {
-	# 				"currency":payload['currency'],
-	# 				"total": payload['gross_amount']
+	# 				"currency":"USD",
+	# 				"total": 400000
 	# 			},
 	# 			"payee": {
 	# 				"email": PAYPAL['payee']
@@ -64,6 +64,7 @@ class OrderService():
 	# 	result = payment.create()
 	# 	if result:
 	# 		self.get_paypal_detail(payment.id)
+	# 		print(payment.id)
 	# 	else:
 	# 		print(payment.error)
 	# 	return payment
@@ -151,10 +152,10 @@ class OrderService():
 				db.session.add(payment)
 				db.session.commit()
 
-			LogsService().create_log("Ticket order from " + user['username'] + (" has been processed"))
+			LogsService().create_log("Ticket id: " + ticket + " order from " + user['username'] + " has been created")
 			
-				# if payloads['payment_type'] == 'paypal':
-					# self.paypalorder(payloads)
+			# if payloads['payment_type'] == 'paypal':
+			# 	self.paypalorder(payloads)
 			# save all items
 			return {
 				'error': False,
@@ -168,7 +169,7 @@ class OrderService():
 				'data': data
 			}
 
-	def delete(self, id):
+	def delete(self, id, user):
 		self.model_order = db.session.query(Order).filter_by(id=id)
 		if self.model_order.first() is not None:
 			self.model_order_details = db.session.query(OrderDetails).filter_by(order_id=self.model_order.first().id)
@@ -177,13 +178,11 @@ class OrderService():
 			self.model_order_payment.delete()
 			db.session.commit()
 
+			LogsService().create_log("Ticket id: " + self.model_order_details['ticket_id'] + " order from " + user['username'] + " has been deleted")
 
 			# delete row
 			self.model_order.delete()
 			db.session.commit()
-
-			LogsService().create_log("Ticket order from " + user['username'] + " has been deleted")
-
 			return {
 				'error': False,
 				'data': None
