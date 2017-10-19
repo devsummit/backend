@@ -3,11 +3,12 @@ import json
 import requests
 import datetime
 import secrets
+import urllib
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
-from flask import request
+from flask import request, current_app
 from app.models import mail
 from app.models.access_token import AccessToken
 from app.models.user import User
@@ -20,6 +21,7 @@ from app.models.client import Client
 from app.models.ambassador import Ambassador  # noqa
 from app.models.redeem_code import RedeemCode  # noqa
 from app.configs.constants import ROLE  # noqa
+from app.configs.settings import EMAIL_HANDLER_ROUTE
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
@@ -102,40 +104,43 @@ class UserService(BaseService):
 				data = e.orig.args
 				return response.set_error(True).set_message('SQL error').set_data(data).build()
 
-	def send_confirmation_email (self, user, *args):
+	def send_confirmation_email (self, user):
 		# generate token that expire in 1 hours
 		token = user.generate_auth_token(3600)
 		# generate url parameter
-		params = "?token={}".format(token)
+		params = "?token={}".format(token.decode('utf-8'))
 		url = Helper().url_helper(params, current_app.config['EMAIL_HANDLER_ROUTE'])
 		# generate email attributes
-		email_subject = "DevSummit: Email Address Verification" if args is None else args[0]
-		message_body = ("Dear " + user.username + ", <br />" + "Please confirm your email address by click in this provided link in one hour: <br />" + 
-						url + "<br /> Regards, <br /> DevSummit Team" if args is None else args[1])
+		email_subject = "DevSummit: Email Address Verification"
+		message_body = ("Dear " + user.username + ", <br /> <br/>" + "Please confirm your email address by click in this provided link in one hour: <br />" + 
+						url + "<br /> <br/> Regards, <br /> DevSummit Team")
 		receiver = user.email
 		email = EmailService()
-		email.set_subject('DevSummit Email Confirmation').set_html(message_body).set_sender(current_app.config['MAIL_DEFAULT_SENDER']).set_recipient(receiver).build()
+		email = email.set_subject('DevSummit Email Confirmation').set_html(message_body).set_sender(current_app.config['MAIL_DEFAULT_SENDER']).set_recipient(receiver).build()
 		mail.send(email)
 		return True
 
 
-	def email_address_verification(token):
+	def email_address_verification(self, token):
+		print(token, 'sss')
 		user = User.verify_auth_token(token)
+		print ("bbbb", user)
 		if user:
-			try:
-				user_model = db.session.query(User).filter_by(id=user.id)
-				user_model.update({
-					confirmed:1
-				})
-				db.session.commit()
-				# check referal related things
-				self.referer_verification(user)
-				# send successful email verification to user and FCM notification
-				self.send_confirmation_email(user, "DevSummit: Email Address Verified", "Your Email Address has been successfully verified")
-				FCMService().send_single_notification("Email Address Verification", "Email address have been successfully verified", user.id, sender_id=1)
+			user_query = db.session.query(User).filter_by(id=user.id)
+			user_query.update({
+				'confirmed': 1
+			})
+			db.session.commit()
+
+			# check referal related things
+			# self.referer_verification(user)
+
+			# send result
+			result = 'Email Address have been successfully verified'
+			return result
 		else:
-			# send unsuccessful email verification to user and suggest him to get another link
-			self.send_confirmation_email(user, "DevSummit: Email Address Verification is not Successful", "The confirmation link could not be verified, you could try to get another link by requesting another email verification link")
+			result = 'Email Address have not been successfully verified, please request another confirmation link'
+			return result
 
 
 	def referer_verification(user):

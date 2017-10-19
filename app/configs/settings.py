@@ -24,17 +24,17 @@ AWS_SECRET_ACCESS_KEY = 'AtjP3Fo8ptE+OQ/LAK/05jHT7xY2Nms9LQzI8I/Ir8mN'
 SES_REGION_NAME = 'us-west-2'  # change to match your region
 SES_EMAIL_SOURCE = 'no-reply@devsummit.io'
 '''
-MAIL_ASCII_ATTACHMENTS = True
-MAIL_SERVER = 'email-smtp.us-west-2.amazonaws.com'
-MAIL_PORT = 587
-MAIL_USE_TLS = True
-MAIL_USERNAME = 'AKIAIGAJPFNDYCSD5YBA'
-MAIL_PASSWORD = 'AtjP3Fo8ptE+OQ/LAK/05jHT7xY2Nms9LQzI8I/Ir8mN'
-MAIL_DEFAULT_SENDER = 'noreply@devsummit.io'
-MAIL_SUPPRESS_SEND = False
+# MAIL_ASCII_ATTACHMENTS = True
+# MAIL_SERVER = 'email-smtp.us-west-2.amazonaws.com'
+# MAIL_PORT = 587
+# MAIL_USE_TLS = True
+# MAIL_USERNAME = 'AKIAIGAJPFNDYCSD5YBA'
+# MAIL_PASSWORD = 'AtjP3Fo8ptE+OQ/LAK/05jHT7xY2Nms9LQzI8I/Ir8mN'
+# MAIL_DEFAULT_SENDER = 'noreply@devsummit.io'
+# MAIL_SUPPRESS_SEND = False
 
-ADMINS = ['noreply@devsummit.io']
-'''
+# ADMINS = ['noreply@devsummit.io']
+
 
 # email server
 MAIL_SERVER = 'smtp.gmail.com'
@@ -47,7 +47,7 @@ MAIL_PASSWORD = 'tcsmhlnqicfvcued'
 MAIL_SUPPRESS_SEND = False
 # administrator list
 ADMINS = ['andy.developmode@gmail.com']
-'''
+
 # default saving, database saving & domain based url
 MAX_CONTENT_LENGTH = 5 * 1024 * 1024
 POST_STAGE_PHOTO_DEST = 'app/static/images/stages/'
@@ -87,4 +87,4 @@ STATIC_DEST = 'app/static/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 #This is the registered url route for email service
-EMAIL_HANDLER_ROUTE = 'email-confirmation'
+EMAIL_HANDLER_ROUTE = 'email-verification'
