@@ -1041,7 +1041,7 @@ def mail_reset_password():
     email = request.json['email'] if 'email' in request.json else None
     user = db.session.query(User).filter_by(email=email).first()
     if user is not None:
-        token = user.generate_auth_token()
+        token = user.generate_auth_token(1800)
         token = token.decode("utf-8") 
         emailservice = EmailService()
         email = emailservice.set_recipient("aditiapratamagg@gmail.com").set_subject('Password Reset').set_sender('noreply@devsummit.io').set_html("<a href='http://localhost:5000/reset-password?action=reset_password&token=%s'>Open this link to change your password</a>" %(token)).build()
