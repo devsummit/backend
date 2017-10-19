@@ -13,22 +13,21 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # sqlite database file path
 SQLALCHEMY_DATABASE_URI = 'mysql://' + os.environ.get("DB_USERNAME") + ':' + os.environ.get("DB_PASSWORD") \
-							+ '@' + os.environ.get("DB_HOST") + '/' + os.environ.get("DB_NAME")
+                            + '@' + os.environ.get("DB_HOST") + '/' + os.environ.get("DB_NAME")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 # email server
-MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
-MAIL_USERNAME = 'andy.developmode@gmail.com'
-MAIL_DEFAULT_SENDER = 'admin@devsummit.com'
-MAIL_PASSWORD = 'lmwdurszelzyxthl'
+MAIL_USERNAME = 'devsummit.io@gmail.com'
+MAIL_DEFAULT_SENDER = 'noreply@devsummit.io'
+MAIL_PASSWORD = 'wwfmhamyyxylyzxj'
 MAIL_SUPPRESS_SEND = False
 # administrator list
-ADMINS = ['andy.developmode@gmail.com']
-
+ADMINS = ['noreply@devsummit.io']
 # default saving, database saving & domain based url
 MAX_CONTENT_LENGTH = 5 * 1024 * 1024
 POST_STAGE_PHOTO_DEST = 'app/static/images/stages/'
