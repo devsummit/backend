@@ -28,7 +28,7 @@ class UserAuthorizationController(BaseController):
     @staticmethod
     def login(request):
         provider = request.json['provider'] if 'provider' in request.json else None
-
+        
         admin = request.json['admin'] if 'admin' in request.json else None
         if provider is None:
             username = request.json['username'] if 'username' in request.json else None
@@ -39,12 +39,15 @@ class UserAuthorizationController(BaseController):
 
                 if user is not None:
                     if admin is not None and admin:
-                        if user.as_dict()['role_id'] != 1 and user.as_dict()['role_id'] != 8:
+                        if user.role_id != 1 and user.role_id != 8:
                             return BaseController.send_error_api({'unauthorized': True}, 'unauthorized, must be admin to access this page.')
                     if user.verify_password(password):
-                        token = userservice.save_token()
-                        user = userservice.include_role_data(user.include_photos().as_dict())
-                        return BaseController.send_response_api({'access_token': token['data'].access_token, 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
+                        if user.confirmed is not None or user.role_id == 1:
+                            token = userservice.save_token()
+                            user = userservice.include_role_data(user.include_photos().as_dict())
+                            return BaseController.send_response_api({'access_token': token['data'].access_token, 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
+                        else:
+                            return BaseController.send_error_api({'not_confirmed': True}, 'Please confirm your email first')
                     else:
                         return BaseController.send_error_api({'wrong_credential': True}, 'wrong credentials')
                 else:
