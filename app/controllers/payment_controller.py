@@ -1,5 +1,7 @@
 from app.controllers.base_controller import BaseController
-from app.services import paymentservice
+from app.services import paymentservice, slackservice
+from app.models.slack.slack_payment import SlackPayment
+from app.configs.constants import SLACK
 
 
 class PaymentController(BaseController):
@@ -321,7 +323,7 @@ class PaymentController(BaseController):
         return ((sum % 10) == 0)
 
     @staticmethod
-    def confirm(request, user_id):
+    def confirm(request, user):
         transaction_id = request.json['transaction_id'] if 'transaction_id' in request.json else None
         order_id = request.json['order_id'] if 'order_id' in request.json else None
         if transaction_id and order_id:
@@ -329,9 +331,12 @@ class PaymentController(BaseController):
                 'transaction_id' : transaction_id,
                 'order_id' : order_id
             }
-            result = paymentservice.confirm(payload, user_id)
+            result = paymentservice.confirm(payload, user.id)
             if result['error']:
                 return BaseController.send_error_api(result['data'], result['message'])
+            if SLACK['notification']:
+                slackpayment = SlackPayment(user, payload, True)
+                slackservice.send_message(slackpayment.build())
             return BaseController.send_response_api(result['data'], result['message'])
         else:
             return BaseController.send_error_api(None, 'payload is invalid')
