@@ -20,7 +20,7 @@ def upgrade():
 	op.create_table('user_feedbacks',
 		sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
-		sa.Column('content', sa.String(255)),
+		sa.Column('content', sa.Text),
 		sa.Column('created_at', sa.DateTime),
 		sa.Column('updated_at', sa.DateTime)
 		)

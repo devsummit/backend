@@ -1,18 +1,23 @@
 # parent class imports
 from app.controllers.base_controller import BaseController
 from app.services import userfeedbackservice
+from app.configs.constants import ROLE
 
 
 class UserFeedbackController(BaseController):
 
     @staticmethod
-    def index():
-        result = userfeedbackservice.index()            
-        return BaseController.send_response_api(result['data'], result['message'])
+    def index(user):
+        if user['role_id'] == ROLE['admin']:
+            result = userfeedbackservice.index()            
+            return BaseController.send_response_api(result['data'], result['message'])
+        else:
+            return BaseController.send_error_api(None, 'user is not authorized')
+
 
     @staticmethod
-    def create(request):
-        user_id = request.json['user_id'] if 'user_id' in request.json else None
+    def create(user, request):
+        user_id = user['id']
         content = request.json['content'] if 'content' in request.json else None
         if user_id and content:
             payloads = {
@@ -28,6 +33,9 @@ class UserFeedbackController(BaseController):
             return BaseController.send_error_api(None, result['data'])
 
     @staticmethod
-    def show(id):
-        result = userfeedbackservice.show(id)
-        return BaseController.send_response_api(result['data'], result['message'])
+    def show(id, user):
+        result = userfeedbackservice.show(id, user)
+        if result is not None:
+            return BaseController.send_response_api(result['data'], result['message'])
+        else:
+            return BaseController.send_error_api(None, 'feed does not exist')

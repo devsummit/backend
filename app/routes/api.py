@@ -1043,12 +1043,14 @@ def get_hackaton_team(*args, **kwargs):
 @api.route('/user-feedback', methods=['GET', 'POST'])
 @token_required
 def user_feedback (*args, **kwargs):
+    user = kwargs['user'].as_dict()
     if (request.method == 'GET'):
-        return UserFeedbackController.index()
+        return UserFeedbackController.index(user)
     else:
-        return UserFeedbackController.create(request)
+        return UserFeedbackController.create(user, request)
 
 @api.route('/user-feedback/<id>', methods=['GET'])
 @token_required
 def user_feedback_show (id, *args, **kwargs):
-    return UserFeedbackController.show(id) 
+    user = kwargs['user'].as_dict()
+    return UserFeedbackController.show(id, user) 

@@ -18,7 +18,7 @@ class UserFeedback(db.Model, BaseModel):
         db.ForeignKey('users.id'),
         nullable=False
     )
-    content = db.Column(db.String)
+    content = db.Column(db.Text)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
 
