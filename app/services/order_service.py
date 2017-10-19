@@ -177,11 +177,13 @@ class OrderService():
 			self.model_order_payment.delete()
 			db.session.commit()
 
-			logsservice().create_log("Ticket order from " + user['username'] + " has been deleted")
 
 			# delete row
 			self.model_order.delete()
 			db.session.commit()
+
+			LogsService().create_log("Ticket order from " + user['username'] + " has been deleted")
+
 			return {
 				'error': False,
 				'data': None
