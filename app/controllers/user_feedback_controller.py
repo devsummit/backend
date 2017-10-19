@@ -11,8 +11,7 @@ class UserFeedbackController(BaseController):
         if user['role_id'] == ROLE['admin']:
             result = userfeedbackservice.index()            
             return BaseController.send_response_api(result['data'], result['message'])
-        else:
-            return BaseController.send_error_api(None, 'user is not authorized')
+        return BaseController.send_error_api(None, 'user is not authorized')
 
 
     @staticmethod
@@ -28,14 +27,12 @@ class UserFeedbackController(BaseController):
         else:
             return BaseController.send_error_api(None, 'field is not complete')
         if not result['error']:
-            return BaseController.send_response_api(result['data'], 'user feedback created successfully', result['included'])
-        else:
-            return BaseController.send_error_api(None, result['data'])
+            return BaseController.send_response_api(result['data'], result['message'])
+        return BaseController.send_error_api(None, result['data'])
 
     @staticmethod
     def show(id, user):
         result = userfeedbackservice.show(id, user)
-        if result is not None:
-            return BaseController.send_response_api(result['data'], result['message'])
-        else:
-            return BaseController.send_error_api(None, 'feed does not exist')
+        if result['error']:
+                return BaseController.send_error_api(result['data'], result['message'])
+        return BaseController.send_response_api(result['data'], result['message'])
