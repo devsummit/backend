@@ -206,7 +206,13 @@ def verification_list():
 def submit_proof():
     return MainController.submit_proof(request)
 
+
 @main.route('/email-verification', methods=['GET'])
 def email_address_verification():
     token = request.args.get('token')
     return MainController.verify_email_address(token)
+
+
+@main.route('/reset-password')
+def reset_password_user():
+    return MainController.reset_password_user(request)

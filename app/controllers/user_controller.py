@@ -121,3 +121,25 @@ class UserController(BaseController):
                 return BaseController.send_error_api(None, "Password did not match")
         else:
             return BaseController.send_error_api(None, 'Password required')
+
+    @staticmethod
+    def reset_password(request):
+        newpassword = request.json['new_password'] if 'new_password' in request.json else None
+        confirmpassword = request.json['confirm_password'] if 'confirm_password' in request.json else None
+        token = request.json['token'] if 'token' in request.json else None
+
+        if newpassword and confirmpassword:
+            if newpassword == confirmpassword:
+                payloads = {
+                    'new_password': newpassword,
+                    'token': token
+                }
+                result = userservice.password_reset(payloads)
+
+                if result['error']:
+                    return BaseController.send_error_api(None, result['message'])
+                return BaseController.send_response_api(None, result['message'])
+            else:
+                return BaseController.send_error_api(None, 'new password and confirm password didnt match')
+        else:
+            return BaseController.send_error_api(None, 'Payloads not complete')
