@@ -204,3 +204,7 @@ def verification_list():
 @main.route('/payment-verification/submit-proof')
 def submit_proof():
     return MainController.submit_proof(request)
+
+@main.route('/reset-password')
+def reset_password_user():
+    return MainController.reset_password_user(request)

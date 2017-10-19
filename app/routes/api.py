@@ -2,10 +2,11 @@
 put api route in here
 '''
 from flask import Blueprint, request, jsonify, json
-
 # import middlewares
 from app.middlewares.authentication import token_required
 from app.models import mail
+from app.models.user import User
+from app.models import db
 from app.services.email_service import EmailService
 from app.models import socketio
 from flask_socketio import emit
@@ -1031,6 +1032,24 @@ def verify_payment(id, *args, **kwargs):
 @api.route('/mail/send', methods=['POST'])
 def send_mailgun():
     emailservice = EmailService()
-    email = emailservice.set_recipient("shi88.andy@gmail.com").set_subject('Order Notification').set_sender('noreply@devsummit.io').set_html('<b>Hallo andy</b>').build()
+    email = emailservice.set_recipient("aditiapratamagg@gmail.com").set_subject('Order Notification').set_sender('noreply@devsummit.io').set_html('<b>Hallo andy</b>').build()
     mail.send(email)
     return 'email sent'
+
+@api.route('/mail/reset-password', methods=['POST'])
+def mail_reset_password():
+    email = request.json['email'] if 'email' in request.json else None
+    user = db.session.query(User).filter_by(email=email).first()
+    if user is not None:
+        token = user.generate_auth_token()
+        token = token.decode("utf-8") 
+        emailservice = EmailService()
+        email = emailservice.set_recipient("aditiapratamagg@gmail.com").set_subject('Password Reset').set_sender('noreply@devsummit.io').set_html("<a href='http://localhost:5000/reset-password?action=reset_password&token=%s'>Open this link to change your password</a>" %(token)).build()
+        mail.send(email)
+        return 'send password reset success'
+    else:
+        return 'please send email which registered into your account before'
+
+@api.route('/reset_password', methods=['POST'])
+def reset_password(*args, **kwargs):
+    return UserController.reset_password(request)
