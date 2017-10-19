@@ -1,5 +1,8 @@
 {% block content %}
-<h2>{{ result }}</h2>
+<h2>{{ result['email'] }}</h2>
+{% if result['message'] %}
+<h3>{{ result['message'] }}</h3>
+{% endif %}
 <p>click this <a href="https://devsummit.io/">link</a> to go to the main page</p>
 
 

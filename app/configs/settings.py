@@ -15,25 +15,6 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 SQLALCHEMY_DATABASE_URI = 'mysql://' + os.environ.get("DB_USERNAME") + ':' + os.environ.get("DB_PASSWORD") \
 							+ '@' + os.environ.get("DB_HOST") + '/' + os.environ.get("DB_NAME")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-'''
-# Amazon Web Services credentials
-AWS_ACCESS_KEY_ID = 'AKIAIGAJPFNDYCSD5YBA'
-AWS_SECRET_ACCESS_KEY = 'AtjP3Fo8ptE+OQ/LAK/05jHT7xY2Nms9LQzI8I/Ir8mN'
-
-# Amazon Simple Email Service
-SES_REGION_NAME = 'us-west-2'  # change to match your region
-SES_EMAIL_SOURCE = 'no-reply@devsummit.io'
-'''
-# MAIL_ASCII_ATTACHMENTS = True
-# MAIL_SERVER = 'email-smtp.us-west-2.amazonaws.com'
-# MAIL_PORT = 587
-# MAIL_USE_TLS = True
-# MAIL_USERNAME = 'AKIAIGAJPFNDYCSD5YBA'
-# MAIL_PASSWORD = 'AtjP3Fo8ptE+OQ/LAK/05jHT7xY2Nms9LQzI8I/Ir8mN'
-# MAIL_DEFAULT_SENDER = 'noreply@devsummit.io'
-# MAIL_SUPPRESS_SEND = False
-
-# ADMINS = ['noreply@devsummit.io']
 
 
 # email server
