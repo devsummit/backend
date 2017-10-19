@@ -42,8 +42,8 @@ class OrderController(BaseController):
 			return BaseController.send_error_api(None, result['message'])
 
 	@staticmethod
-	def delete(id):
-		order = orderservice.delete(id)
+	def delete(id, user):
+		order = orderservice.delete(id, user)
 		if order['error']:
 			return BaseController.send_response_api(None, 'order not found')
 		return BaseController.send_response_api(None, 'order with id: ' + id + ' has been succesfully deleted')
