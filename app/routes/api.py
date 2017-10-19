@@ -1067,3 +1067,30 @@ def mail_reset_password():
 @api.route('/reset_password', methods=['POST'])
 def reset_password(*args, **kwargs):
     return UserController.reset_password(request)
+
+#Hackaton API
+
+@api.route('/hackaton/team', methods=['GET', 'POST'])
+@token_required
+def get_hackaton_team(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if user['role_id'] == ROLE['admin'] or user['role_id'] == ROLE['hackaton']:
+        return HackatonController.get_team(request, user)
+    return 'Unauthorized'
+
+# User Feedback API
+
+@api.route('/user-feedback', methods=['GET', 'POST'])
+@token_required
+def user_feedback (*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (request.method == 'GET'):
+        return UserFeedbackController.index(user)
+    else:
+        return UserFeedbackController.create(user, request)
+
+@api.route('/user-feedback/<id>', methods=['GET'])
+@token_required
+def user_feedback_show (id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
+    return UserFeedbackController.show(id, user) 
