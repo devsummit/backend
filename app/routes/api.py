@@ -185,10 +185,11 @@ def orders(*args, **kwargs):
 @api.route('/orders/<id>', methods=['DELETE', 'GET'])
 @token_required
 def orders_id(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
     if(request.method == 'GET'):
         return OrderController.show(id)
     elif(request.method == 'DELETE'):
-        return OrderController.delete(id)
+        return OrderController.delete(id, user)
 
 
 @api.route('/orders/<order_id>/details', methods=['GET', 'POST'])
@@ -566,15 +567,17 @@ def authorize_credit_card(*args, **kwargs):
 @api.route('/payments/status/<id>', methods=['PATCH', 'PUT'])
 @token_required
 def status(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
     if (request.method == 'PATCH' or request.method == 'PUT'):
-        return PaymentController.status(id)
+        return PaymentController.status(id, user)
 
 
 @api.route('/payments/confirm', methods=['POST'])
 @token_required
 def confirm_payment(*args, **kwargs):
+    User = kwargs['user'].as_dict()
     user_id = kwargs['user'].id
-    return PaymentController.confirm(request, user_id)
+    return PaymentController.confirm(request, user_id, User)
 
 
 @api.route('/payments/<payment_id>', methods=['GET'])
@@ -1011,20 +1014,21 @@ def order_verification_general (*args, **kwargs):
 @api.route('/order-verification/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
 @token_required
 def order_verification_id(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
     if (request.method == 'GET'):
         return OrderVerificationController.show(id, request)
     elif (request.method == 'PUT' or request.method == 'PATCH'):
-        return OrderVerificationController.update(id, request)
+        return OrderVerificationController.update(id, request, user)
     else:
-        return OrderVerificationController.delete(id)
+        return OrderVerificationController.delete(id, user)
 
 
 @api.route('/order-verification/<id>/verify', methods=['POST'])
 @token_required
 def verify_payment(id, *args, **kwargs):
-    user = kwargs['user'].as_dict()
+    User = kwargs['user'].as_dict()
     if user['role_id'] == ROLE['admin']:
-        return OrderVerificationController.verify(id, request)
+        return OrderVerificationController.verify(id, request, User)
     return 'Unauthorized'
 
 #Hackaton API
