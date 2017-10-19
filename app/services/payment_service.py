@@ -612,7 +612,7 @@ class PaymentService():
 				for get_code in get_codes:
 					code.append("<li>%s</li>" %(get_code.code))
 				li = ''.join(code)
-				template = "<h3>You have purchase with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
+				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received exhibitor code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			if items.ticket.type == TICKET_TYPES['hackaton']:
@@ -636,7 +636,7 @@ class PaymentService():
 				for get_code in get_codes:
 					code.append("<li>%s</li>" %(get_code.code))
 				li = ''.join(code)
-				template = "<h3>You have purchase with order_id = %s</h3><h4>Here your redeem codes : </h4>%s<h3>Share the above code to your teammate, and put it into redeem code menu to let them join your team and claim their ticket</h3><h3>Thank you for your purchase</h3>" %(order_.id, li)
+				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here your redeem codes : </h4>%s<h3>Share the above code to your teammate, and put it into redeem code menu to let them join your team and claim their ticket</h3><h3>Thank you for your purchase</h3>" %(order_.id, li)
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			else:				
