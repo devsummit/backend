@@ -40,6 +40,6 @@ class UserFeedbackService(BaseService):
                 result = result.as_dict()
                 return response.set_data(result).set_error(False).set_message('user feedback retrieved successfully').build()
             else:
-                return response.set_error(True).set_message('user is not authorized')
+                return response.set_error(True).set_message('user is not authorized').build()
         else:
             return response.set_error(True).set_data(None).set_message('row not found').build()
