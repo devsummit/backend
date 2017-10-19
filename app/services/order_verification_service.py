@@ -118,6 +118,9 @@ class OrderVerificationService(BaseService):
 		if orderverification.first() is not None:
 			orderverification.delete()
 			db.session.commit()
+
+			LogsService().create_log(user['username'] + "'s payment has been deleted")
+
 			return response.set_message('Order Verification entry was deleted').build()
 		else:
 			data = 'Entry not found'
