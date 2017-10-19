@@ -1044,7 +1044,7 @@ def mail_reset_password():
         token = user.generate_auth_token(1800)
         token = token.decode("utf-8") 
         emailservice = EmailService()
-        email = emailservice.set_recipient("aditiapratamagg@gmail.com").set_subject('Password Reset').set_sender('noreply@devsummit.io').set_html("<a href='http://localhost:5000/reset-password?action=reset_password&token=%s'>Open this link to change your password</a>" %(token)).build()
+        email = emailservice.set_recipient(email).set_subject('Password Reset').set_sender('noreply@devsummit.io').set_html("<h4>You've just tried to reset your password from</h4><h4>click here to reset your password</h4><a href='http://localhost:5000/reset-password?action=reset_password&token=%s'>http://localhost:5000/reset-password?action=reset_password&token=%s</a>" %(token, token)).build()
         mail.send(email)
         return 'send password reset success'
     else:
