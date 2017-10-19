@@ -50,6 +50,7 @@ from app.controllers.order_verification_controller import OrderVerificationContr
 from app.controllers.user_authorization_controller import UserAuthorizationController
 from app.controllers.hackaton_controller import HackatonController
 from app.controllers.user_feedback_controller import UserFeedbackController
+from app.services.slack_service import SlackService
 
 from app.configs.constants import ROLE
 
@@ -1054,3 +1055,10 @@ def user_feedback (*args, **kwargs):
 def user_feedback_show (id, *args, **kwargs):
     user = kwargs['user'].as_dict()
     return UserFeedbackController.show(id, user) 
+
+
+@api.route('/slack/send', methods=['POST'])
+def send_slack():
+    slackservice = SlackService()
+    slackservice.send_message('Someone just ordered with order-id: ')
+    return 'ssss'
