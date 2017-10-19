@@ -1,8 +1,6 @@
-import os
 import datetime
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import desc
 from app.services.base_service import BaseService
 
 #import model class
