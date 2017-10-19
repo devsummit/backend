@@ -15,6 +15,7 @@ from app.models.user_booth import UserBooth
 from app.models.hacker_team import HackerTeam
 from app.models.user_hacker import UserHacker
 from app.services.base_service import BaseService
+from app.services.logs_service import LogsService
 from app.builders.response_builder import ResponseBuilder
 from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
@@ -83,7 +84,7 @@ class OrderVerificationService(BaseService):
 		return response.set_error(True).set_message('data not found').set_data(None).build()
 
 
-	def update(self, id, payload):
+	def update(self, id, payload, user):
 		response = ResponseBuilder()
 		orderverification = db.session.query(OrderVerification).filter_by(id=id)
 		data = orderverification.first().as_dict() if orderverification.first() else None
@@ -101,13 +102,16 @@ class OrderVerificationService(BaseService):
 				'updated_at': datetime.datetime.now()
 			})
 			db.session.commit()
+
+			LogsService().create_log(user['username'] + "'s payment from order id: " + payload['order_id'] + "has been updated")
+			
 			data = orderverification.first()
 			return response.set_data(data.as_dict()).build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
 			return response.set_error(True).set_data(data).build()
 
-	def delete(self, id):
+	def delete(self, id, user):
 		response = ResponseBuilder()
 		orderverification = db.session.query(OrderVerification).filter_by(id=id).first()
 		if orderverification.payment_proof is not None:
@@ -116,6 +120,9 @@ class OrderVerificationService(BaseService):
 		if orderverification.first() is not None:
 			orderverification.delete()
 			db.session.commit()
+
+			LogsService().create_log(user['username'] + "'s payment from order id: " + orderverification['order_id'] + "has been Deleted")
+
 			return response.set_message('Order Verification entry was deleted').build()
 		else:
 			data = 'Entry not found'
@@ -165,7 +172,7 @@ class OrderVerificationService(BaseService):
 		db.session.commit()
 		return hacker_team.id
 
-	def verify(self, id):
+	def verify(self, id, User):
 		response = ResponseBuilder()
 		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
 		orderverification = orderverification_query.first()
@@ -220,6 +227,9 @@ class OrderVerificationService(BaseService):
 			})
 			db.session.commit()
 			send_notification = FCMService().send_single_notification('Payment Status', 'Your payment has been verified', user.id, ROLE['admin'])
+			
+			LogsService().create_log(User['username'] + "'s payment from order id: " + items + "has been Verified")
+			
 			return response.set_data(None).set_message('ticket purchased').build()
 		else:
 			return response.set_data(None).set_message('This payment has already verified').build()

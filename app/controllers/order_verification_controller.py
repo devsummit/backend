@@ -37,7 +37,7 @@ class OrderVerificationController(BaseController):
 
 	
 	@staticmethod
-	def update(id, request):
+	def update(id, request, user):
 		user_id = request.form['user_id'] if 'user_id' in request.form else None
 		order_id = request.form['order_id'] if 'order_id' in request.form else None
 		payment_proof = request.files['payment_proof'] if 'payment_proof' in request.files else None
@@ -49,23 +49,23 @@ class OrderVerificationController(BaseController):
 			}
 		else:
 			return BaseController.send_error_api(None, 'field is not complete')
-		result = orderverificationservice.update(id, payloads)
+		result = orderverificationservice.update(id, payloads, user)
 		if not result['error']:
 			return BaseController.send_response_api(result['data'], result['message'])
 		else:
 			return BaseController.send_error_api(result['data'], result['message'])
 
 	@staticmethod
-	def delete(id):
-		data = orderverificationservice.delete(id)
+	def delete(id, user):
+		data = orderverificationservice.delete(id, user)
 		if data['error']:
 			return BaseController.send_error_api(data['data'], data['message'])
 		return BaseController.send_response_api(data['data'], data['message'])
 
 
 	@staticmethod
-	def verify(id, request):
-		data = orderverificationservice.verify(id)
+	def verify(id, request, User):
+		data = orderverificationservice.verify(id, User)
 		if data['error']:
 			return BaseController.send_error_api(data['data'], data['message'])
 		return BaseController.send_response_api(data['data'], data['message'])

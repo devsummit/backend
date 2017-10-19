@@ -21,6 +21,7 @@ from app.models.redeem_code import RedeemCode  # noqa
 from app.configs.constants import ROLE  # noqa
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
+from app.services.logs_service import LogsService
 from app.builders.response_builder import ResponseBuilder
 from app.models.base_model import BaseModel
 from app.services.user_ticket_service import UserTicketService
@@ -87,6 +88,7 @@ class UserService(BaseService):
 					'referal_count': referer.referal_count + 1
 					})
 				db.session.commit()
+				
 				# checking referer add full day ticket if reach 10 counts
 				if referer.referal_count > 0:
 					referer_detail = db.session.query(User).filter_by(referal=payloads['referer']).first().as_dict()
@@ -125,6 +127,9 @@ class UserService(BaseService):
 					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
 				db.session.commit()
+				
+				LogsService().create_log("A user named: " + payloads['username'] + " has just Registered")
+
 				data = self.model_user
 				return data
 			except SQLAlchemyError as e:

@@ -16,6 +16,7 @@ from app.models.user_booth import UserBooth
 from app.models.user_ticket import UserTicket
 from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
+from app.services.logs_service import LogsService
 from app.builders.response_builder import ResponseBuilder
 from app.services.fcm_service import FCMService
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
@@ -459,7 +460,7 @@ class PaymentService():
 		message = payload['status_message'] if 'status_message' in payload else 'No message from payload' 
 		return response.set_data(payload).set_message(message).build()
 
-	def update(self, id):
+	def update(self, id, user):
 		response = ResponseBuilder()
 		# get the transaction id from payment table
 		payment = db.session.query(Payment).filter_by(id=id).first()
@@ -486,6 +487,7 @@ class PaymentService():
 				})
 
 				db.session.commit()
+				LogsService().create_log(user['username'] + "'s payment has been Updated")
 				if (payment.first().as_dict()['transaction_status'] == 'expire'):
 					# on payment success
 					self.save_paid_ticket(order)
@@ -555,7 +557,7 @@ class PaymentService():
 			payment = False
 		return payment
 
-	def confirm(self, payload, user_id):
+	def confirm(self, payload, user_id, User):
 		response = ResponseBuilder()
 		transaction_exist = db.session.query(Payment).filter_by(transaction_id=payload['transaction_id']).first()
 		if transaction_exist:
@@ -585,6 +587,9 @@ class PaymentService():
 			try:				
 				db.session.add(payment)
 				db.session.commit()
+
+				LogsService().create_log(User['username'] + "'s Payment has been " + payment.transaction_status)
+
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return response.set_data(None).set_message(data).set_error(True).build()
@@ -640,6 +645,9 @@ class PaymentService():
 			})
 			db.session.commit()
 			send_notification = FCMService().send_single_notification('Payment Status', 'Your payment has been confirmed', user.id, ROLE['admin'])
+
+			LogsService().create_log(User['username'] + "'s Payment has been confirmed and allowed")
+
 			return response.set_data(None).set_message('Purchase Completed').build()
 		else:
 			return response.set_error(True).set_message('Paypal amount did not match').build()

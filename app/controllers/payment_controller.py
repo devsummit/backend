@@ -290,9 +290,9 @@ class PaymentController(BaseController):
         return BaseController.send_response_api(result['data'], result['message'])
 
     @staticmethod
-    def status(id):
+    def status(id, user):
 
-        payment = paymentservice.update(id)
+        payment = paymentservice.update(id, user)
 
         if not payment['status_code'] == '404':
             return BaseController.send_response_api(payment, payment['data'], payment['message'])
@@ -321,7 +321,7 @@ class PaymentController(BaseController):
         return ((sum % 10) == 0)
 
     @staticmethod
-    def confirm(request, user_id):
+    def confirm(request, user_id, User):
         transaction_id = request.json['transaction_id'] if 'transaction_id' in request.json else None
         order_id = request.json['order_id'] if 'order_id' in request.json else None
         if transaction_id and order_id:
@@ -329,7 +329,7 @@ class PaymentController(BaseController):
                 'transaction_id' : transaction_id,
                 'order_id' : order_id
             }
-            result = paymentservice.confirm(payload, user_id)
+            result = paymentservice.confirm(payload, user_id, User)
             if result['error']:
                 return BaseController.send_error_api(result['data'], result['message'])
             return BaseController.send_response_api(result['data'], result['message'])
