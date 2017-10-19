@@ -27,10 +27,10 @@ class UserFeedbackService(BaseService):
         try:
             db.session.commit()
             data = userfeedback.as_dict()
-            return response.set_data(data).set_error(False).build()
+            return response.set_data(data).set_message('Feedback created').set_error(False).build()
         except SQLAlchemyError as e:
             data = e.orig.args
-            return response.set_data(data).set_error(True).build()
+            return response.set_data(data).set_error(True).set_message('Some error occured, please try again later').build()
     
     def show(self, id, user):
         response = ResponseBuilder()
@@ -40,6 +40,6 @@ class UserFeedbackService(BaseService):
                 result = result.as_dict()
                 return response.set_data(result).set_error(False).set_message('user feedback retrieved successfully').build()
             else:
-                return response.set_error(True).set_message('user is not authorized')
+                return response.set_error(True).set_message('user is not authorized').build()
         else:
-            return result
+            return response.set_error(True).set_data(None).set_message('row not found').build()
