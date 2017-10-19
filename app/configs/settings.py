@@ -23,7 +23,7 @@ AWS_SECRET_ACCESS_KEY = 'AtjP3Fo8ptE+OQ/LAK/05jHT7xY2Nms9LQzI8I/Ir8mN'
 # Amazon Simple Email Service
 SES_REGION_NAME = 'us-west-2'  # change to match your region
 SES_EMAIL_SOURCE = 'no-reply@devsummit.io'
-'''
+
 MAIL_ASCII_ATTACHMENTS = True
 MAIL_SERVER = 'email-smtp.us-west-2.amazonaws.com'
 MAIL_PORT = 587
@@ -41,13 +41,12 @@ MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
-MAIL_USERNAME = 'andy.developmode@gmail.com'
-MAIL_DEFAULT_SENDER = 'admin@devsummit.com'
-MAIL_PASSWORD = 'tcsmhlnqicfvcued'
+MAIL_USERNAME = 'devsummit.io@gmail.com'
+MAIL_DEFAULT_SENDER = 'noreply@devsummit.io'
+MAIL_PASSWORD = 'wwfmhamyyxylyzxj'
 MAIL_SUPPRESS_SEND = False
 # administrator list
-ADMINS = ['andy.developmode@gmail.com']
-'''
+ADMINS = ['noreply@devsummit.io']
 # default saving, database saving & domain based url
 MAX_CONTENT_LENGTH = 5 * 1024 * 1024
 POST_STAGE_PHOTO_DEST = 'app/static/images/stages/'
