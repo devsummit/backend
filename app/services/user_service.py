@@ -342,6 +342,19 @@ class UserService(BaseService):
 				'data': data
 			}
 
+	def password_reset(self, payloads):
+		response = ResponseBuilder()
+		user = User().verify_auth_token(payloads['token'])
+		if user is not None:
+			self.model_user = db.session.query(User).filter_by(id=user.id)
+			self.model_user.update({
+				'password': generate_password_hash(payloads['new_password'])
+			})
+			db.session.commit()
+			return response.set_data(user.as_dict()).set_message('Reset Password success, You can logged in with new password').build()
+		else:
+			return response.set_data(None).set_message('Reset Password failed or token expired').build()
+
 	def password_required(self, payloads):
 		user = self.get_user(payloads['user']['username'])
 		try:
