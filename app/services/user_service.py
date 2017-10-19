@@ -54,7 +54,7 @@ class UserService(BaseService):
 
 		return response.set_data(data).build()
 
-	def register(self, payloads, user):
+	def register(self, payloads):
 		user_refcount = 0
 		user_havref = 0
 		response = ResponseBuilder()
@@ -88,8 +88,6 @@ class UserService(BaseService):
 					'referal_count': referer.referal_count + 1
 					})
 				db.session.commit()
-				
-				LogsService().create_log("referred by: " + user['username'])
 				
 				# checking referer add full day ticket if reach 10 counts
 				if referer.referal_count > 0:
@@ -129,6 +127,9 @@ class UserService(BaseService):
 					self.model_user.hash_password(payloads['password'])
 				db.session.add(self.model_user)
 				db.session.commit()
+				
+				LogsService().create_log("A user named: " + payloads['username'] + " has just Registered")
+
 				data = self.model_user
 				return data
 			except SQLAlchemyError as e:
