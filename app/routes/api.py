@@ -2,12 +2,14 @@
 put api route in here
 '''
 from flask import Blueprint, request, jsonify, json
-
 # import middlewares
 from app.middlewares.authentication import token_required
 from app.models import mail
+from app.models.user import User
+from app.models import db
 from app.services.email_service import EmailService
 from app.models import socketio
+from app.builders.response_builder import ResponseBuilder
 from flask_socketio import emit
 
 # controllers import
@@ -50,6 +52,8 @@ from app.controllers.invoice_controller import InvoiceController
 from app.controllers.package_management_controller import PackageManagementController
 from app.controllers.order_verification_controller import OrderVerificationController
 from app.controllers.user_authorization_controller import UserAuthorizationController
+from app.controllers.hackaton_controller import HackatonController
+from app.controllers.user_feedback_controller import UserFeedbackController
 
 from app.configs.constants import ROLE
 
@@ -175,11 +179,12 @@ def spot_id(id, *args, **kwargs):
 @api.route('/orders', methods=['GET', 'POST'])
 @token_required
 def orders(*args, **kwargs):
+    user = kwargs['user'].as_dict()
     user_id = kwargs['user'].id
     if(request.method == 'GET'):
         return OrderController.index(user_id)
     elif(request.method == 'POST'):
-        return OrderController.create(request, user_id)
+        return OrderController.create(request, user)
 
 
 @api.route('/orders/<id>', methods=['DELETE', 'GET'])
@@ -573,7 +578,8 @@ def status(id, *args, **kwargs):
 @api.route('/payments/confirm', methods=['POST'])
 @token_required
 def confirm_payment(*args, **kwargs):
-    return PaymentController.confirm(request)
+    user_id = kwargs['user'].id
+    return PaymentController.confirm(request, user_id)
 
 
 @api.route('/payments/<payment_id>', methods=['GET'])
@@ -1031,6 +1037,64 @@ def verify_payment(id, *args, **kwargs):
 @api.route('/mail/send', methods=['POST'])
 def send_mailgun():
     emailservice = EmailService()
-    email = emailservice.set_recipient("shi88.andy@gmail.com").set_subject('Order Notification').set_sender('noreply@devsummit.io').set_html('<b>Hallo andy</b>').build()
+    email = emailservice.set_recipient("aditiapratamagg@gmail.com").set_subject('Order Notification').set_sender('noreply@devsummit.io').set_html('<b>Hallo andy</b>').build()
     mail.send(email)
     return 'email sent'
+
+@api.route('/mail/reset-password', methods=['POST'])
+def mail_reset_password():
+    response = ResponseBuilder()
+    email = request.json['email'] if 'email' in request.json else None
+    user = db.session.query(User).filter_by(email=email).first()
+    if user is not None:
+        token = user.generate_auth_token(1800)
+        token = token.decode("utf-8") 
+        emailservice = EmailService()
+        email = emailservice.set_recipient(email).set_subject('Password Reset').set_sender('noreply@devsummit.io').set_html("<h4>You've just tried to reset your password from</h4><h4>click here to reset your password</h4><a href='%sreset-password?action=reset_password&token=%s'>http://localhost:5000/reset-password?action=reset_password&token=%s</a>" %(request.url_root, token, token)).build()
+        mail.send(email)
+        return jsonify({
+            'data': None,
+            'meta': {
+                'message': 'Send reset password success, you can check your email now',
+                'success': True
+            }
+        })
+    else:
+        return jsonify({
+            'data': None,
+            'meta': {
+                'message': 'Please send email which registered into your account before',
+                'success': True
+            }
+        })
+
+@api.route('/reset_password', methods=['POST'])
+def reset_password(*args, **kwargs):
+    return UserController.reset_password(request)
+
+#Hackaton API
+
+@api.route('/hackaton/team', methods=['GET', 'POST'])
+@token_required
+def get_hackaton_team(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if user['role_id'] == ROLE['admin'] or user['role_id'] == ROLE['hackaton']:
+        return HackatonController.get_team(request, user)
+    return 'Unauthorized'
+
+# User Feedback API
+
+@api.route('/user-feedback', methods=['GET', 'POST'])
+@token_required
+def user_feedback (*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (request.method == 'GET'):
+        return UserFeedbackController.index(user)
+    else:
+        return UserFeedbackController.create(user, request)
+
+@api.route('/user-feedback/<id>', methods=['GET'])
+@token_required
+def user_feedback_show (id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
+    return UserFeedbackController.show(id, user) 

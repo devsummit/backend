@@ -171,3 +171,7 @@ class MainController(BaseController):
 
     def submit_proof(request):
         return render_template('admin/payment_verification/submit_proof.html')
+
+    def reset_password_user(request):
+        return render_template('admin/users/reset_password.html')
+        
