@@ -85,3 +85,6 @@ STATIC_DEST = 'app/static/'
 
 # These are the extension that we are accepting to be uploaded
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
+#This is the registered url route for email service
+EMAIL_HANDLER_ROUTE = 'email-confirmation'
