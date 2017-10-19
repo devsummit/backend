@@ -3,11 +3,13 @@ import json
 import requests
 import datetime
 import secrets
+import urllib
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
-from flask import request
+from flask import request, current_app
+from app.models import mail
 from app.models.access_token import AccessToken
 from app.models.user import User
 from app.models.user_booth import UserBooth
@@ -19,12 +21,15 @@ from app.models.client import Client
 from app.models.ambassador import Ambassador  # noqa
 from app.models.redeem_code import RedeemCode  # noqa
 from app.configs.constants import ROLE  # noqa
+from app.configs.settings import EMAIL_HANDLER_ROUTE
 from werkzeug.security import generate_password_hash
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from app.models.base_model import BaseModel
 from app.services.user_ticket_service import UserTicketService
 from app.services.fcm_service import FCMService
+from app.services.helper import Helper
+from app.services.email_service import EmailService 
 
 
 class UserService(BaseService):
@@ -73,42 +78,6 @@ class UserService(BaseService):
 		if(check_user is not None):
 			return response.set_data(None).set_message('User already registered').set_error(True).build()
 
-		# check referal limit
-		check_referer = None
-		if 'referer' in payloads and payloads['referer']:
-			check_referer = db.session.query(User).filter_by(
-					referal=payloads['referer'])
-			#if the check_referer return empty list, must be first time referred
-			referer = check_referer.first()
-			if referer:
-				if referer.referal_count >= 10:
-					return response.set_data(None).set_message('Referred username already exceed the limit').set_error(True).build()
-				check_referer.update({
-					'referal_count': referer.referal_count + 1
-					})
-				db.session.commit()
-				# checking referer add full day ticket if reach 10 counts
-				if referer.referal_count > 0:
-					referer_detail = db.session.query(User).filter_by(referal=payloads['referer']).first().as_dict()
-					payload = {}
-					payload['user_id'] = referer_detail['id']
-					payload['ticket_id'] = 1						
-					receiver_id = referer_detail['id']
-					sender_id = 1
-					user_refcount = 1
-					user_havref = 1
-					# only send notification if count less than 10
-					if referer.referal_count < 10:
-						type = "Referral Notification"
-						message = "%s has registered referring you, your total referals count is: %d" % (payloads['username'], referer.referal_count)
-						FCMService().send_single_notification(type, message, receiver_id, sender_id)
-					# else count==10, send notif and create new ticket
-					else:
-						type = "Free Ticket Notification"
-						message = "Congratulation! You have been referred 10 times! You've can get one free ticket, please click on claim button to claim your reward"
-						FCMService().send_single_notification(type, message, receiver_id, sender_id)
-
-
 		if payloads['email'] is not None:
 			try:
 				self.model_user = User()
@@ -118,6 +87,8 @@ class UserService(BaseService):
 				self.model_user.username = payloads['username']
 				self.model_user.role_id = payloads['role']
 				self.model_user.social_id = payloads['social_id']
+				self.model_user.referer = payloads['referer']
+
 				self.model_user.referal = self.generate_referal_code(3)
 				self.model_user.referal_count = user_refcount
 				self.model_user.have_refered = user_havref
@@ -126,10 +97,106 @@ class UserService(BaseService):
 				db.session.add(self.model_user)
 				db.session.commit()
 				data = self.model_user
+				# invoke send confirmation email method here
+				self.send_confirmation_email(data)
 				return data
 			except SQLAlchemyError as e:
 				data = e.orig.args
 				return response.set_error(True).set_message('SQL error').set_data(data).build()
+
+	def send_confirmation_email (self, user):
+		# generate token that expire in 1 hours
+		token = user.generate_auth_token(3600)
+		# generate url parameter
+		params = "?token={}".format(token.decode('utf-8'))
+		url = Helper().url_helper(params, current_app.config['EMAIL_HANDLER_ROUTE'])
+		# generate email attributes
+		email_subject = "DevSummit: Email Address Verification"
+		message_body = ("Dear " + user.username + ", <br /> <br/>" + "Please confirm your email address by click in this provided link in one hour: <br />" + 
+						url + "<br /> <br/> Regards, <br /> DevSummit Team")
+		receiver = user.email
+		email = EmailService()
+		email = email.set_subject(email_subject).set_html(message_body).set_sender(current_app.config['MAIL_DEFAULT_SENDER']).set_recipient(receiver).build()
+		mail.send(email)
+		return True
+
+
+	def email_address_verification(self, token):
+		user = User.verify_auth_token(token)
+		result = {}
+		if user:
+			user_query = db.session.query(User).filter_by(id=user.id)
+			user_query.update({
+				'confirmed': 1
+			})
+			db.session.commit()
+
+			# check referal related things comment this out to disable this feature
+			
+			result = self.referer_verification(user)
+
+			# send result
+			result['email'] = 'Email Address have been successfully verified'
+			result['message'] = ' ' if 'message' not in result else result['message']
+			return result
+		else:
+			result['email'] = 'Email Address have not been successfully verified, please request another confirmation link'
+			return result
+
+
+	def referer_verification(self, user):
+		# check if user register with referal
+		result = {}
+		if user.referer:
+			referer_query = db.session.query(User).filter_by(
+					referal=user.referer)
+			referer = referer_query.first()
+			if referer:
+				message = 'Got referer point'
+				referer_valid = True
+				if referer.referal_count >= 10:
+					referer_valid = False
+					result['message'] = 'The username you refered to has exceeded its limit, but your email is safely confirmed\nYou can try another username using the apps.'
+
+				if referer_valid:
+					referer_query.update({
+						'referal_count': referer.referal_count + 1
+						})
+					db.session.commit()
+				# checking referer add full day ticket if reach 10 counts
+			if referer.referal_count > 0:
+				referer_detail = db.session.query(User).filter_by(referal=user.referer).first().as_dict()
+				payload = {}
+				payload['user_id'] = referer_detail['id']
+				payload['ticket_id'] = 1						
+				receiver_id = referer_detail['id']
+				sender_id = 1
+				if referer_valid:
+					user_refcount = 1
+					user_havref = 1
+				else:
+					user_refcount = 0
+					user_havref = 0
+				current_user = db.session.query(User).filter_by(id=user.id)
+				current_user.update({
+					'referal_count' : user_refcount, 
+					'have_refered' : user_havref 
+				})
+				db.session.commit()
+				# only send notification if count less than 10
+				if referer.referal_count < 10:
+					type = "Referral Notification"
+					message = "%s has registered referring you, your total referals count is: %d" % (user.username, referer.referal_count)
+					FCMService().send_single_notification(type, message, receiver_id, sender_id)
+				# else count==10, send notif and create new ticket
+				elif referer.referal_count == 10:
+					type = "Free Ticket Notification"
+					message = "Congratulation! You have been referred 10 times! You've can get one free ticket, please click on claim button to claim your reward"
+					FCMService().send_single_notification(type, message, receiver_id, sender_id)
+			return result
+		else:
+			return result
+
 
 	def list_user(self, request, admin=False):
 		self.total_items = User.query.count()

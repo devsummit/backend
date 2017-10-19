@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, redirect
 from app.controllers.base_controller import BaseController
 from app.models.base_model import BaseModel
 from app.services import attendeeservice
@@ -172,6 +172,11 @@ class MainController(BaseController):
     def submit_proof(request):
         return render_template('admin/payment_verification/submit_proof.html')
 
+
+    def verify_email_address(token):
+        result = userservice.email_address_verification(token)
+        return render_template('admin/email_verification/email_verification.html', result=result)
+
+
     def reset_password_user(request):
         return render_template('admin/users/reset_password.html')
-        
