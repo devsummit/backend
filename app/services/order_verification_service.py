@@ -1,7 +1,6 @@
 import os
 import datetime
-from app.models import db
-from app.models import mail
+from app.models import db, mail
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order

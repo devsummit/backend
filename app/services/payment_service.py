@@ -3,8 +3,7 @@ import base64
 import requests
 import paypalrestsdk
 from sqlalchemy.exc import SQLAlchemyError
-from app.models import db
-from app.models import mail
+from app.models import db, mail
 # import model class
 from app.models.payment import Payment
 from app.models.order_details import OrderDetails
