@@ -5,10 +5,11 @@ from flask import Blueprint, request, jsonify, json
 
 # import middlewares
 from app.middlewares.authentication import token_required
-from app.models import mail
+from app.models import mail, db, socketio
 from app.services.email_service import EmailService
-from app.models import socketio
+from app.services import userservice
 from flask_socketio import emit
+from app.models.user import User
 
 # controllers import
 from app.controllers.ticket_controller import TicketController
@@ -1027,10 +1028,41 @@ def verify_payment(id, *args, **kwargs):
     return 'Unauthorized'
 
 
-# Delete this route when no further test is needed.
-@api.route('/mail/send', methods=['POST'])
+# TODO: serious refactor later :]]
+@api.route('/confirm-email/resend', methods=['POST'])
 def send_mailgun():
-    emailservice = EmailService()
-    email = emailservice.set_recipient("shi88.andy@gmail.com").set_subject('Order Notification').set_sender('noreply@devsummit.io').set_html('<b>Hallo andy</b>').build()
-    mail.send(email)
-    return 'email sent'
+    email = request.json['email'] if 'email' in request.json else None
+    if email is None:
+        return jsonify ({
+            'data': None,
+            'meta': {
+                'success': False,
+                'message': 'email required'
+            }
+        })
+
+    user = db.session.query(User).filter_by(email=email).first()
+    if user is None:
+        return jsonify ({
+            'data': None,
+            'meta': {
+                'success': False,
+                'message': 'user not found, register first'
+            }
+        })
+    if user.confirmed:
+        return jsonify ({
+            'data': None,
+            'meta': {
+                'success': False,
+                'message': 'email has been confirmed, you can login now'
+            }
+        })
+    userservice.send_confirmation_email(user)
+    return jsonify({
+        'data': None,
+        'meta': {
+            'success': True,
+            'message': 'confirmation email has been sent to %s' %(email)
+        }
+    })
