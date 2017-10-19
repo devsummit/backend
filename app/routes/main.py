@@ -4,6 +4,7 @@ from app.services.helper import Helper
 from app.middlewares.rbac import get_previllege
 
 
+
 main = Blueprint('main', __name__)
 
 
@@ -204,6 +205,13 @@ def verification_list():
 @main.route('/payment-verification/submit-proof')
 def submit_proof():
     return MainController.submit_proof(request)
+
+
+@main.route('/email-verification', methods=['GET'])
+def email_address_verification():
+    token = request.args.get('token')
+    return MainController.verify_email_address(token)
+
 
 @main.route('/reset-password')
 def reset_password_user():

@@ -4,11 +4,10 @@ put api route in here
 from flask import Blueprint, request, jsonify, json
 # import middlewares
 from app.middlewares.authentication import token_required
-from app.models import mail
-from app.models.user import User
-from app.models import db
+from app.models import mail, db, socketio, mail
 from app.services.email_service import EmailService
-from app.models import socketio
+from app.services import userservice
+from app.models.user import User
 from app.builders.response_builder import ResponseBuilder
 from flask_socketio import emit
 
@@ -1033,13 +1032,45 @@ def verify_payment(id, *args, **kwargs):
     return 'Unauthorized'
 
 
-# Delete this route when no further test is needed.
-@api.route('/mail/send', methods=['POST'])
+# TODO: serious refactor later :]]
+@api.route('/confirm-email/resend', methods=['POST'])
 def send_mailgun():
-    emailservice = EmailService()
-    email = emailservice.set_recipient("aditiapratamagg@gmail.com").set_subject('Order Notification').set_sender('noreply@devsummit.io').set_html('<b>Hallo andy</b>').build()
-    mail.send(email)
-    return 'email sent'
+    email = request.json['email'] if 'email' in request.json else None
+    if email is None:
+        return jsonify ({
+            'data': None,
+            'meta': {
+                'success': False,
+                'message': 'email required'
+            }
+        })
+
+    user = db.session.query(User).filter_by(email=email).first()
+    if user is None:
+        return jsonify ({
+            'data': None,
+            'meta': {
+                'success': False,
+                'message': 'user not found, register first'
+            }
+        })
+    if user.confirmed:
+        return jsonify ({
+            'data': None,
+            'meta': {
+                'success': False,
+                'message': 'email has been confirmed, you can login now'
+            }
+        })
+    userservice.send_confirmation_email(user)
+    return jsonify({
+        'data': None,
+        'meta': {
+            'success': True,
+            'message': 'confirmation email has been sent to %s' %(email)
+        }
+    })
+
 
 @api.route('/mail/reset-password', methods=['POST'])
 def mail_reset_password():
@@ -1050,7 +1081,7 @@ def mail_reset_password():
         token = user.generate_auth_token(1800)
         token = token.decode("utf-8") 
         emailservice = EmailService()
-        email = emailservice.set_recipient(email).set_subject('Password Reset').set_sender('noreply@devsummit.io').set_html("<h4>You've just tried to reset your password from</h4><h4>click here to reset your password</h4><a href='%sreset-password?action=reset_password&token=%s'>%s/reset-password?action=reset_password&token=%s</a>" %(request.url_root, token, request.url_root, token)).build()
+        email = emailservice.set_recipient(email).set_subject('Password Reset').set_sender('noreply@devsummit.io').set_html("<h4>You've just tried to reset your password from</h4><h4>click here to reset your password</h4><a href='%sreset-password?action=reset_password&token=%s'>%sreset-password?action=reset_password&token=%s</a>" %(request.url_root, token, request.url_root, token)).build()
         mail.send(email)
         return jsonify({
             'data': None,
@@ -1064,16 +1095,17 @@ def mail_reset_password():
             'data': None,
             'meta': {
                 'message': 'Please send email which registered into your account before',
-                'success': True
+                'success': False
             }
         })
+
 
 @api.route('/reset_password', methods=['POST'])
 def reset_password(*args, **kwargs):
     return UserController.reset_password(request)
 
-#Hackaton API
 
+#Hackaton API
 @api.route('/hackaton/team', methods=['GET', 'POST'])
 @token_required
 def get_hackaton_team(*args, **kwargs):
