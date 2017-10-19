@@ -50,6 +50,7 @@ from app.controllers.invoice_controller import InvoiceController
 from app.controllers.package_management_controller import PackageManagementController
 from app.controllers.order_verification_controller import OrderVerificationController
 from app.controllers.user_authorization_controller import UserAuthorizationController
+from app.controllers.email_address_verification_controller import EmailAddressVerificationController
 
 from app.configs.constants import ROLE
 
@@ -1034,3 +1035,8 @@ def send_mailgun():
     email = emailservice.set_recipient("shi88.andy@gmail.com").set_subject('Order Notification').set_sender('noreply@devsummit.io').set_html('<b>Hallo andy</b>').build()
     mail.send(email)
     return 'email sent'
+
+@api.route('email-verification', methods=['GET'])
+def email_address_verification(request):
+    token = request.args.get('token')
+    return EmailAddressVerificationController.verify(token)
