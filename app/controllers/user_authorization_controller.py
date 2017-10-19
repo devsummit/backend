@@ -78,7 +78,7 @@ class UserAuthorizationController(BaseController):
                 return BaseController.send_error_api({'wrong_credential': True}, 'token is invalid')
 
     @staticmethod
-    def register(request, user):
+    def register(request):
         provider = request.json['provider'] if 'provider' in request.json else None
 
         firstname = request.json['first_name'] if 'first_name' in request.json else None
@@ -135,7 +135,7 @@ class UserAuthorizationController(BaseController):
         else:
             return BaseController.send_response_api({'payload_invalid': True}, 'payloads not valid')
 
-        result = userservice.register(payloads, user)
+        result = userservice.register(payloads)
 
         if isinstance(result,dict):
             if result['error']:
