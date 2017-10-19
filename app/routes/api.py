@@ -575,8 +575,8 @@ def status(id, *args, **kwargs):
 @api.route('/payments/confirm', methods=['POST'])
 @token_required
 def confirm_payment(*args, **kwargs):
-    user_id = kwargs['user'].id
-    return PaymentController.confirm(request, user_id)
+    user = kwargs['user']
+    return PaymentController.confirm(request, user)
 
 
 @api.route('/payments/<payment_id>', methods=['GET'])
