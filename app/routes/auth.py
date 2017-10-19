@@ -15,8 +15,10 @@ def login():
 
 
 @auth.route('/register', methods=['POST'])
-def register():
-	return UserAuthorizationController.register(request)
+@token_required
+def register(*args, **kwargs):
+	user = kwargs['user'].as_dict()
+	return UserAuthorizationController.register(request, user)
 
 
 @auth.route('/admin/authorize', methods=['POST'])
