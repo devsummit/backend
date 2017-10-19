@@ -123,6 +123,7 @@ class UserService(BaseService):
 
 	def email_address_verification(self, token):
 		user = User.verify_auth_token(token)
+		result = {}
 		if user:
 			user_query = db.session.query(User).filter_by(id=user.id)
 			user_query.update({
@@ -136,6 +137,7 @@ class UserService(BaseService):
 
 			# send result
 			result['email'] = 'Email Address have been successfully verified'
+			result['message'] = ' ' if 'message' not in result else result['message']
 			return result
 		else:
 			result['email'] = 'Email Address have not been successfully verified, please request another confirmation link'
@@ -154,8 +156,8 @@ class UserService(BaseService):
 				referer_valid = True
 				if referer.referal_count >= 10:
 					referer_valid = False
-					result['message'] = "Referred username already exceed the limit, please refer to other user"
-					return result
+					result['message'] = 'The username you refered to has exceeded its limit, but your email is safely confirmed\nYou can try another username using the apps.'
+
 				if referer_valid:
 					referer_query.update({
 						'referal_count': referer.referal_count + 1
@@ -191,9 +193,9 @@ class UserService(BaseService):
 					type = "Free Ticket Notification"
 					message = "Congratulation! You have been referred 10 times! You've can get one free ticket, please click on claim button to claim your reward"
 					FCMService().send_single_notification(type, message, receiver_id, sender_id)
+			return result
 		else:
 			return result
-
 
 
 	def list_user(self, request, admin=False):
