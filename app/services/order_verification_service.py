@@ -1,6 +1,6 @@
 import os
 import datetime
-from app.models import db
+from app.models import db, mail
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
@@ -14,7 +14,9 @@ from app.models.booth import Booth
 from app.models.user_booth import UserBooth
 from app.models.hacker_team import HackerTeam
 from app.models.user_hacker import UserHacker
+from app.models.redeem_code import RedeemCode
 from app.services.base_service import BaseService
+from app.services.email_service import EmailService
 from app.builders.response_builder import ResponseBuilder
 from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
@@ -167,6 +169,7 @@ class OrderVerificationService(BaseService):
 
 	def verify(self, id):
 		response = ResponseBuilder()
+		emailservice = EmailService()		
 		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
 		orderverification = orderverification_query.first()
 		if orderverification.is_used is not 1:
@@ -186,6 +189,14 @@ class OrderVerificationService(BaseService):
 				redeem_payload['ticket_id'] = items[0].ticket_id
 				redeem_payload['codeable_id'] = user.id
 				RedeemCodeService().purchase_user_redeems(redeem_payload)
+				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='user', codeable_id=user.id).all()
+				code = []
+				for get_code in get_codes:
+					code.append("<li>%s</li>" %(get_code.code))
+				li = ''.join(code)
+				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received exhibitor code').set_sender('noreply@devsummit.io').set_html(template).build()
+				mail.send(email)
 			elif items[0].ticket.type == TICKET_TYPES['hackaton']:
 				payload = {}
 				payload['user_id'] = user.id
@@ -200,6 +211,14 @@ class OrderVerificationService(BaseService):
 				redeem_payload['codeable_id'] = hackerteam_id
 				redeem_payload['count'] = items[0].ticket.quota
 				RedeemCodeService().create(redeem_payload)
+				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='hackaton', codeable_id=hackerteam_id).all()
+				code = []
+				for get_code in get_codes:
+					code.append("<li>%s</li>" %(get_code.code))
+				li = ''.join(code)
+				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here your redeem codes : </h4>%s<h3>Share the above code to your teammate, and put it into redeem code menu to let them join your team and claim their ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
+				mail.send(email)
 			else:
 				for item in items:
 					for i in range(0, item.count):
@@ -212,7 +231,7 @@ class OrderVerificationService(BaseService):
 			})
 			payment_query = db.session.query(Payment).filter_by(order_id=orderverification.order_id)
 			payment_query.update({
-				'transaction_status': 'capture'
+				'transaction_status': 'captured'
 			})
 			completed_order = db.session.query(Order).filter_by(id=orderverification.order_id)
 			completed_order.update({
