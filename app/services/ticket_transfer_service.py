@@ -8,6 +8,7 @@ from app.models.user import User
 from app.builders.response_builder import ResponseBuilder
 from app.models.ticket_transfer_log import TicketTransferLog
 from app.models.base_model import BaseModel
+from app.configs.settings import LOCAL_TIME_ZONE
 
 
 class TicketTransferService():
@@ -82,9 +83,9 @@ class TicketTransferService():
 	def transformTimeZone(self, obj):
 		log_list = obj
 		for entry in log_list:
-			created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+			created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
 			entry['created_at'] = str(created_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
-			updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+			updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
 			entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
 		return log_list
 

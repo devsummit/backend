@@ -26,6 +26,7 @@ from PIL import Image
 from app.configs.constants import IMAGE_QUALITY, ROLE
 from app.services.helper import Helper
 from app.configs.constants import TICKET_TYPES
+from app.configs.settings import LOCAL_TIME_ZONE
 from werkzeug import secure_filename
 
 
@@ -247,8 +248,8 @@ class OrderVerificationService(BaseService):
 
 	def transformTimeZone(self, obj):
 		entry = obj
-		created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+		created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
 		entry['created_at'] = str(created_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
-		updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+		updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
 		entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
 		return entry
