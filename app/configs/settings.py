@@ -59,6 +59,9 @@ GET_PROPOSAL_DOC_DEST = 'static/'
 STATIC_DEST = 'app/static/'
 # These are the extentions that we are accepting to be upload
 ALLOWED_PROPOSAL_DOC_EXTENSIONS = set(['pdf', 'ppt'])
+#LOGO HACKER TEAM
+POST_HACKER_TEAM_PIC_DEST = 'app/static/images/hackerteam_logo/'
+SAVE_HACKER_TEAM_PIC_DEST = 'images/hackerteam_logo/'
 
 GET_DEST = 'static/'
 STATIC_DEST = 'app/static/'
