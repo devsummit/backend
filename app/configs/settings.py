@@ -68,3 +68,6 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 #This is the registered url route for email service
 EMAIL_HANDLER_ROUTE = 'email-verification'
+
+#This is to set local timezone to GMT+7 for admin
+LOCAL_TIME_ZONE = 7
