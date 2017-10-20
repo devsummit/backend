@@ -123,6 +123,33 @@ class UserController(BaseController):
             return BaseController.send_error_api(None, 'Password required')
 
     @staticmethod
+    def send_confirmation_email(request):
+        email = request.json['email'] if 'email' in request.json else None
+        if email:
+            user = userservice.get_user(email)
+            if user is None:
+                return BaseController.send_error_api(None, 'User not found, register first')
+            if user.confirmed:
+                return BaseController.send_response_api(None, 'This account has been confirmed, you can login now')
+            userservice.send_confirmation_email(user)
+            return BaseController.send_response_api(None, 'Confirmation email has been sent to %s' %(email))
+        else:
+            return BaseController.send_error_api(None, 'Email required')
+
+    @staticmethod
+    def send_reset_password(request):
+        email = request.json['email'] if 'email' in request.json else None
+        if email:
+            user = userservice.get_user(email)
+            if user is not None:
+                userservice.send_reset_password_email(user)
+                return BaseController.send_response_api(None, 'Send Reset Password to %s success, you can check your email now' %(email))
+            else:
+                return BaseController.send_error_api(None, 'Email not found, Please send email which registered into your account before')
+        else:
+            return BaseController.send_error_api(None, 'Email required')
+
+    @staticmethod
     def reset_password(request):
         newpassword = request.json['new_password'] if 'new_password' in request.json else None
         confirmpassword = request.json['confirm_password'] if 'confirm_password' in request.json else None

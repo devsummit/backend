@@ -622,7 +622,7 @@ class PaymentService():
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items.ticket_id
 				UserTicketService.create(payload)
-				self.create_hackaton_team(user)
+				self.create_hackaton_team(user, items.ticket_id)
 				user_query = db.session.query(User).filter_by(id=user.id)
 				user_query.update({
 					'role_id': ROLE['hackaton']
@@ -674,13 +674,14 @@ class PaymentService():
 		db.session.add(userbooth)
 		db.session.commit()
 
-	def create_hackaton_team(self, user):
+	def create_hackaton_team(self, user, ticket_id):
 		hacker_team = HackerTeam()
 		hacker_team.name = 'Your Hacker Team name'
 		hacker_team.logo = ''
 		hacker_team.project_name = 'Project Name'
 		hacker_team.project_url = 'Project Link'
 		hacker_team.theme = ''
+		hacker_team.ticket_id = ticket_id
 		db.session.add(hacker_team)
 		db.session.commit()
 		hackteam = db.session.query(HackerTeam).order_by(HackerTeam.created_at.desc()).first()

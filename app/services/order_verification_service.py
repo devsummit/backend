@@ -151,13 +151,14 @@ class OrderVerificationService(BaseService):
 		db.session.add(userbooth)
 		db.session.commit()
 
-	def create_hackaton (self, user):
+	def create_hackaton (self, user, ticket_id):
 		hacker_team = HackerTeam()
 		hacker_team.name = 'Your team name here'
 		hacker_team.logo = None
 		hacker_team.project_name = 'Your project name here'
-		hacker_team.project_url = None
-		hacker_team.theme = None
+		hacker_team.project_url = 'Project name'
+		hacker_team.theme = 'Project link'
+		hacker_team.ticket_id = ticket_id
 		db.session.add(hacker_team)
 		db.session.commit()
 		userhacker = UserHacker()
@@ -202,7 +203,7 @@ class OrderVerificationService(BaseService):
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items[0].ticket_id
 				UserTicketService().create(payload)
-				hackerteam_id = self.create_hackaton(user)
+				hackerteam_id = self.create_hackaton(user, items[0].ticket_id)
 				user_query.update({
 					'role_id': ROLE['hackaton']
 				})
