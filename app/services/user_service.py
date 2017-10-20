@@ -120,6 +120,15 @@ class UserService(BaseService):
 		mail.send(email)
 		return True
 
+	def send_reset_password_email(self, user):
+		token = user.generate_auth_token(1800)
+		token = token.decode('utf-8')
+		email_subject = "Devsummit: Password Reset"
+		message = "<h4>You just tried to reset your password</h4><h4>Click here to change your password</h4><a href='%sreset-password?action=reset_password&token=%s'>%sreset-password?action=reset_password&token=%s</a>" %(request.url_root, token, request.url_root, token)
+		emailservice = EmailService()
+		email = emailservice.set_recipient(user.email).set_subject(email_subject).set_sender(current_app.config['MAIL_DEFAULT_SENDER']).set_html(message).build()
+		mail.send(email)
+		return True
 
 	def email_address_verification(self, token):
 		user = User.verify_auth_token(token)
