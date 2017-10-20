@@ -248,7 +248,7 @@ class OrderVerificationService(BaseService):
 	def transformTimeZone(self, obj):
 		entry = obj
 		created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
-		entry['created_at'] = str(created_at_timezoned).rsplit('.', maxsplit=1)[0]
+		entry['created_at'] = str(created_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
 		updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
-		entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0]
+		entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
 		return entry
