@@ -16,14 +16,16 @@ class TicketTransferService():
 		response = ResponseBuilder()
 		if user_id == '':
 			transferslogsraw = db.session.query(TicketTransferLog).all()
-			transferslogs = self.transformTable(transferslogsraw)					
+			transferslogsraw2 = self.transformTable(transferslogsraw)
+			transferslogs = self.transformTimeZone(transferslogsraw2)					
 		else:
 			transferslogsends = db.session.query(TicketTransferLog).filter(
 				TicketTransferLog.sender_user_id == user_id)
 			transferslogreceives = db.session.query(TicketTransferLog).filter(
 				TicketTransferLog.receiver_user_id == user_id)
 			transferslogsraw = transferslogsends.union(transferslogreceives)
-			transferslogs = self.transformTable(transferslogsraw)
+			transferslogsraw2 = self.transformTable(transferslogsraw)
+			transferslogs = self.transformTimeZone(transferslogsraw2)
 		return transferslogs
 
 	def transfer(self, user_id, user_ticket_id, receiver):
@@ -77,4 +79,13 @@ class TicketTransferService():
 					entry[key] = temp_dict
 					continue
 		return transferslogs
+
+	def transformTimeZone(self, obj):
+		log_list = obj
+		for entry in log_list:
+			created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+			entry['created_at'] = str(created_at_timezoned).rsplit('.', maxsplit=1)[0]
+			updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+			entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0]
+		return log_list
 
