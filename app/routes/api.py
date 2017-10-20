@@ -1049,8 +1049,31 @@ def reset_password(*args, **kwargs):
 @token_required
 def get_hackaton_team(*args, **kwargs):
     user = kwargs['user'].as_dict()
-    if user['role_id'] == ROLE['admin'] or user['role_id'] == ROLE['hackaton']:
+    if user['role_id'] == ROLE['hackaton']:
         return HackatonController.get_team(request, user)
+    return 'Unauthorized'
+
+@api.route('/hackaton', methods=['GET', 'POST'])
+def get_all_hackaton_team(*args, **kwargs):
+    return HackatonController.get_all(request)
+
+@api.route('/hackaton/team/<id>', methods=['GET', 'PUT', 'PATCH'])
+@token_required
+def update_hackaton(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        if user['role_id'] == ROLE['hackaton']:
+            return HackatonController.update_team(request, id)
+        return 'Unauthorized'
+    else:
+        return HackatonController.show(request, id)
+
+@api.route('/hackaton/team/logo/<id>', methods=['PUT', 'PATCH'])
+@token_required
+def update_hackaton_logo(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if user['role_id'] == ROLE['hackaton']:
+        return HackatonController.update_team_logo(request, id)
     return 'Unauthorized'
 
 # User Feedback API
