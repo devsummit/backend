@@ -8,6 +8,7 @@ from app.models.user import User
 from app.builders.response_builder import ResponseBuilder
 from app.models.ticket_transfer_log import TicketTransferLog
 from app.models.base_model import BaseModel
+from app.configs.settings import LOCAL_TIME_ZONE
 
 
 class TicketTransferService():
@@ -16,7 +17,8 @@ class TicketTransferService():
 		response = ResponseBuilder()
 		if user_id == '':
 			transferslogsraw = db.session.query(TicketTransferLog).all()
-			transferslogs = self.transformTable(transferslogsraw)					
+			transferslogsraw2 = self.transformTable(transferslogsraw)
+			transferslogs = self.transformTimeZone(transferslogsraw2)					
 		else:
 			transferslogsends = db.session.query(TicketTransferLog).filter(
 				TicketTransferLog.sender_user_id == user_id)
@@ -77,4 +79,13 @@ class TicketTransferService():
 					entry[key] = temp_dict
 					continue
 		return transferslogs
+
+	def transformTimeZone(self, obj):
+		log_list = obj
+		for entry in log_list:
+			created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
+			entry['created_at'] = str(created_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
+			updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
+			entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
+		return log_list
 
