@@ -24,8 +24,7 @@ class TicketTransferService():
 			transferslogreceives = db.session.query(TicketTransferLog).filter(
 				TicketTransferLog.receiver_user_id == user_id)
 			transferslogsraw = transferslogsends.union(transferslogreceives)
-			transferslogsraw2 = self.transformTable(transferslogsraw)
-			transferslogs = self.transformTimeZone(transferslogsraw2)
+			transferslogs = self.transformTable(transferslogsraw)
 		return transferslogs
 
 	def transfer(self, user_id, user_ticket_id, receiver):
