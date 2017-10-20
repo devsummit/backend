@@ -36,12 +36,14 @@ class OrderVerificationService(BaseService):
 		_result = []
 		for entry in orderverifications:
 			data = entry.as_dict()
+			data = self.transformTimeZone(data)
 			if data['payment_proof']:
 				data['payment_proof'] = Helper().url_helper(data['payment_proof'], current_app.config['GET_DEST'])
 			else:
 				data['payment_proof'] = ""
 			data['user'] = entry.user.include_photos().as_dict()
 			_result.append(data)
+		
 		return _result
 
 	def create(self, payload):
@@ -242,3 +244,11 @@ class OrderVerificationService(BaseService):
 			return response.set_data(None).set_message('ticket purchased').build()
 		else:
 			return response.set_data(None).set_message('This payment has already verified').build()
+
+	def transformTimeZone(self, obj):
+		entry = obj
+		created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+		entry['created_at'] = str(created_at_timezoned).rsplit('.', maxsplit=1)[0]
+		updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=7)
+		entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0]
+		return entry
