@@ -146,6 +146,8 @@ class UserController(BaseController):
                 return BaseController.send_response_api(None, 'Send Reset Password to %s success, you can check your email now' %(email))
             else:
                 return BaseController.send_error_api(None, 'Email not found, Please send email which registered into your account before')
+        else:
+            return BaseController.send_error_api(None, 'Email required')
 
     @staticmethod
     def reset_password(request):
