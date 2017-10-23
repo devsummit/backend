@@ -41,6 +41,7 @@ from app.services.package_management_service import PackageManagementService
 from app.services.order_verification_service import OrderVerificationService
 from app.services.hackaton_service import HackatonService
 from app.services.user_feedback_service import UserFeedbackService
+from app.services.slack_service import SlackService
 
 # instantiate service
 userservice = UserService(10)  # number of item per page
@@ -85,3 +86,4 @@ packagemanagementservice = PackageManagementService()
 orderverificationservice = OrderVerificationService()
 hackatonservice = HackatonService()
 userfeedbackservice = UserFeedbackService()
+slackservice = SlackService()

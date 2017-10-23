@@ -1,5 +1,7 @@
 from app.controllers.base_controller import BaseController
-from app.services import orderservice
+from app.services import orderservice, slackservice
+from app.models.slack.slack_order import SlackOrder
+from app.configs.constants import SLACK
 
 class OrderController(BaseController):
 
@@ -37,6 +39,9 @@ class OrderController(BaseController):
 		result = orderservice.create(payloads, user)
 
 		if not result['error']:
+			if SLACK['notification']:
+				slackorder = SlackOrder(user, result, payment_type)
+				slackservice.send_message(slackorder.build())
 			return BaseController.send_response_api(result['data'], 'order succesfully created', result['included'])
 		else:
 			return BaseController.send_error_api(None, result['message'])
@@ -47,4 +52,3 @@ class OrderController(BaseController):
 		if order['error']:
 			return BaseController.send_response_api(None, 'order not found')
 		return BaseController.send_response_api(None, 'order with id: ' + id + ' has been succesfully deleted')
-
