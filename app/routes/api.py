@@ -1,11 +1,14 @@
 '''
 put api route in here
 '''
-from flask import Blueprint, request, jsonify
-
+from flask import Blueprint, request, jsonify, json
 # import middlewares
 from app.middlewares.authentication import token_required
-from app.models import socketio
+from app.models import mail, db, socketio, mail
+from app.services.email_service import EmailService
+from app.services import userservice
+from app.models.user import User
+from app.builders.response_builder import ResponseBuilder
 from flask_socketio import emit
 
 # controllers import
@@ -1029,14 +1032,49 @@ def verify_payment(id, *args, **kwargs):
         return OrderVerificationController.verify(id, request)
     return 'Unauthorized'
 
-#Hackaton API
+@api.route('/confirm-email/resend', methods=['POST'])
+def send_mailgun():
+    return UserController.send_confirmation_email(request)
 
+@api.route('/mail/reset-password', methods=['POST'])
+def mail_reset_password():
+    return UserController.send_reset_password(request)
+
+@api.route('/reset_password', methods=['POST'])
+def reset_password(*args, **kwargs):
+    return UserController.reset_password(request)
+
+
+#Hackaton API
 @api.route('/hackaton/team', methods=['GET', 'POST'])
 @token_required
 def get_hackaton_team(*args, **kwargs):
     user = kwargs['user'].as_dict()
-    if user['role_id'] == ROLE['admin'] or user['role_id'] == ROLE['hackaton']:
+    if user['role_id'] == ROLE['hackaton']:
         return HackatonController.get_team(request, user)
+    return 'Unauthorized'
+
+@api.route('/hackaton', methods=['GET', 'POST'])
+def get_all_hackaton_team(*args, **kwargs):
+    return HackatonController.get_all(request)
+
+@api.route('/hackaton/team/<id>', methods=['GET', 'PUT', 'PATCH'])
+@token_required
+def update_hackaton(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if (request.method == 'PUT' or request.method == 'PATCH'):
+        if user['role_id'] == ROLE['hackaton']:
+            return HackatonController.update_team(request, id)
+        return 'Unauthorized'
+    else:
+        return HackatonController.show(request, id)
+
+@api.route('/hackaton/team/logo/<id>', methods=['PUT', 'PATCH'])
+@token_required
+def update_hackaton_logo(id, *args, **kwargs):
+    user = kwargs['user'].as_dict()
+    if user['role_id'] == ROLE['hackaton']:
+        return HackatonController.update_team_logo(request, id)
     return 'Unauthorized'
 
 # User Feedback API

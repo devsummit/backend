@@ -76,3 +76,9 @@ IMAGE_QUALITY = 70
 # FCM key
 FCM_SERVER_KEY = 'key=AAAA8iNOby4:APA91bGxdjtV_YTm3FnvjUiGJPPartTvM5COQFsubP-kBGP0AbmGBml1WtbYgAKc2-CDNcFGYLl4j0JzJq4AzeZwc47aURd3MTKLW_bLS6FtYokJdgjJcE7rM-9KiPlPJ029S9ua7OUF'
 FCM_GENERAL_TOPIC = '/topics/devsummit_indonesia_2017'
+
+MAILGUN = {
+    'server': 'https://api.mailgun.net/v3/sandbox1be5324ff09f4cbfabeac3bc90018521.mailgun.org/messages',
+    'key': 'key-cff13ec10ae9301f0867648b2ebe4274',
+    'sender': 'Andy <no-replyss@devsummit.io>'
+}

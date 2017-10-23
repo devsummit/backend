@@ -8,7 +8,7 @@ class HackerTeam(db.Model, BaseModel):
     # table name
     __tablename__ = 'hacker_teams'
     # displayed fields
-    visible = ['id', 'name', 'logo', 'project_name', 'project_url', 'theme', 'created_at', 'updated_at']
+    visible = ['id', 'name', 'logo', 'project_name', 'project_url', 'theme', 'created_at', 'updated_at', 'ticket_id']
 
     # columns definitions
     id = db.Column(
@@ -23,6 +23,7 @@ class HackerTeam(db.Model, BaseModel):
     project_name = db.Column(db.String(60))
     project_url = db.Column(db.String(250))
     theme = db.Column(db.String(60))
+    ticket_id = db.Column(db.Integer)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
 

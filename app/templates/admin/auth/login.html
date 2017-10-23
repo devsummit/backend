@@ -20,7 +20,7 @@
         captchaToken = response
       };
       var onloadCallback = function() {
-        grecaptcha.render('captcha', {
+        captchaWG = grecaptcha.render('captcha', {
           'sitekey' : '6Lf23jQUAAAAAP47SpwZNq6yP6h9y0w_hd9Wn42z',
           'callback': verifyCallback,
           'theme': 'light'
@@ -126,6 +126,7 @@
                   window.location.href = '/';
                 } else {
                   showInfo('label-danger', result.meta.message);
+                  grecaptcha.reset(captchaWG)
                 }
               });
             } else {

@@ -3,13 +3,14 @@ import base64
 import requests
 import paypalrestsdk
 from sqlalchemy.exc import SQLAlchemyError
-from app.models import db
+from app.models import db, mail
 # import model class
 from app.models.payment import Payment
 from app.models.order_details import OrderDetails
 from app.models.user import User
 from app.models.order import Order
 from app.models.booth import Booth
+from app.models.redeem_code import RedeemCode
 from app.models.hacker_team import HackerTeam
 from app.models.user_hacker import UserHacker
 from app.models.user_booth import UserBooth
@@ -18,6 +19,7 @@ from app.services.user_ticket_service import UserTicketService
 from app.services.redeem_code_service import RedeemCodeService
 from app.builders.response_builder import ResponseBuilder
 from app.services.fcm_service import FCMService
+from app.services.email_service import EmailService
 from app.configs.constants import MIDTRANS_API_BASE_URL as url, SERVER_KEY
 from app.configs.constants import VA_NUMBER
 from app.configs.constants import TICKET_TYPES, ROLE
@@ -557,6 +559,7 @@ class PaymentService():
 
 	def confirm(self, payload, user_id):
 		response = ResponseBuilder()
+		emailservice = EmailService()
 		transaction_exist = db.session.query(Payment).filter_by(transaction_id=payload['transaction_id']).first()
 		if transaction_exist:
 			return response.set_error(True).set_message('this transaction have been used before').set_data(None).build()
@@ -603,12 +606,20 @@ class PaymentService():
 				redeem_payload['ticket_id'] = items.ticket_id
 				redeem_payload['codeable_id'] = user.id
 				RedeemCodeService().purchase_user_redeems(redeem_payload)
+				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='user', codeable_id=user.id).all()
+				code = []
+				for get_code in get_codes:
+					code.append("<li>%s</li>" %(get_code.code))
+				li = ''.join(code)
+				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received exhibitor code').set_sender('noreply@devsummit.io').set_html(template).build()
+				mail.send(email)
 			if items.ticket.type == TICKET_TYPES['hackaton']:
 				payload = {}
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items.ticket_id
 				UserTicketService.create(payload)
-				self.create_hackaton_team(user)
+				self.create_hackaton_team(user, items.ticket_id)
 				user_query = db.session.query(User).filter_by(id=user.id)
 				user_query.update({
 					'role_id': ROLE['hackaton']
@@ -619,14 +630,14 @@ class PaymentService():
 				redeem_payload['codeable_id'] = hacker_team.id,
 				redeem_payload['count'] = items.ticket.quota
 				RedeemCodeService().create(redeem_payload)
-
-				# user_role = db.session.query(User).filter_by(id=user.id)
-				# user_role.update({
-				# 	'updated_at': datetime.datetime.now(),
-				# 	'role_id': 3
-				# })
-				# ticket_quota = order_details.ticket.quota
-				# for i 
+				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='hackaton', codeable_id=hacker_team.id).all()
+				code = []
+				for get_code in get_codes:
+					code.append("<li>%s</li>" %(get_code.code))
+				li = ''.join(code)
+				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here your redeem codes : </h4>%s<h3>Share the above code to your teammate, and put it into redeem code menu to let them join your team and claim their ticket</h3><h3>Thank you for your purchase</h3>" %(order_.id, li)
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
+				mail.send(email)
 			else:				
 				for order in order_details:
 					for i in range(0, order.count):
@@ -660,13 +671,14 @@ class PaymentService():
 		db.session.add(userbooth)
 		db.session.commit()
 
-	def create_hackaton_team(self, user):
+	def create_hackaton_team(self, user, ticket_id):
 		hacker_team = HackerTeam()
 		hacker_team.name = 'Your Hacker Team name'
 		hacker_team.logo = ''
 		hacker_team.project_name = 'Project Name'
 		hacker_team.project_url = 'Project Link'
 		hacker_team.theme = ''
+		hacker_team.ticket_id = ticket_id
 		db.session.add(hacker_team)
 		db.session.commit()
 		hackteam = db.session.query(HackerTeam).order_by(HackerTeam.created_at.desc()).first()
