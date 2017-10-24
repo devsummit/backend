@@ -21,6 +21,7 @@ class OrderDetailsService():
 		payment = db.session.query(Payment).filter_by(order_id=order_id).first()
 		payment = payment.as_dict() if payment is not None else None
 		included = {}
+		included['user'] = order.user.as_dict()
 		included['referal'] = order.referal.as_dict() if order.referal else None
 		included['payment'] = payment
 		if order_verification:
