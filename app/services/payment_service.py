@@ -50,7 +50,13 @@ class PaymentService():
 		results = self.admin_get()['data']
 		_results = []
 		for result in results:
-			if result['fraud_status'] is not None and result['fraud_status'] == param['fraud_status']:
+			if 'fraud_status' in param:
+				if result['fraud_status'] is not None and result['fraud_status'] == param['fraud_status']:
+					_results.append(result)
+			elif 'transaction_status' in param:
+				if result['transaction_status'] is not None and result['transaction_status'] == param['transaction_status']:
+					_results.append(result)
+			else:
 				_results.append(result)
 		return response.set_data(_results).build()
 
