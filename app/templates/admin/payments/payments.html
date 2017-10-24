@@ -31,10 +31,8 @@
                     <th>user Name</th>
                     <th>Email</th>
                     <th>Gross Amount</th>
-                    <th>Bank</th>
                     <th>PaymentType</th>
                     <th>TransactionID</th>
-                    <th>Transaction Status</th>
                     <th>Transaction Time</th>
                     <th>Action</th>
                 </tr>
@@ -52,10 +50,11 @@
                             {{ payment.user['email']|e }}
                         </td>
                         <td>
-                            {{ payment.gross_amount|e }}
-                        </td>
-                        <td>
-                            {{ payment.bank|e }}
+                            {% if payment.payment_type == 'paypal' %}
+                                {{ "USD. {:,.2f}".format(payment.gross_amount)|e }}
+                            {% else %}
+                                {{ "IDR. {:,.2f}".format(payment.gross_amount)|e }}
+                            {% endif %}
                         </td>
                         <td>
                             {{ payment.payment_type|e }}
@@ -64,15 +63,12 @@
                             {{ payment.transaction_id|e }}
                         </td>
                         <td>
-                            {{ payment.transaction_status|e }}
-                        </td>
-                        <td>
                             {{ payment.transaction_time|e }}
                         </td>
                         <td>
-                            <button id='btd-{{ payment.user["id"]}}' type="button" class="btn btn-sm btn-info btn-detail" data-toggle="modal" data-target="#modal-detail">
-                                Detail
-                            </button>
+                            <a href="/invoices/{{ payment.order_id }}" id='btd-{{ payment.user["id"]}}' type="button" class="btn btn-sm btn-info btn-detail">
+                                Invoice
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -80,7 +76,6 @@
             </table>
         </div>
 
-        {% include "admin/users/user_detail.html" ignore missing %}
 {% endblock %}
 
 {% block footer_link %}
@@ -96,23 +91,6 @@
         const id = atd_id.substring(4, atd_id.length);
         $('#btd-'+id).click();
     });
-    /* Display user Detail using user detail template*/
-    $('.btn-detail').click(function(event){
-        const btd_id = $(this).attr('id');
-        const id = btd_id.substring(4, btd_id.length);
-        dsa.get('users/' + id, function(result) {
-            // bind result value in to user_detail.html 
-            const data = result['data'];
-            if (data['photos'].length>0) {
-                $('.user-picture').attr('src', data['photos'][0]['url']);
-            }
-            $('.user-name').html(data['first_name'] + ' ' + data['last_name']);
-            $('.user-email').html(data['email']);
-            $('.user-registered_at').html(data['created_at']);
-            $('.user-social-id').html(data['social_id']); 
-            $('.user-username').html(data['username']); 
-        });
-    })
     $(function () {
         $('#payment-list1').DataTable();
     })
