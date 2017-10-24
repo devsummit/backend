@@ -47,7 +47,8 @@ class MainController(BaseController):
         return render_template('admin/attendees/attendees.html', attendees=attendees['data'])
 
     def getPayments():
-        payments = paymentservice.admin_get()
+        param = {'transaction_status': 'captured'}
+        payments = paymentservice.admin_filter(param)
         return render_template('admin/payments/payments.html', payments=payments['data'])
 
     def getAuthorizePayments():
