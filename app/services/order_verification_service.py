@@ -243,9 +243,10 @@ class OrderVerificationService(BaseService):
 			})
 			db.session.commit()
 			send_notification = FCMService().send_single_notification('Payment Status', 'Your payment has been verified', user.id, ROLE['admin'])
+			
 			return response.set_data(None).set_message('ticket purchased').build()
 		else:
-			return response.set_data(None).set_message('This payment has already verified').build()
+			return response.set_data(None).set_error(True).set_message('This payment has already verified').build()
 
 	def transformTimeZone(self, obj):
 		entry = obj

@@ -1,7 +1,9 @@
 from app.controllers.base_controller import BaseController
-from app.services import orderverificationservice
-from app.configs.constants import ROLE
-
+from app.services import orderverificationservice, slackservice
+from app.configs.constants import ROLE, SLACK
+from app.models import db
+from app.models.order_verification import OrderVerification
+from app.models.slack.slack_payment import SlackPayment
 
 class OrderVerificationController(BaseController):
 
@@ -68,4 +70,11 @@ class OrderVerificationController(BaseController):
 		data = orderverificationservice.verify(id)
 		if data['error']:
 			return BaseController.send_error_api(data['data'], data['message'])
+		order_verification = db.session.query(OrderVerification).filter_by(id=id).first()
+		payload = {
+			'order_id': order_verification.order.id
+		}
+		if SLACK['notification']:
+			slackpayment = SlackPayment(order_verification.user, payload, False)
+			slackservice.send_message(slackpayment.build())
 		return BaseController.send_response_api(data['data'], data['message'])
