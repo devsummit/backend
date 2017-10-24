@@ -244,7 +244,6 @@ def delete(event_id):
 
 # Schedule api
 @api.route('/schedules', methods=['GET', 'POST'])
-@token_required
 def schedule(*args, **kwargs):
     filter = request.args.get('filter')
     if(request.method == 'POST'):
@@ -269,7 +268,6 @@ def schedule_id(id, *args, **kwargs):
 
 # Speakers endpoint
 @api.route('/speakers', methods=['GET'])
-@token_required
 def speaker(*args, **kwargs):
     if(request.method == 'GET'):
         return SpeakerController.index()
