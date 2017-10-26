@@ -138,7 +138,9 @@ class OrderService():
 					order_item.price = ticket.price
 				db.session.add(order_item)
 				db.session.commit()
-				order_items.append(order_item.as_dict())
+				order_item_dict = order_item.as_dict()
+				order_item_dict['ticket'] = order_item.ticket.as_dict() 
+				order_items.append(order_item_dict)
 			if payloads['payment_type'] == 'offline':
 				gross_amount = (item['count'] * ticket.price)
 				payment = Payment()

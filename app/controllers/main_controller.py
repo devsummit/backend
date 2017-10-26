@@ -31,10 +31,12 @@ class MainController(BaseController):
 
     def index():
         attendees = overviewservice.getAttendees()
+        users = overviewservice.getUsers()
         booths = overviewservice.getBooths()
         sponsors = overviewservice.getSponsors()
         finances = overviewservice.getFinances()
         overview = {
+            'users': users,
             'attendees': attendees,
             'booths': booths,
             'sponsors': sponsors,
@@ -47,7 +49,8 @@ class MainController(BaseController):
         return render_template('admin/attendees/attendees.html', attendees=attendees['data'])
 
     def getPayments():
-        payments = paymentservice.admin_get()
+        param = {'transaction_status': 'captured'}
+        payments = paymentservice.admin_filter(param)
         return render_template('admin/payments/payments.html', payments=payments['data'])
 
     def getAuthorizePayments():
