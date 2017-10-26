@@ -8,17 +8,16 @@ from app.configs.constants import ROLE
 
 class OverviewService(BaseService):
 
-    def getAttendees(self):
-        t = db.engine.execute("select max(created_at) from users where role_id = " + str(ROLE['user'])).first()
-        if t[0]:
-            last_date = t[0].isoformat()
-        else:
-            last_date = time.strftime("%Y/%m/%d")
-        new = db.engine.execute('select coalesce(count(*),0) from users where role_id = ' + str(ROLE['user']) + ' and created_at >= "' + last_date + '"').first()
-        total = db.engine.execute("select coalesce(count(*),0) from users where role_id = " + str(ROLE['user'])).first()
+    def getUsers(self):
+        total = db.engine.execute('select coalesce(count(*),0) from users where role_id = ' + str(ROLE['user'])).first()
         return {
-            'new': int(new[0].__str__()),
             'total': int(total[0].__str__())
+        }
+
+    def getAttendees(self):
+        count = db.engine.execute('select coalesce(count(*),0) from user_tickets where ticket_id < 4').first()
+        return {
+            'count': int(count[0].__str__()),
         }
     
     def getBooths(self):

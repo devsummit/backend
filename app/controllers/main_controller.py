@@ -31,10 +31,12 @@ class MainController(BaseController):
 
     def index():
         attendees = overviewservice.getAttendees()
+        users = overviewservice.getUsers()
         booths = overviewservice.getBooths()
         sponsors = overviewservice.getSponsors()
         finances = overviewservice.getFinances()
         overview = {
+            'users': users,
             'attendees': attendees,
             'booths': booths,
             'sponsors': sponsors,
