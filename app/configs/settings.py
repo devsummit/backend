@@ -18,13 +18,13 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 # email server
-MAIL_SERVER = 'smtp.gmail.com'
+MAIL_SERVER = 'email-smtp.us-west-2.amazonaws.com'
 MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
-MAIL_USERNAME = 'devsummit.io@gmail.com'
+MAIL_USERNAME = 'AKIAIWLWWJ3TNRVLQO4Q'
 MAIL_DEFAULT_SENDER = 'noreply@devsummit.io'
-MAIL_PASSWORD = 'wwfmhamyyxylyzxj'
+MAIL_PASSWORD = 'AuWb80Fvq2GDMeYwyZBkaiIcAML8Tu2e9Pcq+1YBDbk4'
 MAIL_SUPPRESS_SEND = False
 # administrator list
 ADMINS = ['noreply@devsummit.io']
