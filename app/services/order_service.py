@@ -73,6 +73,7 @@ class OrderService():
 
 	def get(self, user_id):
 		orders = db.session.query(Order).filter_by(user_id=user_id).order_by(Order.created_at.desc()).all()
+		type = 'user'
 		results = []
 		for order in orders:
 			items = db.session.query(OrderDetails).filter_by(order_id=order.id).all()
@@ -86,11 +87,12 @@ class OrderService():
 				order['payment'] = None
 			amount = 0
 			for item in items:
+				type = item.ticket.type
 				amount += item.price * item.count 
 			order['amount'] = amount
 			order['referal'] = referal
+			order['type'] = type
 			results.append(order)
-
 		return results
 
 	def show(self, id):
