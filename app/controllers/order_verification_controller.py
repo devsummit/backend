@@ -4,6 +4,8 @@ from app.configs.constants import ROLE, SLACK
 from app.models import db
 from app.models.order_verification import OrderVerification
 from app.models.slack.slack_payment import SlackPayment
+from app.models.slack.slack_verify import SlackVerify
+from app.configs.constants import SLACK
 
 class OrderVerificationController(BaseController):
 
@@ -28,6 +30,10 @@ class OrderVerificationController(BaseController):
 			return BaseController.send_error_api(None, 'field is not complete')
 		result = orderverificationservice.create(payloads)
 		if not result['error']:
+			if SLACK['notification']:
+				pass
+				slackverify = SlackVerify(result)
+				slackservice.send_message(slackverify.build())
 			return BaseController.send_response_api(result['data'], result['message'])
 		else:
 			return BaseController.send_error_api(result['data'], result['message'])
