@@ -582,9 +582,12 @@ class PaymentService():
 		user = order_.user
 		order_details = db.session.query(OrderDetails).filter_by(order_id=payload['order_id']).all()
 		check_total = 0
+		discount = 0
 		for order in order_details:
 			check_total += order.price * order.count	
-		if check_total == paypal_details_amount:
+		if order_.referal_id is not None:
+			discount = check_total * order_.referal.discount_amount 
+		if check_total - discount <= paypal_details_amount:
 			payment_exist = db.session.query(Payment).filter_by(transaction_id=payload['transaction_id']).first()
 			if payment_exist:
 				return response.set_data(None).set_message('Payment had been completed!').set_error(True).build()
