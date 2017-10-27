@@ -28,6 +28,12 @@
                                         <input type="text" class="form-control add-referal-code" id="referal-code">
                                     </div>
                                 </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="referal-quota">Quota:</label>
+                                        <input type="text" class="form-control add-referal-quota" id="referal-quota">
+                                    </div>
+                                </li>
                             </ul>
                         <a href="#" class="btn btn-primary btn-block btn-add" id="-"><b>Save</b></a>
         
@@ -50,12 +56,13 @@
     $('.btn-add').click(function(event){
         payload = {
             "owner": $('.add-referal-owner').val(),
-            "discount_amount": $('.add-referal-discountamount').val(),
-            "referal_code": $('.add-referal-code').val()
+            "discount_amount": $('.add-referal-discountamount').val() / 100,
+            "referal_code": $('.add-referal-code').val(),
+            "quota": $('.add-referal-quota').val()
         };
         dsa.post('referals', payload, function(result) {
             if(result.meta.success) {
-                window.location = "http://localhost:5000/referals";
+                window.location = "/referals";
             }
         });
     })

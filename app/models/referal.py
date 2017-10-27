@@ -9,13 +9,14 @@ class Referal(db.Model, BaseModel):
 	__tablename__ = 'referals'
 
 	# visible fields
-	visible = ['id', 'owner', 'discount_amount', 'referal_code', 'created_at', 'updated_at']
+	visible = ['id', 'owner', 'discount_amount', 'referal_code', 'quota', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
 	owner = db.Column(db.String)
 	discount_amount = db.Column(db.Float(precision=2))
 	referal_code = db.Column(db.String)
+	quota = db.Column(db.Integer)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 

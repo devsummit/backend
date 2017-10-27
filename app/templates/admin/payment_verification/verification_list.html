@@ -91,6 +91,7 @@
                     ),
                     m('.pa3 cf mw9 center bg-white br2', [
                         m('h3.b', "Order ID:", m('h4', Verification.current.order_id)),
+                        m('h3.b', "Required payment:", m('h4', 'IDR ' + Intl.NumberFormat().format(Verification.current.payment.gross_amount))),
                         m('h3.b', "User ID:", m('h4', Verification.current.user_id)),
                         m('h3.b', "Date Issued:", m('h4', Verification.current.created_at)),
                         m('.cf', [

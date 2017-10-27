@@ -42,9 +42,9 @@ class OrderVerificationService(BaseService):
 				data['payment_proof'] = Helper().url_helper(data['payment_proof'], current_app.config['GET_DEST'])
 			else:
 				data['payment_proof'] = ""
+			data['payment'] = db.session.query(Payment).filter_by(order_id=entry.order_id).first().as_dict()
 			data['user'] = entry.user.include_photos().as_dict()
 			_result.append(data)
-		
 		return _result
 
 	def create(self, payload):

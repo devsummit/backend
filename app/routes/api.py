@@ -1091,10 +1091,3 @@ def user_feedback (*args, **kwargs):
 def user_feedback_show (id, *args, **kwargs):
     user = kwargs['user'].as_dict()
     return UserFeedbackController.show(id, user) 
-
-
-@api.route('/slack/send', methods=['POST'])
-def send_slack():
-    slackservice = SlackService()
-    slackservice.send_message('Someone just ordered with order-id: ')
-    return 'ssss'
