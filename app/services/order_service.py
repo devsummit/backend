@@ -118,13 +118,14 @@ class OrderService():
 		self.model_order.user_id = payloads['user_id']
 		self.model_order.status = 'pending'
 		referal = db.session.query(Referal).filter_by(referal_code=payloads['referal_code'])
-		if(referal.first() is not None and referal.first().quota > 0):
-			referal.update({
-				'quota': referal.first().quota - 1
-			})
-			self.model_order.referal_id = referal.first().as_dict()['id']
-		else:
-			return response.set_error(True).set_data(None).set_message('quota for specified code have exceeded the limit').build()
+		if referal.first() is not None:
+			if referal.first().quota > 0:
+				referal.update({
+					'quota': referal.first().quota - 1
+				})
+				self.model_order.referal_id = referal.first().as_dict()['id']
+			else:
+				return response.set_error(True).set_data(None).set_message('quota for specified code have exceeded the limit').build()
 		db.session.add(self.model_order)
 		try:
 			db.session.commit()
