@@ -1098,3 +1098,12 @@ def user_feedback_show (id, *args, **kwargs):
 @token_required
 def grant_partner_pj(*args, **kwargs):
     return PartnerPjController.grant(request)
+
+
+@api.route('/partner/info', methods=['GET'])
+@token_required
+def get_partner_info(*args, **kwargs):
+    user = kwargs['user'].as_dict()
+    return PartnerPjController.get_info(user, request)
+
+
