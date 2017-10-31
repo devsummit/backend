@@ -3,6 +3,7 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.referal import Referal
+from app.models.partners import Partner
 from app.models.referal_owner import ReferalOwner
 from app.models.user import User
 from app.builders.response_builder import ResponseBuilder
@@ -13,7 +14,13 @@ class ReferalService():
 
 	def get(self):
 		referals = db.session.query(Referal).all()
-		return referals
+		results = []
+		for referal in referals:
+			data = referal.as_dict()
+			owner = db.session.query(ReferalOwner).filter_by(referal_id=referal.id).first()
+			data['owner'] = db.session.query(Partner).filter_by(id=owner.referalable_id).first().as_dict()
+			results.append(data)
+		return results
 
 	def show(self, id):
 		referal = db.session.query(Referal).filter_by(id=id).first()
