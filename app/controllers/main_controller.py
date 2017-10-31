@@ -64,7 +64,8 @@ class MainController(BaseController):
 
     def getReferals():
         referals = referalservice.get()
-        return render_template('admin/referals/referals.html', referals=referals)
+        partners = partnerservice.get(request)
+        return render_template('admin/referals/referals.html', referals=referals, partners=partners)
 
     def getAccounts():
         accounts = userservice.list_user(request)
