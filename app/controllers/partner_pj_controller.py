@@ -67,3 +67,18 @@ class PartnerPjController(BaseController):
 		# get partner info
 		# get count
 		return BaseController.send_response_api(result, 'data retrieved', included)
+
+
+	@staticmethod
+	def admin_get_info(referal_id, request):
+		result = {}
+		referal = db.session.query(Referal).filter_by(id=referal_id).first()
+		if referal is None:
+			return BaseController.send_error_api(None, 'referal not found')
+		referal_owner = db.session.query(ReferalOwner).filter_by(referal_id=referal_id).first()
+		partner = db.session.query(Partner).filter_by(id=referal_owner.referalable_id).first()
+		included = {}
+		result['partner'] = partner.as_dict()
+		result['referal'] = referal.as_dict()
+		included['count'] = db.session.query(Order).filter_by(referal_id=referal.id).count()
+		return BaseController.send_response_api(result, 'data retrieved', included)
