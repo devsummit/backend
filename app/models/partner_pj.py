@@ -13,10 +13,12 @@ class PartnerPj(db.Model, BaseModel):
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
-	user_id = db.Column(db.Integer)
-	partner_id = db.Column(db.Integer)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	partner_id = db.Column(db.Integer, db.ForeignKey('partners.id'))
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
+	partner = db.relationship('Partner')
+	user = db.relationship('User')
 
 	def __init__(self):
 		self.created_at = datetime.datetime.now()
