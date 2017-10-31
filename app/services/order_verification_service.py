@@ -70,6 +70,8 @@ class OrderVerificationService(BaseService):
 			db.session.commit()
 			result = orderverification.as_dict()
 			result['payment_proof'] = Helper().url_helper(result['payment_proof'], current_app.config['GET_DEST'])
+			if orderverification:
+				send_notification = FCMService().send_single_notification('Payment Status', 'Payment proof have been uploaded, your payment is being processed', user.id, ROLE['admin'])
 			return response.set_data(result).set_message('Data created succesfully').build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
