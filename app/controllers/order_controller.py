@@ -1,6 +1,7 @@
 from app.controllers.base_controller import BaseController
 from app.services import orderservice, slackservice
 from app.models.slack.slack_order import SlackOrder
+from app.services.fcm_service import FCMService
 from app.configs.constants import SLACK
 
 class OrderController(BaseController):
@@ -39,6 +40,7 @@ class OrderController(BaseController):
 		result = orderservice.create(payloads, user)
 
 		if not result['error']:
+			send_notification = FCMService().send_single_notification('Order Status', 'Your order have been succesfully placed.', user.id, ROLE['admin'])
 			if SLACK['notification']:
 				slackorder = SlackOrder(user, result, payment_type)
 				slackservice.send_message(slackorder.build())
