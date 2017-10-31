@@ -73,6 +73,7 @@ class OrderService():
 
 	def get(self, user_id):
 		orders = db.session.query(Order).filter_by(user_id=user_id).order_by(Order.created_at.desc()).all()
+		type = 'user'
 		results = []
 		for order in orders:
 			items = db.session.query(OrderDetails).filter_by(order_id=order.id).all()
@@ -86,11 +87,12 @@ class OrderService():
 				order['payment'] = None
 			amount = 0
 			for item in items:
+				type = item.ticket.type
 				amount += item.price * item.count 
 			order['amount'] = amount
 			order['referal'] = referal
+			order['type'] = type
 			results.append(order)
-
 		return results
 
 	def show(self, id):
@@ -110,14 +112,20 @@ class OrderService():
 	def create(self, payloads, user):
 		response = ResponseBuilder()
 		if user['role_id'] == ROLE['hackaton']:
-			return response.set_data(None).set_message('You cant buy ticket hackaton twice').set_error(True).build()
+			return response.set_data(None).set_message('You cannot buy hackaton ticket twice').set_error(True).build()
 		self.model_order = Order()
 		order_details = payloads['order_details']
 		self.model_order.user_id = payloads['user_id']
 		self.model_order.status = 'pending'
 		referal = db.session.query(Referal).filter_by(referal_code=payloads['referal_code'])
-		if(referal.first() is not None):
-			self.model_order.referal_id = referal.first().as_dict()['id']
+		if referal.first() is not None:
+			if referal.first().quota > 0:
+				referal.update({
+					'quota': referal.first().quota - 1
+				})
+				self.model_order.referal_id = referal.first().as_dict()['id']
+			else:
+				return response.set_error(True).set_data(None).set_message('quota for specified code have exceeded the limit').build()
 		db.session.add(self.model_order)
 		try:
 			db.session.commit()
@@ -142,7 +150,11 @@ class OrderService():
 				order_item_dict['ticket'] = order_item.ticket.as_dict() 
 				order_items.append(order_item_dict)
 			if payloads['payment_type'] == 'offline':
-				gross_amount = (item['count'] * ticket.price)
+				gross_amount = (item['count'] * ticket.price) 
+				if referal.first() is not None:
+					# discount on gross amount
+					gross_amount -= gross_amount * referal.first().discount_amount 
+
 				payment = Payment()
 				payment.order_id = order_id
 				payment.payment_type = 'offline'

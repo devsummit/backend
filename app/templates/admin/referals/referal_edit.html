@@ -28,6 +28,12 @@
                                         <input type="text" class="form-control referal-code" id="referal-code">
                                     </div>
                                 </li>
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="referal-quota">Quota:</label>
+                                        <input type="text" class="form-control referal-quota" id="referal-quota">
+                                    </div>
+                                </li>
                             </ul>
                         <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
         
@@ -51,8 +57,9 @@
         const id = $(this).attr('id');
         payload = {
             "owner": $('.referal-owner').val(),
-            "discount_amount": $('.referal-discountamount').val(),
-            "referal_code": $('.referal-code').val()
+            "discount_amount": $('.referal-discountamount').val() / 100,
+            "referal_code": $('.referal-code').val(),
+            "quota": $('.referal-quota').val()
         };
         dsa.patch('referals/' + id, payload, function(result) {
             if(result.meta.success) {
