@@ -21,7 +21,7 @@ class ReferalController(BaseController):
 	def create(request):
 		owner_type = request.json['owner_type'] if 'owner_type' in request.json else None
 		owner_id = request.json['owner_id'] if 'owner_id' in request.json else None
-		discount_amount = request.json['discount_amount'] if 'discount_amount' in request.json else None
+		discount_amount = 0.1 # 10% discount fix
 		referal_code = request.json['referal_code'] if 'referal_code' in request.json else ''
 		quota = request.json['quota'] if 'quota' in request.json else 1
 
