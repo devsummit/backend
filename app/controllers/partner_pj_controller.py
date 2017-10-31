@@ -1,7 +1,10 @@
+import datetime
 from app.controllers.base_controller import BaseController
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.partner_pj import PartnerPj 
 from app.models.partners import Partner
+from app.configs.constants import ROLE
+from app.models.user import User
 from app.models import db
 
 
@@ -28,10 +31,20 @@ class PartnerPjController(BaseController):
 					return BaseController.send_error_api(None, 'query error occured')
 			else:
 				return BaseController.send_error_api(None, 'partner not found')
+		# revert user role
+		user = db.session.query(User).filter_by(id=result.first().user_id).update({
+				'role_id': ROLE['user']
+			})
 		result.update({
-			'user_id': user_id
+			'user_id': user_id,
+			'updated_at': datetime.datetime.now()
 		})
 		try:
+			db.session.commit()
+			new_user = db.session.query(User).filter_by(id=user_id).update({
+					'role_id': ROLE['partner'],
+					'updated_at': datetime.datetime.now()
+				})
 			db.session.commit()
 			return BaseController.send_response_api(None, 'pj updated')
 		except SQLAlchemyError as e:
