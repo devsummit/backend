@@ -2,7 +2,10 @@ import datetime
 from app.controllers.base_controller import BaseController
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.partner_pj import PartnerPj 
+from app.models.referal_owner import ReferalOwner
+from app.models.referal import Referal
 from app.models.partners import Partner
+from app.models.order import Order
 from app.configs.constants import ROLE
 from app.models.user import User
 from app.models import db
@@ -49,3 +52,18 @@ class PartnerPjController(BaseController):
 			return BaseController.send_response_api(None, 'pj updated')
 		except SQLAlchemyError as e:
 			return BaseController.send_error_api(None, 'query error occured')
+
+	@staticmethod
+	def get_info(user, request):
+		result = {}
+		partnerpj = db.session.query(PartnerPj).filter_by(user_id=user['id']).first()
+		referal_owner = db.session.query(ReferalOwner).filter_by(referalable_id=partnerpj.partner.id).first()
+		# get referal info
+		referal = db.session.query(Referal).filter_by(id=referal_owner.referal_id).first()
+		result['partner'] = partnerpj.partner.as_dict()
+		result['referal'] = referal.as_dict()
+		included = {}
+		included['count'] = db.session.query(Order).filter_by(referal_id=referal.id).count()
+		# get partner info
+		# get count
+		return BaseController.send_response_api(result, 'data retrieved', included)
