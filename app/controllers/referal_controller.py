@@ -8,14 +8,14 @@ class ReferalController(BaseController):
 	@staticmethod
 	def index():
 		referals = referalservice.get()
-		return BaseController.send_response_api(BaseModel.as_list(referals), 'referals retrieved successfully')
+		return BaseController.send_response_api(referals, 'referals retrieved successfully')
 
 	@staticmethod
 	def show(id):
 		referal = referalservice.show(id)
 		if referal is None:
 			return BaseController.send_error_api(None, 'referal not found')
-		return BaseController.send_response_api(referal.as_dict(), 'referal retrieved successfully')
+		return BaseController.send_response_api(referal, 'referal retrieved successfully')
 
 	@staticmethod
 	def create(request):
