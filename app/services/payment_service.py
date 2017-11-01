@@ -620,7 +620,9 @@ class PaymentService():
 				for get_code in get_codes:
 					code.append("<li>%s</li>" %(get_code.code))
 				li = ''.join(code)
-				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
+				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(order_.id, li)
+				template += "<h4>And here is your Invoice:</h4>"
+				template += '<a href="https://api.devsummit.io/invoices/'+ order_.id +'">Klik here to show the invoice</a>'
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received exhibitor code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			if items.ticket.type == TICKET_TYPES['hackaton']:
@@ -645,15 +647,25 @@ class PaymentService():
 					code.append("<li>%s</li>" %(get_code.code))
 				li = ''.join(code)
 				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here your redeem codes : </h4>%s<h3>Share the above code to your teammate, and put it into redeem code menu to let them join your team and claim their ticket</h3><h3>Thank you for your purchase</h3>" %(order_.id, li)
+				template += "<h4>And here is your Invoice:</h4>"
+				template += '<a href="https://api.devsummit.io/invoices/'+ order_.id +'">Klik here to show the invoice</a>'
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			else:				
+				result = None
 				for order in order_details:
 					for i in range(0, order.count):
 						payload = {}
 						payload['user_id'] = user.id
 						payload['ticket_id'] = order.ticket_id
 						UserTicketService().create(payload)
+				if (result and (not result['error'])):
+					template = "<h3>Congratulation! you have the previlege to attend Indonesia Developer Summit</h3>"
+					template += "<h4>Here is your Invoice:</h4>"
+					template += '<a href="https://api.devsummit.io/invoices/'+ order_.id +'">Klik here to show the invoice</a>'
+					template += "<h5>Thank you.</h5>"
+					email = emailservice.set_recipient(user.email).set_subject('Devsummit Ticket Invoice').set_sender('noreply@devsummit.io').set_html(template).build()
+					mail.send(email)
 			confirmed_order = db.session.query(Order).filter_by(id=payment.order_id)
 			confirmed_order.update({
 				'status': 'paid'
