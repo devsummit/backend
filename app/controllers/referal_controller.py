@@ -25,7 +25,7 @@ class ReferalController(BaseController):
 		referal_code = request.json['referal_code'] if 'referal_code' in request.json else ''
 		quota = request.json['quota'] if 'quota' in request.json else 1
 
-		if owner and discount_amount and referal_code and quota:
+		if discount_amount and referal_code and quota and owner_type and owner_id:
 			payloads = {
 				'owner_type': owner_type,
 				'owner_id': owner_id,
@@ -65,7 +65,7 @@ class ReferalController(BaseController):
 		if not result['error']:
 			return BaseController.send_response_api(result['data'], result['message'])
 		else:
-			return BaseController.send_error_api(result['data'], result['message'])	
+			return BaseController.send_error_api(result['data'], result['message'])
 
 	@staticmethod
 	def reward_referal(user):

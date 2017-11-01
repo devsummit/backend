@@ -73,12 +73,12 @@ class ReferalService():
 		try:
 			self.model_referal = db.session.query(Referal).filter_by(id=id)
 			self.model_referal.update({
-				'owner': payloads['owner'],
 				'discount_amount': payloads['discount_amount'],
 				'referal_code': payloads['referal_code'],
 				'quota': payloads['quota'],
 				'updated_at': datetime.datetime.now()
 			})
+
 			db.session.commit()
 			data = self.model_referal.first().as_dict()
 			return response.set_data(data).set_message('referal updated successfully').build()
