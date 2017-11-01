@@ -83,7 +83,6 @@ class ReferalService():
 			data = self.model_referal.first().as_dict()
 			return response.set_data(data).set_message('referal updated successfully').build()
 		except SQLAlchemyError as e:
-			print(e)
 			data = e.orig.args
 			return response.set_error(True).set_data({'sql_error': True}).set_message(data).build()
 
