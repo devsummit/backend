@@ -1,0 +1,109 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Partner PJ </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Partners PJ
+        <small>Partner PJ</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Partners</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
+        
+        <div class="box-body">
+            <table id="partner-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Partner Name</th>
+                    <th>Email</th>
+                    <th>Website</th>
+                    <th>Type</th>
+                    <th>Photo</th>
+                    <th>PJ (firstname - username)</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for partner in partners %}
+                    <tr>
+                        <td>
+                            <a href="http://{{ partner.website }}" id='atd-{{ partner.id }}' class="partner-name">
+                            {{ partner.name }}</a> 
+                        </td>
+                        <td class='partner-email'>
+                            {{ partner.email|e }}
+                        </td>
+                        <td>
+                            {{ partner.website|e }}
+                        </td>
+                        <td>
+                            {{ partner.type|e }}
+                        </td>
+                        <td>
+                            <img src="{{ partner.photo|e }}" height="120px" width="100px" alt='partner photo'>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <select id="{{ partner.id }}" class="i-pj form-control">
+                                    {% for user in users %}
+                                        {% if partner.user_id == None %}
+                                            <option>None</option>
+                                        {% else %}
+                                            <option value="{{ user.id }}" {% if partner.user_id==user.id %} selected="selected"{% endif %}>{{ user.first_name + ' - ' + user.username }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='constants.js') }}"></script>
+
+
+<!-- page script -->
+<script>
+
+    $('.i-pj').change(function(target) {
+        const user_id = $(this).find(":selected").val();
+        const partner_id = $(this).attr("id");
+        payload = {
+            user_id,
+            partner_id  
+        };          
+        if (confirm('are you sure to assign the pj?')) {
+            dsa.post('partner/pj', payload, function(result) {
+                if(result.meta.success) {
+                    window.location = "/partnerspj";
+                }
+            });
+        }
+    });
+
+    $(function () {
+        $('#partner-list1').DataTable();
+    })
+</script>
+
+{% endblock %}
