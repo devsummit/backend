@@ -29,6 +29,11 @@ class PartnerPjController(BaseController):
 				db.session.add(newPartnerPj)
 				try:
 					db.session.commit()
+					new_user = db.session.query(User).filter_by(id=user_id).update({
+						'role_id': ROLE['partner'],
+						'updated_at': datetime.datetime.now()
+						})
+					db.session.commit()
 					return BaseController.send_response_api(None, 'pj updated')
 				except SQLAlchemyError as e:
 					return BaseController.send_error_api(None, 'query error occured')
