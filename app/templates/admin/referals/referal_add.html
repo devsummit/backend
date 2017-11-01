@@ -10,16 +10,16 @@
                 <div class="box box-primary">
                     <div class="box-body box-profile">
                             <ul class="list-group list-group-unbordered">
-                                <li class="list-group-item">
-                                    <div class="form-group">
-                                        <label for="referal-owner">Owner:</label>
-                                        <input type="text" class="form-control add-referal-owner" id="referal-owner">
-                                    </div>
-                                </li>
+                                      <li class="list-group-item">
+                                          <label for="event-type-add">Partners:</label>
+                                          <select class="event-types-add form-control">
+                                          </select>
+                                      </li>
+
                                 <li class="list-group-item">
                                     <div class="form-group">
                                         <label for="referal-discountamount">Discount percentage %:</label>
-                                        <input type="text" class="form-control add-referal-discountamount" id="referal-discountamount">
+                                        <input type="text" class="form-control add-referal-discountamount" id="referal-discountamount" value="10" disabled>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
@@ -36,7 +36,7 @@
                                 </li>
                             </ul>
                         <a href="#" class="btn btn-primary btn-block btn-add" id="-"><b>Save</b></a>
-        
+
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -54,8 +54,11 @@
 <script>
     /* Display Attendee Detail */
     $('.btn-add').click(function(event){
+        let id = $('.event-types-add').val();
+
         payload = {
-            "owner": $('.add-referal-owner').val(),
+            "owner_type": "partner",
+            "owner_id": id,
             "discount_amount": $('.add-referal-discountamount').val() / 100,
             "referal_code": $('.add-referal-code').val(),
             "quota": $('.add-referal-quota').val()

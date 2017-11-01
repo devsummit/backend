@@ -25,6 +25,7 @@ from app.services import sponsortemplateservice
 from app.services import invoiceservice
 from app.services import packagemanagementservice
 from app.services import tickettransferservice
+from app.configs.constants import ROLE
 
 
 class MainController(BaseController):
@@ -35,12 +36,14 @@ class MainController(BaseController):
         booths = overviewservice.getBooths()
         sponsors = overviewservice.getSponsors()
         finances = overviewservice.getFinances()
+        order_count = overviewservice.getOrders()
         overview = {
             'users': users,
             'attendees': attendees,
             'booths': booths,
             'sponsors': sponsors,
-            'finances': finances
+            'finances': finances,
+            'order': order_count
         }
         return render_template('admin/base/overview.html', overview=overview)
 
@@ -64,7 +67,8 @@ class MainController(BaseController):
 
     def getReferals():
         referals = referalservice.get()
-        return render_template('admin/referals/referals.html', referals=referals)
+        partners = partnerservice.get(request)
+        return render_template('admin/referals/referals.html', referals=referals, partners=partners)
 
     def getAccounts():
         accounts = userservice.list_user(request)
@@ -106,6 +110,12 @@ class MainController(BaseController):
     def getPartners():
         partners = partnerservice.get(request)
         return render_template('admin/partnership/partners/partners.html', partners=partners['data'])
+
+    def getPartnersPj():
+        partners = partnerservice.filter('community', request)
+        users = userservice.get_user_filter(ROLE['user'])
+        print(partners)
+        return render_template('admin/partnership/partners/partner_pj.html', partners=partners['data'], users=users)
 
     def getEntryCashLogs():
         entrycashlogs = entrycashlogservice.get(request)
