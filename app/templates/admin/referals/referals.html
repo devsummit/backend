@@ -22,7 +22,7 @@
 {% block content %}
     <div class="box">
         <!-- /.box-header -->
-        
+
         <div class="box-body">
             <table id="referal-list1" class="table table-bordered table-striped">
                 <thead>
@@ -85,7 +85,7 @@
         const bte_id = $(this).attr('id');
         const id = bte_id.substring(4, bte_id.length);
         dsa.get('referals/' + id, function(result) {
-            // bind result value in to attendee_detail.html 
+            // bind result value in to attendee_detail.html
             const data = result['data'];
             $('.referal-owner').val(data['owner']);
             $('.referal-discountamount').val(data['discount_amount'] * 100);
@@ -97,6 +97,16 @@
 
     $('.btn-add').click(function(event){
         $('.modal-title').html('Add New Referal');
+
+        const btn_id = $(this).attr('id');
+        dsa.get('partners', function(result) {
+          // append the result data to dropdown add
+          const data = result['data'];
+
+          data.map(function(item) {
+            $('.event-types-add').append(`<option value=${item.id}>${item.name}</option>`);
+          });
+        });
     });
 
     $('.btn-delete').click(function(event){
