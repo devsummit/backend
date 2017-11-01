@@ -73,7 +73,6 @@ class ReferalService():
 		try:
 			self.model_referal = db.session.query(Referal).filter_by(id=id)
 			self.model_referal.update({
-				'owner': payloads['owner'],
 				'discount_amount': payloads['discount_amount'],
 				'referal_code': payloads['referal_code'],
 				'quota': payloads['quota'],
@@ -83,6 +82,7 @@ class ReferalService():
 			data = self.model_referal.first().as_dict()
 			return response.set_data(data).set_message('referal updated successfully').build()
 		except SQLAlchemyError as e:
+			print(e)
 			data = e.orig.args
 			return response.set_error(True).set_data({'sql_error': True}).set_message(data).build()
 
