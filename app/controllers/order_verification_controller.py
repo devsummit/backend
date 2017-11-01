@@ -31,7 +31,6 @@ class OrderVerificationController(BaseController):
 		result = orderverificationservice.create(payloads)
 		if not result['error']:
 			if SLACK['notification']:
-				pass
 				slackverify = SlackVerify(result)
 				slackservice.send_message(slackverify.build())
 			return BaseController.send_response_api(result['data'], result['message'])
@@ -43,7 +42,6 @@ class OrderVerificationController(BaseController):
 		orderverification = orderverificationservice.show(id)
 		return BaseController.send_response_api(orderverification['data'], orderverification['message'])	
 
-	
 	@staticmethod
 	def update(id, request):
 		user_id = request.form['user_id'] if 'user_id' in request.form else None
@@ -69,7 +67,6 @@ class OrderVerificationController(BaseController):
 		if data['error']:
 			return BaseController.send_error_api(data['data'], data['message'])
 		return BaseController.send_response_api(data['data'], data['message'])
-
 
 	@staticmethod
 	def verify(id, request):
