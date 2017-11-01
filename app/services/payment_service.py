@@ -658,7 +658,7 @@ class PaymentService():
 						payload = {}
 						payload['user_id'] = user.id
 						payload['ticket_id'] = order.ticket_id
-						UserTicketService().create(payload)
+						result = UserTicketService().create(payload)
 				if (result and (not result['error'])):
 					template = "<h3>Congratulation! you have the previlege to attend Indonesia Developer Summit</h3>"
 					template += "<h4>Here is your Invoice:</h4>"
