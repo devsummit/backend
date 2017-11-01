@@ -183,7 +183,7 @@ class OrderVerificationService(BaseService):
 		db.session.commit()
 		return hacker_team.id
 
-	def verify(self, id):
+	def verify(self, id, request):
 		response = ResponseBuilder()
 		emailservice = EmailService()		
 		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
@@ -192,6 +192,7 @@ class OrderVerificationService(BaseService):
 			user_query = db.session.query(User).filter_by(id=orderverification.user_id)
 			user = user_query.first()
 			items = db.session.query(OrderDetails).filter_by(order_id=orderverification.order_id).all()
+			url_invoice = request.host + '/invoices/'+ orderverification.order_id
 			if items[0].ticket.type == TICKET_TYPES['exhibitor']:
 				payload = {}
 				payload['user_id'] = user.id
@@ -212,7 +213,7 @@ class OrderVerificationService(BaseService):
 				li = ''.join(code)
 				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
 				template += "<h4>And here is your Invoice:</h4>"
-				template += '<a href="https://api.devsummit.io/invoices/'+ orderverification.order_id +'">Klik here to show the invoice</a>'
+				template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received exhibitor code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			elif items[0].ticket.type == TICKET_TYPES['hackaton']:
@@ -236,7 +237,7 @@ class OrderVerificationService(BaseService):
 				li = ''.join(code)
 				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here your redeem codes : </h4>%s<h3>Share the above code to your teammate, and put it into redeem code menu to let them join your team and claim their ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
 				template += "<h4>And here is your Invoice:</h4>"
-				template += '<a href="https://api.devsummit.io/invoices/'+ orderverification.order_id +'">Klik here to show the invoice</a>'
+				template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			else:
@@ -250,7 +251,7 @@ class OrderVerificationService(BaseService):
 				if (result and (not result['error'])):
 					template = "<h3>Congratulation! you have the previlege to attend Indonesia Developer Summit</h3>"
 					template += "<h4>Here is your Invoice:</h4>"
-					template += '<a href="https://api.devsummit.io/invoices/'+ orderverification.order_id +'">Klik here to show the invoice</a>'
+					template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
 					template += "<h5>Thank you.</h5>"
 					email = emailservice.set_recipient(user.email).set_subject('Devsummit Ticket Invoice').set_sender('noreply@devsummit.io').set_html(template).build()
 					mail.send(email)
