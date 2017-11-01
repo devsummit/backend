@@ -19,6 +19,21 @@ class OverviewService(BaseService):
         return {
             'count': int(count[0].__str__()),
         }
+
+    def getOrders(self):
+        total_count = db.engine.execute('select coalesce(count(*),0) from orders').first()
+        unique_user_count = db.engine.execute('select count(distinct user_id) from orders').first()
+        attendee_tickets = db.engine.execute('select count(count) from order_details where ticket_id<5').first()
+        exhibitor_tickets = db.engine.execute('select count(count) from order_details where ticket_id>5 and ticket_id<9').first()
+        hackaton_tickets = db.engine.execute('select count(count) from order_details where ticket_id>8').first()
+        return {
+            'total_count': total_count[0],
+            'unique_user_count': unique_user_count[0],
+            'attendee_ticket_count': attendee_tickets[0],
+            'exhibitor_ticket_count': exhibitor_tickets[0],
+            'hackaton_ticket_count': hackaton_tickets[0]
+        }
+
     
     def getBooths(self):
         t = db.engine.execute("select max(created_at) from booths").first()

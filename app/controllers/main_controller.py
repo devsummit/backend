@@ -36,12 +36,14 @@ class MainController(BaseController):
         booths = overviewservice.getBooths()
         sponsors = overviewservice.getSponsors()
         finances = overviewservice.getFinances()
+        order_count = overviewservice.getOrders()
         overview = {
             'users': users,
             'attendees': attendees,
             'booths': booths,
             'sponsors': sponsors,
-            'finances': finances
+            'finances': finances,
+            'order': order_count
         }
         return render_template('admin/base/overview.html', overview=overview)
 
