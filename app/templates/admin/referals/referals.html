@@ -38,7 +38,7 @@
                     {% for referal in referals %}
                     <tr>
                         <td>
-                            <a href="#" class="referal_details" id='{{ referal.id }}'>{{ referal.owner.name }}</a>
+                            <a href="/referal_details/{{ referal.id }}" class="referal_details" id='{{ referal.id }}'>{{ referal.owner.name }}</a>
                         </td>
                         <td>
                             {{ referal.discount_amount * 100 }}
