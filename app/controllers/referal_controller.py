@@ -25,10 +25,8 @@ class ReferalController(BaseController):
 		referal_code = request.json['referal_code'] if 'referal_code' in request.json else ''
 		quota = request.json['quota'] if 'quota' in request.json else 1
 
-		if owner and discount_amount and referal_code and quota:
+		if discount_amount and referal_code and quota:
 			payloads = {
-				'owner_type': owner_type,
-				'owner_id': owner_id,
 				'discount_amount': discount_amount,
 				'referal_code': referal_code,
 				'quota': quota
