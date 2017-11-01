@@ -59,11 +59,7 @@
                             <div class="form-group">
                                 <select id="{{ partner.id }}" class="i-pj form-control">
                                     {% for user in users %}
-                                        {% if partner.user_id == None %}
-                                            <option>None</option>
-                                        {% else %}
-                                            <option value="{{ user.id }}" {% if partner.user_id==user.id %} selected="selected"{% endif %}>{{ user.first_name + ' - ' + user.username }}</option>
-                                        {% endif %}
+                                        <option value="{{ user.id }}" {% if partner.user_id==user.id %} selected="selected"{% endif %}>{{ user.first_name + ' - ' + user.username }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
