@@ -1,0 +1,91 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Owner info detais </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Owner
+        <small>Details</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Referals</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+
+        <div class="box-body">
+          <p>Count</p>
+          <h1>Referal code has been used {{ referal_info }} times</h1>
+
+        </div>
+
+        <div class="box-body">
+          <p>Quota left</p>
+          <h1>Referal code has been used {{ referal_info }} times</h1>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    /* Display Attendee Detail */
+    // $('.btn-edit').click(function(event){
+    //     $('.modal-title').html('Edit');
+    //
+    //     const bte_id = $(this).attr('id');
+    //     const id = bte_id.substring(4, bte_id.length);
+    //     dsa.get('referal/' + id + '/info', function(result) {
+    //         // bind result value in to attendee_detail.html
+    //         const data = result['data'];
+    //         $('#referal-owner').val(data['partner']['name']);
+    //         $('.referal-discountamount').val(data['referal']['discount_amount'] * 100);
+    //         $('.referal-code').val(data['referal']['referal_code']);
+    //         $('.referal-quota').val(data['referal']['quota']);
+    //         $('.btn-save').attr("id", data['referal']['id']);
+    //     });
+    // })
+    //
+    // $('.btn-add').click(function(event){
+    //     $('.modal-title').html('Add New Referal');
+    //
+    //     const btn_id = $(this).attr('id');
+    //     dsa.get('partners', function(result) {
+    //       // append the result data to dropdown add
+    //       const data = result['data'];
+    //
+    //       data.map(function(item) {
+    //         $('.event-types-add').append(`<option value=${item.id}>${item.name}</option>`);
+    //       });
+    //     });
+    // });
+    //
+    // $('.btn-delete').click(function(event){
+    //     $('.modal-title').html('Delete');
+    //
+    //     const btd_id = $(this).attr('id');
+    //     const id = btd_id.substring(4, btd_id.length);
+    //     $('.btn-yes').attr("id", id);
+    // })
+    // $(function () {
+    //     $('#referal-list1').DataTable();
+    // })
+</script>
+
+{% endblock %}
