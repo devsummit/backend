@@ -45,16 +45,10 @@ class ReferalController(BaseController):
 
 	@staticmethod
 	def update(request, id):
-		owner = request.json['owner'] if 'owner' in request.json else None
-		discount_amount = request.json['discount_amount'] if 'discount_amount' in request.json else None
-		referal_code = request.json['referal_code'] if 'referal_code' in request.json else ''
 		quota = request.json['quota'] if 'quota' in request.json else 1
 
-		if owner and discount_amount and referal_code and quota:
+		if quota:
 			payloads = {
-				'owner': owner,
-				'discount_amount': discount_amount,
-				'referal_code': referal_code,
 				'quota': quota
 			}
 		else:

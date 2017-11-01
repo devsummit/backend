@@ -1116,7 +1116,7 @@ def get_partner_info(*args, **kwargs):
 def get_referal_info(id, *args, **kwargs):
     user = kwargs['user']
     if user.role_id == ROLE['admin']:
-        return PartnerPjController.admin_get_info(id, request)  
+        return PartnerPjController.admin_get_info(id)  
     return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
     
 
