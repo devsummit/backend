@@ -18,13 +18,16 @@ class ReferalService():
 		for referal in referals:
 			data = referal.as_dict()
 			owner = db.session.query(ReferalOwner).filter_by(referal_id=referal.id).first()
-			data['owner'] = db.session.query(Partner).filter_by(id=owner.referalable_id).first().as_dict()
+			if owner:
+				data['owner'] = db.session.query(Partner).filter_by(id=owner.referalable_id).first().as_dict()
+			else:
+				data['owner'] = None
 			results.append(data)
 		return results
 
 	def show(self, id):
 		referal = db.session.query(Referal).filter_by(id=id).first()
-		return referal
+		return referal.as_dict()
 
 	def create(self, payloads):
 		response = ResponseBuilder()
@@ -73,8 +76,6 @@ class ReferalService():
 		try:
 			self.model_referal = db.session.query(Referal).filter_by(id=id)
 			self.model_referal.update({
-				'discount_amount': payloads['discount_amount'],
-				'referal_code': payloads['referal_code'],
 				'quota': payloads['quota'],
 				'updated_at': datetime.datetime.now()
 			})
