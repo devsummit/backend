@@ -69,12 +69,12 @@ class PartnerPjController(BaseController):
 		referal = db.session.query(Referal).filter_by(id=referal_owner.referal_id).first()
 		result['partner'] = partnerpj.partner.as_dict()
 		# check if referal exist
+		included = {}
 		if referal:
 			result['referal'] = referal.as_dict()
+			included['count'] = db.session.query(Order).filter_by(referal_id=referal.id).count()
 		else:
 			result['referal'] = None
-		included = {}
-		included['count'] = db.session.query(Order).filter_by(referal_id=referal.id).count()
 		# get partner info
 		return BaseController.send_response_api(result, 'data retrieved', included)
 
