@@ -76,11 +76,11 @@ class ReferalController(BaseController):
 		return BaseController.send_response_api(None, 'referal with id: ' + id + ' has been succesfully deleted')
 
 	@staticmethod
-	def check(request):
+	def check(request, user):
 		referal_code = request.json['referal_code'] if 'referal_code' in request.json else None
 		if referal_code:
 			# process
-			referal = referalservice.check_referal_code(referal_code)
+			referal = referalservice.check_referal_code(referal_code, user)
 			if referal['error']:
 				return BaseController.send_error_api(referal['data'], referal['message'])
 			return BaseController.send_response_api(referal['data'], referal['message'])

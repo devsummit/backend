@@ -626,7 +626,8 @@ def referal_id(id, *args, **kwargs):
 @api.route('/referals/check', methods=['POST'])
 @token_required
 def check_referal(*args, **kwargs):
-    return ReferalController.check(request)
+    user = kwargs['user'].as_dict()
+    return ReferalController.check(request, user)
 
 @api.route('/referals/submit', methods=['POST'])
 @token_required
