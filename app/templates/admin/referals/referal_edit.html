@@ -61,7 +61,6 @@
             "referal_code": $('#referal-code').val(),
             "quota": $('#referal-quota').val()
         };
-        console.log("Pyalo", payload);
         dsa.patch('referals/' + id, payload, function(result) {
             if(result.meta.success) {
                 window.location = "/referals";
