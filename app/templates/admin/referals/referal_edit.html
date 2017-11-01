@@ -36,7 +36,7 @@
                                 </li>
                             </ul>
                         <a href="#" class="btn btn-primary btn-block btn-save" id="-"><b>Save</b></a>
-        
+
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -56,14 +56,15 @@
     $('.btn-save').click(function(event){
         const id = $(this).attr('id');
         payload = {
-            "owner": $('.referal-owner').val(),
-            "discount_amount": $('.referal-discountamount').val() / 100,
-            "referal_code": $('.referal-code').val(),
-            "quota": $('.referal-quota').val()
+            "owner": $('#referal-owner').val(),
+            "discount_amount": $('#referal-discountamount').val() / 100,
+            "referal_code": $('#referal-code').val(),
+            "quota": $('#referal-quota').val()
         };
+        console.log("Pyalo", payload);
         dsa.patch('referals/' + id, payload, function(result) {
             if(result.meta.success) {
-                window.location = "http://localhost:5000/referals";
+                window.location = "/referals";
             }
         });
     })
