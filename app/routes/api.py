@@ -1,7 +1,7 @@
 '''
 put api route in here
 '''
-from flask import Blueprint, request, jsonify, json
+from flask import Blueprint, request, jsonify, json, Response
 # import middlewares
 from app.middlewares.authentication import token_required
 from app.models import mail, db, socketio, mail
@@ -291,7 +291,7 @@ def booth(*args, **kwargs):
     if(request.method == 'PUT' or request.method == 'PATCH'):
         if(user['role_id'] == ROLE['booth']):
             return BoothController.update(request, user['id'])
-        return 'Unauthorized'
+        return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
     elif(request.method == 'POST'):
         return BoothController.create(request)
     elif(request.method == 'GET'):
@@ -800,7 +800,7 @@ def feeds(*args, **kwargs):
 def feeds_banned(feed_id, *args, **kwargs):
     user = kwargs['user'].as_dict()
     if (user['role_id'] != ROLE['admin']):
-        return 'unauthorized'
+        return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
     else: 
         return FeedController.bannedfeeds(feed_id)
 
@@ -912,7 +912,7 @@ def speaker_candidate_logs(*args, **kwargs):
 def send_notification(*args, **kwargs):
     user = kwargs['user'].as_dict()
     if (user['role_id'] != ROLE['admin']):
-        return 'unauthorized'
+        return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
     else:
         return AdminController.send_single_notification(request, user)
 
@@ -922,7 +922,7 @@ def send_notification(*args, **kwargs):
 def broadcast_notification(*args, **kwargs):
     user = kwargs['user'].as_dict()
     if (user['role_id'] != ROLE['admin']):
-        return 'unauthorized'
+        return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
     else:
         return AdminController.broadcast_notification(request, user)
 
@@ -932,7 +932,7 @@ def broadcast_notification(*args, **kwargs):
 def send_email(*args, **kwargs):
     user = kwargs['user'].as_dict()
     if (user['role_id'] != ROLE['admin']):
-        return 'unauthorized'
+        return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
     else:
         return AdminController.send_email(request, user)
 
@@ -1029,7 +1029,8 @@ def verify_payment(id, *args, **kwargs):
     user = kwargs['user'].as_dict()
     if user['role_id'] == ROLE['admin']:
         return OrderVerificationController.verify(id, request)
-    return 'Unauthorized'
+    return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
+    
 
 @api.route('/confirm-email/resend', methods=['POST'])
 def send_mailgun():
@@ -1051,7 +1052,8 @@ def get_hackaton_team(*args, **kwargs):
     user = kwargs['user'].as_dict()
     if user['role_id'] == ROLE['hackaton']:
         return HackatonController.get_team(request, user)
-    return 'Unauthorized'
+    return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
+    
 
 @api.route('/hackaton', methods=['GET', 'POST'])
 def get_all_hackaton_team(*args, **kwargs):
@@ -1064,7 +1066,7 @@ def update_hackaton(id, *args, **kwargs):
     if (request.method == 'PUT' or request.method == 'PATCH'):
         if user['role_id'] == ROLE['hackaton']:
             return HackatonController.update_team(request, id)
-        return 'Unauthorized'
+        return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
     else:
         return HackatonController.show(request, id)
 
@@ -1074,7 +1076,8 @@ def update_hackaton_logo(id, *args, **kwargs):
     user = kwargs['user'].as_dict()
     if user['role_id'] == ROLE['hackaton']:
         return HackatonController.update_team_logo(request, id)
-    return 'Unauthorized'
+    return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
+    
 
 # User Feedback API
 
@@ -1106,4 +1109,12 @@ def get_partner_info(*args, **kwargs):
     user = kwargs['user'].as_dict()
     return PartnerPjController.get_info(user, request)
 
+@api.route('/referal/<id>/info', methods=['GET'])
+@token_required
+def get_referal_info(id, *args, **kwargs):
+    user = kwargs['user']
+    if user.role_id == ROLE['admin']:
+        return PartnerPjController.admin_get_info(id, request)  
+    return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
+    
 
