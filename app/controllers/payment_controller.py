@@ -331,7 +331,7 @@ class PaymentController(BaseController):
                 'transaction_id' : transaction_id,
                 'order_id' : order_id
             }
-            result = paymentservice.confirm(payload, user.id)
+            result = paymentservice.confirm(payload, user.id, request)
             if result['error']:
                 return BaseController.send_error_api(result['data'], result['message'])
             if SLACK['notification']:

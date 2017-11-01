@@ -82,8 +82,16 @@ class PartnerPjController(BaseController):
 			return BaseController.send_error_api(None, 'referal not found')
 		referal_owner = db.session.query(ReferalOwner).filter_by(referal_id=referal_id).first()
 		partner = db.session.query(Partner).filter_by(id=referal_owner.referalable_id).first()
-		included = {}
-		result['partner'] = partner.as_dict()
-		result['referal'] = referal.as_dict()
-		included['count'] = db.session.query(Order).filter_by(referal_id=referal.id).count()
-		return BaseController.send_response_api(result, 'data retrieved', included)
+
+		response = {}
+		response['data'] = {}
+		response['data']['partner'] = partner.as_dict()
+		response['data']['referal'] = referal.as_dict()
+		response['included'] = {}
+		response['included']['count'] = db.session.query(Order).filter_by(referal_id=referal.id).count()
+		response['links'] = {}
+		response['meta'] = {}
+		response['meta']['message'] = 'data retrieved'
+		response['meta']['success'] = 'true' 
+		return response
+		# return BaseController.send_response_api(result, 'data retrieved', included)
