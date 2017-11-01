@@ -61,17 +61,27 @@ class OrderVerificationService(BaseService):
 			})
 		else:
 			orderverification = OrderVerification()
-			order = db.session.query(Order).filter_by(id=payload['order_id']).first()
+			order_query = db.session.query(Order).filter_by(id=payload['order_id'])
+			payment_query = db.session.query(Payment).filter_by(order_id=payload['order_id'])
+			order = order_query.first()
 			orderverification.user_id = order.user_id
 			orderverification.order_id = payload['order_id']
 			orderverification.payment_proof = payment_proof
+			order_query.update({
+				'status': 'in progress',
+				'updated_at': datetime.datetime.now()
+			})
+			payment_query.update({
+				'transaction_status': 'in progress',
+				'updated_at': datetime.datetime.now()
+			})
 			db.session.add(orderverification)
 		try:
 			db.session.commit()
 			result = orderverification.as_dict()
 			result['payment_proof'] = Helper().url_helper(result['payment_proof'], current_app.config['GET_DEST'])
 			if orderverification:
-				send_notification = FCMService().send_single_notification('Payment Status', 'Payment proof have been uploaded, your payment is being processed', user.id, ROLE['admin'])
+				send_notification = FCMService().send_single_notification('Payment Status', 'Payment proof have been uploaded, your payment is being processed', order.user_id, ROLE['admin'])
 			return response.set_data(result).set_message('Data created succesfully').build()
 		except SQLAlchemyError as e:
 			data = e.orig.args

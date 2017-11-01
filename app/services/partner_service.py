@@ -6,6 +6,7 @@ from app.services.helper import Helper
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug import secure_filename
 from app.models.partners import Partner
+from app.models.partner_pj import PartnerPj
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 
@@ -116,7 +117,9 @@ class PartnerService(BaseService):
 		partners = db.session.query(Partner).filter_by(type=filter).all()
 		results = []
 		for partner in partners:
+			pj = db.session.query(PartnerPj).filter_by(partner_id=partner.id).first()
 			data = partner.as_dict()
+			data['user_id'] = pj.user_id if pj else None
 			results.append(data)
 		result = response.set_data(results).build()
 		return result
