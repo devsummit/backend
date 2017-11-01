@@ -63,5 +63,26 @@
                 <a href="/entrycashlogs" class="small-box-footer">Cashlog Info<i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
+        <div class="col-lg-12 col-xs-6">
+        <!-- small box -->
+            <div class="small-box bg-blue">
+                <div class="inner">
+                    <h3>{{ overview.order.total_count }}</h3>
+                    <p>Gross orders count</p>
+                    <h3>{{ overview.order.unique_user_count }}</h3>
+                    <p>Order count by unique user id</p>
+                    <h3>{{ overview.order.attendee_ticket_count }}</h3>
+                    <p>Attendee ticket ordered</p>
+                    <h3>{{ overview.order.exhibitor_ticket_count }}</h3>
+                    <p>Exhibitor ticket ordered</p>
+                    <h3>{{ overview.order.hackaton_ticket_count }}</h3>
+                    <p>Hackaton ticket ordered</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-ios-book"></i>
+                </div>
+                <a href="/sponsors" class="small-box-footer">Order Info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
 </div>
 {% endblock %}
