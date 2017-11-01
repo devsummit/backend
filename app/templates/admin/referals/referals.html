@@ -53,9 +53,6 @@
                             <button id='bte-{{ referal.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
-                            <button id='btd-{{ referal.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
-                                Delete
-                            </button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -67,7 +64,6 @@
         </div>
         {% include "admin/referals/referal_edit.html" %}
         {% include "admin/referals/referal_add.html" %}
-        {% include "admin/referals/referal_delete.html" %}
 
 {% endblock %}
 
@@ -81,25 +77,15 @@
     /* Display Attendee Detail */
     $('.btn-edit').click(function(event){
         $('.modal-title').html('Edit');
-
         const bte_id = $(this).attr('id');
         const id = bte_id.substring(4, bte_id.length);
-        dsa.get('referal/' + id + '/info', function(result) {
+        dsa.get('referals/' + id, function(result) {
             // bind result value in to attendee_detail.html
             const data = result['data'];
-            $('#referal-owner').val(data['partner']['name']);
-            $('.referal-discountamount').val(data['referal']['discount_amount'] * 100);
-            $('.referal-code').val(data['referal']['referal_code']);
-            $('.referal-quota').val(data['referal']['quota']);
-            $('.btn-save').attr("id", data['referal']['id']);
+            $('.e-referal-code').val(data.referal_code);
+            $('.e-referal-quota').val(data.quota);
+            $('.btn-save').attr("id", data.id);
         });
-    });
-
-    $('.referal_details').click(function(event) {
-      const owner_id = $(this).attr('id');
-
-      window.location = '/referal_details/' + owner_id;
-
     });
 
     $('.btn-add').click(function(event){
