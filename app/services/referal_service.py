@@ -3,6 +3,8 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.referal import Referal
+from app.models.partners import Partner
+from app.models.referal_owner import ReferalOwner
 from app.models.user import User
 from app.builders.response_builder import ResponseBuilder
 from app.services.user_ticket_service import UserTicketService
@@ -12,7 +14,13 @@ class ReferalService():
 
 	def get(self):
 		referals = db.session.query(Referal).all()
-		return referals
+		results = []
+		for referal in referals:
+			data = referal.as_dict()
+			owner = db.session.query(ReferalOwner).filter_by(referal_id=referal.id).first()
+			data['owner'] = db.session.query(Partner).filter_by(id=owner.referalable_id).first().as_dict()
+			results.append(data)
+		return results
 
 	def show(self, id):
 		referal = db.session.query(Referal).filter_by(id=id).first()
@@ -21,12 +29,18 @@ class ReferalService():
 	def create(self, payloads):
 		response = ResponseBuilder()
 		self.model_referal = Referal()
-		self.model_referal.owner = payloads['owner']
 		self.model_referal.discount_amount = payloads['discount_amount']
 		self.model_referal.referal_code = payloads['referal_code']
 		self.model_referal.quota = payloads['quota']
+
 		db.session.add(self.model_referal)
 		try:
+			db.session.commit()
+			self.model_referal_owner = ReferalOwner()
+			self.model_referal_owner.referalable_type = payloads['owner_type']
+			self.model_referal_owner.referalable_id = payloads['owner_id']
+			self.model_referal_owner.referal_id = self.model_referal.id
+			db.session.add(self.model_referal_owner)
 			db.session.commit()
 			data = self.model_referal.as_dict()
 			return response.set_data(data).set_message('referal created successfully').build()

@@ -100,6 +100,11 @@ def partners():
     if(request.method == 'GET'):
         return MainController.getPartners()
 
+@main.route('/partnerspj', methods=['GET'])
+def partners_pj():
+    if(request.method == 'GET'):
+        return MainController.getPartnersPj()
+
 
 @main.route('/entrycashlogs')
 def entrycashlog():

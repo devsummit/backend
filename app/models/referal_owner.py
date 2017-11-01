@@ -4,18 +4,18 @@ from app.models import db
 from app.models.base_model import BaseModel
 
 
-class Referal(db.Model, BaseModel):
+class ReferalOwner(db.Model, BaseModel):
 	# table name
-	__tablename__ = 'referals'
+	__tablename__ = 'referal_owner'
 
 	# visible fields
-	visible = ['id', 'discount_amount', 'referal_code', 'quota', 'created_at', 'updated_at']
+	visible = ['id', 'referalable_id', 'referalable_type', 'referal_id', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
-	discount_amount = db.Column(db.Float(precision=2))
-	referal_code = db.Column(db.String)
-	quota = db.Column(db.Integer)
+	referalable_type = db.Column(db.String)
+	referalable_id = db.Column(db.Integer)
+	referal_id = db.Column(db.Integer)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
