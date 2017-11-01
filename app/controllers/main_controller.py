@@ -26,7 +26,7 @@ from app.services import invoiceservice
 from app.services import packagemanagementservice
 from app.services import tickettransferservice
 from app.configs.constants import ROLE
-
+from app.controllers.partner_pj_controller import PartnerPjController
 
 class MainController(BaseController):
 
@@ -114,7 +114,6 @@ class MainController(BaseController):
     def getPartnersPj():
         partners = partnerservice.filter('community', request)
         users = userservice.get_user_filter(ROLE['user'])
-        print(partners)
         return render_template('admin/partnership/partners/partner_pj.html', partners=partners['data'], users=users)
 
     def getEntryCashLogs():
@@ -178,7 +177,7 @@ class MainController(BaseController):
     def getTransferLog(request):
         logs = tickettransferservice.get_logs()
         return render_template('admin/ticket-transfer-log/ticket-transfer-log.html', logs=logs)
-    
+
     def verification_list():
         return render_template('admin/payment_verification/verification_list.html')
 
@@ -193,3 +192,8 @@ class MainController(BaseController):
 
     def reset_password_user(request):
         return render_template('admin/users/reset_password.html')
+
+
+    def get_referal_info(id):
+        referal_info = PartnerPjController.admin_get_info(id)
+        return render_template('admin/referals/referal_details.html', referal_info=referal_info)

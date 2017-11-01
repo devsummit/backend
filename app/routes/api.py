@@ -197,14 +197,16 @@ def orders_id(id, *args, **kwargs):
         return OrderController.delete(id)
 
 
-@api.route('/orders/<order_id>/details', methods=['GET', 'POST'])
-@token_required
+@api.route('/orders/<order_id>/details', methods=['GET'])
+# @token_required # disabled for consumed in invoice, user show invoice should not require login
 def orders_details(order_id, *args, **kwargs):
-    if(request.method == 'GET'):
-        return OrderDetailsController.index(order_id)
-    elif(request.method == 'POST'):
-        return OrderDetailsController.create(order_id, request)
+    return OrderDetailsController.index(order_id)
 
+
+@api.route('/orders/<order_id>/details', methods=['POST'])
+@token_required
+def orders_detail_post(order_id, *args, **kwargs):
+    return OrderDetailsController.create(order_id, request)
 
 @api.route('/orders/<order_id>/details/<detail_id>', methods=['PUT', 'PATCH', 'DELETE', 'GET'])
 @token_required

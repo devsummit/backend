@@ -221,3 +221,7 @@ def email_address_verification():
 @main.route('/reset-password')
 def reset_password_user():
     return MainController.reset_password_user(request)
+
+@main.route('/referal_details/<id>')
+def referal_info(id):
+    return MainController.get_referal_info(id)

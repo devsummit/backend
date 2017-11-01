@@ -169,6 +169,9 @@
         normalized.data.map((order) => {
           total = normalized.included.payment.payment_type==="paypal" ? total + order.ticket.usd_price : total + order.ticket.price
         })
+        if(normalized.data.length===0) {
+          return null
+        }
         normalized.total = total
         normalized.email = normalized.included.user.email
         normalized.created_at = normalized.data[0].created_at
@@ -177,13 +180,16 @@
         return normalized
       }
       invoiceData = normalizeData(fetchData)
-      console.log("con", invoiceData)
 
-      m.route(document.body, "/print", {
-        "/print": ()=>{window.printState = {printed: false}; return Invoice},
-        "/topdf": ()=>{window.printState = {output:'pdf', printed: true}; return Invoice},
-        "/toprint": ()=>{window.printState = {output:'print', printed: true}; return Invoice},
-      })
+      if (!invoiceData) {
+        m.mount(document.body, {view: () => m('h3', 'invoice detail information is empty!')})
+      } else {
+        m.route(document.body, "/print", {
+          "/print": ()=>{window.printState = {printed: false}; return Invoice},
+          "/topdf": ()=>{window.printState = {output:'pdf', printed: true}; return Invoice},
+          "/toprint": ()=>{window.printState = {output:'print', printed: true}; return Invoice},
+        })
+      }
     }
   })
 </script>
