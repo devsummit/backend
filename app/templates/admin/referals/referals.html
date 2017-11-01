@@ -84,8 +84,9 @@
 
         const bte_id = $(this).attr('id');
         const id = bte_id.substring(4, bte_id.length);
-        dsa.get('referals/' + id, function(result) {
+        dsa.get('referal/' + id + '/info', function(result) {
             // bind result value in to attendee_detail.html
+            console.log("result", result);
             const data = result['data'];
             $('.referal-owner').val(data['owner']);
             $('.referal-discountamount').val(data['discount_amount'] * 100);
