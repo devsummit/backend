@@ -1,7 +1,7 @@
 import datetime
 from app.controllers.base_controller import BaseController
 from sqlalchemy.exc import SQLAlchemyError
-from app.models.partner_pj import PartnerPj 
+from app.models.partner_pj import PartnerPj
 from app.models.referal_owner import ReferalOwner
 from app.models.referal import Referal
 from app.models.partners import Partner
@@ -12,7 +12,7 @@ from app.models import db
 
 
 class PartnerPjController(BaseController):
-	
+
 	@staticmethod
 	def grant(request):
 		user_id = request.json['user_id'] if 'user_id' in request.json else None
@@ -75,7 +75,7 @@ class PartnerPjController(BaseController):
 
 
 	@staticmethod
-	def admin_get_info(referal_id, request):
+	def admin_get_info(referal_id):
 		result = {}
 		referal = db.session.query(Referal).filter_by(id=referal_id).first()
 		if referal is None:
