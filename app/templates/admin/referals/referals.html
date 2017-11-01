@@ -38,7 +38,7 @@
                     {% for referal in referals %}
                     <tr>
                         <td>
-                            {{ referal.owner.name }}
+                            <a href="#" class="referal_details" id='{{ referal.id }}'>{{ referal.owner.name }}</a>
                         </td>
                         <td>
                             {{ referal.discount_amount * 100 }}
@@ -93,7 +93,14 @@
             $('.referal-quota').val(data['referal']['quota']);
             $('.btn-save').attr("id", data['referal']['id']);
         });
-    })
+    });
+
+    $('.referal_details').click(function(event) {
+      const owner_id = $(this).attr('id');
+
+      window.location = '/referal_details/' + owner_id;
+
+    });
 
     $('.btn-add').click(function(event){
         $('.modal-title').html('Add New Referal');
@@ -119,6 +126,7 @@
     $(function () {
         $('#referal-list1').DataTable();
     })
+
 </script>
 
 {% endblock %}

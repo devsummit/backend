@@ -1,7 +1,7 @@
 import datetime
 from app.controllers.base_controller import BaseController
 from sqlalchemy.exc import SQLAlchemyError
-from app.models.partner_pj import PartnerPj 
+from app.models.partner_pj import PartnerPj
 from app.models.referal_owner import ReferalOwner
 from app.models.referal import Referal
 from app.models.partners import Partner
@@ -12,7 +12,7 @@ from app.models import db
 
 
 class PartnerPjController(BaseController):
-	
+
 	@staticmethod
 	def grant(request):
 		user_id = request.json['user_id'] if 'user_id' in request.json else None
@@ -75,15 +75,23 @@ class PartnerPjController(BaseController):
 
 
 	@staticmethod
-	def admin_get_info(referal_id, request):
+	def admin_get_info(referal_id):
 		result = {}
 		referal = db.session.query(Referal).filter_by(id=referal_id).first()
 		if referal is None:
 			return BaseController.send_error_api(None, 'referal not found')
 		referal_owner = db.session.query(ReferalOwner).filter_by(referal_id=referal_id).first()
 		partner = db.session.query(Partner).filter_by(id=referal_owner.referalable_id).first()
-		included = {}
-		result['partner'] = partner.as_dict()
-		result['referal'] = referal.as_dict()
-		included['count'] = db.session.query(Order).filter_by(referal_id=referal.id).count()
-		return BaseController.send_response_api(result, 'data retrieved', included)
+
+		response = {}
+		response['data'] = {}
+		response['data']['partner'] = partner.as_dict()
+		response['data']['referal'] = referal.as_dict()
+		response['included'] = {}
+		response['included']['count'] = db.session.query(Order).filter_by(referal_id=referal.id).count()
+		response['links'] = {}
+		response['meta'] = {}
+		response['meta']['message'] = 'data retrieved'
+		response['meta']['success'] = 'true' 
+		return response
+		# return BaseController.send_response_api(result, 'data retrieved', included)
