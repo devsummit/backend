@@ -73,7 +73,6 @@ class ReferalService():
 		try:
 			self.model_referal = db.session.query(Referal).filter_by(id=id)
 			self.model_referal.update({
-				'owner': payloads['owner'],
 				'discount_amount': payloads['discount_amount'],
 				'referal_code': payloads['referal_code'],
 				'quota': payloads['quota'],
