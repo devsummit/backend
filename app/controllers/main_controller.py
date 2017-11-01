@@ -114,7 +114,6 @@ class MainController(BaseController):
     def getPartnersPj():
         partners = partnerservice.filter('community', request)
         users = userservice.get_user_filter(ROLE['user'])
-        print(partners)
         return render_template('admin/partnership/partners/partner_pj.html', partners=partners['data'], users=users)
 
     def getEntryCashLogs():

@@ -8,11 +8,9 @@ from app.models.user import User
 PREVILLEGES = {
     8:
     [
-        "/partners",
-        "/password",
-        "/entrycashlogs",
-        "/entrycashlogsfilter",
-        "/sources"
+        "/referal_details",
+        "/referals",
+        "/password"
     ]
 }
 
