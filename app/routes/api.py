@@ -176,6 +176,16 @@ def spot_id(id, *args, **kwargs):
     return SpotController.update(request, id)
 
 
+@api.route('/admin/orders', methods=['GET'])
+@token_required
+def admin_verifyorders(*args, **kwargs):
+    return OrderController.unverified_order()
+
+@api.route('/admin/orders/verify/<id>', methods=['POST'])
+@token_required
+def admin_verify_order(id, *args, **kwargs):
+    return OrderController.verify_order(id, request)
+
 # Ticket Order API
 @api.route('/orders', methods=['GET', 'POST'])
 @token_required
@@ -1020,7 +1030,6 @@ def order_verification_general (*args, **kwargs):
     else:
         return OrderVerificationController.create(request)
 
-
 @api.route('/order-verification/<id>', methods=['PUT', 'PATCH', 'GET', 'DELETE'])
 @token_required
 def order_verification_id(id, *args, **kwargs):
@@ -1039,7 +1048,8 @@ def verify_payment(id, *args, **kwargs):
     if user['role_id'] == ROLE['admin']:
         return OrderVerificationController.verify(id, request)
     return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
-    
+
+
 
 @api.route('/confirm-email/resend', methods=['POST'])
 def send_mailgun():

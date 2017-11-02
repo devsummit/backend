@@ -18,6 +18,7 @@ from app.services import rundownlistservice
 from app.services import redeemcodeservice
 from app.services import speakercandidateservice
 from app.services import sourceservice
+from app.services import orderservice
 from app.services import overviewservice
 from app.services import feedreportservice
 from app.services import feedservice
@@ -180,6 +181,10 @@ class MainController(BaseController):
 
     def verification_list():
         return render_template('admin/payment_verification/verification_list.html')
+
+    def admin_verification_list():
+        orders = orderservice.unverified_order()
+        return render_template('admin/payment_verification/admin_verification_list.html', orders=orders['data'])
 
     def submit_proof(request):
         return render_template('admin/payment_verification/submit_proof.html')

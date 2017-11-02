@@ -207,6 +207,11 @@ def verification_list():
     return MainController.verification_list()
 
 
+@main.route('/admin-verification')
+def admin_verification_list():
+    return MainController.admin_verification_list()
+
+
 @main.route('/payment-verification/submit-proof')
 def submit_proof():
     return MainController.submit_proof(request)

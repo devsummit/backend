@@ -1,5 +1,5 @@
 from app.controllers.base_controller import BaseController
-from app.services import orderservice, slackservice
+from app.services import orderservice, slackservice, orderverificationservice
 from app.models.slack.slack_order import SlackOrder
 from app.services.fcm_service import FCMService
 from app.configs.constants import SLACK, ROLE
@@ -54,3 +54,17 @@ class OrderController(BaseController):
 		if order['error']:
 			return BaseController.send_response_api(None, 'order not found')
 		return BaseController.send_response_api(None, 'order with id: ' + id + ' has been succesfully deleted')
+	
+	@staticmethod
+	def unverified_order():
+		orders = orderservice.unverified_order()
+		if orders['error']:
+			return BaseController.send_error_api(orders['data'], orders['message'])
+		return BaseController.send_response_api(orders['data'], orders['message'])
+
+	@staticmethod
+	def verify_order(id, request):
+		result = orderverificationservice.admin_verify(id, request)
+		if result['error']:
+			return BaseController.send_error_api(result['data'], result['message'])
+		return BaseController.send_response_api(None, result['message'])
