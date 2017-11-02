@@ -166,9 +166,9 @@ class OrderVerificationService(BaseService):
 		db.session.add(userbooth)
 		db.session.commit()
 
-	def create_hackaton (self, user, ticket_id):
+	def create_hackaton (self, user, ticket_id, hacker_team_name=''):
 		hacker_team = HackerTeam()
-		hacker_team.name = 'Your team name here'
+		hacker_team.name = hacker_team_name
 		hacker_team.logo = None
 		hacker_team.project_name = 'Your project name here'
 		hacker_team.project_url = 'Project name'
@@ -183,7 +183,7 @@ class OrderVerificationService(BaseService):
 		db.session.commit()
 		return hacker_team.id
 
-	def admin_verify(self, order_id, request):
+	def admin_verify(self, order_id, request, hacker_team_name=None):
 		response = ResponseBuilder()
 		emailservice = EmailService()		
 		order_query = db.session.query(Order).filter_by(id=order_id)
@@ -191,9 +191,7 @@ class OrderVerificationService(BaseService):
 		if order.status != 'paid':
 			user_query = db.session.query(User).filter_by(id=order.user_id)
 			user = user_query.first()
-			print('order_id', order.id)
 			items = db.session.query(OrderDetails).filter_by(order_id=order.id).all()
-			print(items, 'itemssssss')
 			url_invoice = request.url_root + '/invoices/'+ order.id
 			if items[0].ticket.type == TICKET_TYPES['exhibitor']:
 				payload = {}
@@ -223,7 +221,7 @@ class OrderVerificationService(BaseService):
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items[0].ticket_id
 				UserTicketService().create(payload)
-				hackerteam_id = self.create_hackaton(user, items[0].ticket_id)
+				hackerteam_id = self.create_hackaton(user, items[0].ticket_id, hacker_team_name)
 				user_query.update({
 					'role_id': ROLE['hackaton']
 				})
@@ -273,7 +271,7 @@ class OrderVerificationService(BaseService):
 			return response.set_data(None).set_error(True).set_message('This payment has already verified').build()
 
 
-	def verify(self, id, request):
+	def verify(self, id, request, hacker_team_name=None):
 		response = ResponseBuilder()
 		emailservice = EmailService()		
 		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
@@ -311,7 +309,7 @@ class OrderVerificationService(BaseService):
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items[0].ticket_id
 				UserTicketService().create(payload)
-				hackerteam_id = self.create_hackaton(user, items[0].ticket_id)
+				hackerteam_id = self.create_hackaton(user, items[0].ticket_id, hacker_team_name)
 				user_query.update({
 					'role_id': ROLE['hackaton']
 				})
