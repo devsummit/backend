@@ -285,6 +285,11 @@ def speaker_id(id, *args, **kwargs):
         return SpeakerController.show(id)
 
 
+@api.route('/booths', methods=['GET'])
+def get_exhibitors(*args, **kwargs):
+    return BoothController.index(request)
+
+
 # Booth api
 @api.route('/booths', methods=['PUT', 'PATCH', 'GET', 'POST'])
 @token_required
@@ -296,8 +301,6 @@ def booth(*args, **kwargs):
         return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
     elif(request.method == 'POST'):
         return BoothController.create(request)
-    elif(request.method == 'GET'):
-        return BoothController.index(request)
 
 
 # Booth route by id
@@ -707,13 +710,16 @@ def get_entry_cash_log_filter(*args, **kwargs):
     return EntryCashLogController.get_by_filter(request)
 
 
-@api.route('/sponsors', methods=['GET', 'POST'])
+@api.route('/sponsors', methods=['POST'])
 @token_required
+def post_sponsor(*args, **kwargs):
+    return SponsorController.create(request)
+
+
+
+@api.route('/sponsors', methods=['GET'])
 def get_sponsors(*args, **kwargs):
-    if(request.method == 'GET'):
-        return SponsorController.index(request)
-    elif(request.method == 'POST'):
-        return SponsorController.create(request)
+    return SponsorController.index(request)
 
 
 @api.route('/sponsors/<id>', methods=['GET', 'PATCH', 'PUT', 'DELETE'])
