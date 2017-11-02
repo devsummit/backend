@@ -37,9 +37,9 @@
                     </td>
                     <td>
                         <!-- <a href="" id='ard-{{ redeemcode["id"] }}' class="redeemcodes-detail" data-toggle="modal" data-target="#modal-detail">   -->
-                        {% if redeemcode['codeable_type'] == 'booth' and redeemcode['user'] %} 
+                        {% if redeemcode['codeable_type'] == 'user' %} 
                             {{ redeemcode['user']['first_name']|e + ' ' + redeemcode['user']['last_name']|e + ' ( ' + redeemcode['user']['username']|e + ' ) ' }} 
-                        {% elif redeemcode['codeable_type'] in ['partner', 'user'] %} 
+                        {% elif redeemcode['codeable_type'] == 'partner' %} 
                             {{ redeemcode['partner']['name']|e }} 
                         {% endif %}
                     
