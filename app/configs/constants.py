@@ -61,6 +61,11 @@ PAYPAL = {
     'cancel_url': 'http://localhost:5000/'
 }
 
+EVENT_BRITE = {
+    'EVENTBRITE_EVENT_ID': '39451411233',
+    'EVENTBRITE_OAUTH_TOKEN': 'VVZMXUZB5PY4O65KK5AO'
+}
+
 SLACK = {
     'hook': 'https://hooks.slack.com/services/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',
     'notification': True
