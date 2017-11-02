@@ -41,6 +41,8 @@
                             {{ redeemcode['user']['first_name']|e + ' ' + redeemcode['user']['last_name']|e + ' ( ' + redeemcode['user']['username']|e + ' ) ' }} 
                         {% elif redeemcode['codeable_type'] == 'partner' %} 
                             {{ redeemcode['partner']['name']|e }} 
+                        {% elif redeemcode['codeable_type'] == 'booth' %} 
+                            {{ redeemcode['booth']['name']|e }} 
                         {% endif %}
                     
                         <!-- </a> -->
