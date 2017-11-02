@@ -1,0 +1,88 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Admin Verification List </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Admin
+        <small>Order Verification List</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Admin Payment Verification</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <table id="admin-verification-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Status</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>
+                            {{ order.id }}
+                        </td>
+                        <td>
+                            {{ order.status }}
+                        </td>
+                        <td>
+                            {{ order.user.username }}
+                        </td>
+                         <td>
+                            <button id='bte-{{ order.id }}' type="button" class="btn btn-sm btn-info btn-verify" data-toggle="modal" data-target="#modal-verify">
+                                Verify
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    /* Edit ticket */
+    $('.btn-verify').click(function(event){
+        if (confirm('Verify this payment?')) {
+            const bte_id = $(this).attr('id');
+            const order_id = bte_id.substring(4, bte_id.length);
+            console.log('order_id', order_id);
+            dsa.post('admin/orders/verify/' + order_id, null, function(result) {
+                console.log(result, 'result')
+                if(result.meta.success) {
+                    window.location = '/admin-verification';
+                }
+            });
+        }
+    });
+
+    $(function () {
+        $('#admin-verification-list1').DataTable();
+    })
+</script>
+
+{% endblock %}

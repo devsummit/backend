@@ -12,14 +12,14 @@
                             <ul class="list-group list-group-unbordered">
                                 <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="referal-discountamount">Discount Percentage %:</label>
-                                        <input type="text" class="form-control referal-discountamount" id="referal-discountamount" value="10" disabled>
+                                        <label for="e-referal-discountamount">Discount Percentage %:</label>
+                                        <input type="text" class="form-control e-referal-discountamount" id="e-referal-discountamount">
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="form-group">
                                         <label for="e-referal-code">Referal code:</label>
-                                        <input type="text" class="form-control e-referal-code" id="e-referal-code" disabled>
+                                        <input type="text" class="form-control e-referal-code" id="e-referal-code">
                                     </div>
                                 </li>
                                 <li class="list-group-item">
@@ -50,7 +50,9 @@
     $('.btn-save').click(function(event){
         const id = $(this).attr('id');
         payload = {
-            "quota": $('#e-referal-quota').val()
+            "quota": $('#e-referal-quota').val(),
+            "discount_amount": $('#e-referal-discountamount').val() / 100,
+            "referal_code": $('#e-referal-code').val()
         };
         dsa.patch('referals/' + id, payload, function(result) {
             if(result.meta.success) {

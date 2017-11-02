@@ -4,6 +4,7 @@ from app.models import db, mail
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
+from app.models.email_templates.email_purchase import EmailPurchase
 from app.models.order_details import OrderDetails
 from app.models.user import User
 from app.models.payment import Payment
@@ -166,9 +167,9 @@ class OrderVerificationService(BaseService):
 		db.session.add(userbooth)
 		db.session.commit()
 
-	def create_hackaton (self, user, ticket_id):
+	def create_hackaton (self, user, ticket_id, hacker_team_name=''):
 		hacker_team = HackerTeam()
-		hacker_team.name = 'Your team name here'
+		hacker_team.name = hacker_team_name
 		hacker_team.logo = None
 		hacker_team.project_name = 'Your project name here'
 		hacker_team.project_url = 'Project name'
@@ -183,7 +184,83 @@ class OrderVerificationService(BaseService):
 		db.session.commit()
 		return hacker_team.id
 
-	def verify(self, id, request):
+	def admin_verify(self, order_id, request, hacker_team_name=None):
+		response = ResponseBuilder()
+		emailservice = EmailService()		
+		order_query = db.session.query(Order).filter_by(id=order_id)
+		order = order_query.first()
+		if order.status != 'paid':
+			user_query = db.session.query(User).filter_by(id=order.user_id)
+			user = user_query.first()
+			items = db.session.query(OrderDetails).filter_by(order_id=order.id).all()
+			url_invoice = request.url_root + '/invoices/'+ order.id
+			if items[0].ticket.type == TICKET_TYPES['exhibitor']:
+				payload = {}
+				payload['user_id'] = user.id
+				payload['ticket_id'] = items[0].ticket_id
+				UserTicketService().create(payload)
+				self.create_booth(user)
+				user_query.update({
+					'role_id': ROLE['booth']
+				})
+				redeem_payload = {}
+				redeem_payload['ticket_id'] = items[0].ticket_id
+				redeem_payload['codeable_id'] = user.id
+				RedeemCodeService().purchase_user_redeems(redeem_payload)
+				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='user', codeable_id=user.id).all()
+				mail_template = EmailPurchase()
+				template = mail_template.set_invoice_path(order.id).set_redeem_code(get_codes).build()
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received exhibitor code').set_sender('noreply@devsummit.io').set_html(template).build()
+				mail.send(email)
+			elif items[0].ticket.type == TICKET_TYPES['hackaton']:
+				payload = {}
+				payload['user_id'] = user.id
+				payload['ticket_id'] = items[0].ticket_id
+				UserTicketService().create(payload)
+				hackerteam_id = self.create_hackaton(user, items[0].ticket_id, hacker_team_name)
+				user_query.update({
+					'role_id': ROLE['hackaton']
+				})
+				redeem_payload = {}
+				redeem_payload['codeable_type'] = TICKET_TYPES['hackaton']
+				redeem_payload['codeable_id'] = hackerteam_id
+				redeem_payload['count'] = items[0].ticket.quota
+				RedeemCodeService().create(redeem_payload)
+				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='hackaton', codeable_id=hackerteam_id).all()
+				mail_template = EmailPurchase()
+				template = mail_template.set_invoice_path(order.id).set_redeem_code(get_codes).build()
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
+				mail.send(email)
+			else:
+				result = None
+				for item in items:
+					for i in range(0, item.count):
+						payload = {}
+						payload['user_id'] = user.id
+						payload['ticket_id'] = item.ticket_id
+						result = UserTicketService().create(payload)
+				if (result and (not result['error'])):
+					mail_template = EmailPurchase()
+					template = mail_template.set_invoice_path(order.id).build()
+					email = emailservice.set_recipient(user.email).set_subject('Devsummit Ticket Invoice').set_sender('noreply@devsummit.io').set_html(template).build()
+					mail.send(email)
+
+			order_query.update({
+				'status': 'paid'
+			})
+			payment_query = db.session.query(Payment).filter_by(order_id=order.id)
+			payment_query.update({
+				'transaction_status': 'captured'
+			})
+			db.session.commit()
+			send_notification = FCMService().send_single_notification('Payment Status', 'Your payment has been verified', user.id, ROLE['admin'])
+			
+			return response.set_data(None).set_message('ticket purchased').build()
+		else:
+			return response.set_data(None).set_error(True).set_message('This payment has already verified').build()
+
+
+	def verify(self, id, request, hacker_team_name=None):
 		response = ResponseBuilder()
 		emailservice = EmailService()		
 		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
@@ -221,7 +298,7 @@ class OrderVerificationService(BaseService):
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items[0].ticket_id
 				UserTicketService().create(payload)
-				hackerteam_id = self.create_hackaton(user, items[0].ticket_id)
+				hackerteam_id = self.create_hackaton(user, items[0].ticket_id, hacker_team_name)
 				user_query.update({
 					'role_id': ROLE['hackaton']
 				})

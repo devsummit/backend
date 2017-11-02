@@ -82,6 +82,8 @@ class ReferalService():
 			self.model_referal = db.session.query(Referal).filter_by(id=id)
 			self.model_referal.update({
 				'quota': payloads['quota'],
+				'discount_amount': payloads['discount_amount'],
+				'referal_code': payloads['referal_code'],
 				'updated_at': datetime.datetime.now()
 			})
 
