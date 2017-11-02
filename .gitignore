@@ -14,3 +14,6 @@ __pycache__
 .vscode/
 app/static/images/partners/
 app/static/images/
+bin/
+lib/
+app/static/documents

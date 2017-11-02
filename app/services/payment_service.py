@@ -414,14 +414,17 @@ class PaymentService():
 
 	# this will send the all payment methods payload to midtrand api
 	def send_to_midtrans_api(self, payloads):
+		print(payloads, 'payloads arg')
 		response = ResponseBuilder()
 		endpoint = url + 'charge'
+		print(endpoint, 'charge endpoint')
 		result = requests.post(
 				endpoint,
 				headers=self.headers,
 				json=payloads
 		)
 		payload = result.json()
+		print(payload, 'result from midtrans')
 		if(str(payload['status_code']) in ['400', '202']):
 
 			if 'validation_messages' in payload and payload['validation_messages'][0]:

@@ -118,8 +118,8 @@
             admin: true
           }
           
-          dsa.request('auth/vercaptcha', 'POST', {captchaToken: captchaToken}, function(valid) {
-            if (valid) {
+          //dsa.request('auth/vercaptcha', 'POST', {captchaToken: captchaToken}, function(valid) {
+            //if (valid) {
               dsa.login(payloads, function(success, result){
                 if(success) {
                   showInfo('label-success', 'Login success');
@@ -129,10 +129,10 @@
                   grecaptcha.reset(captchaWG)
                 }
               });
-            } else {
-              showInfo('label-danger', "Captcha not Valid!");
-            }
-          })
+            //} else {
+              //showInfo('label-danger', "Captcha not Valid!");
+            //}
+          //})
           
         });
       });

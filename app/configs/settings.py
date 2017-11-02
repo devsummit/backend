@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv('.env')
 
 # app setting only for development purpose comment this out if not used
-DEBUG = True
+DEBUG = True 
 
 # constants
 API_BASE_URL = os.environ.get("API_BASE_URL")
