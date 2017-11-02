@@ -183,6 +183,96 @@ class OrderVerificationService(BaseService):
 		db.session.commit()
 		return hacker_team.id
 
+	def admin_verify(self, order_id, request):
+		response = ResponseBuilder()
+		emailservice = EmailService()		
+		order_query = db.session.query(Order).filter_by(id=order_id)
+		order = order_query.first()
+		if order.status != 'paid':
+			user_query = db.session.query(User).filter_by(id=order.user_id)
+			user = user_query.first()
+			print('order_id', order.id)
+			items = db.session.query(OrderDetails).filter_by(order_id=order.id).all()
+			print(items, 'itemssssss')
+			url_invoice = request.url_root + '/invoices/'+ order.id
+			if items[0].ticket.type == TICKET_TYPES['exhibitor']:
+				payload = {}
+				payload['user_id'] = user.id
+				payload['ticket_id'] = items[0].ticket_id
+				UserTicketService().create(payload)
+				self.create_booth(user)
+				user_query.update({
+					'role_id': ROLE['booth']
+				})
+				redeem_payload = {}
+				redeem_payload['ticket_id'] = items[0].ticket_id
+				redeem_payload['codeable_id'] = user.id
+				RedeemCodeService().purchase_user_redeems(redeem_payload)
+				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='user', codeable_id=user.id).all()
+				code = []
+				for get_code in get_codes:
+					code.append("<li>%s</li>" %(get_code.code))
+				li = ''.join(code)
+				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
+				template += "<h4>And here is your Invoice:</h4>"
+				template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received exhibitor code').set_sender('noreply@devsummit.io').set_html(template).build()
+				mail.send(email)
+			elif items[0].ticket.type == TICKET_TYPES['hackaton']:
+				payload = {}
+				payload['user_id'] = user.id
+				payload['ticket_id'] = items[0].ticket_id
+				UserTicketService().create(payload)
+				hackerteam_id = self.create_hackaton(user, items[0].ticket_id)
+				user_query.update({
+					'role_id': ROLE['hackaton']
+				})
+				redeem_payload = {}
+				redeem_payload['codeable_type'] = TICKET_TYPES['hackaton']
+				redeem_payload['codeable_id'] = hackerteam_id
+				redeem_payload['count'] = items[0].ticket.quota
+				RedeemCodeService().create(redeem_payload)
+				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='hackaton', codeable_id=hackerteam_id).all()
+				code = []
+				for get_code in get_codes:
+					code.append("<li>%s</li>" %(get_code.code))
+				li = ''.join(code)
+				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here your redeem codes : </h4>%s<h3>Share the above code to your teammate, and put it into redeem code menu to let them join your team and claim their ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
+				template += "<h4>And here is your Invoice:</h4>"
+				template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
+				mail.send(email)
+			else:
+				result = None
+				for item in items:
+					for i in range(0, item.count):
+						payload = {}
+						payload['user_id'] = user.id
+						payload['ticket_id'] = item.ticket_id
+						result = UserTicketService().create(payload)
+				if (result and (not result['error'])):
+					template = "<h3>Congratulation! you have the previlege to attend Indonesia Developer Summit</h3>"
+					template += "<h4>Here is your Invoice:</h4>"
+					template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
+					template += "<h5>Thank you.</h5>"
+					email = emailservice.set_recipient(user.email).set_subject('Devsummit Ticket Invoice').set_sender('noreply@devsummit.io').set_html(template).build()
+					mail.send(email)
+
+			order_query.update({
+				'status': 'paid'
+			})
+			payment_query = db.session.query(Payment).filter_by(order_id=order.id)
+			payment_query.update({
+				'transaction_status': 'captured'
+			})
+			db.session.commit()
+			send_notification = FCMService().send_single_notification('Payment Status', 'Your payment has been verified', user.id, ROLE['admin'])
+			
+			return response.set_data(None).set_message('ticket purchased').build()
+		else:
+			return response.set_data(None).set_error(True).set_message('This payment has already verified').build()
+
+
 	def verify(self, id, request):
 		response = ResponseBuilder()
 		emailservice = EmailService()		
