@@ -192,7 +192,7 @@ class OrderVerificationService(BaseService):
 			user_query = db.session.query(User).filter_by(id=orderverification.user_id)
 			user = user_query.first()
 			items = db.session.query(OrderDetails).filter_by(order_id=orderverification.order_id).all()
-			url_invoice = request.host + '/invoices/'+ orderverification.order_id
+			url_invoice = request.url_root + '/invoices/'+ orderverification.order_id
 			if items[0].ticket.type == TICKET_TYPES['exhibitor']:
 				payload = {}
 				payload['user_id'] = user.id
