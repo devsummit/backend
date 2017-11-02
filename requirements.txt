@@ -31,3 +31,4 @@ flask-cors==3.0.3
 Simplejson==3.11.1
 
 paypalrestsdk==1.13.1
+eventbrite==3.3.3
