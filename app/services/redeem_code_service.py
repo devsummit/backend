@@ -130,7 +130,6 @@ class RedeemCodeService():
         for i in range(0, ticket.quota):
             code = secrets.token_hex(4)
             while (code in codes):
-                print(code)
                 code = secrets.token_hex(4)
             self.model_redeem_code = RedeemCode()
             self.model_redeem_code.codeable_type = 'user'
