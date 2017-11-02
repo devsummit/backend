@@ -46,10 +46,14 @@ class ReferalController(BaseController):
 	@staticmethod
 	def update(request, id):
 		quota = request.json['quota'] if 'quota' in request.json else 1
-
+		discount_amount = request.json['discount_amount'] if 'discount_amount' in request.json else 0.1
+		referal_code = request.json['referal_code'] if 'referal_code' in request.json else ''
+		
 		if quota:
 			payloads = {
-				'quota': quota
+				'discount_amount': discount_amount,
+				'quota': quota,
+				'referal_code': referal_code
 			}
 		else:
 			return BaseController.send_error_api({'payload_invalid': True}, 'field is not complete')

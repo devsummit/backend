@@ -82,6 +82,7 @@
         dsa.get('referals/' + id, function(result) {
             // bind result value in to attendee_detail.html
             const data = result['data'];
+            $('.e-referal-discountamount').val(data.discount_amount * 100);
             $('.e-referal-code').val(data.referal_code);
             $('.e-referal-quota').val(data.quota);
             $('.btn-save').attr("id", data.id);
