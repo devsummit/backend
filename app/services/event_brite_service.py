@@ -1,4 +1,5 @@
 import eventbrite
+import logging
 from app.models import db
 # import model class
 from app.services.base_service import BaseService
@@ -16,6 +17,8 @@ class EventBriteService(BaseService):
     def hook(self, request):
         response = ResponseBuilder()
         hook_object = self.eventbrite.webhook_to_object(request)
+        logging.info(hook_object)
+        logging.debug(hook_object)
 
         if hook_object.type == 'Order':
             # do something to order hook
