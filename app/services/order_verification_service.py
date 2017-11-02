@@ -4,6 +4,7 @@ from app.models import db, mail
 from sqlalchemy.exc import SQLAlchemyError
 # import model class
 from app.models.order import Order
+from app.models.email_templates.email_purchase import EmailPurchase
 from app.models.order_details import OrderDetails
 from app.models.user import User
 from app.models.payment import Payment
@@ -207,13 +208,8 @@ class OrderVerificationService(BaseService):
 				redeem_payload['codeable_id'] = user.id
 				RedeemCodeService().purchase_user_redeems(redeem_payload)
 				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='user', codeable_id=user.id).all()
-				code = []
-				for get_code in get_codes:
-					code.append("<li>%s</li>" %(get_code.code))
-				li = ''.join(code)
-				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(order.id, li)
-				template += "<h4>And here is your Invoice:</h4>"
-				template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
+				mail_template = EmailPurchase()
+				template = mail_template.set_invoice_path(order.id).set_redeem_code(get_codes).build()
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received exhibitor code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			elif items[0].ticket.type == TICKET_TYPES['hackaton']:
@@ -231,13 +227,8 @@ class OrderVerificationService(BaseService):
 				redeem_payload['count'] = items[0].ticket.quota
 				RedeemCodeService().create(redeem_payload)
 				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='hackaton', codeable_id=hackerteam_id).all()
-				code = []
-				for get_code in get_codes:
-					code.append("<li>%s</li>" %(get_code.code))
-				li = ''.join(code)
-				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here your redeem codes : </h4>%s<h3>Share the above code to your teammate, and put it into redeem code menu to let them join your team and claim their ticket</h3><h3>Thank you for your purchase</h3>" %(order.id, li)
-				template += "<h4>And here is your Invoice:</h4>"
-				template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
+				mail_template = EmailPurchase()
+				template = mail_template.set_invoice_path(order.id).set_redeem_code(get_codes).build()
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			else:
@@ -249,10 +240,8 @@ class OrderVerificationService(BaseService):
 						payload['ticket_id'] = item.ticket_id
 						result = UserTicketService().create(payload)
 				if (result and (not result['error'])):
-					template = "<h3>Congratulation! you have the previlege to attend Indonesia Developer Summit</h3>"
-					template += "<h4>Here is your Invoice:</h4>"
-					template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
-					template += "<h5>Thank you.</h5>"
+					mail_template = EmailPurchase()
+					template = mail_template.set_invoice_path(order.id).build()
 					email = emailservice.set_recipient(user.email).set_subject('Devsummit Ticket Invoice').set_sender('noreply@devsummit.io').set_html(template).build()
 					mail.send(email)
 
