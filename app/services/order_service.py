@@ -95,6 +95,16 @@ class OrderService():
 			results.append(order)
 		return results
 
+	def unverified_order(self):
+		response = ResponseBuilder()
+		orders = db.session.query(Order).filter(Order.status != 'paid').all()
+		results = [] 
+		for order in orders:
+			data = order.as_dict()
+			data['user'] = order.user.as_dict()
+			results.append(data)
+		return response.set_data(results).build()
+
 	def show(self, id):
 		response = ResponseBuilder()
 		order_raw = db.session.query(Order).filter_by(id=id).first()
