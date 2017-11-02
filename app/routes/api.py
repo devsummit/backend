@@ -54,8 +54,8 @@ from app.controllers.user_authorization_controller import UserAuthorizationContr
 from app.controllers.hackaton_controller import HackatonController
 from app.controllers.user_feedback_controller import UserFeedbackController
 from app.controllers.partner_pj_controller import PartnerPjController
+from app.controllers.event_brite_controller import EventBriteController
 from app.services.slack_service import SlackService
-
 from app.configs.constants import ROLE
 
 
@@ -1127,3 +1127,6 @@ def get_referal_info(id, *args, **kwargs):
     return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
     
 
+@api.route('/eventbrite/hook', methods=['POST'])
+def event_brite_hook():
+    return EventBriteController.hook(request)
