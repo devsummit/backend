@@ -20,7 +20,11 @@ class ReferalService():
 			data = referal.as_dict()
 			owner = db.session.query(ReferalOwner).filter_by(referal_id=referal.id).first()
 			if owner:
-				data['owner'] = db.session.query(Partner).filter_by(id=owner.referalable_id).first().as_dict()
+				temp_owner = db.session.query(Partner).filter_by(id=owner.referalable_id).first()
+				if temp_owner:
+					data['owner'] = temp_owner.as_dict()
+				else:
+					data['owner'] = None
 			else:
 				data['owner'] = None
 			results.append(data)
