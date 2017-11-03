@@ -81,3 +81,17 @@ class OrderVerificationController(BaseController):
 			slackpayment = SlackPayment(order_verification.user, payload, False)
 			slackservice.send_message(slackpayment.build())
 		return BaseController.send_response_api(data['data'], data['message'])
+
+
+	@staticmethod
+	def resend_order_email(request):
+		order_id = request.json['order_id'] if 'order_id' in request.json else None
+		if order_id is None:
+			return BaseController.send_error_api(None, 'invalid payload')
+		payload = {
+			'order_id': order_id
+		}
+		result = orderverificationservice.resend_order_email(payload)
+		if result['error']:
+			return BaseController.send_error_api(result['data'], result['error'])
+		return BaseController.send_response_api(result['data'], result['message']) 
