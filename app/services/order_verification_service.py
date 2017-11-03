@@ -186,7 +186,7 @@ class OrderVerificationService(BaseService):
 
 	def admin_verify(self, order_id, request, hacker_team_name=None):
 		response = ResponseBuilder()
-		emailservice = EmailService()		
+		emailservice = EmailService()
 		order_query = db.session.query(Order).filter_by(id=order_id)
 		order = order_query.first()
 		if order.status != 'paid':
@@ -284,13 +284,8 @@ class OrderVerificationService(BaseService):
 				redeem_payload['codeable_id'] = user.id
 				RedeemCodeService().purchase_user_redeems(redeem_payload)
 				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='user', codeable_id=user.id).all()
-				code = []
-				for get_code in get_codes:
-					code.append("<li>%s</li>" %(get_code.code))
-				li = ''.join(code)
-				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here are the redeem codes for claiming full 3 days ticket at devsummit event as described in the package information : </h4>%s<h3>Use the above code to claim your ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
-				template += "<h4>And here is your Invoice:</h4>"
-				template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
+				mail_template = EmailPurchase()
+				template = mail_template.set_invoice_path(order.id).set_redeem_code(get_codes).build()
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received exhibitor code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			elif items[0].ticket.type == TICKET_TYPES['hackaton']:
@@ -308,13 +303,8 @@ class OrderVerificationService(BaseService):
 				redeem_payload['count'] = items[0].ticket.quota
 				RedeemCodeService().create(redeem_payload)
 				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='hackaton', codeable_id=hackerteam_id).all()
-				code = []
-				for get_code in get_codes:
-					code.append("<li>%s</li>" %(get_code.code))
-				li = ''.join(code)
-				template = "<h3>You have complete the payment with order_id = %s</h3><h4>Here your redeem codes : </h4>%s<h3>Share the above code to your teammate, and put it into redeem code menu to let them join your team and claim their ticket</h3><h3>Thank you for your purchase</h3>" %(orderverification.order_id, li)
-				template += "<h4>And here is your Invoice:</h4>"
-				template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
+				mail_template = EmailPurchase()
+				template = mail_template.set_invoice_path(order.id).set_redeem_code(get_codes).build()
 				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			else:
@@ -326,10 +316,8 @@ class OrderVerificationService(BaseService):
 						payload['ticket_id'] = item.ticket_id
 						result = UserTicketService().create(payload)
 				if (result and (not result['error'])):
-					template = "<h3>Congratulation! you have the previlege to attend Indonesia Developer Summit</h3>"
-					template += "<h4>Here is your Invoice:</h4>"
-					template += '<a href="'+ url_invoice +'">Klik here to show the invoice</a>'
-					template += "<h5>Thank you.</h5>"
+					mail_template = EmailPurchase()
+					template = mail_template.set_invoice_path(order.id).build()
 					email = emailservice.set_recipient(user.email).set_subject('Devsummit Ticket Invoice').set_sender('noreply@devsummit.io').set_html(template).build()
 					mail.send(email)
 
@@ -358,3 +346,16 @@ class OrderVerificationService(BaseService):
 		updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
 		entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
 		return entry
+
+	def resend_order_email(self, payload):
+		response = ResponseBuilder()
+		emailservice = EmailService()
+		mail_template = EmailPurchase()
+		order = db.session.query(Order).filter_by(id=payload['order_id']).first()
+		if order is None:
+			return response.set_data(None).set_error(True).set_message('Order not found').build()
+		# send email
+		template = mail_template.set_invoice_path(order.id).build()
+		email = emailservice.set_recipient(order.user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
+		mail.send(email)
+		return response.set_data(None).set_message('Email sent').build()
