@@ -133,11 +133,10 @@ class OrderService():
 				db.session.add(payment)
 				db.session.commit()	
 				# check if ticket is free
-				if gross_amount == 0:
+				if gross_amount == 0 or (referal.first() and referal.first().discount_amount == 1):
 					# call verify service
 					ov_service = OrderVerificationService()
 					ov_service.admin_verify(self.model_order.id, request, payloads['hacker_team_name'])
-
 
 			# save all items
 			return {
