@@ -1,4 +1,4 @@
-from flask import request
+from app.services.helper import Helper
 
 
 class EmailPurchase():
@@ -8,7 +8,7 @@ class EmailPurchase():
 		self.template = "<h3>Congratulation! you have the privillege to attend Indonesia Developer Summit</h3>"
 	
 	def set_invoice_path(self, order_id):
-		url_invoice = request.url_root + '/invoices/' + order_id
+		url_invoice = Helper.url_helper('invoices/' + order_id, '')
 		self.template += "<h4>Here is your Invoice:</h4>"
 		self.template += '<a href="'+ url_invoice +'">Click here to show the invoice</a>'
 		return self

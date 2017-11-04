@@ -1055,13 +1055,21 @@ def verify_payment(id, *args, **kwargs):
 def send_mailgun():
     return UserController.send_confirmation_email(request)
 
+
 @api.route('/mail/reset-password', methods=['POST'])
 def mail_reset_password():
     return UserController.send_reset_password(request)
 
+
 @api.route('/reset_password', methods=['POST'])
 def reset_password(*args, **kwargs):
     return UserController.reset_password(request)
+
+
+@api.route('/order/resend-email', methods=['POST'])
+@token_required
+def resend_order_email(*args, **kwargs):
+    return OrderVerificationController.resend_order_email(request)
 
 
 #Hackaton API

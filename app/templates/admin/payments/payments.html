@@ -70,6 +70,11 @@
                                 Invoice
                             </a>
                         </td>
+                        <td>
+                            <a href='#' id='btd-{{ payment.order_id}}' type="button" class="btn btn-sm btn-info btn-resend-email">
+                                Resend Email
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -90,6 +95,25 @@
         const atd_id = $(this).attr('id');
         const id = atd_id.substring(4, atd_id.length);
         $('#btd-'+id).click();
+    });
+
+    $('.btn-resend-email').click(function(event){
+        event.preventDefault();
+        const atd_id = $(this).attr('id');
+        const id = atd_id.substring(4, atd_id.length);
+        console.log(id, 'dddd')
+        payload = {
+            'order_id': id
+        }
+        if (confirm('Resend email? This action will send the email including redeem code and invoice of the choosen order to the user.')) {
+            dsa.post('order/resend-email', payload, function(result) {            
+                if(result.meta.success) {
+                    window.location = '/payments';
+                }
+            });          
+         } else {
+            alert('Canceled')
+        }
     });
     $(function () {
         $('#payment-list1').DataTable();
