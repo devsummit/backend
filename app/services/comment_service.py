@@ -3,6 +3,7 @@ from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.comments import Comment
 from app.services.base_service import BaseService
+from app.services.fcm_service import FCMService
 from app.builders.response_builder import ResponseBuilder
 
 
@@ -10,6 +11,7 @@ class CommentService(BaseService):
 
 	def __init__(self, perpage):
 		self.perpage = perpage
+		self.fcmservice = FCMService()
 
 	def get_by_post_id(self, request, feed_id, page):
 		self.total_items = Comment.query.filter_by(feed_id=feed_id).count()
@@ -34,6 +36,7 @@ class CommentService(BaseService):
 			del user['fcmtoken']
 			data = comment.as_dict()
 			data['user'] = user
+			fcm_result = self.fcmservice.send_single_notification('Comment Notification', user['username'] + ' commented on your post', comment.feed.user_id, 1, comment.feed_id)
 			return response.set_data(data).build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
