@@ -8,6 +8,7 @@ from app.services.helper import Helper
 from werkzeug import secure_filename
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.feed import Feed
+from app.models.comments import Comment
 from app.models.sponsor import Sponsor
 from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
@@ -33,15 +34,20 @@ class FeedService(BaseService):
 		for row in paginate['data']:
 			if row['attachment'] is not None:
 				row['attachment'] = Helper().url_helper(row['attachment'], current_app.config['GET_DEST'])
+			row['comment_count'] = Comment.query.filter_by(feed_id=row['id']).count()
 		return response.set_data(paginate['data']).set_links(paginate['links']).build()
 
 	def show(self, id):
 		response = ResponseBuilder()
 		feed = db.session.query(Feed).filter_by(id=id).first()
+		if feed is None:
+			return response.set_data(None).set_error(True).set_message('feed not found').build()
 		data = {}
 		data = feed.as_dict() if feed else None
 		data['user'] = feed.user.include_photos().as_dict()
 		data['attachment'] = Helper().url_helper(data['attachment'], current_app.config['GET_DEST']) if data['attachment'] is not None else None
+		data['comment_count'] = Comment.query.filter_by(feed_id=data['id']).count()
+
 		return response.set_data(data).build()
 
 	def delete(self, user, id):
