@@ -34,22 +34,23 @@ class BoothController(BaseController):
         if user_id is not None:
             booth_id = db.session.query(Booth).filter_by(user_id=user_id).first().as_dict()['id']
         
-        name = request.json['name'] if 'name' in request.json else ''
-        stage_id = request.json['stage_id'] if 'stage_id' in request.json else None
-        stage_id = None if stage_id < 0 else stage_id
-        points = request.json['points'] if 'points' in request.json else None
-        summary = request.json['summary'] if 'summary' in request.json else None
-
+        name = request.form['name'] if 'name' in request.form else ''
+        stage_id = request.form['stage_id'] if 'stage_id' in request.form else None
+        if stage_id:
+            stage_id = None if int(stage_id) < 0 else stage_id
+        points = request.form['points'] if 'points' in request.form else None
+        summary = request.form['summary'] if 'summary' in request.form else ''
+        logo = request.files['logo'] if 'logo' in request.files else None
         if points and summary:
             payloads = {
                 'name': name,
                 'stage_id': stage_id,
                 'points': points,
-                'summary': summary
+                'summary': summary,
+                'logo': logo
             }
         else:
             return BaseController.send_error_api(None, 'field is not complete')
-
         result = boothservice.update(payloads, booth_id)
 
         if not result['error']:

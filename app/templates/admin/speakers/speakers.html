@@ -33,7 +33,8 @@
                     <th>Summary</th>
                     <th>Information</th>
                     <th>Type</th>                    
-                    <th></th>
+                    <th>Photo</th>                    
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -53,6 +54,10 @@
                         </td>
                         <td>
                             {{ speaker.type|e }}
+                        </td>
+                        <td>
+                            <img src="{{ speaker.user.photos[0].url|e }}" height="120px" width="100px" alt='speaker photo'>
+                        </td>
                         </td>
                         <td class="text-center">
                             <button id='bte-{{ speaker.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
@@ -91,9 +96,12 @@
                 // bind result value in to speaker_detail.html 
                 const data = result['data'];
 
-                $('.speaker-job').val(data['job']);
-                $('.speaker-summary').val(data['summary']);
-                $('.speaker-information').val(data['information']);
+                $('.e-speaker-job').val(data['job']);
+                $('.e-speaker-summary').val(data['summary']);
+                $('.e-speaker-information').val(data['information']);
+                $('.e-speaker-information').val(data['information']);
+                $("#e-img-upload").attr("src", data['user']['photos'][0]['url']);
+
                 $('.btn-save').attr("id", `${data['id']} ${data['user_id']}`);
             });
         })

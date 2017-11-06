@@ -57,10 +57,14 @@ class OrderService():
 	def unverified_order(self):
 		response = ResponseBuilder()
 		orders = db.session.query(Order).filter(Order.status != 'paid').all()
-		results = [] 
+		results = []
 		for order in orders:
 			data = order.as_dict()
 			data['user'] = order.user.as_dict()
+			if order.referal is not None:
+				data['referal'] = order.referal.as_dict()
+			else:
+				data['referal'] = None
 			results.append(data)
 		return response.set_data(results).build()
 

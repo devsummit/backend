@@ -12,20 +12,27 @@
                     <ul class="list-group list-group-unbordered">
                         <li class="list-group-item">
                             <div class="form-group">
-                                <label for="speaker-job">Speaker job:</label>
-                                <input type="text" class="form-control speaker-job" id="speaker-job">
+                                <label for="e-speaker-job">Speaker job:</label>
+                                <input type="text" class="form-control e-speaker-job" id="e-speaker-job">
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="form-group">
-                                <label for="speaker-summary">Speaker summary:</label>
-                                <input type="text" class="form-control speaker-summary" id="speaker-summary">
+                                <label for="e-speaker-summary">Speaker summary:</label>
+                                <input type="text" class="form-control e-speaker-summary" id="e-speaker-summary">
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="form-group">
-                                <label for="speaker-information">Speaker information:</label>
-                                <input type="text" class="form-control speaker-information" id="speaker-information">
+                                <label for="e-speaker-information">Speaker information:</label>
+                                <input type="text" class="form-control e-speaker-information" id="e-speaker-information">
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="e-speaker-photo">Photo:</label>
+                                 <input class="e-input-file e-speaker-photo" id="e-fileInput" type="file" name="file">
+                                 <img id='e-img-upload' style="width: 300px; height: 200px" />
                             </div>
                         </li>
                     </ul>
@@ -48,16 +55,33 @@
     /* Save edited data */
     $('.btn-save').click(function(event){
         const data = $(this).attr('id').split(' ');
-        payload = {
-            "user_id": data[1],
-            "job": $('.speaker-job').val(),
-            "summary": $('.speaker-summary').val(),
-            "information": $('.speaker-information').val() 
-        };
-        dsa.patch('speakers/' + data[0], payload, function(result) {
+        const formdata = new FormData();
+
+        formdata.append('user_id', data[1])
+        formdata.append('job', $('.e-speaker-job').val())
+        formdata.append('summary', $('.e-speaker-summary').val())
+        formdata.append('information', $('.e-speaker-information').val())
+        formdata.append('photo', $('#e-fileInput')[0].files[0])
+
+        dsa.patchForm('speakers/' + data[0], formdata, function(result) {
             if(result.meta.success) {
                 window.location = "/speakers";
             }
         });
     })
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                $('#e-img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#e-fileInput").change(function(){
+        readURL(this);
+    }); 
 </script>
