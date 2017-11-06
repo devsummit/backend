@@ -19,10 +19,10 @@ class FCMService():
 		}
 
 
-	def send_single_notification(self, title, message, uid, sender_id):
+	def send_single_notification(self, title, message, uid, sender_id, attachment=None):
 		response = ResponseBuilder()
 		user = db.session.query(User).filter_by(id=uid).first().as_dict()
-		if not self.save_notification(title, message, uid, sender_id):
+		if not self.save_notification(title, message, uid, sender_id, attachment):
 			return response.set_error(True).set_message('failed to save notification').set_data(None).build()
 		fcmtoken = user['fcmtoken']
 		if fcmtoken is not None:
@@ -32,11 +32,12 @@ class FCMService():
 		return response.set_data(None).set_message('notification sent').build()
 
 		
-	def save_notification(self, type, message, receiver_id, sender_id):
+	def save_notification(self, type, message, receiver_id, sender_id, attachment):
 		notification = Notification()
 		notification.sender_uid = sender_id
 		notification.receiver_uid = receiver_id
 		notification.message = message
+		notification.attachment = attachment
 		notification.type = type
 		db.session.add(notification)
 		try:
