@@ -89,10 +89,14 @@ class PartnerService(BaseService):
 				'name': payloads['name'],
 				'email': payloads['email'],
 				'website': payloads['website'],
-				'photo': photo,
 				'type': payloads['type'],
 				'updated_at': datetime.datetime.now()
 			})
+			if photo:
+				partner.update({
+					'photo': photo,
+					'updated_at': datetime.datetime.now()
+				})
 			db.session.commit()
 			data = partner.first().as_dict()
 			return response.set_data(data).build()
