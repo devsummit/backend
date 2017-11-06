@@ -36,6 +36,7 @@ from app.controllers.partner_controller import PartnerController
 from app.controllers.entry_cash_log_controller import EntryCashLogController
 from app.controllers.sponsor_controller import SponsorController
 from app.controllers.feed_controller import FeedController
+from app.controllers.comment_controller import CommentController
 from app.controllers.notification_controller import NotificationController
 from app.controllers.rundown_list_controller import RundownListController
 from app.controllers.redeem_code_controller import RedeemCodeController
@@ -799,6 +800,19 @@ def feeds_id(id, *args, **kwargs):
         return FeedController.show(id)
     elif request.method == 'DELETE':
         return FeedController.delete(user, id)
+
+
+@api.route('/feeds/<id>/comments', methods=['GET', 'POST'])
+@token_required
+def comments(id, *args, **kwargs):
+    user = kwargs['user']
+    if (request.method == 'GET'):
+        if request.args.get('page'):
+            return CommentController.index(request, id, page=request.args.get('page'))
+        else:
+            return CommentController.index(request, id, page=1)
+    else:
+        return CommentController.create(request, id, user)
 
 
 @api.route('/feeds', methods=['GET', 'POST'])
