@@ -1,3 +1,6 @@
+import os
+import datetime
+from werkzeug import secure_filename
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.booth import Booth
@@ -8,8 +11,6 @@ from app.services.base_service import BaseService
 from app.builders.response_builder import ResponseBuilder
 from flask import request, current_app
 from app.services.helper import Helper 
-import os
-import datetime
 
 
 class BoothService(BaseService):
@@ -44,7 +45,8 @@ class BoothService(BaseService):
 			return response.set_data(data).set_error(True).set_message('booth not found').build()
 		data = booth.as_dict()
 		data['user'] = booth.user.include_photos().as_dict()
-		data['logo_url'] = Helper().url_helper(data['logo_url'], current_app.config['GET_DEST'])
+		if data['logo_url']:
+			data['logo_url'] = Helper().url_helper(data['logo_url'], current_app.config['GET_DEST'])
 
 		user_booth = db.session.query(UserBooth).filter_by(booth_id=id).all()
 
@@ -62,12 +64,18 @@ class BoothService(BaseService):
 		response = ResponseBuilder()
 		try:
 			self.model_booth = db.session.query(Booth).filter_by(id=booth_id)
+
 			self.model_booth.update({
 				'name': payloads['name'],
 				'stage_id': payloads['stage_id'],
 				'points': payloads['points'],
 				'summary': payloads['summary']
 			})
+			if payloads['logo']:
+				photo = self.save_file(payloads['logo'])
+				self.model_booth.update({
+					'logo_url': photo
+				})
 			db.session.commit()
 			data = self.model_booth.first().as_dict()
 			data['user'] = self.model_booth.first().user.include_photos().as_dict()
@@ -76,6 +84,20 @@ class BoothService(BaseService):
 		except SQLAlchemyError as e:
 			data = e.orig.args
 			return response.set_error(True).set_data(data).set_message('sql error').build()
+
+	def save_file(self, file, id=None):
+		if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
+				filename = secure_filename(file.filename)
+				filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
+				file.save(os.path.join(current_app.config['POST_PARTNER_PHOTO_DEST'], filename))
+				if id:
+					temp_partner = db.session.query(Partner).filter_by(id=id).first()
+					partner_photo = temp_partner.as_dict() if temp_partner else None
+					if partner_photo is not None and partner_photo['photo'] is not None:
+						Helper().silent_remove(current_app.config['STATIC_DEST'] + partner_photo['photo'])
+				return current_app.config['SAVE_PARTNER_PHOTO_DEST'] + filename
+		else:
+			return None
 
 	def update_logo(self, payloads, booth_id):
 		response = ResponseBuilder()
