@@ -13,27 +13,34 @@
                             <input type="hidden" class="form-control booth-user-id" id="booth-user-id">
                             <li class="list-group-item">
                                     <div class="form-group">
-                                        <label for="booth-name">Booth name:</label>
-                                        <input type="text" class="form-control booth-name" id="booth-summary">
+                                        <label for="e-booth-name">Booth name:</label>
+                                        <input type="text" class="form-control e-booth-name" id="e-booth-summary">
                                     </div>
                                 </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="booth-summary">Booth summary:</label>
-                                    <input type="text" class="form-control booth-summary" id="booth-summary">
+                                    <label for="e-booth-summary">Booth summary:</label>
+                                    <input type="text" class="form-control e-booth-summary" id="e-booth-summary">
                                 </div>
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
-                                    <label for="booth-points">Booth points:</label>
-                                    <input type="text" class="form-control booth-points" id="booth-points">
+                                    <label for="e-booth-points">Booth points:</label>
+                                    <input type="text" class="form-control e-booth-points" id="e-booth-points">
                                 </div>
                             </li>
                             <li class="list-group-item">
-                                <label for="booth-stages">Stages:</label>
-                                <select class="booth-stages form-control">
+                                <label for="e-booth-stages">Stages:</label>
+                                <select class="e-booth-stages form-control">
                                 </select>
                             </li>
+                            <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="booth-logo">Logo:</label>
+                                         <input class="input-file e-booth-logo" id="e-fileInput" type="file" name="file">
+                                         <img id='e-img-upload' style="width: 300px; height: 200px" />
+                                    </div>
+                                </li>
                         </ul>
                         <a href="#" class="btn btn-primary btn-block btn-save-booth-edit" id="-"><b>Save</b></a>
                     </div>
@@ -50,19 +57,35 @@
     /* Booth edit action */
     $('.btn-save-booth-edit').click(function(event){
         const booth_id = $(this).attr('id');
-        
-        payload = {
-            "name": $('.booth-name').val(),
-            "summary": $('.booth-summary').val(),
-            "points": $('.booth-points').val(),
-            "stage_id": $('.booth-stages').val() > 0 ? parseInt($('.booth-stages').val()) : -1,  
-            "user_id": $('.booth-user-id').val()
-        };
+        const formdata = new FormData();
+        formdata.append('logo', $('#e-fileInput')[0].files[0])
+        formdata.append('name', $('.e-booth-name').val())
+        formdata.append('summary', $('.e-booth-summary').val())
+        formdata.append('points', $('.e-booth-points').val())
+        formdata.append('stage_id', $('.booth-stages').val() > 0 ? parseInt($('.booth-stages').val()) : -1)
+        formdata.append('user_id', $('.booth-user-id').val())
 
-        dsa.patch('booths/' + booth_id, payload, function(result) {
+        dsa.patchForm('booths/' + booth_id, formdata, function(result) {
+            console.log(result, 'result')
             if(result.meta.success) {
                 window.location = "/booths";
             }
         });
     })
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                $('#e-img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#e-fileInput").change(function(){
+        readURL(this);
+    }); 
 </script>

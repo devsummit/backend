@@ -29,7 +29,7 @@
                         <th>Booth Name</th>
                         <th>Email</th>
                         <th>Summary</th>
-                        <th>Stage</th>
+                        <th>Logo</th>
                         <th>Points</th>
                         <th>Actions</th>
                     </tr>
@@ -55,11 +55,7 @@
                             {{ booth.summary }}
                         </td>
                         <td>
-                            {% if booth.stage.name %}
-                                {{ booth.stage.name.title() }}
-                            {% else %}
-                                -
-                            {% endif %}
+                            <img src="{{booth.logo_url|e}}" height="120px" width="100px" alt='booth logo'>
                         </td>
                         <td>
                             {{ booth.points }}
@@ -96,16 +92,18 @@
                 // bind result value in to attendee_detail.html 
                 const data = result['data'];
                 selected_stage_id = data['stage'] ? data['stage'].id : null;
-                $('.booth-name').val(data['name']);
-                $('.booth-summary').val(data['summary']);
-                $('.booth-points').val(data['points']);
-                $('.booth-user-id').val(data['user_id']);
+                $('.e-booth-name').val(data['name']);
+                $('.e-booth-summary').val(data['summary']);
+                $('.e-booth-points').val(data['points']);
+                $('.e-booth-user-id').val(data['user_id']);
                 $('.btn-save-booth-edit').attr("id", id);
+                $("#e-img-upload").attr("src", data['logo_url']);
+
             });
 
             dsa.get('stages', function(result) {
                 const stages = result['data'];
-                var select = $(".booth-stages");
+                var select = $(".e-booth-stages");
                 select.find('option').remove();
 
                 var withoutStageOpt = document.createElement('option');
