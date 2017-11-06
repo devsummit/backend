@@ -45,14 +45,11 @@
                     <td>
                         <button id='bte-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-input">
                                 Edit
-                            </button>
-                        <button id='btd-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-delete" data-toggle="modal" data-target="#modal-delete">
-                                Delete
-                            </button>
+                        </button>
                         <button id='btd-{{ account.id }}' value='role-{{ account.role_id }}' type="button" class="btn btn-sm btn-info btn-grant"
                             data-toggle="modal" data-target="#modal-grant">
                                 Grant
-                            </button>
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -185,14 +182,6 @@
             $('#account-input-select-role').find('*').removeAttr('selected');
             $('#input-role1').attr('selected', 'selected');
             setTabContent(0);
-        });
-
-        $('.btn-delete').click(function (event) {
-            $('.modal-title').html('Are you sure want to delete this account?');
-
-            const btd_id = $(this).attr('id');
-            const id = btd_id.substring(4, btd_id.length);
-            $('.btn-yes').attr("id", id);
         });
 
         $('.btn-grant').click(function (event) {
