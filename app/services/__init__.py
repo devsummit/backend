@@ -44,6 +44,7 @@ from app.services.hackaton_service import HackatonService
 from app.services.user_feedback_service import UserFeedbackService
 from app.services.slack_service import SlackService
 from app.services.event_brite_service import EventBriteService
+from app.services.hackaton_proposal_service import HackatonProposalService
 
 # instantiate service
 userservice = UserService(10)  # number of item per page
@@ -91,3 +92,4 @@ hackatonservice = HackatonService()
 userfeedbackservice = UserFeedbackService()
 slackservice = SlackService()
 eventbriteservice = EventBriteService()
+hackatonproposalservice = HackatonProposalService()
