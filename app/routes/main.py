@@ -65,6 +65,11 @@ def get_accounts():
     return MainController.getAccounts()
 
 
+@main.route('/hackatonproposals')
+def get_proposal():
+    return MainController.getHackatonProposal()
+
+
 @main.route('/speakers')
 def get_speakers():
     return MainController.getSpeakers()
@@ -99,6 +104,11 @@ def adduserphoto():
 def partners():
     if(request.method == 'GET'):
         return MainController.getPartners()
+
+@main.route('/hackers')
+def getHackers():
+    return MainController.getHackers()
+
 
 @main.route('/partnerspj', methods=['GET'])
 def partners_pj():
