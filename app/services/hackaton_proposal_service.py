@@ -3,6 +3,7 @@ from flask import current_app, request
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
 from app.configs.constants import ROLE
+from app.configs.settings import LOCAL_TIME_ZONE
 from app.services.helper import Helper
 from app.services.fcm_service import FCMService
 from app.services.order_verification_service import OrderVerificationService
@@ -23,8 +24,21 @@ class HackatonProposalService(BaseService):
 		_results = []
 		for result in results:
 			data = result.as_dict()
+			data = self.transformTimeZone(data)
 			data['order'] = result.order.as_dict()
-			data['user'] = result.order.user.as_dict()
+			data['user'] = result.order.user.include_photos().as_dict()
+			_results.append(data)
+		return response.set_data(_results).build()
+
+	def get_except(self, status):
+		response = ResponseBuilder()
+		results = db.session.query(HackatonProposal).filter(HackatonProposal.status!=status).all()
+		_results = []
+		for result in results:
+			data = result.as_dict()
+			data = self.transformTimeZone(data)
+			data['order'] = result.order.as_dict()
+			data['user'] = result.order.user.include_photos().as_dict()
 			_results.append(data)
 		return response.set_data(_results).build()
 
@@ -84,3 +98,11 @@ class HackatonProposalService(BaseService):
 		except SQLAlchemyError as e:
 			data = e.orig.args
 			return response.set_data(data).set_error(True).build()
+
+	def transformTimeZone(self, obj):
+		entry = obj
+		created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
+		entry['created_at'] = str(created_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
+		updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
+		entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
+		return entry
