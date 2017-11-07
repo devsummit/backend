@@ -85,7 +85,7 @@ class OrderService():
 	def create(self, payloads, user):
 		response = ResponseBuilder()
 		if user['role_id'] == ROLE['hackaton']:
-			return response.set_data(None).set_message('You cannot buy hackaton ticket twice').set_error(True).build()
+			return response.set_data(None).set_message('Hackaton attendee cannot buy ticket').set_error(True).build()
 		self.model_order = Order()
 		order_details = payloads['order_details']
 		self.model_order.user_id = payloads['user_id']
@@ -137,7 +137,10 @@ class OrderService():
 				db.session.add(payment)
 				db.session.commit()	
 				# check if ticket is free
-				if gross_amount == 0 or (referal.first() and referal.first().discount_amount == 1):
+				if order_details[0]['ticket_id'] == 10:
+					# hackaton proposal
+					pass
+				elif gross_amount == 0 or (referal.first() and referal.first().discount_amount == 1):
 					# call verify service
 					ov_service = OrderVerificationService()
 					ov_service.admin_verify(self.model_order.id, request, payloads['hacker_team_name'])
