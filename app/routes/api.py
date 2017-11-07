@@ -1104,12 +1104,19 @@ def get_all_hackaton_team(*args, **kwargs):
 
 @api.route('/hackatonproposals', methods=['GET'])
 def hackaton_proposal(*args, **kwargs):
-    return HackatonProposalController.index(request)
+    status = request.args.get('status')
+    status = status if status else 'pending'
+    return HackatonProposalController.index(status)
 
 
-@api.route('/hackatonproposals/<id>', methods=['PATCH', 'PUT'])
+@api.route('/hackatonproposals/<id>/deny', methods=['PATCH', 'PUT'])
 def hackaton_deny(id, *args, **kwargs):
     return HackatonProposalController.deny(id)
+
+
+@api.route('/hackatonproposals/<id>/verify', methods=['PATCH', 'PUT'])
+def hackaton_verify(id, *args, **kwargs):
+    return HackatonProposalController.verify(id)
 
 
 @api.route('/hackaton/team/<id>', methods=['GET', 'PUT', 'PATCH'])
