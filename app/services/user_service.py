@@ -222,6 +222,14 @@ class UserService(BaseService):
 			paginate['links']).build()
 		return result
 
+	def list_hackaton_attendee(self):
+		response = ResponseBuilder()
+		_results = []
+		hackers = db.session.query(User).filter(User.role_id==ROLE['hackaton']).all()
+		for hacker in hackers:
+			_results.append(hacker.include_photos().as_dict())
+		return response.set_data(_results).set_message('hackers retreived').set_links({}).build()
+
 	def get_user_filter(self, type=7):
 		results = []
 		users = db.session.query(User).filter(User.role_id > 6).all()
