@@ -1,0 +1,60 @@
+{% extends "admin/base/index.html" %} {% block title %}
+<title> Accounts list </title> {% endblock %} {% set globals={'base_route': 'accounts', 'api_route': 'users'} %} {% block header_link
+%}
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Hackers
+    <small>List of Hackatons</small>
+
+</h1>
+{% endblock %} {% block breadcrumb %}
+<li class="active">Hackaton Participants</li>
+{% endblock %} {% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <div class="box-body">
+        <table id="hacker-list1" class="table table-bordered table-striped">
+            <thead>
+
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Profile Photo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for hacker in hackers %}
+                <tr>
+                    <td>
+                        {{ hacker['last_name']|e + ', ' + hacker['first_name']|e }}
+                    </td>
+                    <td>
+                        {{ hacker.email|e }}
+                    </td>
+                    <td>
+                        {{ hacker.username|e }}
+                    </td>
+                    <td>
+                        <img src="{{ hacker.photos[0].url|e }}" height="120px" width="100px" alt='user photo'>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endblock %} 
+    {% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#hacker-list1').DataTable();
+        });    
+    </script>
+
+    <!-- page script -->
+    {% endblock %}

@@ -1,0 +1,108 @@
+{% extends "admin/base/index.html" %} {% block title %}
+<title> Accounts list </title> {% endblock %} {% set globals={'base_route': 'accounts', 'api_route': 'users'} %} {% block header_link
+%}
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}"> {% endblock %} {% block page_header %} {{ super() }}
+<h1>
+    Accounts
+    <small>List of Hackatons</small>
+
+</h1>
+{% endblock %} {% block breadcrumb %}
+<li class="active">Hackaton Participants</li>
+{% endblock %} {% block content %}
+<div class="box">
+    <!-- /.box-header -->
+    <div class="box-body">
+        <table id="proposal-list1" class="table table-bordered table-striped">
+            <thead>
+
+                <tr>
+                    <th>Links</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>User Photo</th>
+                    <th>Status</th>
+                    <th>Submission Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for proposal in proposals %}
+                <tr>
+                    <td>
+                        <a href="{{ proposal.github_link }}" target="_blank">{{ proposal.github_link }}</a>
+                    </td>
+                    <td>
+                        {{ proposal.user.username }}
+                    </td>
+                    <td>
+                        {{ proposal.user.email }}
+                    </td>
+                    <td>
+                        <img src="{{ proposal.user.photos[0].url|e }}" height="120px" width="100px" alt='user photo'>
+                    </td>
+                    <td>
+                        {{ proposal.status }}
+                    </td>
+                    <td>
+                        {{ proposal.created_at }}
+                    </td>
+                    <td>
+                        <button id='bte-{{ proposal.order_id }}' type="button" class="btn btn-sm btn-info btn-deny">
+                                Deny
+                        </button>
+                        <button id='bte-{{ proposal.order_id }}' type="button" class="btn btn-sm btn-info btn-verify">
+                                Accept
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endblock %} 
+    {% block footer_link %}
+    <!-- DataTables -->
+    <script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+    <!-- page script -->
+    <script>
+
+        $('.btn-deny').click(function (event) {
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+        
+            if (confirm('Are you sure to change the state of this proposal to denied?')) {
+                dsa.patch('hackatonproposals/' + id + '/deny', null, function (result) {
+                    if (result.meta.success) {
+                       window.location = '/hackatonproposals';
+                    }
+                });
+            } else {
+                alert('proposal denial cancelled')
+            }    
+        });
+
+        $('.btn-verify').click(function (event) {
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+        
+            if (confirm('Are you sure to change the state of this proposal to verified?')) {
+                dsa.patch('hackatonproposals/' + id + '/verify', null, function (result) {
+                    if (result.meta.success) {
+                       window.location = '/hackatonproposals';
+                    }
+                });
+            } else {
+                alert('proposal verification cancelled')
+            }    
+        });
+
+        $(function () {
+            $('#proposal-list1').DataTable();
+        });
+    </script>
+
+    {% endblock %}
