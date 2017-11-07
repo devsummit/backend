@@ -217,19 +217,13 @@ class OrderVerificationService(BaseService):
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items[0].ticket_id
 				UserTicketService().create(payload)
-				hackerteam_id = self.create_hackaton(user, items[0].ticket_id, hacker_team_name)
 				user_query.update({
 					'role_id': ROLE['hackaton']
 				})
-				redeem_payload = {}
-				redeem_payload['codeable_type'] = TICKET_TYPES['hackaton']
-				redeem_payload['codeable_id'] = hackerteam_id
-				redeem_payload['count'] = items[0].ticket.quota
-				RedeemCodeService().create(redeem_payload)
-				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='hackaton', codeable_id=hackerteam_id).all()
+				send_notification = FCMService().send_single_notification('Hackaton Status', 'Congratulations you are accepted to join our hackaton. Further information can be seen at your registered email.', user.id, ROLE['admin'])
 				mail_template = EmailPurchase()
-				template = mail_template.set_invoice_path(order.id).set_redeem_code(get_codes).build()
-				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
+				template = mail_template.set_invoice_path(order.id).build()
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations!! you are accepted to join Indonesia Developer Summit 2017 hackaton').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			else:
 				result = None
@@ -293,19 +287,13 @@ class OrderVerificationService(BaseService):
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items[0].ticket_id
 				UserTicketService().create(payload)
-				hackerteam_id = self.create_hackaton(user, items[0].ticket_id, hacker_team_name)
 				user_query.update({
 					'role_id': ROLE['hackaton']
 				})
-				redeem_payload = {}
-				redeem_payload['codeable_type'] = TICKET_TYPES['hackaton']
-				redeem_payload['codeable_id'] = hackerteam_id
-				redeem_payload['count'] = items[0].ticket.quota
-				RedeemCodeService().create(redeem_payload)
-				get_codes = db.session.query(RedeemCode).filter_by(codeable_type='hackaton', codeable_id=hackerteam_id).all()
+				send_notification = FCMService().send_single_notification('Hackaton Status', 'Congratulations you are accepted to join our hackaton. Further information can be seen at your registered email.', user.id, ROLE['admin'])
 				mail_template = EmailPurchase()
-				template = mail_template.set_invoice_path(order.id).set_redeem_code(get_codes).build()
-				email = emailservice.set_recipient(user.email).set_subject('Congratulations !! you received hackaton code').set_sender('noreply@devsummit.io').set_html(template).build()
+				template = mail_template.set_invoice_path(order.id).build()
+				email = emailservice.set_recipient(user.email).set_subject('Congratulations!! you are accepted to join Indonesia Developer Summit 2017 hackaton').set_sender('noreply@devsummit.io').set_html(template).build()
 				mail.send(email)
 			else:
 				result = None

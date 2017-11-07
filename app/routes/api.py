@@ -56,6 +56,7 @@ from app.controllers.hackaton_controller import HackatonController
 from app.controllers.user_feedback_controller import UserFeedbackController
 from app.controllers.partner_pj_controller import PartnerPjController
 from app.controllers.event_brite_controller import EventBriteController
+from app.controllers.hackaton_proposal_controller import HackatonProposalController
 from app.services.slack_service import SlackService
 from app.configs.constants import ROLE
 
@@ -1099,6 +1100,24 @@ def get_hackaton_team(*args, **kwargs):
 @api.route('/hackaton', methods=['GET', 'POST'])
 def get_all_hackaton_team(*args, **kwargs):
     return HackatonController.get_all(request)
+
+
+@api.route('/hackatonproposals', methods=['GET'])
+def hackaton_proposal(*args, **kwargs):
+    status = request.args.get('status')
+    status = status if status else 'pending'
+    return HackatonProposalController.index(status)
+
+
+@api.route('/hackatonproposals/<id>/deny', methods=['PATCH', 'PUT'])
+def hackaton_deny(id, *args, **kwargs):
+    return HackatonProposalController.deny(id)
+
+
+@api.route('/hackatonproposals/<id>/verify', methods=['PATCH', 'PUT'])
+def hackaton_verify(id, *args, **kwargs):
+    return HackatonProposalController.verify(id)
+
 
 @api.route('/hackaton/team/<id>', methods=['GET', 'PUT', 'PATCH'])
 @token_required

@@ -1,12 +1,17 @@
+import requests
+from app.configs.constants import ROLE
 from app.controllers.base_controller import BaseController
 from app.services import userservice
-import requests
 
 
 class UserController(BaseController):
     @staticmethod
     def index(request):
-        users = userservice.list_user(request)
+        role = request.args.get('role')
+        if role and int(role) == ROLE['hackaton']:
+            users = userservice.list_hackaton_attendee()
+        else:
+            users = userservice.list_user(request)
         return BaseController.send_response_api(users['data'], 'users retrieved successfully', {}, users['links'])
 
     @staticmethod

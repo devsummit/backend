@@ -26,6 +26,7 @@ from app.services import sponsortemplateservice
 from app.services import invoiceservice
 from app.services import packagemanagementservice
 from app.services import tickettransferservice
+from app.services import hackatonproposalservice
 from app.configs.constants import ROLE
 from app.controllers.partner_pj_controller import PartnerPjController
 
@@ -52,6 +53,10 @@ class MainController(BaseController):
         attendees = attendeeservice.get(request)
         return render_template('admin/attendees/attendees.html', attendees=attendees['data'])
 
+    def getHackatonProposal():
+        hackatonproposals = hackatonproposalservice.get_except('verified')
+        return render_template('admin/accounts/hackaton_proposal.html', proposals=hackatonproposals['data'])
+
     def getPayments():
         param = {'transaction_status': 'captured'}
         payments = paymentservice.admin_filter(param)
@@ -74,6 +79,10 @@ class MainController(BaseController):
     def getAccounts():
         accounts = userservice.list_user(request)
         return render_template('admin/accounts/accounts.html', accounts=accounts['data'])
+
+    def getHackers():
+        hackers = userservice.list_hackaton_attendee()
+        return render_template('admin/accounts/hackaton_users.html', hackers=hackers['data'])
 
     def getBooths():
         booths = boothservice.get(request)
