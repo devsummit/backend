@@ -14,7 +14,7 @@
                                 <div class="form-group">
                                     <label for="event-title">Select Type:</label>
                                     <select class="add-codeable-type form-control">
-                                        </select>
+                                    </select>
                                 </div>
                             </li>
                             <li class="list-group-item" id="add-codeable-id">
@@ -63,18 +63,19 @@
             'codeable_id': $('.add-codeable-id').val(),
             'count': $('.add-count').val()
         };
-
-        dsa.post('redeemcodes', payload, function (result) {
-            if (result.meta.success) {
-                location.reload()
-            }
-        });
+        if(confirm('generate redeem code?')) {
+            dsa.post('redeemcodes', payload, function (result) {
+                if (result.meta.success) {
+                    location.reload()
+                }
+            });
+        }
     })
 
     // Change participants based on event type
     $('.add-codeable-type').on('change', function () {
         const selected = this.value
-        if (selected == '') {
+        if (selected == '' || selected == 'user') {
             $('#add-codeable-id').hide();
         } else {
             $('#add-codeable-id').show();
@@ -91,19 +92,10 @@
                         participant.append(option);
                     })
                 });
-            } else if (selected == 'partner') {
-                dsa.get('partners', function (result) {
-                    result.data.map(function (res) {
-                        let option = document.createElement('option');
-
-                        option.innerHTML = capitalizeFirstLetter(res.name);
-                        option.value = res.id;
-    
-                        participant.append(option);
-                    })
-                });
-            }
-        }
+            } else if (selected == 'user') {
+                $('#add-codeable-id').val(1);
+                } 
+        } 
     })
 
     // Used for capitalize words
