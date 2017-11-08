@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify, json, Response
 # import middlewares
 from app.middlewares.authentication import token_required
 from app.models import mail, db, socketio, mail
+from sqlalchemy import or_
 from app.services.email_service import EmailService
 from app.services import userservice
 from app.models.user import User
@@ -189,10 +190,32 @@ def spot_id(id, *args, **kwargs):
 def admin_verifyorders(*args, **kwargs):
     return OrderController.unverified_order()
 
+
+@api.route('/admin/orders', methods=['POST'])
+@token_required
+def admin_orders(*args, **kwargs):
+    user = kwargs['user']
+    if user.role_id != ROLE['admin']:
+        return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
+    order_user = request.json['order_user'] if 'order_user' in request.json else None
+    user = db.session.query(
+            User).filter(or_(User.username.like(order_user), User.email.like(order_user))).first()
+    if user is None:
+        return json.dumps({
+            'data': None,
+            'meta': {
+                'success': False,
+                'message': 'User with specified email or username not found'
+            }
+        })
+    return OrderController.create(request, user.as_dict())
+
+
 @api.route('/admin/orders/verify/<id>', methods=['POST'])
 @token_required
 def admin_verify_order(id, *args, **kwargs):
     return OrderController.verify_order(id, request)
+
 
 # Ticket Order API
 @api.route('/orders', methods=['GET', 'POST'])

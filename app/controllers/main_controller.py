@@ -76,6 +76,11 @@ class MainController(BaseController):
         partners = partnerservice.get(request)
         return render_template('admin/referals/referals.html', referals=referals, partners=partners)
 
+    def admin_order():
+        tickets = ticketservice.get()
+        return render_template('admin/payments/admin_order.html', tickets=tickets['data'])
+
+
     def getAccounts():
         accounts = userservice.list_user(request)
         return render_template('admin/accounts/accounts.html', accounts=accounts['data'])
