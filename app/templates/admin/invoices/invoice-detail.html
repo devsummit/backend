@@ -108,16 +108,23 @@
             m('.dtc bg-navy white pa2 br2 ba b--near-white', m('.span f3 f5-ns pa0 pa1-ns lh-copy measure-narrow ttc', 'price')),
           ]),
           invoiceData.data.map((data, index) => {
-            var price = invoiceData.included.payment.payment_type === "paypal" ? data.ticket.usd_price : data.ticket.price
+            var price, sprice, currency
+            if (invoiceData.included.payment) {
+              price =  invoiceData.included.payment.payment_type === "paypal" ? data.ticket.usd_price : data.ticket.price
+              currency = invoiceData.included.payment.payment_type === "paypal" ? "USD ": "IDR "
+            } else {
+              price = data.ticket.price
+              sprice = data.ticket.price.toLocaleString()
+              currency = "IDR"
+            }
             var qty = data.count
-            var subtotal = qty * price
-            var currency = invoiceData.included.payment.payment_type === "paypal" ? "USD ": "IDR "
+            var subtotal = (qty * price).toLocaleString()
             return m('.invoice-table-header dt dt--fixed', [
               m('.dtc bg-light-silver pa2 br2 ba b--near-white', m('.span f3 f5-ns pa0 pa1-ns lh-copy measure-narrow ttc', index+1 + '. ')),
               m('.dtc bg-light-silver pa2 br2 ba b--near-white', m('.span f3 f5-ns pa0 pa1-ns lh-copy measure-narrow ttc', data.ticket.ticket_type)),
-              m('.dtc bg-light-silver pa2 br2 ba b--near-white', m('.span f3 f5-ns pa0 pa1-ns lh-copy measure-narrow ttc', currency+price)),
+              m('.dtc bg-light-silver pa2 br2 ba b--near-white', m('.span f3 f5-ns pa0 pa1-ns lh-copy measure-narrow ttc', currency+" "+sprice)),
               m('.dtc bg-light-silver pa2 br2 ba b--near-white', m('.span f3 f5-ns pa0 pa1-ns lh-copy measure-narrow ttc', qty)),
-              m('.dtc bg-light-silver pa2 br2 ba b--near-white', m('.span f3 f5-ns pa0 pa1-ns lh-copy measure-narrow ttc', currency+subtotal)),
+              m('.dtc bg-light-silver pa2 br2 ba b--near-white', m('.span f3 f5-ns pa0 pa1-ns lh-copy measure-narrow ttc', currency+" "+subtotal)),
             ])  
           })
         ]),
@@ -167,7 +174,11 @@
         // count total
         var total = 0
         normalized.data.map((order) => {
-          total = normalized.included.payment.payment_type==="paypal" ? total + order.ticket.usd_price : total + order.ticket.price
+          if (normalized.included.payment) {
+            total = normalized.included.payment.payment_type==="paypal" ? total + order.ticket.usd_price : total + order.ticket.price
+          } else {
+            total = total + order.ticket.price
+          }
         })
         if(normalized.data.length===0) {
           return null
@@ -175,7 +186,11 @@
         normalized.total = total
         normalized.email = normalized.included.user.email
         normalized.created_at = normalized.data[0].created_at
-        normalized.currency = normalized.included.payment.payment_type==="paypal" ? "USD " : "IDR "
+        if (normalized.included.payment) {
+          normalized.currency = normalized.included.payment.payment_type==="paypal" ? "USD " : "IDR "
+        } else {
+          normalized.currency = "IDR "
+        }
         normalized.total = normalized.currency + normalized.total.toLocaleString()
         return normalized
       }
