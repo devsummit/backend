@@ -146,6 +146,11 @@ def speaker_candidates():
     return MainController.showSpeakerCandidates()
 
 
+@main.route('/admin_order')
+def admin_order():
+    return MainController.admin_order()
+
+
 @main.route('/entrycashlogsfilter')
 def report_finance_source():
     return MainController.getReportFinance(request)
