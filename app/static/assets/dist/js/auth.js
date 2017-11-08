@@ -19,6 +19,12 @@
         headers: {
             Authorization: dsa.acess_token()
         },
+        error: function(result) {
+            if (result.status === 401) {
+                clearCredential();
+                window.location.href = '/login';
+            }
+        },
         success: onSuccess ? function(result){
             if(result['expired']) {
                 clearCredential();
@@ -160,7 +166,6 @@
             contentType: "application/json; charset=utf-8",
             dataType   : "json",
             success    : function(result){
-                console.log(result)
                 const success=result['meta']['success']
                 if (success) {
                     var data = result['data']
@@ -202,8 +207,10 @@
     }
 
     /* isLogin func */
-    dsa.isLogin = function() {
-        return(!!dsa.acess_token())
+    dsa.isLogin = function(cb) {
+        dsa.get("ceklogin", (result) => {
+            cb(result)
+        });
     }
 
     /* initialize */
