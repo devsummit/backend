@@ -158,7 +158,7 @@ class RedeemCodeService():
             return response.set_data(None).set_error(True).set_message('code already used').build()
 
         try:
-            if redeem_code['codeable_type'] == 'partner':
+            if redeem_code['codeable_type'] in ['partner', 'user']:
                 # become attendee
                 userticket = UserTicket()
                 userticket.user_id = user['id']
@@ -176,21 +176,6 @@ class RedeemCodeService():
                 user['role_id'] = 3
                 db.session.commit()
                 _result['user']['booth'] = booth
-            elif redeem_code['codeable_type'] == 'hackaton':
-                hackaton = db.session.query(HackerTeam).filter_by(id=redeem_code['codeable_id']).first().as_dict()
-                user_hacker = UserHacker()
-                user_hacker.hacker_team_id = redeem_code['codeable_id']
-                user_hacker.user_id = user['id']
-                db.session.add(user_hacker)
-                user['role_id'] = 5
-                # create user ticket here
-                userticket = UserTicket()
-                userticket.user_id = user['id']
-                userticket.ticket_id = hackaton['ticket_id']
-                db.session.add(userticket)
-
-                db.session.commit()
-                _result['user']['hackaton'] = hackaton
             raw_redeem_code.update({
                 'used': True
             })
