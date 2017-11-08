@@ -22,7 +22,8 @@
 {% block content %}
     <div class="box">
         <!-- /.box-header -->
-        
+        <h5>How to:</h5>
+        <h6>input either username, email or registered mobile number (without `+` start with 62 instead of 0) </h6>
         <div class="box-body">
             <div class="form-group">
                 <label for="order-user-id">User Email or Username:</label>
@@ -43,11 +44,13 @@
                 <label for="referal-code">Referal Code</label>
                 <input type="text" class="form-control referal-code" id="referal-code">
             </div>
+            <a href="#" class="btn btn-primary btn-block btn-order">Order</b></a>
+            <h5><b>Note:</b></h5>
             <h6>*username, email and referal code are case sensitive</h6>
             <h6>*ticket count for every order will be 1</h6>
             <h6>*After succesfully placed an order you'll get the order-id on alert, copy those and verify in admin verification list if needed</h6>
             <h6>*In case using 100% valued referal code the order will be directly verified and ticket will be generated for `full` ticket</h6>
-            <a href="#" class="btn btn-primary btn-block btn-order">Order</b></a>
+            <h6>*An error will be trigered if user is not found, but order will still proceed if referal code is not found, so input the referal code carefully.</h6>
         </div>
 {% endblock %}
 
