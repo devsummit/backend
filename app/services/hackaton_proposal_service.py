@@ -1,6 +1,7 @@
 import datetime
 from flask import current_app, request
-from app.models import db
+from app.models import db, mail
+from app.models.email_templates.email_hackaton import EmailHackaton
 from sqlalchemy.exc import SQLAlchemyError
 from app.configs.constants import ROLE
 from app.configs.settings import LOCAL_TIME_ZONE
@@ -8,6 +9,7 @@ from app.services.helper import Helper
 from app.services.fcm_service import FCMService
 from app.services.order_verification_service import OrderVerificationService
 from app.services.base_service import BaseService
+from app.services.email_service import EmailService
 from app.builders.response_builder import ResponseBuilder
 from app.models.hackaton_proposals import HackatonProposal
 from app.models.order import Order
@@ -44,6 +46,7 @@ class HackatonProposalService(BaseService):
 
 	def create(self, payloads):
 		response = ResponseBuilder()
+		emailservice = EmailService()
 		hackaton_proposal = HackatonProposal()
 		hackaton_proposal.github_link = payloads['github_link']
 		hackaton_proposal.order_id = payloads['order_id']
@@ -51,6 +54,11 @@ class HackatonProposalService(BaseService):
 		db.session.add(hackaton_proposal)
 		try:
 			db.session.commit()
+			mail_template = EmailHackaton()
+			user = hackaton_proposal.order.user
+			template = mail_template.build(user.first_name + ' ' + user.last_name)
+			email = emailservice.set_recipient(hackaton_proposal.order.user.email).set_subject('Indonesia Developer Summit 2017 Hackaton').set_sender('noreply@devsummit.io').set_html(template).build()
+			mail.send(email)
 			return response.set_data(hackaton_proposal.as_dict()).set_message('proposal succesfully created').build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
