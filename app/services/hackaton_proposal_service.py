@@ -57,7 +57,7 @@ class HackatonProposalService(BaseService):
 			mail_template = EmailHackaton()
 			user = hackaton_proposal.order.user
 			template = mail_template.build(user.first_name + ' ' + user.last_name)
-			email = emailservice.set_recipient(hackaton_proposal.order.user.email).set_subject('Indonesia Developer Summit 2017 Hackaton').set_sender('noreply@devsummit.io').set_html(template).build()
+			email = emailservice.set_recipient(hackaton_proposal.order.user.email).set_subject('Indonesia Developer Summit 2017 Hackathon').set_sender('noreply@devsummit.io').set_html(template).build()
 			mail.send(email)
 			return response.set_data(hackaton_proposal.as_dict()).set_message('proposal succesfully created').build()
 		except SQLAlchemyError as e:
