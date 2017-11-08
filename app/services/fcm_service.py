@@ -32,7 +32,7 @@ class FCMService():
 		return response.set_data(None).set_message('notification sent').build()
 
 		
-	def save_notification(self, type, message, receiver_id, sender_id, attachment):
+	def save_notification(self, type, message, receiver_id, sender_id, attachment=None):
 		notification = Notification()
 		notification.sender_uid = sender_id
 		notification.receiver_uid = receiver_id
