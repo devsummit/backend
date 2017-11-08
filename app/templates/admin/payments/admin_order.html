@@ -1,0 +1,105 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Admin Order </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Admin Order
+        <small>Place An Order For Our Customer</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Admin Order</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <div class="form-group">
+                <label for="order-user-id">User Email or Username:</label>
+                <input type="text" class="form-control order-user-id" id="order-user-id">
+            </div>
+            <div class="form-group">
+                <!-- Select Ticket -->
+                <label for="ticket-type">Choose Ticket:</label>
+                <select class="form-control ticket-type" id="ticket-type">
+                    {% for ticket in tickets %}
+                        <option id="ticket-{{ ticket.id }}" value="{{ ticket.id }}">
+                            {{ ticket.ticket_type }} | IDR. {{ "{0:,.2f}".format(ticket.price) }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="referal-code">Referal Code</label>
+                <input type="text" class="form-control referal-code" id="referal-code">
+            </div>
+            <h6>*username, email and referal code are case sensitive</h6>
+            <h6>*ticket count for every order will be 1</h6>
+            <h6>*After succesfully placed an order you'll get the order-id on alert, copy those and verify in admin verification list if needed</h6>
+            <h6>*In case using 100% valued referal code the order will be directly verified and ticket will be generated for `full` ticket</h6>
+            <a href="#" class="btn btn-primary btn-block btn-order">Order</b></a>
+        </div>
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    $('.btn-order').click(function(event){
+        user_id = $('.order-user-id').val();
+        ticket_id = $('.ticket-type').find(":selected").val();
+        referal_code = $('.referal-code').val();
+        payload = {
+            'order_details': [
+                {
+                    'ticket_id': ticket_id,
+                    'count': 1
+                }
+            ],
+            'payment_type': 'offline',
+            'referal_code': referal_code,
+            'order_user': user_id
+        }
+        if (confirm('Place this order?')) {
+            dsa.post('admin/orders', payload, function(result) {
+                if(result.meta.success) {
+                    alert('Order Placed With Order-id: ' + result.data.id);
+                    window.location = '/admin_order'
+                } else {
+                    alert('An Error Occured: ' + result.meta.message)
+                }
+            });
+        }
+    })
+
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#fileInput").change(function(){
+        readURL(this);
+    });
+</script>
+
+{% endblock %}
