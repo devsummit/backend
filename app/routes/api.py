@@ -67,6 +67,12 @@ api = Blueprint('api', __name__)
 def api_index(*args, **kwargs):
     return 'api index'
 
+@api.route('/ceklogin', methods=['GET'])
+@token_required
+def ceklogin(*args, **kwargs):
+    user_id = kwargs['user'].id
+    return jsonify(user_id)
+
 
 # Ticket api
 
