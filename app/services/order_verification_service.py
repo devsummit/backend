@@ -60,6 +60,7 @@ class OrderVerificationService(BaseService):
 				'payment_proof': payment_proof,
 				'updated_at': datetime.datetime.now()
 			})
+			order = orderverification.order
 		else:
 			orderverification = OrderVerification()
 			order_query = db.session.query(Order).filter_by(id=payload['order_id'])
