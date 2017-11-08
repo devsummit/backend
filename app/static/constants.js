@@ -37,7 +37,7 @@ const EVENT_TYPES = [
 
 const ROLES = [
 	'booth',
-	'partner',
+	'user',
 	''
 ]
 
