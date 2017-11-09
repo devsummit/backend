@@ -32,6 +32,13 @@
                 <label for="notification">Notification Content:</label>
                 <input type="text" class="form-control notification-content" id="notification-content">
             </div>
+            <div class="form-group">
+                <label for="notification-audience">Audience:</label>
+                    <select class="form-control" id="notification-audience">
+                        <option id="users" value="users">All User</option>
+                        <option id="hackers" value="hackers">All Hackaton User</option>
+                    </select>
+            </div>
             <button class="btn btn-primary btn-block btn-authorize" data-toggle="modal" data-target="#modal-authorize">Send</button>
         </div>
 
@@ -54,6 +61,7 @@
         const admin = dsa.getUser();
         $('#title').val(title);
         $('#content').val(content)
+        $('#notification-audience').find(":selected").val();
         $('#username').val(admin['username']);
     })
 </script>
