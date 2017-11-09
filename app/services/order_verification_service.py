@@ -2,7 +2,6 @@ import os
 import datetime
 from app.models import db, mail
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import and_
 # import model class
 from app.models.order import Order
 from app.models.email_templates.email_purchase import EmailPurchase
@@ -35,7 +34,7 @@ from werkzeug import secure_filename
 class OrderVerificationService(BaseService):
 	
 	def get(self):
-		result = db.session.query(OrderVerification, Order, Payment).join(Order).outerjoin(Payment).filter(and_(OrderVerification.is_used==0, Order.status != 'paid')).all()
+		result = db.session.query(OrderVerification, Order, Payment).join(Order).join(Payment).filter(OrderVerification.is_used==0, Order.status != 'paid').all()
 		_result = []
 		for orderverification, order, payment in result:
 			data = orderverification.as_dict()
