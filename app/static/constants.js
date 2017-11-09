@@ -2,6 +2,7 @@ const PARTNER_TYPES = [
 	'supporting',
 	'community',
 	'company',
+	'media',
 ];
 
 const CASH_FLOWS = [
