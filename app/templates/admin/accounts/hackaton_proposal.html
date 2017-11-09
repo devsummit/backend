@@ -55,6 +55,9 @@
                         <button id='bte-{{ proposal.order_id }}' type="button" class="btn btn-sm btn-info btn-verify">
                                 Accept
                         </button>
+                        <button id='bte-{{ proposal.order_id }}' type="button" class="btn btn-sm btn-info btn-resend">
+                                Resend Email
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -83,6 +86,21 @@
             } else {
                 alert('proposal denial cancelled')
             }    
+        });
+
+
+        $('.btn-resend').click(function (event) {
+            const bte_id = $(this).attr('id');
+            const id = bte_id.substring(4, bte_id.length);
+            console.log(id, 'id');
+            if (confirm('Resend Hackaton Email?')) {
+                dsa.post('hackaton-email/' + id + '/resend', null, function (result) {
+                    console.log(result)
+                    if (result.meta.success) {
+                       window.location = '/hackatonproposals';
+                    }
+                });
+            }
         });
 
         $('.btn-verify').click(function (event) {
