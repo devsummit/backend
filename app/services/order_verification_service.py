@@ -2,6 +2,7 @@ import os
 import datetime
 from app.models import db, mail
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import and_
 # import model class
 from app.models.order import Order
 from app.models.email_templates.email_purchase import EmailPurchase
@@ -34,17 +35,17 @@ from werkzeug import secure_filename
 class OrderVerificationService(BaseService):
 	
 	def get(self):
-		orderverifications = db.session.query(OrderVerification).filter_by(is_used=0).all()
+		result = db.session.query(OrderVerification, Order, Payment).join(Order).outerjoin(Payment).filter(and_(OrderVerification.is_used==0, Order.status != 'paid')).all()
 		_result = []
-		for entry in orderverifications:
-			data = entry.as_dict()
+		for orderverification, order, payment in result:
+			data = orderverification.as_dict()
 			data = self.transformTimeZone(data)
 			if data['payment_proof']:
 				data['payment_proof'] = Helper().url_helper(data['payment_proof'], current_app.config['GET_DEST'])
 			else:
 				data['payment_proof'] = ""
-			data['payment'] = db.session.query(Payment).filter_by(order_id=entry.order_id).first().as_dict()
-			data['user'] = entry.user.include_photos().as_dict()
+			data['payment'] = payment.as_dict()
+			data['user'] = orderverification.user.include_photos().as_dict()
 			_result.append(data)
 		return _result
 
@@ -260,6 +261,7 @@ class OrderVerificationService(BaseService):
 		emailservice = EmailService()		
 		orderverification_query = db.session.query(OrderVerification).filter_by(id=id)
 		orderverification = orderverification_query.first()
+		order = orderverification.order
 		if orderverification.is_used is not 1:
 			user_query = db.session.query(User).filter_by(id=orderverification.user_id)
 			user = user_query.first()
