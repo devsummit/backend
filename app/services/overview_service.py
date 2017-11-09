@@ -15,7 +15,7 @@ class OverviewService(BaseService):
         }
 
     def getAttendees(self):
-        count = db.engine.execute('select coalesce(count(*),0) from user_tickets where ticket_id < 4').first()
+        count = db.engine.execute('select coalesce(count(*),0) from user_tickets where ticket_id <= 4').first()
         return {
             'count': int(count[0].__str__()),
         }
