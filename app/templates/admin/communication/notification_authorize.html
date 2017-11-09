@@ -43,10 +43,13 @@
     $('.btn-send').click(function(event){
         const username = $('#username').val();
         const password = $('.confirm-password').val();
-        const payloads = {  
+        const audience = $('#notification-audience').find(":selected").val();
+
+        const payloads = {
             "username": username,
             "password": password
         }
+        console.log('payloads', payloads);
         dsa.authorize('admin/authorize', payloads, function(result){
             if(result.meta.success){
                 const title = $('#title').val()
@@ -55,12 +58,15 @@
                 if(title.trim().length >= 0 && content.trim().length > 0){
                     const payloads = {
                         'message': content,
-                        'type': title
+                        'type': title,
+                        'audience': audience
                     }
                     dsa.post('admin/broadcastnotification', payloads, function(result){
                         if(result.meta.success){
                             alert('Notification broadcasted!')
                             window.location = '/notification'
+                        } else {
+                            alert(result.meta.message)
                         }
                     })
                 }else{
