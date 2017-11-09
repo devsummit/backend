@@ -692,3 +692,12 @@ class UserService(BaseService):
 		else:
 			code = secrets.token_hex(count)
 			return code.upper()
+
+	def get_attendees(self):
+		response = ResponseBuilder()
+		_results = []
+		attendees = db.session.query(User).filter(User.role_id == 7).all()
+		for attendee in attendees:
+			_results.append(attendee.include_photos().as_dict())
+		return response.set_data(_results).set_message('Attendees retrieved successfully').build()
+
