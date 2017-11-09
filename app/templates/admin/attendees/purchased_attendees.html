@@ -1,0 +1,91 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Attendees list </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Attendees
+        <small>User Who Have Successfully Get Their Ticket</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Attendees</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        
+        <div class="box-body">
+            <table id="attendee-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Order Id</th>
+                    <th>Referal Code</th>
+                    <th>Ticket Code</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for attendee in attendees %}
+                    <tr>
+                        <td>
+                            <a href="" id='atd-{{ attendee.id }}' class="attendees-name">{{ attendee.last_name + ', ' + attendee.first_name|e }}</a> 
+                        </td>
+                        <td>
+                            {{ attendee.username|e }}
+                        </td>
+                        <td>
+                            {{ attendee.email|e }}
+                        </td>
+                        <td>
+                            {% for order in attendee.orders %}
+                                {{ order.id|e }} <br/>
+                            {% endfor %}
+                        </td>
+                        </td>
+                        <td>
+                            {% for order in attendee.orders %}
+                                {% if order.referal %}
+                                    {{ order.referal.referal_code|e }} <br/>
+                                {% else %}
+                                    - <br/>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        </td>
+                        <td>
+                            {% for ticket in attendee.tickets %}
+                                {{ ticket.ticket_code|e }} <br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    $(function () {
+        $('#attendee-list1').DataTable();
+    })
+</script>
+
+{% endblock %}

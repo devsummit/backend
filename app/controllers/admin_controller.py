@@ -1,9 +1,10 @@
+from flask_mail import Message
 from app.controllers.base_controller import BaseController
 from app.services import userservice
+from app.models import db, mail
 from app.models.user import User
 from app.services import fcmservice
-from flask_mail import Message
-from app.models import mail
+from app.configs.constants import ROLE
 
 
 class AdminController(BaseController):
@@ -25,10 +26,18 @@ class AdminController(BaseController):
     @staticmethod
     def broadcast_notification(requests, user):
         message = requests.json['message'] if 'message' in requests.json else None
-        attachment = requests.json['attachment'] if 'attachment' in requests.json else None
+        audience = requests.json['audience'] if 'audience' in requests.json else None
         type = requests.json['type'] if 'type' in requests.json else None
+        result = None
         if message and type:
-            result = fcmservice.broadcast_notification(type, message, user['id'])
+            if audience == 'users':
+                result = fcmservice.broadcast_notification(type, message, user['id'])
+            elif audience == 'hackers':
+                hackers = db.session.query(User).filter(User.role_id == ROLE['hackaton']).all()
+                if len(hackers) < 1:
+                    return BaseController.send_error_api(None, 'No hackaton user found')
+                for hacker in hackers:
+                    result = fcmservice.send_single_notification(type, message, hacker.id, 1)
         else:
             return BaseController.send_error_api(None, 'payload not valid')
         if result['error']:

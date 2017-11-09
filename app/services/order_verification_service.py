@@ -202,7 +202,8 @@ class OrderVerificationService(BaseService):
 				UserTicketService().create(payload)
 				self.create_booth(user)
 				user_query.update({
-					'role_id': ROLE['booth']
+					'role_id': ROLE['booth'],
+					'updated_at': datetime.datetime.now()
 				})
 				redeem_payload = {}
 				redeem_payload['ticket_id'] = items[0].ticket_id
@@ -219,7 +220,8 @@ class OrderVerificationService(BaseService):
 				payload['ticket_id'] = items[0].ticket_id
 				UserTicketService().create(payload)
 				user_query.update({
-					'role_id': ROLE['hackaton']
+					'role_id': ROLE['hackaton'],
+					'updated_at': datetime.datetime.now()
 				})
 				send_notification = FCMService().send_single_notification('Hackaton Status', 'Congratulations you are accepted to join our hackaton. Further information can be seen at your registered email.', user.id, ROLE['admin'])
 				mail_template = EmailPurchase()
@@ -241,6 +243,7 @@ class OrderVerificationService(BaseService):
 					mail.send(email)
 
 			order_query.update({
+				'updated_at': datetime.datetime.now(),
 				'status': 'paid'
 			})
 			payment_query = db.session.query(Payment).filter_by(order_id=order.id)
@@ -273,7 +276,8 @@ class OrderVerificationService(BaseService):
 				UserTicketService().create(payload)
 				self.create_booth(user)
 				user_query.update({
-					'role_id': ROLE['booth']
+					'role_id': ROLE['booth'],
+					'updated_at': datetime.datetime.now()
 				})
 				redeem_payload = {}
 				redeem_payload['ticket_id'] = items[0].ticket_id
@@ -290,7 +294,8 @@ class OrderVerificationService(BaseService):
 				payload['ticket_id'] = items[0].ticket_id
 				UserTicketService().create(payload)
 				user_query.update({
-					'role_id': ROLE['hackaton']
+					'role_id': ROLE['hackaton'],
+					'updated_at': datetime.datetime.now()
 				})
 				send_notification = FCMService().send_single_notification('Hackaton Status', 'Congratulations you are accepted to join our hackaton. Further information can be seen at your registered email.', user.id, ROLE['admin'])
 				mail_template = EmailPurchase()
@@ -312,14 +317,17 @@ class OrderVerificationService(BaseService):
 					mail.send(email)
 
 			orderverification_query.update({
-				'is_used': 1
+				'is_used': 1,
+				'updated_at': datetime.datetime.now()
 			})
 			payment_query = db.session.query(Payment).filter_by(order_id=orderverification.order_id)
 			payment_query.update({
+				'updated_at': datetime.datetime.now(),
 				'transaction_status': 'captured'
 			})
 			completed_order = db.session.query(Order).filter_by(id=orderverification.order_id)
 			completed_order.update({
+				'updated_at': datetime.datetime.now(),
 				'status': 'paid'
 			})
 			db.session.commit()

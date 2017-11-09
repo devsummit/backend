@@ -30,6 +30,11 @@ def get_attendees():
     return MainController.getAttendees()
 
 
+@main.route('/purchased-attendees')
+def get_purchased_attendees():
+    return MainController.getPurchasedAttendees()
+
+
 @main.route('/payments')
 def getPayments():
     return MainController.getPayments()

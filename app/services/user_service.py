@@ -14,10 +14,12 @@ from app.models.access_token import AccessToken
 from app.models.user import User
 from app.models.user_booth import UserBooth
 from app.models.user_photo import UserPhoto
+from app.models.user_ticket import UserTicket
 from app.models.booth import Booth  # noqa
 from app.models.attendee import Attendee  # noqa
 from app.models.speaker import Speaker  # noqa
 from app.models.client import Client
+from app.models.order import Order
 from app.models.ambassador import Ambassador  # noqa
 from app.models.redeem_code import RedeemCode  # noqa
 from app.configs.constants import ROLE  # noqa
@@ -701,3 +703,21 @@ class UserService(BaseService):
 			_results.append(attendee.include_photos().as_dict())
 		return response.set_data(_results).set_message('Attendees retrieved successfully').build()
 
+	def get_purchased_attendees(self):
+		response = ResponseBuilder()
+		_results = []
+		users = db.session.query(User, Order).join(Order).filter(Order.status == 'paid').group_by(User.id)
+		for user, order in users.all():
+			data = user.as_dict()
+			tickets = db.session.query(UserTicket).filter(UserTicket.user_id == user.id).all()
+			orders = db.session.query(Order).filter(Order.user_id == user.id, Order.status == 'paid').all()
+			data['orders'] = []
+			data['tickets'] = []
+			for order in orders:
+				datum = order.as_dict()
+				datum['referal'] = order.referal.as_dict() if order.referal else None
+				data['orders'].append(datum)
+			for ticket in tickets:
+				data['tickets'].append(ticket.as_dict())
+			_results.append(data)
+		return response.set_data(_results).build()
