@@ -24,6 +24,7 @@
                     <th>Email</th>
                     <th>Username</th>
                     <th>Role</th>
+                    <th>Photo</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -31,7 +32,7 @@
                 {% for account in accounts %}
                 <tr>
                     <td>
-                        {{ account['last_name']|e + ', ' + account['first_name']|e }}
+                        {{ account.last_name|e + ', ' + account.first_name|e }}
                     </td>
                     <td>
                         {{ account.email|e }}
@@ -41,6 +42,9 @@
                     </td>
                     <td>
                         {{ account.role['name']|e }}
+                    </td>
+                    <td>
+                        <img src="{{account.photos[0].url|e}}" height="120px" width="100px" alt='user photo'>
                     </td>
                     <td>
                         <button id='bte-{{ account.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-input">
