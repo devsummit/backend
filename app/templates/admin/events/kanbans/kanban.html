@@ -31,9 +31,8 @@
     <script>
         // check if user is login when enter this page
         // use dsa client from auth.js
-        if (!dsa.isLogin()) {
-            window.location.href = '/login';
-        }
+        dsa.isLogin(function(){
+        });
 
         $('#logOutBtn').click((event) => {
             dsa.logout();
