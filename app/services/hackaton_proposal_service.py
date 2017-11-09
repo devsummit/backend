@@ -65,7 +65,6 @@ class HackatonProposalService(BaseService):
 			return response.set_data(data).set_error(True).build()		
 
 	def check_hackaton_proposal_exist(self, user_id):
-		order_ids = db.session.query(Order.id).filter_by(user_id=user_id)
 		hackaton_proposal = db.session.query(HackatonProposal).join(Order).filter(Order.user_id == user_id).first()
 		if hackaton_proposal:
 			return True
