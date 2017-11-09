@@ -13,6 +13,7 @@ from app.models.payment import Payment
 from app.models.referal import Referal
 from app.services.hackaton_proposal_service import HackatonProposalService
 from app.configs.constants import PAYPAL, ROLE  # noqa
+from app.configs.settings import LOCAL_TIME_ZONE
 from app.models.order_details import OrderDetails
 from app.models.order_verification import OrderVerification
 
@@ -58,10 +59,11 @@ class OrderService():
 
 	def unverified_order(self):
 		response = ResponseBuilder()
-		orders = db.session.query(Order).filter(Order.status != 'paid').all()
+		orders = db.session.query(Order).filter(Order.status != 'paid').order_by(Order.created_at.desc()).all()
 		results = []
 		for order in orders:
 			data = order.as_dict()
+			data = self.transformTimeZone(data)
 			data['user'] = order.user.as_dict()
 			if order.referal is not None:
 				data['referal'] = order.referal.as_dict()
@@ -200,3 +202,11 @@ class OrderService():
 
 	def get_ticket(self, id):
 		return db.session.query(Ticket).filter_by(id=id).first()
+
+	def transformTimeZone(self, obj):
+		entry = obj
+		created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
+		entry['created_at'] = str(created_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
+		updated_at_timezoned = datetime.datetime.strptime(entry['updated_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
+		entry['updated_at'] = str(updated_at_timezoned).rsplit('.', maxsplit=1)[0] + " WIB"
+		return entry
