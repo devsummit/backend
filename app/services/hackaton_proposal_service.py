@@ -106,6 +106,19 @@ class HackatonProposalService(BaseService):
 			data = e.orig.args
 			return response.set_data(data).set_error(True).build()
 
+	def resend_email(self, payloads):
+		response = ResponseBuilder()
+		emailservice = EmailService()
+		hackaton_proposal = db.session.query(HackatonProposal).filter(HackatonProposal.order_id == payloads['order_id']).first()
+		if hackaton_proposal is None:
+			return response.set_error(True).set_data(None).set_message('proposal not found').build()
+		mail_template = EmailHackaton()
+		user = hackaton_proposal.order.user
+		template = mail_template.build(user.first_name + ' ' + user.last_name)
+		email = emailservice.set_recipient(user.email).set_subject('Indonesia Developer Summit 2017 Hackathon').set_sender('noreply@devsummit.io').set_html(template).build()
+		mail.send(email)
+		return response.set_data(None).set_message('email has been sent to: ' + user.email).build()
+
 	def transformTimeZone(self, obj):
 		entry = obj
 		created_at_timezoned = datetime.datetime.strptime(entry['created_at'], "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=LOCAL_TIME_ZONE)
