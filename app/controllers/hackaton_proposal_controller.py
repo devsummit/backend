@@ -35,3 +35,14 @@ class HackatonProposalController(BaseController):
 			return BaseController.send_error_api(result['data'], result['message'])
 		return BaseController.send_response_api(result['data'], result['message'])
 
+	@staticmethod
+	def resend_email(order_id):
+		if order_id is None:
+			return BaseController.send_error_api(None, 'invalid payload')
+		payloads = {
+			'order_id': order_id
+		}
+		result = hackatonproposalservice.resend_email(payloads)
+		if result['error']:
+			return BaseController.send_error_api(result['data'], result['message'])
+		return BaseController.send_response_api(result['data'], result['message'])
