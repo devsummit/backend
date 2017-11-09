@@ -50,7 +50,7 @@ class MainController(BaseController):
         return render_template('admin/base/overview.html', overview=overview)
 
     def getAttendees():
-        attendees = attendeeservice.get(request)
+        attendees = userservice.get_attendees()
         return render_template('admin/attendees/attendees.html', attendees=attendees['data'])
 
     def getHackatonProposal():
