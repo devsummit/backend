@@ -11,7 +11,7 @@
     const baseStorage = 'devsummitadmin';
 
     const ajaxObj = (url, methodType, payloads, onSuccess) => ({
-        url : 'api/v1/'+url,
+        url : '/api/v1/'+url,
         type: methodType,
         data: payloads ? JSON.stringify(payloads) : '',
         contentType: "application/json; charset=utf-8",
