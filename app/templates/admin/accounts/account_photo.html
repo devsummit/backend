@@ -1,0 +1,67 @@
+<div class="modal fade" id="modal-photo">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Default title</h4>
+        </div>
+        <div class="modal-body">
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item">
+                                    <div class="form-group">
+                                        <label for="account-photo">Photo:</label>
+                                         <input class="input-file e-account-photo" id="e-fileInput" type="file" name="file">
+                                         <img id='e-img-upload' style="width: 300px; height: 200px" />
+                                    </div>
+                                </li>
+                            </ul>
+                        <a href="#" class="btn btn-primary btn-block btn-photo-save" id="-"><b>Save</b></a>
+        
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- page script -->
+<script>
+    /* Save edit account */   
+    $('.btn-photo-save').click(function(event){
+        const id = $(this).attr('id');
+        const formdata = new FormData();
+        formdata.append('image_file', $('#e-fileInput')[0].files[0])
+        dsa.patchForm('usersphoto/' + id, formdata, function(result) {
+            if(result.meta.success) {
+                window.location = "/accounts";
+            }
+        });
+    })
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                $('#e-img-upload').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#e-fileInput").change(function(){
+        readURL(this);
+    }); 
+    $(function () {
+        $('#partner-list1').DataTable();
+    })
+</script>
