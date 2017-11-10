@@ -1,5 +1,5 @@
 import oauth2 as oauth
-import json
+import json, os
 import requests
 import datetime
 import secrets
@@ -7,6 +7,7 @@ import urllib
 
 from app.models import db
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug import secure_filename
 from sqlalchemy import or_
 from flask import request, current_app
 from app.models import mail
@@ -210,19 +211,14 @@ class UserService(BaseService):
 
 
 	def list_user(self, request, admin=False):
-		self.total_items = User.query.count()
-		if request.args.get('page'):
-			self.page = request.args.get('page')
-		else:
-			self.perpage = self.total_items
-			self.page = 1
-		self.base_url = request.base_url if not admin else request.url_root + 'users'
-		paginate = super().paginate(db.session.query(User))
-		paginate = super().include(['role'])
 		response = ResponseBuilder()
-		result = response.set_data(paginate['data']).set_links(
-			paginate['links']).build()
-		return result
+		_results = []
+		users = db.session.query(User).all()
+		for user in users:
+			data = user.include_photos().as_dict()
+			data['role'] = user.role.as_dict()
+			_results.append(data)
+		return response.set_data(_results).build()
 
 	def list_hackaton_attendee(self):
 		response = ResponseBuilder()
@@ -346,6 +342,45 @@ class UserService(BaseService):
 			# user with social_id exist
 			# return the user
 			return self.model_user
+		else:
+			return None
+
+	def update_photo(self, payloads, id):
+		response = ResponseBuilder()
+		try:
+			user_photo = db.session.query(UserPhoto).filter_by(user_id=id)
+			file = payloads['photo']
+			photo = None
+			photo = self.save_file(file, id)
+			if user_photo.first() is None:
+				user_photo = UserPhoto()
+				user_photo.user_id = id
+				user_photo.url = photo
+				db.session.add(user_photo)
+				db.session.commit()
+				return response.set_message('Photo updated').set_data(None).build()
+			if photo:
+				user_photo.update({
+					'url': photo,
+					'updated_at': datetime.datetime.now()
+				})
+			db.session.commit()
+			data = user_photo.first().as_dict()
+			return response.set_data(data).build()
+		except SQLAlchemyError as e:
+			data = e
+			return response.set_error(True).set_data(data).build()
+
+	def save_file(self, file, id=None):
+		if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
+				filename = secure_filename(file.filename)
+				filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
+				file.save(os.path.join(current_app.config['POST_USER_PHOTO_DEST'], filename))
+				if id:
+					temp_user = db.session.query(UserPhoto).filter(UserPhoto.user_id == id).first()
+					if temp_user and temp_user.url:
+						Helper().silent_remove(current_app.config['STATIC_DEST'] + temp_user.url)
+				return current_app.config['SAVE_USER_PHOTO_DEST'] + filename
 		else:
 			return None
 

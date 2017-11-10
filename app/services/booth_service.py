@@ -72,7 +72,7 @@ class BoothService(BaseService):
 				'summary': payloads['summary']
 			})
 			if payloads['logo']:
-				photo = self.save_file(payloads['logo'])
+				photo = self.save_file(payloads['logo'], booth_id)
 				self.model_booth.update({
 					'logo_url': photo
 				})
@@ -89,13 +89,13 @@ class BoothService(BaseService):
 		if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
 				filename = secure_filename(file.filename)
 				filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
-				file.save(os.path.join(current_app.config['POST_PARTNER_PHOTO_DEST'], filename))
+				file.save(os.path.join(current_app.config['POST_BOOTH_PHOTO_DEST'], filename))
 				if id:
-					temp_partner = db.session.query(Partner).filter_by(id=id).first()
-					partner_photo = temp_partner.as_dict() if temp_partner else None
-					if partner_photo is not None and partner_photo['photo'] is not None:
-						Helper().silent_remove(current_app.config['STATIC_DEST'] + partner_photo['photo'])
-				return current_app.config['SAVE_PARTNER_PHOTO_DEST'] + filename
+					temp_booth = db.session.query(Booth).filter_by(id=id).first()
+					booth_photo = temp_booth.as_dict() if temp_booth else None
+					if booth_photo is not None and booth_photo['logo_url'] is not None:
+						Helper().silent_remove(current_app.config['STATIC_DEST'] + booth_photo['logo_url'])
+				return current_app.config['SAVE_BOOTH_PHOTO_DEST'] + filename
 		else:
 			return None
 

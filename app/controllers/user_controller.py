@@ -56,6 +56,22 @@ class UserController(BaseController):
             return BaseController.send_error_api(None, result['data'])
 
     @staticmethod
+    def update_photo(id, request):
+        photo = request.files['image_file'] if 'image_file' in request.files else None
+        if photo:
+            payloads = {
+                'photo': photo
+            }
+        else:
+            return BaseController.send_error_api(None, 'invalid payload')
+
+        result = userservice.update_photo(payloads, id)
+
+        if not result['error']:
+            return BaseController.send_response_api(result['data'], 'user succesfully updated')
+        return BaseController.send_error_api(None, result['data'])
+
+    @staticmethod
     def add(request):
         first_name = request.json['first_name'] if 'first_name' in request.json else None
         last_name = request.json['last_name'] if 'last_name' in request.json else ''

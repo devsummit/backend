@@ -21,7 +21,7 @@
                                 <div class="form-group">
                                     <label for="event-title">Select Entry:</label>
                                     <select class="add-codeable-id form-control" id="add-codeable-id">
-                                        </select>
+                                    </select>
                                 </div>
                             </li>
                             <li class="list-group-item">
@@ -58,15 +58,21 @@
 <script>
     /* Display Attendee Detail */
     $('.btn-save-add').click(function (event) {
+        const type = $('.add-codeable-type').val();
+        var codeable_id = $('.add-codeable-id').val();
+        if (type == 'user') {
+            codeable_id = 1;
+        }
         payload = {
-            'codeable_type': $('.add-codeable-type').val(),
-            'codeable_id': $('.add-codeable-id').val(),
+            'codeable_type': type,
+            'codeable_id': codeable_id,
             'count': $('.add-count').val()
         };
         if(confirm('generate redeem code?')) {
             dsa.post('redeemcodes', payload, function (result) {
+                console.log(result)
                 if (result.meta.success) {
-                    location.reload()
+                    window.location = '/redeemcodes';
                 }
             });
         }
@@ -92,9 +98,7 @@
                         participant.append(option);
                     })
                 });
-            } else if (selected == 'user') {
-                $('#add-codeable-id').val(1);
-                } 
+            }
         } 
     })
 
