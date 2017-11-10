@@ -62,12 +62,15 @@ class SponsorTemplateService(BaseService):
         sponsor = db.session.query(Sponsor).filter_by(id=sponsor_id).first()
         try:
             sponsor_template = db.session.query(SponsorTemplate).filter_by(sponsor_id=sponsor_id)
-            attachment = self.save_file(payloads['attachment']) if payloads['attachment'] is not None else None
             sponsor_template.update({
                 'message': payloads['message'],
-                'attachment': attachment,
                 'redirect_url': payloads['redirect_url']
             })
+            if payloads['attachment']:
+                attachment = self.save_file(payloads['attachment']) if payloads['attachment'] is not None else None
+                sponsor_template.update({
+                    'attachment': attachment
+                })
             db.session.commit()
             data = sponsor_template.first().as_dict()
             data['sponsor'] = sponsor.as_dict()

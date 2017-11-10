@@ -96,7 +96,7 @@
                 const data = result['data']
                 $('#e-message').val(data['message'])
                 $('#e-redirect-url').val(data['redirect_url'])
-                $("#e-img-upload").attr("src", data['attachment']);
+                $("#e-img-upload").attr("src", '/static/' + data['attachment']);
                 $('#e-attachment').val(data['attachment'] ? data['attachment'] : '-');
             })
         })
