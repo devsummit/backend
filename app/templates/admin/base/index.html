@@ -44,14 +44,12 @@
 <body class="hold-transition skin-yellow sidebar-mini">
 
     <script>
-        
-        // check if user is login when enter this page
-        // use dsa client from auth.js
-        
         dsa.isLogin(function(result){
-          console.log("login result", Boolean(result))
+          console.log("login result", result)
+          if (!result) {
+            window.location.href = "/";
+          }
         });
-
         var init = dsa.initialize();
         
       

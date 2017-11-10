@@ -117,7 +117,7 @@
               dsa.login(payloads, function(success, result){
                 if(success) {
                   showInfo('label-success', 'Login success');
-                  window.location.href = '/';
+                  window.location.href = '/home';
                 } else {
                   showInfo('label-danger', result.meta.message);
                   grecaptcha.reset(captchaWG)
