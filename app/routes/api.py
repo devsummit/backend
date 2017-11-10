@@ -162,13 +162,15 @@ def beacon(*args, **kwargs):
 
 
 # Beacon route by id
-@api.route('/beacons/<id>', methods=['PUT', 'PATCH', 'DELETE'])
+@api.route('/beacons/<id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 @token_required
 def beacon_id(id, *args, **kwargs):
     if(request.method == 'PUT' or request.method == 'PATCH'):
         return BeaconController.update(request, id)
     elif(request.method == 'DELETE'):
         return BeaconController.delete(id)
+    elif(request.method == 'GET'):
+        return BeaconController.show(id)
 
 
 # Spot api
