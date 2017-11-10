@@ -558,6 +558,16 @@ def users(*args, **kwargs):
         return UserController.index(request)
 
 
+@api.route('/usersphoto/<id>', methods=['PUT', 'PATCH'])
+@token_required
+def update_user_photo(id, *args, **kwargs):
+    # implement here
+    user = kwargs['user']
+    if (user.role_id != ROLE['admin']):
+        return Response(json.dumps({'message': 'unauthorized'}), status=401, mimetype='application/json')
+    return UserController.update_photo(id, request)
+
+
 # User detail/ route by id
 @api.route('/users/<id>', methods=['GET'])
 @token_required
