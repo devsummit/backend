@@ -741,8 +741,8 @@ class UserService(BaseService):
 	def get_purchased_attendees(self):
 		response = ResponseBuilder()
 		_results = []
-		users = db.session.query(User, Order).join(Order).filter(Order.status == 'paid').group_by(User.id)
-		for user, order in users.all():
+		users = db.session.query(User).join(Order).filter(Order.status == 'paid').group_by(User.id)
+		for user in users.all():
 			data = user.as_dict()
 			tickets = db.session.query(UserTicket).filter(UserTicket.user_id == user.id).all()
 			orders = db.session.query(Order).filter(Order.user_id == user.id, Order.status == 'paid').all()
