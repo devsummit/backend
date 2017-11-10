@@ -97,12 +97,11 @@ class SpeakerService():
         if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
                 filename = secure_filename(file.filename)
                 filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
-                file.save(os.path.join(current_app.config['POST_PARTNER_PHOTO_DEST'], filename))
+                file.save(os.path.join(current_app.config['POST_USER_PHOTO_DEST'], filename))
                 if id:
-                    temp_partner = db.session.query(Partner).filter_by(id=id).first()
-                    partner_photo = temp_partner.as_dict() if temp_partner else None
-                    if partner_photo is not None and partner_photo['photo'] is not None:
-                        Helper().silent_remove(current_app.config['STATIC_DEST'] + partner_photo['photo'])
-                return current_app.config['SAVE_PARTNER_PHOTO_DEST'] + filename
+                    temp_user = db.session.query(UserPhoto).filter(UserPhoto.user_id == id).first()
+                    if temp_user and temp_user.url:
+                        Helper().silent_remove(current_app.config['STATIC_DEST'] + temp_user.url)
+                return current_app.config['SAVE_USER_PHOTO_DEST'] + filename
         else:
             return None
