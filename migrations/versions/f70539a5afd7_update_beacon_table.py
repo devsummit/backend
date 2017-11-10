@@ -17,11 +17,14 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column('beacons', sa.Column('action', sa.String(120)))
-    op.add_column('beacons', sa.Column('identifier', sa.String(255)))
+    op.add_column('beacons', sa.Column('type', sa.String(120)))
+    op.add_column('beacons', sa.Column('description', sa.Text))
+    op.add_column('beacons', sa.Column('type_id', sa.String(255)))
+    op.alter_column('beacons', 'code', existing_type=sa.String(255), nullable=False, new_column_name='uuid')
 
 
 def downgrade():
-    op.drop_column('beacons', 'identifier')
-    op.drop_column('beacons', 'action')
-    
+    op.drop_column('beacons', 'type')
+    op.drop_column('beacons', 'type_id')
+    op.drop_column('beacons', 'description')
+    op.alter_column('beacons', 'uuid', existing_type=sa.String(255), nullable=False, new_column_name='code')
