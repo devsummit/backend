@@ -29,6 +29,7 @@ from app.services import tickettransferservice
 from app.services import hackatonproposalservice
 from app.configs.constants import ROLE
 from app.controllers.partner_pj_controller import PartnerPjController
+from app.services import beaconservice
 
 class MainController(BaseController):
 
@@ -225,30 +226,13 @@ class MainController(BaseController):
         referal_info = PartnerPjController.admin_get_info(id)
         return render_template('admin/referals/referal_details.html', referal_info=referal_info)
 
-    def beacon_list():
-        beacons =  [
-            {
-            "uuid": "775823475873240543758432",
-            "description": "some description",
-            "type": "booth",
-            "type_id": 1,
-            },
-            {
-            "uuid": "589234754237583472587348",
-            "description": "some description 2",
-            "type": "booth",
-            "type_id": 2,
-            }
-        ]
-        return render_template('admin/beacon/beacon.html', beacons=beacons)
+    def region_list():
+        beacons =  beaconservice.get()
+        return render_template('admin/beacon/region.html', beacons=beacons)
 
-    def beacon_show(id):
-        beacon = {
-            "uuid": "589234754237583472587348",
-            "description": "some description 2",
-            "type": "booth",
-            "type_id": 2,
-        }
-        return render_template("admin/beacon/beacon_detail.html", beacon=beacon)
-        
-        
+    def region_show(id):
+        beacon = beaconservice.show(id)
+        return render_template("admin/beacon/region_detail.html", beacon=beacon)
+    
+    def region_add():
+        return render_template("admin/beacon/region_add.html")
