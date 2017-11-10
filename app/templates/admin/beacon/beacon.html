@@ -1,0 +1,70 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Beacon list </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Beacon
+        <small>List of registered beacon</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Beacon</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+            <table id="beacon-list1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>UUID</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Type-ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for beacon in beacons %}
+                    <tr>
+                        <td>
+                            <a href="/beacons/{{ beacon.uuid }}" id='atd-{{ beacon.uuid }}' class="beacon-uuid">{{ beacon.uuid|e }}</a> 
+                        </td>
+                        <td>
+                            {{ beacon.description|e }}
+                        </td>
+                        <td>
+                            {{ beacon.type|e }}
+                        </td>
+                        <td>
+                            {{ beacon.type_id }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_link %}
+<!-- DataTables -->
+<script src="{{ url_for('static', filename='assets/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+
+<!-- page script -->
+<script>
+    $(function () {
+        $('#beacon-list1').DataTable();
+    })
+</script>
+
+{% endblock %}

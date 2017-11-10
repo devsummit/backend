@@ -224,3 +224,31 @@ class MainController(BaseController):
     def get_referal_info(id):
         referal_info = PartnerPjController.admin_get_info(id)
         return render_template('admin/referals/referal_details.html', referal_info=referal_info)
+
+    def beacon_list():
+        beacons =  [
+            {
+            "uuid": "775823475873240543758432",
+            "description": "some description",
+            "type": "booth",
+            "type_id": 1,
+            },
+            {
+            "uuid": "589234754237583472587348",
+            "description": "some description 2",
+            "type": "booth",
+            "type_id": 2,
+            }
+        ]
+        return render_template('admin/beacon/beacon.html', beacons=beacons)
+
+    def beacon_show(id):
+        beacon = {
+            "uuid": "589234754237583472587348",
+            "description": "some description 2",
+            "type": "booth",
+            "type_id": 2,
+        }
+        return render_template("admin/beacon/beacon_detail.html", beacon=beacon)
+        
+        
