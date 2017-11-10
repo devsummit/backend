@@ -32,6 +32,9 @@ from app.controllers.partner_pj_controller import PartnerPjController
 
 class MainController(BaseController):
 
+    def login():
+        return render_template('admin/auth/login.html', overview=overview)
+
     def index():
         attendees = overviewservice.getAttendees()
         users = overviewservice.getUsers()

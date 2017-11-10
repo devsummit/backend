@@ -19,8 +19,7 @@ def init(param, *args, **kwargs):
 def not_found():
     return render_template("admin/base/404.html")
 
-
-@main.route('/')
+@main.route('/home')
 def index(*args, **kwargs):
     return MainController.index()
 
@@ -60,10 +59,13 @@ def get_booths():
     return MainController.getBooths()
 
 
-@main.route('/login')
+@main.route('/')
 def login():
     return render_template('admin/auth/login.html')
 
+@main.route('/login')
+def gotologin():
+    return render_template('admin/auth/login.html')
 
 @main.route('/accounts')
 def get_accounts():
