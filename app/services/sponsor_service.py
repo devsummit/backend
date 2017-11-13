@@ -179,9 +179,10 @@ class SponsorService(BaseService):
 
     def save_file(self, file, id=None):
         image = Image.open(file, 'r')
+
         if file and Helper().allowed_file(file.filename, current_app.config['ALLOWED_EXTENSIONS']):
             if (Helper().allowed_file(file.filename, ['jpg', 'jpeg', 'png'])):
-                image = image.convert("RGB")
+                image = image.convert("RGBA")
             filename = secure_filename(file.filename)
             filename = Helper().time_string() + "_" + file.filename.replace(" ", "_")
             image.save(os.path.join(current_app.config['POST_SPONSOR_PIC_DEST'], filename), quality=IMAGE_QUALITY, optimize=True)
