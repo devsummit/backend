@@ -25,6 +25,12 @@
                             </li>
                             <li class="list-group-item">
                                 <div class="form-group">
+                                    <label for="e-booth-website">Booth website:</label>
+                                    <input type="text" class="form-control e-booth-website" id="e-booth-website">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="form-group">
                                     <label for="e-booth-points">Booth points:</label>
                                     <input type="text" class="form-control e-booth-points" id="e-booth-points">
                                 </div>
@@ -61,6 +67,7 @@
         formdata.append('logo', $('#e-fileInput')[0].files[0])
         formdata.append('name', $('.e-booth-name').val())
         formdata.append('summary', $('.e-booth-summary').val())
+        formdata.append('url', $('.e-booth-website').val())
         formdata.append('points', $('.e-booth-points').val())
         formdata.append('stage_id', $('.booth-stages').val() > 0 ? parseInt($('.booth-stages').val()) : -1)
         formdata.append('user_id', $('.booth-user-id').val())
