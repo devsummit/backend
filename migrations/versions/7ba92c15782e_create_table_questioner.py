@@ -21,7 +21,7 @@ def upgrade():
                     sa.Column('id', sa.Integer, primary_key=True),
                     sa.Column('booth_id', sa.Integer, sa.ForeignKey(
                         'booths.id', ondelete='CASCADE')),
-                    sa.Column('question', sa.Text),
+                    sa.Column('questions', sa.Text),
                     sa.Column('created_at', sa.DateTime),
                     sa.Column('updated_at', sa.DateTime)
                     )
