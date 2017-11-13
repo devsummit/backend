@@ -1233,13 +1233,21 @@ def event_brite_hook():
 
 
 @api.route('/questioners', methods=['GET', 'POST'])
-def questioner_index():
+@token_required
+def questioner_index(*args, **kwargs):
     if request.method=="GET":
         return QuestionerController.index()
-    return QuestionerController.patch(request, None)
+    return QuestionerController.patch(None, request)
 
 @api.route('/questioners/<id>', methods=['GET', 'POST'])
-def questioners_show(id):
+@token_required
+def questioners_show(id, *args, **kwargs):
     if request.method=="GET":
         return QuestionerController.show(id)
     return QuestionerController.patch(id, request)
+
+@api.route('/questioners/<id>/answers', methods=['POST'])
+@token_required
+def questioner_post_answer(id, *args, **kwargs):
+    user = kwargs['user']
+    return QuestionerController.post_answer(id, user, request)

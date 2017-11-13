@@ -17,11 +17,26 @@ class QuestionerController(BaseController):
 	
 	@staticmethod
 	def patch(id, request):
-		if request.json['questions']:
+		# pyload should have keys: booth_id and questions 
+		if request.json['questions'] and request.json['booth_id']:
 			payload = {
+				'booth_id': request.json['booth_id'],
 				'questions': request.json['questions']
 			}
 			questioner = questionerservice.patch(id, payload)
-			return BaseController.send_response_api(questioner)
+			return BaseController.send_response_api(questioner, "questioner succesfully posted")
+		else:
+			return BaseController.send_error_api('payload not valid')
+
+	@staticmethod
+	def post_answer(id, user, request):
+		user_id = user.id
+		answers = request.json['answers']
+		if answers:
+			payload = {
+				'answers': answers
+			}
+			result = questionerservice.post_answer(id, user_id, payload)
+			return BaseController.send_response_api(result, "answer successfully posted")
 		else:
 			return BaseController.send_error_api('payload not valid')

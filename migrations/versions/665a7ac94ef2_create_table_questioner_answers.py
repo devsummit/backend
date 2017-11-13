@@ -19,9 +19,11 @@ depends_on = None
 def upgrade():
     op.create_table('questioner_answers',
                     sa.Column('id', sa.Integer, primary_key=True),
+                    sa.Column('user_id', sa.Integer, sa.ForeignKey(
+                        'users.id', ondelete='CASCADE')),
                     sa.Column('questioner_id', sa.Integer, sa.ForeignKey(
                         'questioners.id', ondelete='CASCADE')),
-                    sa.Column('answer', sa.Text),
+                    sa.Column('answers', sa.Text),
                     sa.Column('created_at', sa.DateTime),
                     sa.Column('updated_at', sa.DateTime)
                     )
