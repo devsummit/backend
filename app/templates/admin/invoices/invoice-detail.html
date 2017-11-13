@@ -111,6 +111,7 @@
             var price, sprice, currency
             if (invoiceData.included.payment) {
               price =  invoiceData.included.payment.payment_type === "paypal" ? data.ticket.usd_price : data.ticket.price
+              sprice = price.toLocaleString()
               currency = invoiceData.included.payment.payment_type === "paypal" ? "USD ": "IDR "
             } else {
               price = data.ticket.price
@@ -175,7 +176,7 @@
         var total = 0
         normalized.data.map((order) => {
           if (normalized.included.payment) {
-            total = normalized.included.payment.payment_type==="paypal" ? total + order.ticket.usd_price : total + order.ticket.price
+            total = normalized.included.payment.payment_type==="paypal" ? total + order.ticket.usd_price*order.count : total + order.ticket.price*order.count
           } else {
             total = total + order.ticket.price
           }
