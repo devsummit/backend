@@ -21,6 +21,7 @@ class BoothCheckinService():
 		checkin.user_id = payloads['user_id']
 		checkin.booth_type = payloads['booth_type']
 		checkin.booth_id = payloads['booth_id']
+		checkin.speed_dating = payloads['speed_dating']
 		db.session.add(checkin)
 		try:
 			db.session.commit()

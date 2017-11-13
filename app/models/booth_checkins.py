@@ -9,7 +9,7 @@ class BoothCheckin(db.Model, BaseModel):
 	__tablename__ = 'booth_checkins'
 
 	# visible fields
-	visible = ['id', 'user_id', 'booth_type', 'booth_id', 'created_at', 'updated_at']
+	visible = ['id', 'user_id', 'booth_type', 'booth_id', 'speed_dating', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -21,6 +21,7 @@ class BoothCheckin(db.Model, BaseModel):
 	user = db.relationship('User')
 	booth_type = db.Column(db.String)
 	booth_id = db.Column(db.String)
+	speed_dating = db.Column(db.Boolean)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
