@@ -18,7 +18,7 @@ class UserTicketService():
             }
 
         ticket = exist.ticket
-        if ticket.ticket_type == 'full':
+        if ticket.id in [1, 10, 6, 7, 8]:
             checked_in = db.session.query(CheckIn).filter_by(user_ticket_id=exist.id)
             if checked_in.first() is not None:
                 # update updated at
@@ -53,7 +53,7 @@ class UserTicketService():
         return {
             'error': True,
             'data': {'expired': True},
-            'message': 'Ticket has been checked in, cannot be used anymore'
+            'message': 'Ticket has been checked in at %s, cannot be used anymore' %checked_in.created_at
         }
 
     def create_checkin(self, user_ticket_id):
