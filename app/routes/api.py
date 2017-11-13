@@ -60,6 +60,7 @@ from app.controllers.event_brite_controller import EventBriteController
 from app.controllers.hackaton_proposal_controller import HackatonProposalController
 from app.controllers.booth_checkins_controller import BoothCheckinController
 from app.services.slack_service import SlackService
+from app.controllers.questioner_controller import QuestionerController
 from app.configs.constants import ROLE
 
 
@@ -1244,3 +1245,24 @@ def get_referal_info(id, *args, **kwargs):
 @api.route('/eventbrite/hook', methods=['POST'])
 def event_brite_hook():
     return EventBriteController.hook(request)
+
+
+@api.route('/questioners', methods=['GET', 'POST'])
+@token_required
+def questioner_index(*args, **kwargs):
+    if request.method=="GET":
+        return QuestionerController.index()
+    return QuestionerController.patch(None, request)
+
+@api.route('/questioners/<id>', methods=['GET', 'POST'])
+@token_required
+def questioners_show(id, *args, **kwargs):
+    if request.method=="GET":
+        return QuestionerController.show(id)
+    return QuestionerController.patch(id, request)
+
+@api.route('/questioners/<id>/answers', methods=['POST'])
+@token_required
+def questioner_post_answer(id, *args, **kwargs):
+    user = kwargs['user']
+    return QuestionerController.post_answer(id, user, request)
