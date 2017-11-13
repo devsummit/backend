@@ -3,6 +3,17 @@ from app.controllers.base_controller import BaseController
 
 
 class BoothCheckinController(BaseController):
+
+	@staticmethod
+	def get_guests(request, user):
+	    filter = request.args.get('speed_dating')
+	    if filter:
+	    	result = boothcheckinservice.filter_guests(user, filter)
+	    else:
+	    	result = boothcheckinservice.get_guests(user)
+	    if result['error']:
+	    	return BaseController.send_error_api(result['data'], result['message'])
+	    return BaseController.send_response_api(result['data'], result['message'])
 	
 	@staticmethod
 	def checkin(request, user_id):
