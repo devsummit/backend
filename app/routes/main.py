@@ -253,10 +253,16 @@ def reset_password_user():
 def referal_info(id):
     return MainController.get_referal_info(id)
 
-@main.route('/beacons')
-def beacon_list():
-    return MainController.beacon_list()
+@main.route('/regions')
+def region_list():
+    return MainController.region_list()
 
-@main.route('/beacons/<id>')
-def beacon_show(id):
-    return MainController.beacon_show(id)
+@main.route('/regions/<id>')
+def region_show(id):
+    return MainController.region_show(id)
+
+@main.route('/regions/create')
+def region_add():
+    return MainController.region_add()
+
+    
