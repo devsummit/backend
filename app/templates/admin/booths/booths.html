@@ -29,6 +29,7 @@
                         <th>Booth Name</th>
                         <th>Email</th>
                         <th>Summary</th>
+                        <th>website</th>
                         <th>Logo</th>
                         <th>Points</th>
                         <th>Actions</th>
@@ -53,6 +54,9 @@
                         </td>
                         <td>
                             {{ booth.summary }}
+                        </td>
+                        <td>
+                            {{ booth.url }}
                         </td>
                         <td>
                             <img src="{{booth.logo_url|e}}" height="120px" width="100px" alt='booth logo'>
@@ -94,6 +98,7 @@
                 selected_stage_id = data['stage'] ? data['stage'].id : null;
                 $('.e-booth-name').val(data['name']);
                 $('.e-booth-summary').val(data['summary']);
+                $('.e-booth-website').val(data['url']);
                 $('.e-booth-points').val(data['points']);
                 $('.e-booth-user-id').val(data['user_id']);
                 $('.btn-save-booth-edit').attr("id", id);

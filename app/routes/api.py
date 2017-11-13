@@ -58,6 +58,7 @@ from app.controllers.user_feedback_controller import UserFeedbackController
 from app.controllers.partner_pj_controller import PartnerPjController
 from app.controllers.event_brite_controller import EventBriteController
 from app.controllers.hackaton_proposal_controller import HackatonProposalController
+from app.controllers.booth_checkins_controller import BoothCheckinController
 from app.services.slack_service import SlackService
 from app.controllers.questioner_controller import QuestionerController
 from app.configs.constants import ROLE
@@ -533,6 +534,20 @@ def user_tickets(*args, **kwargs):
 @token_required
 def check_in(*args, **kwargs):
     return UserTicketController.check_in(request)
+
+
+@api.route('/boothcheckin', methods=['POST'])
+@token_required
+def booth_checkin(*args, **kwargs):
+    user = kwargs['user']
+    return BoothCheckinController.checkin(request, user.id)
+
+
+@api.route('/booth/guests', methods=['GET'])
+@token_required
+def booth_guests(*args, **kwargs):
+    user = kwargs['user']
+    return BoothCheckinController.get_guests(request, user)
 
 
 # Attendee api
