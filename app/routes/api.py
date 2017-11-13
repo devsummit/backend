@@ -542,6 +542,13 @@ def booth_checkin(*args, **kwargs):
     return BoothCheckinController.checkin(request, user.id)
 
 
+@api.route('/booth/guests', methods=['GET'])
+@token_required
+def booth_guests(*args, **kwargs):
+    user = kwargs['user']
+    return BoothCheckinController.get_guests(request, user)
+
+
 # Attendee api
 @api.route('/attendees', methods=['GET'])
 @token_required
