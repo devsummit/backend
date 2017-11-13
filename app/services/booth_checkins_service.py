@@ -40,6 +40,17 @@ class BoothCheckinService():
 			_results.append(data)
 		return response.set_data(_results).set_message('guests retrieved successfully').build()
 
+	def filter_guests(self, user, filter):
+		response = ResponseBuilder()
+		role, booth_id = self.get_booth_id(user)
+		guests = db.session.query(BoothCheckin).filter(BoothCheckin.booth_type == role, BoothCheckin.booth_id == booth_id, BoothCheckin.speed_dating == filter).all()
+		_results = []
+		for guest in guests:
+			data = guest.user.include_photos().as_dict()
+			data['checkin_details'] = guest.as_dict()
+			_results.append(data)
+		return response.set_data(_results).set_message('guests retrieved successfully').build()
+
 
 	def checkin(self, payloads):
 		response = ResponseBuilder()
