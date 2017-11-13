@@ -69,7 +69,8 @@ class BoothService(BaseService):
 				'name': payloads['name'],
 				'stage_id': payloads['stage_id'],
 				'points': payloads['points'],
-				'summary': payloads['summary']
+				'summary': payloads['summary'],
+				'url': payloads['url']
 			})
 			if payloads['logo']:
 				photo = self.save_file(payloads['logo'], booth_id)
@@ -141,6 +142,7 @@ class BoothService(BaseService):
 		self.model_booth.points = payloads['points']
 		self.model_booth.summary = payloads['summary']
 		self.model_booth.logo_url = payloads['logo_url']
+		self.model_booth.url = payloads['url']
 		db.session.add(self.model_booth)
 		try:
 			db.session.commit()
