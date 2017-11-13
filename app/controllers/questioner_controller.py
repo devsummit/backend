@@ -37,6 +37,9 @@ class QuestionerController(BaseController):
 				'answers': answers
 			}
 			result = questionerservice.post_answer(id, user_id, payload)
+			print("**********", result)
+			if result['error']:
+				return BaseController.send_error_api(result['data'], 'error post answer')
 			return BaseController.send_response_api(result, "answer successfully posted")
 		else:
 			return BaseController.send_error_api('payload not valid')
