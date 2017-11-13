@@ -40,13 +40,15 @@ class BoothController(BaseController):
             stage_id = None if int(stage_id) < 0 else stage_id
         points = request.form['points'] if 'points' in request.form else None
         summary = request.form['summary'] if 'summary' in request.form else ''
+        url = request.form['url'] if 'url' in request.form else ''
         logo = request.files['logo'] if 'logo' in request.files else None
-        if points and summary:
+        if points:
             payloads = {
                 'name': name,
                 'stage_id': stage_id,
                 'points': points,
                 'summary': summary,
+                'url': url,
                 'logo': logo
             }
         else:
@@ -66,6 +68,7 @@ class BoothController(BaseController):
         points = request.json['points'] if 'points' in request.json else 0
         summary = request.json['summary'] if 'summary' in request.json else None
         logo_url = request.json['logo_url'] if 'logo_url' in request.json else ''
+        url = request.json['url'] if 'url' in request.json else ''
 
         payloads = {
             'name': name,
@@ -73,7 +76,8 @@ class BoothController(BaseController):
             'stage_id': stage_id,
             'points': points,
             'summary': summary,
-            'logo_url': logo_url
+            'logo_url': logo_url,
+            'url': url
         }
 
         result = boothservice.create(payloads)
