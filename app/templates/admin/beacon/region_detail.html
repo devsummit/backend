@@ -1,0 +1,154 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Beacon detail </title>  {% endblock %}
+
+{% block header_link %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/select2.css') }}">
+{% endblock %}
+
+{% block page_header %}
+    {{ super() }}
+    <h1>
+        Region
+        <small>Detail of registered region</small>
+    </h1>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">Region</li>
+{% endblock %}
+
+{% block content %}
+    <div class="box box-primary">
+        <div class="box-header with-border">
+           <h3 class="box-title">Region Detail</h3>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+            <div class="box-body">
+                <div class="form-group">
+                    <label for="major">major</label>
+                    <input type="text" class="form-control" id="major" placeholder="Enter major value" value={{ beacon.major }}>
+                </div>
+                <div class="form-group">
+                    <label for="minor">minor</label>
+                    <input type="text" class="form-control" id="minor" placeholder="Enter minor value" value={{ beacon.minor }}>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" id="description" placeholder="Enter description" value={{ beacon.description }}>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select class="form-control" id="select-type">
+                        <option value="exhibitor" selected="selected">Booth</option>
+                        <option value="sponsor">Sponsor</option>
+                        <option value="speaker">Speaker</option>
+                        <option value="entrance">Entrance</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group" id="type-id">
+                    <label>Type ID</label>
+                    <select id="select-type-id" class="form-control">
+
+                    </select>
+                </div>
+                
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <a class="btn btn-primary btn-edit" id="{{ beacon.id }}">Submit</a>
+            </div>
+     </div>
+{% endblock %}
+
+{% block footer_link %}
+<!-- page script -->
+<script src="{{ url_for('static', filename='assets/dist/js/select2.js') }}"></script>
+<script>
+
+    $('.btn-edit').on('click', function() {
+        const id = $(this).attr('id');
+        const type = $('#select-type').find(":selected").val();
+        var type_id = $('#select-type-id').find(":selected").val();
+        if (type === 'other' || type === 'entrance')
+            type_id = '0';
+        payloads = {
+            'major': $('#major').val(),
+            'minor': $('#minor').val(),
+            'description': $('#description').val(),
+            'type': type,
+            'type_id': type_id
+        }
+        dsa.patch('beacons/' + id, payloads, function(result) {
+            if (result.meta.success) {
+                window.location = '/regions/' + id;
+            } else {
+                alert(result.meta.message);
+            }
+        })
+        
+    })
+
+    $('#select-type').on('change', function() {
+        const type = $(this).find(":selected").val();
+        if (type === 'exhibitor') {
+            $('#type-id').show();
+            let select = $("#select-type-id");
+            select.find('option').remove();
+            dsa.get('booths', function(result) {
+                    const data = result['data'];
+                    data.map(function(type) {
+                        let option = document.createElement('option');
+                        option.innerHTML = type.name;
+                        option.value = type.id;
+                        select.append(option);
+                });
+            });
+        } else if (type === 'sponsor') {
+            $('#type-id').show();
+            let select = $("#select-type-id");
+            select.find('option').remove();
+            dsa.get('sponsors', function(result) {
+                const data = result['data'];
+                console.log(result)
+                data.map(function(type) {
+                    let option = document.createElement('option');
+                    option.innerHTML = type.name;
+                    option.value = type.id;
+                    select.append(option);
+                });
+            });
+
+        } else if (type === 'speaker') {
+            $('#type-id').show();
+            let select = $("#select-type-id");
+            select.find('option').remove();
+            dsa.get('speakers', function(result) {
+                const data = result['data'];
+                console.log(result)
+                data.map(function(type) {
+                    let option = document.createElement('option');
+                    option.innerHTML = type.user.first_name + ' ' + type.user.last_name;
+                    option.value = type.id;
+                    select.append(option);
+                });
+            });
+
+
+        } else {
+            // other and entrance
+            $('#type-id').hide();
+        }
+    })
+
+
+
+
+</script>
+
+{% endblock %}

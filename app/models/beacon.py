@@ -8,11 +8,15 @@ class Beacon(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'beacons'
 	# displayed fields
-	visible = ['id', 'code', 'created_at', 'updated_at']
+	visible = ['id', 'major', 'minor', 'type', 'type_id', 'description', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
-	code = db.Column(db.String)
+	major = db.Column(db.String)
+	minor = db.Column(db.String)
+	type = db.Column(db.String)
+	type_id = db.Column(db.String)
+	description = db.Column(db.Text)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
 
