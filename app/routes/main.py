@@ -253,11 +253,9 @@ def reset_password_user():
 def referal_info(id):
     return MainController.get_referal_info(id)
 
-<<<<<<< HEAD
 @main.route('/questioners')
 def questioner_list():
     return render_template('admin/questioners/questioners.html')
-=======
 @main.route('/regions')
 def region_list():
     return MainController.region_list()
@@ -271,4 +269,3 @@ def region_add():
     return MainController.region_add()
 
     
->>>>>>> 32cf514371b886ec7f7f9175e9afb9bf0e9b1ba7
