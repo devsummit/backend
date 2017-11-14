@@ -20,11 +20,13 @@ def upgrade():
     op.add_column('beacons', sa.Column('type', sa.String(120)))
     op.add_column('beacons', sa.Column('description', sa.Text))
     op.add_column('beacons', sa.Column('type_id', sa.String(255)))
-    op.alter_column('beacons', 'code', existing_type=sa.String(255), nullable=False, new_column_name='uuid')
+    op.add_column('beacons', sa.Column('minor', sa.String(255)))
+    op.alter_column('beacons', 'code', existing_type=sa.String(255), nullable=False, new_column_name='major')
 
 
 def downgrade():
     op.drop_column('beacons', 'type')
     op.drop_column('beacons', 'type_id')
     op.drop_column('beacons', 'description')
-    op.alter_column('beacons', 'uuid', existing_type=sa.String(255), nullable=False, new_column_name='code')
+    op.drop_column('beacons', 'minor')
+    op.alter_column('beacons', 'major', existing_type=sa.String(255), nullable=False, new_column_name='code')
