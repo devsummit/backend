@@ -21,12 +21,15 @@
 
 {% block content %}
     <div class="box">
+        <a href="/regions/create" class="btn btn-primary"><b>Add New</b></a>
         <!-- /.box-header -->
         <div class="box-body">
+            <h6>*click on major or minor to edit the item.</h6>
             <table id="beacon-list1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                    <th>UUID</th>
+                    <th>Major</th>
+                    <th>Minor</th>
                     <th>Description</th>
                     <th>Type</th>
                     <th>Type-ID</th>
@@ -36,7 +39,10 @@
                     {% for beacon in beacons %}
                     <tr>
                         <td>
-                            <a href="/beacons/{{ beacon.uuid }}" id='atd-{{ beacon.uuid }}' class="beacon-uuid">{{ beacon.uuid|e }}</a> 
+                            <a href="/regions/{{ beacon.id }}" id='atd-{{ beacon.id }}' class="beacon-uuid">{{ beacon.major|e }}</a> 
+                        </td>
+                        <td>
+                            <a href="/regions/{{ beacon.id }}" id='atd-{{ beacon.id }}' class="beacon-uuid">{{ beacon.minor|e }}</a> 
                         </td>
                         <td>
                             {{ beacon.description|e }}

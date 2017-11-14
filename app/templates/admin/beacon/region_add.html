@@ -31,34 +31,39 @@
         <form role="form">
             <div class="box-body">
                 <div class="form-group">
-                    <label for="uuid">UUID</label>
-                    <input type="uuid" class="form-control" id="uuid" placeholder="Enter uuid">
+                    <label for="major">Major</label>
+                    <input type="text" class="form-control" id="add-major" placeholder="Enter major value">
+                </div>
+                <div class="form-group">
+                    <label for="minor">Minor</label>
+                    <input type="text" class="form-control" id="add-minor" placeholder="Enter minor value">
                 </div>
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <input type="description" class="form-control" id="description" placeholder="Enter description">
+                    <input type="text" class="form-control" id="add-description" placeholder="Enter description">
                 </div>
                 <div class="form-group">
                     <label>Type</label>
-                    <select id="select-type" class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true">
-                        <option selected="selected">Booth</option>
-                        <option>Booth</option>
-                        <option>Sponsor</option>
-                        <option>Speaker</option>
-                        <option>Entrance</option>
-                        <option>Other</option>
+                    <select class="form-control" id="add-select-type">
+                        <option value="exhibitor" selected="selected">Booth</option>
+                        <option value="sponsor">Sponsor</option>
+                        <option value="speaker">Speaker</option>
+                        <option value="entrance">Entrance</option>
+                        <option value="other">Other</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="add-type-id">
                     <label>Type ID</label>
-                    <select id="select-type-id" class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true">
+                    <select id="add-select-type-id" class="form-control">
+
                     </select>
                 </div>
+                
                 
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
-                <button class="btn btn-primary">Submit</button>
+                <a class="btn btn-primary btn-add">Submit</a>
             </div>
         </form>
      </div>
@@ -68,9 +73,79 @@
 <!-- page script -->
 <script src="{{ url_for('static', filename='assets/dist/js/select2.js') }}"></script>
 <script>
-    $(function () {
-           $('.select2').select2()
+
+    $('.btn-add').on('click', function() {
+        const type = $('#add-select-type').find(":selected").val();
+        var type_id = $('#add-select-type-id').find(":selected").val();
+        if (type === 'other' || type === 'entrance')
+            type_id = '0';
+        payloads = {
+            'major': $('#add-major').val(),
+            'minor': $('#add-minor').val(),
+            'description': $('#add-description').val(),
+            'type': type,
+            'type_id': type_id
+        }
+        dsa.post('beacons', payloads, function(result) {
+            if (result.meta.success) {
+                window.location = '/regions';
+            } else {
+                alert(result.meta.message);
+            }
+        })
+        
     })
+
+    $('#add-select-type').on('change', function() {
+        const type = $(this).find(":selected").val();
+        if (type === 'exhibitor') {
+            $('#add-type-id').show();
+            let select = $("#add-select-type-id");
+            select.find('option').remove();
+            dsa.get('booths', function(result) {
+                    const data = result['data'];
+                    data.map(function(type) {
+                        let option = document.createElement('option');
+                        option.innerHTML = type.name;
+                        option.value = type.id;
+                        select.append(option);
+                });
+            });
+        } else if (type === 'sponsor') {
+            $('#add-type-id').show();
+            let select = $("#add-select-type-id");
+            select.find('option').remove();
+            dsa.get('sponsors', function(result) {
+                const data = result['data'];
+                data.map(function(type) {
+                    let option = document.createElement('option');
+                    option.innerHTML = type.name;
+                    option.value = type.id;
+                    select.append(option);
+                });
+            });
+
+        } else if (type === 'speaker') {
+            $('#add-type-id').show();
+            let select = $("#add-select-type-id");
+            select.find('option').remove();
+            dsa.get('speakers', function(result) {
+                const data = result['data'];
+                data.map(function(type) {
+                    let option = document.createElement('option');
+                    option.innerHTML = type.user.first_name + ' ' + type.user.last_name;
+                    option.value = type.id;
+                    select.append(option);
+                });
+            });
+
+
+        } else {
+            // other and entrance
+            $('#add-type-id').hide();
+        }
+    })
+
 </script>
 
 {% endblock %}
