@@ -1262,11 +1262,13 @@ def questioner_index(*args, **kwargs):
         return QuestionerController.index()
     return QuestionerController.patch(None, request)
 
-@api.route('/questioners/<id>', methods=['GET', 'POST'])
+@api.route('/questioners/<id>', methods=['GET', 'POST', 'DELETE'])
 @token_required
 def questioners_show(id, *args, **kwargs):
     if request.method=="GET":
         return QuestionerController.show(id)
+    elif request.method=='DELETE':
+        return QuestionerController.delete(id)
     return QuestionerController.patch(id, request)
 
 @api.route('/questioners/<id>/answers', methods=['POST'])

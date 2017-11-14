@@ -139,7 +139,12 @@
                                             m('button.btn btn-sm btn-danger', 
                                                 {
                                                     onclick: function() {
-                                                        model.list.splice(index, 1)
+                                                        fetchAPI('/api/v1/questioners/'+questioner.id, 'DELETE', null)
+                                                            .then(function(data) {
+                                                                if (data.meta.success) {
+                                                                    model.list.splice(index, 1)
+                                                                }
+                                                            })
                                                     }
                                                 },
                                                 'X'
@@ -159,6 +164,7 @@
         oninit: function(vnode) {
             var id = vnode.attrs.id
             fetchCurrent(id)
+            model.info.message=""
         },
         view: function() {
             if (!model.current.id) return m('h1', 'questioner is empty')

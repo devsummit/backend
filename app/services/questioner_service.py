@@ -89,3 +89,22 @@ class QuestionerService():
                 'error': True,
                 'data': data
             }
+    def delete(self, id):
+        questioner = db.session.query(Questioner).filter_by(id=id)
+        if questioner.first() is not None:
+            # delete row
+            questioner.delete()
+            db.session.commit()
+            return {
+                'error': False,
+                'data': None,
+                'message': 'questioner deleted'
+            }
+        else:
+            message = 'data not found'
+            return {
+                'error': True,
+                'data': None,
+                'message': message
+            }
+
