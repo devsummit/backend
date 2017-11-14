@@ -152,12 +152,13 @@ class OrderVerificationService(BaseService):
 		else:
 			return None
 
-	def create_booth(self, user):
+	def create_booth(self, user, type):
 		booth = Booth()
 		booth.name = 'Your booth name here'
 		booth.user_id = user.id
 		booth.points = 0
 		booth.summary = ''
+		booth.type = type
 		booth.logo_url = None
 		booth.stage_id = None
 		db.session.add(booth)
@@ -199,8 +200,9 @@ class OrderVerificationService(BaseService):
 				payload = {}
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items[0].ticket_id
+
 				UserTicketService().create(payload)
-				self.create_booth(user)
+				self.create_booth(user, items[0].ticket.ticket_type)
 				user_query.update({
 					'role_id': ROLE['booth'],
 					'updated_at': datetime.datetime.now()
@@ -274,7 +276,7 @@ class OrderVerificationService(BaseService):
 				payload['user_id'] = user.id
 				payload['ticket_id'] = items[0].ticket_id
 				UserTicketService().create(payload)
-				self.create_booth(user)
+				self.create_booth(user, items[0].ticket.ticket_type)
 				user_query.update({
 					'role_id': ROLE['booth'],
 					'updated_at': datetime.datetime.now()

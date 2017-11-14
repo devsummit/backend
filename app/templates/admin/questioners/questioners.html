@@ -1,0 +1,29 @@
+{% extends "admin/base/index.html" %}
+
+{% block title %} <title> Questioner </title>  {% endblock %}
+
+{% block page_header %}
+{{ super() }}
+<h1>
+    Questioner
+    <small>Generate Questioner</small>
+</h1>
+{% endblock %}
+
+{% block header_link %}
+<script src="{{ url_for('static', filename='assets/dist/js/mithril.js') }}"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+<li class="active">Questioners</li>
+{% endblock %}
+
+{% block content %}
+  <div id="root">
+    <!-- our questioner view will mounted here -->
+  </div>
+{% endblock %}
+
+{% block footer_link %}
+  {% include "admin/questioners/questioner_list.html"%}
+{% endblock %}

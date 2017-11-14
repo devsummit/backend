@@ -8,43 +8,66 @@ class BeaconController(BaseController):
 	@staticmethod
 	def index():
 		beacons = beaconservice.get()
-		return BaseController.send_response_api(BaseModel.as_list(beacons), 'stages retrieved successfully')
+		if beacons['error']:
+			return BaseController.send_error_api(beacons['data'], beacons['message'])
+		return BaseController.send_response_api(beacons['data'], beacons['message'])
+
+	@staticmethod
+	def show(id):
+		beacon = beaconservice.show(id)
+		if beacon['error']:
+			return BaseController.send_error_api(beacon['data'], beacon['message'])
+		return BaseController.send_response_api(beacon['data'], beacon['message'])
 
 	@staticmethod
 	def create(request):
-		code = request.json['code'] if 'code' in request.json else None
-
-		if code:
+		major = request.json['major'] if 'major' in request.json else None
+		minor = request.json['minor'] if 'minor' in request.json else None
+		type = request.json['type'] if 'type' in request.json else None
+		type_id = request.json['type_id'] if 'type_id' in request.json else None
+		description = request.json['description'] if 'description' in request.json else ''
+		if major and minor and type and type_id:
 			payloads = {
-				'code': code,
+				'major': major,
+				'minor': minor,
+				'type': type,
+				'type_id': type_id,
+				'description': description,
 			}
 		else:
-			return BaseController.send_error_api(None, 'field is not complete')
+			return BaseController.send_error_api(None, 'invalid payload')
 
 		result = beaconservice.create(payloads)
 
 		if not result['error']:
-			return BaseController.send_response_api(result['data'], 'beacon succesfully created')
+			return BaseController.send_response_api(result['data'], result['message'])
 		else:
-			return BaseController.send_error_api(None, result['data'])
+			return BaseController.send_error_api(result['data'], result['message'])
 
 	@staticmethod
 	def update(request, id):
-		code = request.json['code'] if 'code' in request.json else None
-
-		if code:
+		major = request.json['major'] if 'major' in request.json else None
+		minor = request.json['minor'] if 'minor' in request.json else None
+		type = request.json['type'] if 'type' in request.json else None
+		type_id = request.json['type_id'] if 'type_id' in request.json else None
+		description = request.json['description'] if 'description' in request.json else ''
+		
+		if major and minor and type and type_id:
 			payloads = {
-				'code': code,
+				'major': major,
+				'minor': minor,
+				'type': type,
+				'type_id': type_id,
+				'description': description,
 			}
 		else:
-			return BaseController.send_error_api(None, 'field is not complete')
+			return BaseController.send_error_api(None, 'invalid payload')
 
 		result = beaconservice.update(payloads, id)
 
-		if not result['error']:
-			return BaseController.send_response_api(result['data'], 'beacon succesfully updated')
-		else:
-			return BaseController.send_error_api(None, result['data'])
+		if result['error']:
+			return BaseController.send_error_api(result['data'], result['message'])
+		return BaseController.send_response_api(result['data'], result['message'])
 
 	@staticmethod
 	def delete(id):
@@ -52,3 +75,15 @@ class BeaconController(BaseController):
 		if beacon['error']:
 			return BaseController.send_response_api(None, 'beacon not found')
 		return BaseController.send_response_api(None, 'beacon with id: ' + id + ' has been succesfully deleted')
+
+	@staticmethod
+	def update_mapping(request):
+		version = request.json['version'] if 'version' in request.json else None
+		if version is None:
+			return BaseController.send_error_api(None, 'invalid payload')
+
+		result = beaconservice.fetch_mapping(version)
+
+		if result['error']:
+			return BaseController.send_error_api(result['data'], result['message'])
+		return BaseController.send_response_api(result['data'], result['message'])

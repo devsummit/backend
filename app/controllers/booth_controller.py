@@ -67,6 +67,7 @@ class BoothController(BaseController):
         stage_id = request.json['stage_id'] if 'stage_id' in request.json else None
         points = request.json['points'] if 'points' in request.json else 0
         summary = request.json['summary'] if 'summary' in request.json else None
+        type = request.json['type'] if 'type' in request.json else None
         logo_url = request.json['logo_url'] if 'logo_url' in request.json else ''
         url = request.json['url'] if 'url' in request.json else ''
 
@@ -76,6 +77,7 @@ class BoothController(BaseController):
             'stage_id': stage_id,
             'points': points,
             'summary': summary,
+            'type': type,
             'logo_url': logo_url,
             'url': url
         }

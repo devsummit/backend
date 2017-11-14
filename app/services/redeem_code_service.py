@@ -29,9 +29,9 @@ class RedeemCodeService():
         # print(redeem_codes)
         results = []
         for entity in entities:
-            data = db.session.query(RedeemCode).filter(and_(RedeemCode.codeable_id.like(entity[0]), RedeemCode.codeable_type.like(entity[1]))).first()
-            results.append(data)
-        
+            if entity[1] != 'hackaton':
+                data = db.session.query(RedeemCode).filter(and_(RedeemCode.codeable_id.like(entity[0]), RedeemCode.codeable_type.like(entity[1]))).first()
+                results.append(data)
         final_results = self.include_type_detail(results)
 
         return response.set_data(final_results).set_message("Redeem codes retrieved successfully").build()
