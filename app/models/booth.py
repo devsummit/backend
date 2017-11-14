@@ -9,7 +9,7 @@ class Booth(db.Model, BaseModel):
 	# table name
 	__tablename__ = 'booths'
 	# displayed fields
-	visible = ['id', 'user_id', 'stage_id', 'points', 'summary', 'logo_url', 'url', 'name', 'created_at', 'updated_at']
+	visible = ['id', 'user_id', 'stage_id', 'points', 'summary', 'type', 'logo_url', 'url', 'name', 'created_at', 'updated_at']
 
 	# columns definitions
 	id = db.Column(db.Integer, primary_key=True)
@@ -25,6 +25,7 @@ class Booth(db.Model, BaseModel):
 	)
 	stage = db.relationship('Stage')
 	summary = db.Column(db.Text)
+	type = db.Column(db.String)
 	points = db.Column(db.Integer)
 	name = db.Column(db.String(255))
 	url = db.Column(db.String(255))
