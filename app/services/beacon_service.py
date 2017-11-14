@@ -4,6 +4,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.builders.response_builder import ResponseBuilder
 # import model class
 from app.models.beacon import Beacon
+from app.models.sponsor import Sponsor
+from app.models.speaker import Speaker
+from app.models.booth import Booth
+from app.models.booth_gallery import BoothGallery
+from app.models.beacon_map_version import BeaconMapVersion
 
 
 class BeaconService():
@@ -29,6 +34,18 @@ class BeaconService():
 			return True
 		return False
 
+	def update_map_version(self):
+		version = db.session.query(BeaconMapVersion)
+		if version.first():
+			version.update({
+				'version': version.first().version + 1
+			})
+		else:
+			version = BeaconMapVersion()
+			version.version = 1
+			db.session.add(version)
+		db.session.commit()
+
 	def create(self, payloads):
 		response = ResponseBuilder()
 		if self.is_beacon_exist(payloads['major'], payloads['minor']):
@@ -42,6 +59,7 @@ class BeaconService():
 		db.session.add(self.model_beacon)
 		try:
 			db.session.commit()
+			self.update_map_version()			
 			data = self.model_beacon.as_dict()
 			return response.set_data(data).set_message('region created succesfully').build()
 		except SQLAlchemyError as e:
@@ -61,11 +79,15 @@ class BeaconService():
 				'updated_at': datetime.datetime.now()
 			})
 			db.session.commit()
+			self.update_map_version()			
 			data = self.model_beacon.first().as_dict()
 			return response.set_data(data).set_message('region updated succesfully').build()
 		except SQLAlchemyError as e:
 			data = e.orig.args
 			return response.set_data(data).set_error(True).set_message('sql error').build()
+
+	def get_current_version(self):
+		return db.session.query(BeaconMapVersion).first().version
 
 	def delete(self, id):
 		response = ResponseBuilder()
@@ -78,3 +100,45 @@ class BeaconService():
 		else:
 			data = 'data not found'
 			return response.set_data(data).set_error(True).set_message('sql error').build()
+
+	def fetch_mapping(self, version):
+		response = ResponseBuilder()
+		result = []
+		current_version = self.get_current_version()
+		if version == current_version:
+			return response.set_data({'newest': True}).set_message('your beacon map version is already the newest').build()
+		# fetch all row from beacon map
+		beacons = db.session.query(Beacon).all()
+		# for each beacon map include all data neccessary according to their type and type id
+		for beacon in beacons:
+			data = beacon.as_dict()
+			data['details'] = self.include_data(beacon)
+			result.append(data)
+		result.append({'version': self.get_current_version()})
+		# return response
+		return response.set_data(result).set_message('You have updated your beacon map to version: %s' %current_version).build()
+
+
+	def include_data(self, beacon):
+		result = {}
+		if beacon.type == 'exhibitor':
+			exhibitor = db.session.query(Booth).filter(Booth.id == beacon.type_id).first()
+			gallery = self.fetch_booth_gallery(exhibitor.id)
+			result['exhibitor'] = exhibitor.as_dict()
+			result['exhibitor']['gallery'] =[]
+			for image in gallery:
+				result['exhibitor']['gallery'].append(image.as_dict())
+		elif beacon.type == 'sponsor':
+			result['sponsor'] = db.session.query(Sponsor).filter(Sponsor.id == beacon.type_id).first().as_dict()
+		elif beacon.type == 'speaker':
+			speaker = db.session.query(Speaker).filter(Speaker.id == beacon.type_id).first()
+			result['speaker'] = speaker.as_dict()
+			result['speaker']['user'] = speaker.user.include_photos().as_dict()
+		elif beacon.type == 'other':
+			pass
+		elif beacon.type == 'entrance':
+			pass
+		return result
+
+	def fetch_booth_gallery(self, booth_id):
+		return db.session.query(BoothGallery).filter(BoothGallery.booth_id == booth_id).all()
