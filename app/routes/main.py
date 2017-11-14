@@ -252,3 +252,7 @@ def reset_password_user():
 @main.route('/referal_details/<id>')
 def referal_info(id):
     return MainController.get_referal_info(id)
+
+@main.route('/questioners')
+def questioner_list():
+    return render_template('admin/questioners/questioners.html')

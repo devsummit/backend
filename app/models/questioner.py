@@ -18,6 +18,7 @@ class Questioner(db.Model, BaseModel):
 		db.ForeignKey('booths.id'),
 		nullable=False
 	)
+	booth = db.relationship('Booth')
 	questions = db.Column(db.Text)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
