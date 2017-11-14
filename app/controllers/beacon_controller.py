@@ -75,3 +75,15 @@ class BeaconController(BaseController):
 		if beacon['error']:
 			return BaseController.send_response_api(None, 'beacon not found')
 		return BaseController.send_response_api(None, 'beacon with id: ' + id + ' has been succesfully deleted')
+
+	@staticmethod
+	def update_mapping(request):
+		version = request.json['version'] if 'version' in request.json else None
+		if version is None or version < current_version:
+			# fetch newest 
+			pass
+		elif version == current_version:
+			return BaseController.send_response_api(None, 'beacon mapping is already the newest one')
+		if result['error']:
+			return BaseController.send_error_api(result['data'], result['message'])
+		return BaseController.send_response_api(result['data'], result['message'])
