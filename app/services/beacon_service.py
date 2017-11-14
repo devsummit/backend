@@ -114,7 +114,7 @@ class BeaconService():
 			data = beacon.as_dict()
 			data['details'] = self.include_data(beacon)
 			result.append(data)
-		# fetch map here
+		result.append({'version': self.get_current_version()})
 		# return response
 		return response.set_data(result).set_message('You have updated your beacon map to version: %s' %current_version).build()
 
