@@ -228,11 +228,11 @@ class MainController(BaseController):
 
     def region_list():
         beacons =  beaconservice.get()
-        return render_template('admin/beacon/region.html', beacons=beacons)
+        return render_template('admin/beacon/region.html', beacons=beacons['data'])
 
     def region_show(id):
         beacon = beaconservice.show(id)
-        return render_template("admin/beacon/region_detail.html", beacon=beacon)
+        return render_template("admin/beacon/region_detail.html", beacon=beacon['data'])
     
     def region_add():
         return render_template("admin/beacon/region_add.html")

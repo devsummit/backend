@@ -21,13 +21,15 @@ class BeaconController(BaseController):
 
 	@staticmethod
 	def create(request):
-		uuid = request.json['uuid'] if 'uuid' in request.json else None
+		major = request.json['major'] if 'major' in request.json else None
+		minor = request.json['minor'] if 'minor' in request.json else None
 		type = request.json['type'] if 'type' in request.json else None
 		type_id = request.json['type_id'] if 'type_id' in request.json else None
 		description = request.json['description'] if 'description' in request.json else ''
-		if uuid and type and type_id:
+		if major and minor and type and type_id:
 			payloads = {
-				'uuid': uuid,
+				'major': major,
+				'minor': minor,
 				'type': type,
 				'type_id': type_id,
 				'description': description,
@@ -44,14 +46,16 @@ class BeaconController(BaseController):
 
 	@staticmethod
 	def update(request, id):
-		uuid = request.json['uuid'] if 'uuid' in request.json else None
+		major = request.json['major'] if 'major' in request.json else None
+		minor = request.json['minor'] if 'minor' in request.json else None
 		type = request.json['type'] if 'type' in request.json else None
 		type_id = request.json['type_id'] if 'type_id' in request.json else None
 		description = request.json['description'] if 'description' in request.json else ''
 		
-		if uuid and type and type_id:
+		if major and minor and type and type_id:
 			payloads = {
-				'uuid': uuid,
+				'major': major,
+				'minor': minor,
 				'type': type,
 				'type_id': type_id,
 				'description': description,
