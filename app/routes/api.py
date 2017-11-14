@@ -175,6 +175,12 @@ def beacon_id(id, *args, **kwargs):
         return BeaconController.show(id)
 
 
+@api.route('/beacons/mapping/update', methods=['POST'])
+@token_required
+def beacon_map(*args, **kwargs):
+    return BeaconController.update_mapping(request)
+
+
 # Spot api
 @api.route('/spots', methods=['GET'])
 @token_required
