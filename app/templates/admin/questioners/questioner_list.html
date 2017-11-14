@@ -1,0 +1,242 @@
+<script>
+    var root = document.getElementById("root")
+    var model = {
+        info: {
+            tipe: "default",
+            message: ""
+        },
+        list: [],
+        current: {},
+        booths: []
+    }
+
+    var fetchAPI = function(url, method, payload) {
+        return m.request({
+                method: method,
+                headers: {
+                    Authorization: dsa.acess_token()
+                },
+                url:  url,
+                data: payload
+            })
+    }
+    var fetchList = function() {
+        fetchAPI('/api/v1/questioners', 'GET', null)
+            .then(function (data) {
+                if (data['data']) {
+                    model.list = data['data']
+                }
+            })
+    }
+
+    var fetchCurrent = function(id) {
+        fetchAPI('/api/v1/questioners/'+id, 'GET', null)
+            .then(function (data) {
+                if (data['data']) {
+                    model.current = data['data']
+                    model.current.questionList = []
+                    var questionArr = JSON.parse(model.current.questions)
+                    if (questionArr && questionArr.length) {
+                        model.current.questionList = questionArr
+                    }
+                }
+            })
+    }
+
+    var postQuestioner = function(id, booth_id, questioner) {
+        var payload = {}
+        payload.id = id
+        payload.booth_id = booth_id
+        payload.questions = questioner
+        var url = id ? "/api/v1/questioners/"+ id : "/api/v1/questioners"
+        fetchAPI(url, "POST", payload)
+            .then(function (data) {
+                    model.info.tipe = data.meta.success ? 'success' : 'danger'
+                    model.info.message = data.meta.message
+            })
+    }
+    var labelInfo = {
+            view: function() {
+                return m(`h4.label-${model.info.tipe}`, model.info.message)
+            }
+    }
+
+    var boothDropDown =  {
+        oninit: function() {
+            fetchAPI('/api/v1/booths', 'GET', null)
+                .then(function(data) {
+                    if (data['data'] && data['data'].length) {
+                        model.booths = data['data']
+                    }
+                })
+        },
+        view: function() {
+            return m('select.form-control', 
+                {
+                    onchange: m.withAttr('value', function(value) {
+                                model.current.booth_id = value
+                            })
+                },
+                model.booths.map(function(booth, index) {
+                    return m('option', 
+                        {
+                            value: booth.id,
+                            selected: model.current.id==booth.id,
+                        },
+                        booth.name
+                    )
+                })
+            )
+        }
+    }
+
+    var questionerList = {
+        oninit: fetchList,
+        view: function () {
+            return m('.col-xs-12',
+                m('.box', [
+                    m('.box-header with border', [
+                        m('label.box-title', "Questioner List"),
+                        m('button.btn btn-sm btn-success pull-right', 
+                            {onclick: function() {
+                                fetchAPI('/api/v1/questioners', 'POST', {
+                                    booth_id: null,
+                                    questions: ""
+                                })
+                                .then(function(data) {
+                                    if (data.data && data.data.booth_id) {
+                                        var id =  data.data.id
+                                        m.route.set('/edit/'+id)
+                                    }
+                                })
+                            }},
+                            'New Questioner'
+                        )
+                    ]),
+                    m('.box-body table-responsive no-padding',
+                        m('.table table-hover',
+                            m('tbody', [
+                                m('tr', [
+                                    m('th', 'NO.'),
+                                    m('th', 'BOOTH ID.'),
+                                    m('th', 'BOOTH NAME.'),
+                                    m('th', 'QUESTIONS'),
+                                    m('th', ''), //button edit column
+                                    m('th', '') //button delete column
+                                ]),
+                                model.list.map(function (questioner, index) {
+                                    return m('tr', 
+                                        {key: index},
+                                        [
+                                            m('td', index + 1),
+                                            m('td', questioner.booth_id),
+                                            m('td', questioner.booth.name),
+                                            m('td', questioner.questions),
+                                            m(`a[href=/edit/${questioner.id}].btn btn-sm btn-primary`, 
+                                                {oncreate: m.route.link},
+                                                'edit'
+                                            ),
+                                            m('button.btn btn-sm btn-danger', 
+                                                {
+                                                    onclick: function() {
+                                                        model.list.splice(index, 1)
+                                                    }
+                                                },
+                                                'X'
+                                            )
+                                        ]
+                                    )
+                                })
+                            ])
+                        )
+                    )
+                ])
+            )
+        }
+    }
+
+    var questionerEdit = {
+        oninit: function(vnode) {
+            var id = vnode.attrs.id
+            fetchCurrent(id)
+        },
+        view: function() {
+            if (!model.current.id) return m('h1', 'questioner is empty')
+            return m('.col-md-12', 
+                m('.box box-primary', [
+                    m('.box-header with border', [
+                        m('button.btn btn-sm btn-warning pull-right', 
+                            {
+                                onclick: function() {
+                                    m.route.set('/')
+                                }
+                            },
+                            'Back to list'
+                        ),
+                        m(labelInfo),
+                        m('label.box-title', "Input Questioner"),
+                        m('h6', "Select Booth Owner"),
+                        m(boothDropDown)
+                    ]),
+                    m('form', 
+                        m('.box-body', [
+                            model.current.questionList.map(function(question, index) {
+                                return m('.form-group', {key: index}, [
+                                    m('label[for=question_text]', question.id + "."),
+                                    m('button.btn btn-sm btn-danger pull-right', 
+                                        {
+                                            "data-widget":"remove",
+                                            onclick: function() {
+                                                model.current.questionList.splice(index, 1)
+                                            }
+                                        },
+                                        m('i.fa fa-remove')
+                                    ),
+                                    m('textarea.form-control', 
+                                        {
+                                            rows: 5, 
+                                            placeholder: 'Enter question text',
+                                            oninput: m.withAttr('value', function(value){
+                                                question.text = value
+                                            })
+                                        },
+                                        question.text
+                                    ),
+                                ])
+                            }),
+                            m('button.btn btn-success pull-right', 
+                                {
+                                    onclick: function(e) {
+                                        e.preventDefault()
+                                        postQuestioner(model.current.id, model.current.booth_id, model.current.questionList)
+                                    }
+                                }, 
+                                'submit'
+                            ),
+                            m('button.btn btn-primary pull-right', 
+                                {
+                                    onclick: function(e) {
+                                        e.preventDefault()
+                                        model.info.tipe = 'primary'
+                                        model.info.message = 'add new question'
+                                        model.current.questionList.push({
+                                            id: model.current.questionList.length+1,
+                                            text: ''
+                                        })
+                                    }
+                                }, 
+                                'add new'
+                            )
+                        ])
+                    )
+                ])
+            )
+        }        
+    }
+
+    //page router
+    m.route(root, '/', {
+        '/': questionerList,
+        '/edit/:id': questionerEdit
+    })
+</script>

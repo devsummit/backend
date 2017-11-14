@@ -8,7 +8,7 @@ class QuestionerController(BaseController):
 	@staticmethod
 	def index():
 		questioners = questionerservice.get()
-		return BaseController.send_response_api(BaseModel.as_list(questioners), 'questioners retrieved successfully')
+		return BaseController.send_response_api(questioners, 'questioners retrieved successfully')
 
 	@staticmethod
 	def show(id):
@@ -18,15 +18,17 @@ class QuestionerController(BaseController):
 	@staticmethod
 	def patch(id, request):
 		# pyload should have keys: booth_id and questions 
-		if request.json['questions'] and request.json['booth_id']:
+		if ('questions' in request.json) and ('booth_id' in request.json):
 			payload = {
 				'booth_id': request.json['booth_id'],
 				'questions': request.json['questions']
 			}
 			questioner = questionerservice.patch(id, payload)
-			return BaseController.send_response_api(questioner, "questioner succesfully posted")
+			if questioner['error']:
+				return BaseController.send_error_api(None, questioner['message'])
+			return BaseController.send_response_api(questioner['data'], questioner['message'])
 		else:
-			return BaseController.send_error_api('payload not valid')
+			return BaseController.send_error_api(None, 'payload not valid!')
 
 	@staticmethod
 	def post_answer(id, user, request):
@@ -37,7 +39,6 @@ class QuestionerController(BaseController):
 				'answers': answers
 			}
 			result = questionerservice.post_answer(id, user_id, payload)
-			print("**********", result)
 			if result['error']:
 				return BaseController.send_error_api(result['data'], 'error post answer')
 			return BaseController.send_response_api(result, "answer successfully posted")
