@@ -79,11 +79,11 @@ class BeaconController(BaseController):
 	@staticmethod
 	def update_mapping(request):
 		version = request.json['version'] if 'version' in request.json else None
-		if version is None or version < current_version:
-			# fetch newest 
-			pass
-		elif version == current_version:
-			return BaseController.send_response_api(None, 'beacon mapping is already the newest one')
+		if version is None:
+			return BaseController.send_error_api(None, 'invalid payload')
+
+		result = beaconservice.fetch_mapping(version)
+
 		if result['error']:
 			return BaseController.send_error_api(result['data'], result['message'])
 		return BaseController.send_response_api(result['data'], result['message'])
