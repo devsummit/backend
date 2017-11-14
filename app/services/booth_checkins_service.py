@@ -7,6 +7,7 @@ from app.models.booth_checkins import BoothCheckin
 from app.models.user import User
 from app.models.user_booth import UserBooth
 from app.models.partner_pj import PartnerPj
+from app.models.questioner_answer import QuestionerAnswer
 from app.builders.response_builder import ResponseBuilder
 
 
@@ -37,8 +38,13 @@ class BoothCheckinService():
 		for guest in guests:
 			data = guest.user.include_photos().as_dict()
 			data['checkin_details'] = guest.as_dict()
+			answer = self.get_questioner_answer(guest.user.id)
+			data['speed_dating'] = answer.as_dict() if answer else None
 			_results.append(data)
 		return response.set_data(_results).set_message('guests retrieved successfully').build()
+
+	def get_questioner_answer(self, user_id):
+		return db.session.query(QuestionerAnswer).filter(QuestionerAnswer.user_id == user_id).first()
 
 	def filter_guests(self, user, filter):
 		response = ResponseBuilder()
