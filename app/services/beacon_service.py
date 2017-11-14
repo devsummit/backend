@@ -23,18 +23,19 @@ class BeaconService():
 			return response.set_data(beacon.as_dict()).set_message('beacon retrieved succesfully').build()
 		return response.set_data(None).set_error(True).set_message('beacon not found').build()
 
-	def is_uuid_exist(self, uuid):
-		beacon = db.session.query(Beacon).filter(Beacon.uuid == uuid).first()
+	def is_beacon_exist(self, major, minor):
+		beacon = db.session.query(Beacon).filter(Beacon.major == major, Beacon.minor == minor).first()
 		if beacon:
 			return True
 		return False
 
 	def create(self, payloads):
 		response = ResponseBuilder()
-		if self.is_uuid_exist(payloads['uuid']):
-			return response.set_data(None).set_message('duplicate uuid found').set_error(True).build()
+		if self.is_beacon_exist(payloads['major'], payloads['minor']):
+			return response.set_data(None).set_message('duplicate beacon found').set_error(True).build()
 		self.model_beacon = Beacon()
-		self.model_beacon.uuid = payloads['uuid']
+		self.model_beacon.major = payloads['major']
+		self.model_beacon.minor = payloads['minor']
 		self.model_beacon.type = payloads['type']
 		self.model_beacon.type_id = payloads['type_id']
 		self.model_beacon.description = payloads['description']
@@ -52,7 +53,8 @@ class BeaconService():
 		try:
 			self.model_beacon = db.session.query(Beacon).filter(Beacon.id == id)
 			self.model_beacon.update({
-				'uuid': payloads['uuid'],
+				'major': payloads['major'],
+				'minor': payloads['minor'],
 				'type': payloads['type'],
 				'type_id': payloads['type_id'],
 				'description': payloads['description'],
