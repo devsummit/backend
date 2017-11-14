@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.builders.response_builder import ResponseBuilder
 # import model class
 from app.models.beacon import Beacon
+from app.models.beacon_map_version import BeaconMapVersion
 
 
 class BeaconService():
@@ -29,6 +30,18 @@ class BeaconService():
 			return True
 		return False
 
+	def update_map_version(self):
+		version = db.session.query(BeaconMapVersion)
+		if version.first():
+			version.update({
+				'version': version.first().version + 1
+			})
+		else:
+			version = BeaconMapVersion()
+			version.version = 1
+			db.session.add(version)
+		db.session.commit()
+
 	def create(self, payloads):
 		response = ResponseBuilder()
 		if self.is_beacon_exist(payloads['major'], payloads['minor']):
@@ -42,6 +55,7 @@ class BeaconService():
 		db.session.add(self.model_beacon)
 		try:
 			db.session.commit()
+			self.update_map_version()			
 			data = self.model_beacon.as_dict()
 			return response.set_data(data).set_message('region created succesfully').build()
 		except SQLAlchemyError as e:
@@ -61,6 +75,7 @@ class BeaconService():
 				'updated_at': datetime.datetime.now()
 			})
 			db.session.commit()
+			self.update_map_version()			
 			data = self.model_beacon.first().as_dict()
 			return response.set_data(data).set_message('region updated succesfully').build()
 		except SQLAlchemyError as e:
