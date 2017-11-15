@@ -255,7 +255,9 @@ def referal_info(id):
 
 @main.route('/questioners')
 def questioner_list():
-    return render_template('admin/questioners/questioners.html')
+    booth_id = request.args.get('booth_id', 'null')
+    return render_template('admin/questioners/questioners.html', booth_id=booth_id)
+
 @main.route('/regions')
 def region_list():
     return MainController.region_list()

@@ -21,7 +21,12 @@
             })
     }
     var fetchList = function() {
-        fetchAPI('/api/v1/questioners', 'GET', null)
+        var booth_id = {{ booth_id }}
+        var url = '/api/v1/questioners' 
+        if (booth_id) {
+            url = '/api/v1/questioners?booth_id='+booth_id
+        }
+        fetchAPI(url, 'GET', null)
             .then(function (data) {
                 if (data['data']) {
                     model.list = data['data']
@@ -63,9 +68,14 @@
 
     var boothDropDown =  {
         oninit: function() {
-            fetchAPI('/api/v1/booths', 'GET', null)
+            var booth_id = {{ booth_id }}
+            var url = '/api/v1/booths'
+            if (booth_id) {
+                url = '/api/v1/booths/'+booth_id
+            }
+            fetchAPI(url, 'GET', null)
                 .then(function(data) {
-                    if (data['data'] && data['data'].length) {
+                    if (data['data']) {
                         model.booths = data['data']
                     }
                 })
@@ -77,15 +87,24 @@
                                 model.current.booth_id = value
                             })
                 },
-                model.booths.map(function(booth, index) {
-                    return m('option', 
+                (Array.isArray(model.booths)) ? 
+                    model.booths.map(function(booth, index) {
+                        return m('option', 
+                            {
+                                value: booth.id,
+                                selected: model.current.id==booth.id,
+                            },
+                            booth.name
+                        )
+                    })
+                : 
+                    m('option', 
                         {
-                            value: booth.id,
-                            selected: model.current.id==booth.id,
+                            value: model.booths.id,
                         },
-                        booth.name
+                        model.booths.name
                     )
-                })
+                
             )
         }
     }
@@ -99,8 +118,9 @@
                         m('label.box-title', "Questioner List"),
                         m('button.btn btn-sm btn-success pull-right', 
                             {onclick: function() {
+                                var booth_id = {{ booth_id }} //this id come from the backend 
                                 fetchAPI('/api/v1/questioners', 'POST', {
-                                    booth_id: null,
+                                    booth_id: booth_id,
                                     questions: ""
                                 })
                                 .then(function(data) {

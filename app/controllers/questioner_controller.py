@@ -6,8 +6,9 @@ from app.services import questionerservice
 class QuestionerController(BaseController):
 
 	@staticmethod
-	def index():
-		questioners = questionerservice.get()
+	def index(request):
+		booth_id = request.args.get('booth_id', '')
+		questioners = questionerservice.get(booth_id)
 		return BaseController.send_response_api(questioners, 'questioners retrieved successfully')
 
 	@staticmethod
@@ -44,6 +45,7 @@ class QuestionerController(BaseController):
 			return BaseController.send_response_api(result, "answer successfully posted")
 		else:
 			return BaseController.send_error_api('payload not valid')
+
 	@staticmethod
 	def delete(id):
 		questioner = questionerservice.delete(id)

@@ -9,8 +9,12 @@ from app.models.questioner_answer import QuestionerAnswer
 
 
 class QuestionerService():
-    def get(self):
-        questioners = db.session.query(Questioner).all()
+    def get(self, booth_id):
+        questioners = None
+        if booth_id:
+            questioners = db.session.query(Questioner).filter_by(booth_id=booth_id).all()    
+        else:
+            questioners = db.session.query(Questioner).all()
         _results = []
         for questioner in questioners:
             data = questioner.as_dict()
@@ -24,7 +28,7 @@ class QuestionerService():
         if data:
             data['booth'] = questioner.booth.as_dict()
         return data 
-
+    
     def patch(self, id, payload):
         try:
             if id==None:

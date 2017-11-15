@@ -72,6 +72,9 @@
                             <button id='bte-{{ booth.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
                                 Edit
                             </button>
+                            <button id='btq-{{ booth.id }}' type="button" class="btn btn-sm btn-info btn-questioner">
+                                Questioner
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -89,6 +92,11 @@
 
     <!-- page script -->
     <script>
+        /*Display questioner page*/
+        $('.btn-questioner').click(function() {
+            const btd_id = $(this).attr('id');
+            window.location.href = "/questioners?booth_id="+btd_id.substring(4, btd_id.length)
+        })
         /* Display booths edit detail */
         $('.btn-edit').click(function(event) {
             $('.modal-title').html('Edit');
