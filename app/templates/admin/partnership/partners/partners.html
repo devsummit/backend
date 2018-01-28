@@ -25,7 +25,7 @@
     <div class="box">
         <!-- /.box-header -->
         <a href="#" class="btn btn-primary btn-add" data-toggle="modal" data-target="#modal-add" id="-"><b>Add New</b></a>
-        
+
         <div class="box-body">
             <table id="partner-list1" class="table table-bordered table-striped">
                 <thead>
@@ -43,7 +43,7 @@
                     <tr>
                         <td>
                             <a href="http://{{ partner.website }}" id='atd-{{ partner.id }}' class="partner-name">
-                            {{ partner.name }}</a> 
+                            {{ partner.name }}</a>
                         </td>
                         <td class='partner-email'>
                             {{ partner.email|e }}
@@ -55,7 +55,7 @@
                             {{ partner.type|e }}
                         </td>
                         <td>
-                            <img src="{{partner.photo|e}}" height="120px" width="100px" alt='partner photo'>
+                            <img src="{{partner.photo|e}}" width="100px" alt='partner photo' class="img-responsive">
                         </td>
                         <td>
                             <button id='btd-{{ partner.id }}' type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#modal-edit">
@@ -98,7 +98,7 @@
         let select = $(".e-partner-type");
         select.find('option').remove();
         dsa.get('partners/' + id, function(result) {
-            // bind result value in to account_detail.html 
+            // bind result value in to account_detail.html
             const data = result['data'];
             $('.e-partner-name').val(data['name']);
             $('.e-partner-email').val(data['email']);
